@@ -1,140 +1,119 @@
-# DESIGN.md — Glacial Glassmorphic Design System
+# Accessories — Premium Ice-Blue Retail Design System (DESIGN.md)
 
-**Stitch MCP Project Reference**:
-- **Project Name**: `projects/10436377106137043740`
-- **Project Title**: `Accessories - Ice Blue Storefront`
-- **Design System Asset**: `assets/9e29a3cb9e2742ccb3f0374cf8a3db5d` ("Glacial Glassmorphic")
-- **Mobile Screen ID**: `projects/10436377106137043740/screens/8634788a773a49a981b8427b40efa3d7`
-- **Generated Assets**:
-  - Desktop Screen Screenshot: [Stitch Desktop Thumbnail](https://lh3.googleusercontent.com/aida/AEtjO1VJ6aubHBKCNwksawHJCpR-J6g0WUFgIAhvdBYirIg-Wdpvqbrfr-kTcRetnl4LjNQWKNgZwVGEyA2dglZnCYAbpuuts3WrabjL9BxLay3dp5Ws8KGWmIrjqWCGe93ZPl4Glg9p8uI7046EyLMQW0F_nlbnzVHLNfIrPEjD73a680Icl74s1Kf7yaW5tVMBXLOCBqqdxQ4K8jZj4TE8YaURUKPR3CDzfeq0dnDebs-EVJOMzRqBukEgMXZY)
-  - Mobile Screen Screenshot: [Stitch Mobile Screenshot](https://lh3.googleusercontent.com/aida/AEtjO1UuFRgl0trXTcpGA6RVYt3NTZKrP4A3bA6OQSEEQ7htPxWhEBxM5ZLvc9v2GOryHa1lwJEN2CkXb-JK_P3m4ByqnO2EIsWSQuxbEzju6FYqo28Z9zE-V4ehs0PY7w1ixY0YBegfnDb-KHdbdyWX97IyV6c_1W7guvDtg2CEu0VV9fmB2IR43VwYKe5plrcH0yF5cxYXAWOmdCGuOMj8nl85DyGnA64DVl9XXY3GAhXL4JRJcIArOytXNa-l)
+*Derived from Stitch MCP Project `projects/10436377106137043740` (Design System `assets/9e29a3cb9e2742ccb3f0374cf8a3db5d`)*
+*Generated Screens: Desktop 1440px (`cd35e62b8bbd44229c0a1315bb2224b6`), Mobile 390px (`cd2ae62201a94b6f84b89034f8f878a2`)*
 
 ---
 
-## 1. Visual Direction & Aesthetic Philosophy
+## 1. Visual Direction: Premium Ice-Blue Retail
 
-The visual atmosphere balances **Architectural Minimalism** with **Luminous Tactile Glassmorphism**:
-- **Atmosphere**: Cool, crystalline, and orderly. Floating optical glass lenses over chilled ice-blue mist.
-- **Surfaces**: Frosted translucent glass cards with specular highlight rims and multi-tiered ambient diffusion.
-- **Contrast**: AAA-compliant deep navy ink against ice-blue and pearl-white surfaces.
-- **Accents**: Electric-blue `#2563EB` primary action drivers with subtle ambient glows.
-- **Currency**: Bangladeshi Taka (`BDT ৳`) formatted accurately (e.g. `৳2,450`).
-- **Brand Name**: Configurable (defaults to "Accessories" / "AURA GEAR").
-- **Localization**: English and Bangla (বাংলা) dual-script ready typography with expandable line-heights.
+The storefront visual identity is calm, precise, spacious, and trustworthy. The aesthetic avoids aggressive neon glows, heavy blurs, and loud promotional banners, allowing excellent static product imagery, crisp typography, and restrained tactile glass surfaces to anchor the shopping experience.
 
----
+### Core Design Tokens
 
-## 2. Color Palette & Tokens
-
-| Token Name | Hex / Value | Usage & Meaning |
-| :--- | :--- | :--- |
-| `--canvas-bg` | `#EAF5FF` | Base canvas background (chilled ice-blue) |
-| `--canvas-gradient` | `linear-gradient(180deg, #FFFFFF 0%, #EAF5FF 40%, #DCEEFE 100%)` | Atmosphere gradient |
-| `--surface-glass-l1` | `rgba(248, 252, 255, 0.75)` | Resting cards, static panels (80% frosted glass) |
-| `--surface-glass-l2` | `rgba(248, 252, 255, 0.88)` | Sticky header, hover cards, slide-out drawer |
-| `--surface-glass-l3` | `rgba(255, 255, 255, 0.95)` | Modals, high-priority overlays |
-| `--surface-solid` | `#F8FCFF` | Pearl-white fallback / solid card fills |
-| `--text-primary` | `#112A43` | Deep navy ink, headlines, primary copy |
-| `--text-secondary` | `#4B637B` | Refined slate for specs, ratings, subtext |
-| `--text-tertiary` | `#8FA6BE` | Muted place-holders, disabled states |
-| `--brand-primary` | `#2563EB` | Electric-blue action triggers, active tabs, CTA buttons |
-| `--brand-hover` | `#1D4ED8` | Deeper royal blue for hover states |
-| `--brand-subtle` | `rgba(37, 99, 235, 0.08)` | Inactive chips, pill backgrounds, selection tints |
-| `--border-glass` | `rgba(37, 99, 235, 0.12)` | Subtle perimeter micro-border |
-| `--border-glass-specular` | `rgba(255, 255, 255, 0.85)` | Upper specular highlight edge reflection |
-| `--glow-primary` | `0 0 24px 2px rgba(37, 99, 235, 0.22)` | Luminescent focus glow |
-| `--success` | `#059669` | In-stock badge, verified compatibility chip |
-| `--warning` | `#D97706` | Low stock notification |
-| `--error` | `#DC2626` | Form validation error |
+| Token | Hex / Value | Usage & Application |
+|---|---|---|
+| **Main Background** | `#F7FBFF` | Canvas root background across the entire storefront |
+| **Ice-Blue Section Background** | `#EAF4FC` | Alternate section tint, category pedestals, filter chips |
+| **Product Surfaces** | `#FFFFFF` | Opaque product cards, modal surfaces, form inputs |
+| **Primary Text** | `#10263D` | Headings, product titles, prices, high-contrast labels |
+| **Secondary Text** | `#52677B` | Subtitles, descriptions, specs, metadata |
+| **Tertiary / Muted Text** | `#8FA6BE` | Placeholders, inactive counts, breadcrumbs |
+| **Primary Action** | `#145CFF` | Primary action buttons (`Shop accessories`, `Add to bag`, checkout) |
+| **Action Hover** | `#0D4BD9` | Hover state for primary action triggers |
+| **Subtle Borders** | `#DCE7F0` | Structural card borders, dividers, subtle input strokes |
+| **Success / Stock** | `#059669` | In-stock indicators, verified fit badges |
+| **Warning / Low Stock** | `#D97706` | Low stock badges, caution alerts |
 
 ---
 
-## 3. Typography & Hierarchy
+## 2. Glass Treatment & Surface Architecture
 
-Typeface: **Inter** (fallback: system-ui, -apple-system, sans-serif), with support for **Noto Sans Bengali** for localized strings.
-
-- **Hero Display**: `56px` (Desktop) / `36px` (Mobile), weight: `700`, line-height: `1.15`, letter-spacing: `-0.03em`.
-- **Headline Large (H1/H2)**: `32px` - `40px`, weight: `600`, line-height: `1.2`, letter-spacing: `-0.025em`.
-- **Headline Medium (H3)**: `24px` - `26px`, weight: `600`, line-height: `1.3`, letter-spacing: `-0.02em`.
-- **Headline Small (H4)**: `18px` - `20px`, weight: `600`, line-height: `1.4`.
-- **Body Large**: `17px`, weight: `400` / `500`, line-height: `1.6`.
-- **Body Regular**: `15px` - `16px`, weight: `400`, line-height: `1.55`.
-- **Body Small**: `13px` - `14px`, weight: `400`, line-height: `1.5`.
-- **Label / Button (Caps & Micro-copy)**: `12px` - `14px`, weight: `600`, letter-spacing: `0.02em`.
+- **Restrained Application**: Frosted glass is applied specifically to sticky navigation headers, active overlays, and selected badges.
+- **Opaque Reading Surfaces**: Product descriptions, price blocks, spec sheets, checkout forms, and modal bodies remain sufficiently opaque (`#FFFFFF` or `#F7FBFF` at `95%+`) to guarantee high-contrast readability.
+- **No Distracting Decoration**: Strictly avoid heavy blurs (`blur(40px)`), neon glowing borders, oversized drop shadows, or floating background shapes.
+- **Micro-Specular Edge**: Cards feature a crisp `1px solid #DCE7F0` boundary paired with an ultra-subtle top specular highlight `inset 0 1px 0 rgba(255, 255, 255, 0.9)`.
 
 ---
 
-## 4. Elevation, Blur, and Shadow System
+## 3. Layout & Spacing System
 
-- **Backdrop Filter Blur**: `backdrop-filter: blur(16px) saturate(180%)` for standard glass; `blur(24px)` for navigation and drawers.
-- **Glass Card Box Shadow**:
-  ```css
-  box-shadow: 
-    0 8px 32px -4px rgba(17, 42, 67, 0.05),
-    0 2px 8px -2px rgba(37, 99, 235, 0.04),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.85);
-  ```
-- **Elevated Hover Shadow**:
-  ```css
-  box-shadow: 
-    0 16px 40px -6px rgba(17, 42, 67, 0.08),
-    0 4px 16px -2px rgba(37, 99, 235, 0.08),
-    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
-  ```
+- **Max Content Width**: `1320px` (centered with `mx-auto`).
+- **Desktop Horizontal Padding**: `48px` to `64px` (`px-6 sm:px-12 lg:px-16`).
+- **Mobile Horizontal Padding**: `20px` (`px-5`).
+- **Spacing Scale**: Strictly adhere to `4px`, `8px`, `12px`, `16px`, `24px`, `32px`, `48px`, `64px`, `96px`.
+- **Corner Radii**:
+  - Small badges & chips: `9999px` (fully rounded pills)
+  - Inputs & action buttons: `12px` to `14px`
+  - Cards & containers: `16px` to `20px`
+- **Section Separation**: Separate page sections primarily through whitespace rhythm (`my-12 sm:my-16 lg:my-20`) rather than enclosing every section in heavy nested boxes.
 
 ---
 
-## 5. Layout & Responsive Breakpoints
+## 4. Typography Hierarchy
 
-- **Mobile Narrow**: `360px` – `390px`: 1-column hero stack, 2-column compact product grid, sticky bottom nav bar, slide-out drawer cart.
-- **Tablet**: `768px` – `1024px`: 2-column or 3-column product grid, semi-expanded finder.
-- **Desktop**: `1280px` – `1440px`: Full 12-column grid, max-width `1380px`, hero split (left copy + right 3D canvas), sticky top glass header.
-
----
-
-## 6. Real 3D Background Motion Specification
-
-1. **Technology**: Three.js integrated via high-performance Canvas with responsive resizing and hardware acceleration.
-2. **Visual Scene Composition**:
-   - Ethereal transparent glass ribbons/loops twisting slowly behind the hero elements.
-   - Realistic procedural 3D accessory models:
-     - Sleek wireless earbuds in an open pebble charging case with glowing LED dot.
-     - Ergonomic translucent MagSafe phone case with titanium camera bump ring.
-     - Compact GaN dual-port fast charger with metallic prongs.
-   - Translucent glass materials (`MeshPhysicalMaterial`) with `transmission: 0.88`, `roughness: 0.12`, `ior: 1.52`, `thickness: 1.2`, and soft chromatic dispersion.
-3. **Motion Dynamics**:
-   - Gentle floating sine-wave elevation (`y ± 0.15` over 4-6s).
-   - Restrained rotational drift (`rx/ry ± 0.003` per frame).
-   - Soft pointer-parallax responsiveness (`±0.05` normalized mouse offset).
-4. **Controls & Accessibility**:
-   - Visible **Pause / Resume** 3D animation toggle on screen.
-   - Full compliance with `prefers-reduced-motion` (automatically disables drift).
-   - **IntersectionObserver**: Automatically stops WebGL render loop when hero is scrolled out of viewport.
-   - **Page Visibility API**: Freezes animation when tab is in background to save battery.
-   - **Static Fallback**: Graceful CSS gradient + glass refraction fallback if WebGL is unsupported or errors.
+- **Font Family**: `Inter`, `-apple-system`, `BlinkMacSystemFont`, `sans-serif` (with fallback to `Noto Sans Bengali` for bilingual clarity).
+- **Desktop Hero Heading**: `64px` to `72px`, font-weight `800`, line-height `1.08`, tracking `-0.03em`.
+- **Mobile Hero Heading**: `36px` to `40px`, font-weight `800`, line-height `1.15`, tracking `-0.025em`.
+- **Section Headings**: `28px` to `34px` desktop, `24px` to `26px` mobile, font-weight `700`, line-height `1.2`.
+- **Product Titles**: `15px` to `16px`, font-weight `600`, line-height `1.35`.
+- **Product Prices**: `18px` to `22px`, font-weight `800`, deep navy `#10263D`.
+- **Body Text**: `15px` to `16px`, line-height `1.6`, slate `#52677B`.
+- **Supporting / Micro-Labels**: `12px` to `13px`, font-weight `500` or `600`, tracking `0.02em`.
 
 ---
 
-## 7. Shopping Experience & Commerce Architecture
+## 5. Homepage Structure & Content
 
-- **Catalog & Compatibility**:
-  - Filter by Category: Cases, Audio, Charging, Power Banks.
-  - Filter by Phone Brand (Apple, Samsung, Google, Xiaomi) and Model (iPhone 15 Pro, Galaxy S24 Ultra, Pixel 8 Pro, etc.).
-  - Search by keywords with instant debounced search results.
-  - Sorting: Price (Low to High, High to Low), Rating, Newest.
-  - Product Variants: Color (Ice Blue, Matte Frost, Deep Navy, Titanium Silver) & Capacity / Port type.
-- **Cart & Wishlist**:
-  - LocalStorage persistence with optimistic updates.
-  - Quantity controls, instant subtotal calculation, free shipping threshold indicator (over ৳2,000).
-- **Checkout & Payment**:
-  - Guest checkout with delivery address in Bangladesh (Dhaka / Outside Dhaka).
-  - Payment Gateways:
-    - **bKash** (Merchant Simulation / API integration point)
-    - **Nagad** (Merchant Simulation / API integration point)
-    - **Cards** (Visa / Mastercard)
-    - **Cash on Delivery (COD)**
-  - Server-side order validation & persistence in backend.
-- **Order Tracking & Account**:
-  - Order history tracking by Order ID.
-- **Admin Dashboard**:
-  - Protected admin panel for inventory, products, price updates, and orders overview.
+1. **Header**:
+   - Brand logo `Accessories` in `#10263D` on left.
+   - Concise navigation: `Shop`, `Find my fit`, `Support` with subtle hover indicators.
+   - Clean search bar with clear placeholder and keyboard shortcut dismiss (`Escape`).
+   - Line icon triggers for language switcher (`BN`/`EN`), Wishlist (`Heart` + count badge), Admin profile (`User`), and Shopping Bag (`Bag` + count badge).
+   - Sticky frosted glass backdrop (`backdrop-blur-md bg-[#F7FBFF]/85 border-b border-[#DCE7F0]`).
+
+2. **Hero Section**:
+   - **Headline**:
+     ```
+     Small upgrades.
+     Everyday better.
+     ```
+   - **Supporting Copy**: `Cases, sound and power for your everyday.`
+   - **Action Buttons**:
+     - Primary: `Shop accessories` (Solid `#145CFF` pill with chevron)
+     - Secondary: `Find my phone` (Clean text link `#145CFF` with phone icon)
+   - **Visual Artwork**: High-resolution static product photography showing complementary accessories (Aura Frost MagSafe Case, Glacier Earbuds, GaN Charger) on a pale ice-blue studio background with soft believable shadows. Zero 3D/Three.js or spinning animations.
+
+3. **Device Compatibility Finder**:
+   - Compact module immediately beneath the hero.
+   - Select Phone Brand (Apple, Samsung, Google) & Model (iPhone 15 Pro, S24 Ultra, Pixel 8 Pro).
+   - Direct `Find accessories` action trigger.
+   - Immediate feedback banner showing filtered devices with single-click dismissal.
+
+4. **Curated Category Pedestals**:
+   - Four image-led categories: **Cases**, **Audio**, **Charging**, **Power Banks**.
+   - Clean display pedestals with smooth hover lift and active selection indicator.
+
+5. **Curated Product Collection**:
+   - 4-column layout on wide desktop (≥1024px), 3-column on tablet, 2-column on mobile.
+   - Cards on `#FFFFFF` with `#DCE7F0` border, generous image space, variant finishes, in-stock badge, and royal blue `Add` pill button.
+
+6. **Service Guarantees & Genuine Trust Signals**:
+   - Standard courier delivery rates: ৳60 Dhaka, ৳120 Nationwide, Free over ৳2,000.
+   - 7-Day Replacement Policy.
+   - Verified Authentic Devices.
+   - Dedicated Local Support & Storefront in Dhaka.
+
+7. **Concise Footer**:
+   - Categorized links (Categories, Assistance, Operations).
+   - Clean list items without browser bullet points or button bevels.
+   - Store status, location, copyright, and payment method icons.
+
+---
+
+## 6. Commerce & Shopping Journey
+
+- **Cart Drawer**: Unified slide-over drawer with transparent shipping calculation, subtotal, delivery fee, and free delivery progress tracker.
+- **Checkout Modal**: Calm, single-purpose checkout flow. Honest payment options (Cash on Delivery, Verified Online Payment via Sandbox or Live gateway). Zero direct card number/CVV collection in unsecured React state.
+- **Product Details Modal**: High-resolution image gallery, variant selection swatches, verified device compatibility checklist, honest stock status, delivery expectations, and prominent `Add to bag` action.
+- **Order Tracking & Confirmation**: Transparent order status tracking using real order IDs with verified state models.

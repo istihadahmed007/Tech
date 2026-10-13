@@ -70,35 +70,56 @@ export default function AdminModal({
     }
   };
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
   const totalStockCount = products.reduce((sum, p) => sum + p.stock, 0);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div 
+      className="modal-overlay" 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="admin-modal-title"
+    >
       <div 
-        className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-white/98 backdrop-blur-2xl border border-blue-200/80 shadow-2xl animate-fadeIn"
+        className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCE7F0] shadow-2xl animate-fadeIn"
         onClick={(e) => e.stopPropagation()}
+        style={{
+          boxShadow: '0 25px 60px -15px rgba(16, 38, 61, 0.20)'
+        }}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-blue-100 mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#10263D] text-white flex items-center justify-center font-bold">
               <Lock size={18} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[#112A43]">
+              <h2 id="admin-modal-title" className="text-xl font-bold text-[#10263D]">
                 Admin Operations Console
               </h2>
-              <p className="text-xs text-[#4B637B]">
+              <p className="text-xs text-[#52677B]">
                 Protected store administration & live order queue
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-slate-500"
-            aria-label="Close"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            aria-label="Close admin console"
           >
             <X size={20} />
           </button>
@@ -107,20 +128,25 @@ export default function AdminModal({
         {!authToken ? (
           /* Password Authentication Gate */
           <div className="max-w-sm mx-auto py-8 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 mx-auto flex items-center justify-center mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-[#EAF4FC] text-[#145CFF] mx-auto flex items-center justify-center mb-4">
               <Key size={26} />
             </div>
-            <h3 className="text-lg font-bold text-[#112A43] mb-1">
+            <h3 className="text-lg font-bold text-[#10263D] mb-1">
               Store Manager Access
             </h3>
-            <p className="text-xs text-[#4B637B] mb-5">
+            <p className="text-xs text-[#52677B] mb-5">
               Enter admin passcode (Default: <code>admin123</code>)
             </p>
 
             <form onSubmit={handleLogin} className="space-y-3">
+              <label htmlFor="admin-passcode-input" className="sr-only">
+                Admin Passcode
+              </label>
               <input
+                id="admin-passcode-input"
                 type="password"
                 required
+                autoComplete="current-password"
                 placeholder="Enter admin passcode"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -128,11 +154,11 @@ export default function AdminModal({
                 autoFocus
               />
               {loginError && (
-                <p className="text-xs text-red-600 font-semibold">{loginError}</p>
+                <p className="text-xs text-red-600 font-semibold" role="alert">{loginError}</p>
               )}
               <button
                 type="submit"
-                className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20"
+                className="w-full py-2.5 px-4 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold text-xs shadow-md shadow-blue-500/20"
               >
                 Authenticate Session
               </button>
@@ -143,9 +169,9 @@ export default function AdminModal({
           <div>
             {/* Quick Metrics Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-              <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/60">
-                <span className="text-[11px] font-bold uppercase text-[#4B637B] block mb-1">Total Orders</span>
-                <span className="text-2xl font-extrabold text-[#112A43]">{orders.length}</span>
+              <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
+                <span className="text-[11px] font-bold uppercase text-[#52677B] block mb-1">Total Orders</span>
+                <span className="text-2xl font-extrabold text-[#10263D]">{orders.length}</span>
               </div>
               <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/60">
                 <span className="text-[11px] font-bold uppercase text-emerald-800 block mb-1">Gross Revenue</span>
@@ -158,11 +184,11 @@ export default function AdminModal({
             </div>
 
             {/* Sub-tabs */}
-            <div className="flex items-center gap-2 mb-4 border-b border-slate-200 pb-2">
+            <div className="flex items-center gap-2 mb-4 border-b border-[#DCE7F0] pb-2">
               <button
                 onClick={() => setActiveTab('orders')}
                 className={`text-xs font-bold px-4 py-2 rounded-xl transition-all ${
-                  activeTab === 'orders' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+                  activeTab === 'orders' ? 'bg-[#145CFF] text-white' : 'text-[#52677B] hover:bg-[#EAF4FC]'
                 }`}
               >
                 Customer Orders Queue ({orders.length})
@@ -170,7 +196,7 @@ export default function AdminModal({
               <button
                 onClick={() => setActiveTab('inventory')}
                 className={`text-xs font-bold px-4 py-2 rounded-xl transition-all ${
-                  activeTab === 'inventory' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+                  activeTab === 'inventory' ? 'bg-[#145CFF] text-white' : 'text-[#52677B] hover:bg-[#EAF4FC]'
                 }`}
               >
                 Product Stock Levels
@@ -178,7 +204,7 @@ export default function AdminModal({
 
               <button
                 onClick={() => loadAdminOrders(authToken)}
-                className="ml-auto p-2 text-slate-500 hover:text-blue-600 text-xs flex items-center gap-1"
+                className="ml-auto p-2 text-[#52677B] hover:text-[#145CFF] text-xs flex items-center gap-1"
                 title="Refresh queue"
               >
                 <RefreshCw size={14} className={loadingOrders ? 'animate-spin' : ''} />
@@ -192,7 +218,7 @@ export default function AdminModal({
                 {orders.length > 0 ? (
                   <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-slate-200 text-[#4B637B] font-bold uppercase">
+                      <tr className="border-b border-[#DCE7F0] text-[#52677B] font-bold uppercase">
                         <th className="py-2.5 px-3">Order ID</th>
                         <th className="py-2.5 px-3">Customer & Phone</th>
                         <th className="py-2.5 px-3">Items</th>
@@ -203,23 +229,23 @@ export default function AdminModal({
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {orders.map((order) => (
-                        <tr key={order.id} className="hover:bg-blue-50/40">
-                          <td className="py-3 px-3 font-mono font-bold text-blue-700">
+                        <tr key={order.id} className="hover:bg-[#EAF4FC]/60">
+                          <td className="py-3 px-3 font-mono font-bold text-[#145CFF]">
                             {order.id}
                           </td>
                           <td className="py-3 px-3">
-                            <span className="font-bold text-[#112A43] block">{order.customer?.name}</span>
+                            <span className="font-bold text-[#10263D] block">{order.customer?.name}</span>
                             <span className="text-[#8FA6BE]">{order.customer?.phone}</span>
                           </td>
-                          <td className="py-3 px-3 max-w-[200px] truncate text-[#4B637B]">
+                          <td className="py-3 px-3 max-w-[200px] truncate text-[#52677B]">
                             {order.items?.map(i => `${i.title} (${i.quantity})`).join(', ')}
                           </td>
-                          <td className="py-3 px-3 font-extrabold text-[#112A43]">
+                          <td className="py-3 px-3 font-extrabold text-[#10263D]">
                             {currencySymbol}{order.total?.toLocaleString()}
                           </td>
                           <td className="py-3 px-3">
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                              order.paymentStatus === 'verified' 
+                              order.paymentStatus === 'paid' || order.paymentStatus === 'verified'
                                 ? 'bg-emerald-100 text-emerald-800' 
                                 : 'bg-slate-100 text-slate-700'
                             }`}>
@@ -230,12 +256,14 @@ export default function AdminModal({
                             <select
                               value={order.status}
                               onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                              className="text-xs font-semibold py-1 px-2 rounded-lg border border-slate-300 bg-white"
+                              className="text-xs font-semibold py-1 px-2 rounded-lg border border-[#DCE7F0] bg-white text-[#10263D]"
                             >
+                              <option value="pending_payment">Pending Payment</option>
                               <option value="confirmed">Confirmed</option>
                               <option value="processing">Processing</option>
                               <option value="shipped">Shipped</option>
                               <option value="delivered">Delivered</option>
+                              <option value="cancelled">Cancelled</option>
                             </select>
                           </td>
                         </tr>
@@ -243,7 +271,7 @@ export default function AdminModal({
                     </tbody>
                   </table>
                 ) : (
-                  <div className="text-center py-8 text-xs text-slate-400">
+                  <div className="text-center py-8 text-xs text-[#8FA6BE]">
                     No orders placed yet. Place a test order in the storefront!
                   </div>
                 )}
@@ -255,7 +283,7 @@ export default function AdminModal({
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200 text-[#4B637B] font-bold uppercase">
+                    <tr className="border-b border-[#DCE7F0] text-[#52677B] font-bold uppercase">
                       <th className="py-2.5 px-3">Product</th>
                       <th className="py-2.5 px-3">Category</th>
                       <th className="py-2.5 px-3">Price</th>
@@ -265,14 +293,14 @@ export default function AdminModal({
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {products.map((p) => (
-                      <tr key={p.id} className="hover:bg-blue-50/40">
-                        <td className="py-3 px-3 font-bold text-[#112A43]">
+                      <tr key={p.id} className="hover:bg-[#EAF4FC]/60">
+                        <td className="py-3 px-3 font-bold text-[#10263D]">
                           {p.title}
                         </td>
-                        <td className="py-3 px-3 capitalize text-slate-500">
+                        <td className="py-3 px-3 capitalize text-[#52677B]">
                           {p.category}
                         </td>
-                        <td className="py-3 px-3 font-bold text-[#112A43]">
+                        <td className="py-3 px-3 font-bold text-[#10263D]">
                           {currencySymbol}{p.price.toLocaleString()}
                         </td>
                         <td className="py-3 px-3">
@@ -283,7 +311,7 @@ export default function AdminModal({
                         <td className="py-3 px-3">
                           <button
                             onClick={() => onRestockProduct(p.id, 10)}
-                            className="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-[11px]"
+                            className="px-2.5 py-1 rounded-lg bg-[#EAF4FC] hover:bg-[#DCE7F0] text-[#145CFF] font-semibold text-[11px]"
                           >
                             +10 Units
                           </button>

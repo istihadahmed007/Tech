@@ -1,67 +1,81 @@
 import React from 'react';
-import { Sparkles, ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
+import { Sparkles, ShieldCheck, Phone, MapPin, HelpCircle } from 'lucide-react';
 
 export default function Footer({ 
   storeName, 
   onOpenSupport, 
   onOpenTracking, 
-  onSelectCategory,
+  onSelectCategory, 
   onOpenAdmin,
   t, 
   lang 
 }) {
   return (
-    <footer className="w-full mt-20 pt-16 pb-12 border-t border-blue-200/60 bg-white/60 backdrop-blur-md">
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-blue-100">
+    <footer className="w-full mt-16 sm:mt-20 pt-12 sm:pt-16 pb-12 border-t border-[#DCE7F0] bg-white/80 backdrop-blur-md">
+      <div className="max-w-[1320px] mx-auto px-5 sm:px-12 lg:px-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#DCE7F0]">
           {/* Brand Column */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-                <Sparkles size={16} />
-              </div>
-              <span className="font-extrabold text-xl text-[#112A43]">
-                {storeName || t.brandName}
+          <div className="lg:col-span-2 space-y-3.5">
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-2xl text-[#10263D] tracking-tight">
+                {storeName || 'Accessories'}
               </span>
             </div>
-            <p className="text-xs text-[#4B637B] leading-relaxed max-w-sm">
+            <p className="text-xs text-[#52677B] leading-relaxed max-w-sm">
               {t.footerAbout}
             </p>
-            <div className="text-xs text-[#4B637B] space-y-1.5 pt-1">
+            <div className="text-xs text-[#52677B] space-y-2 pt-1">
               <div className="flex items-center gap-2">
-                <MapPin size={14} className="text-blue-600 shrink-0" />
-                <span>Gulshan-2, Dhaka-1212, Bangladesh</span>
+                <MapPin size={14} className="text-[#145CFF] shrink-0" />
+                <span>Dhaka, Bangladesh • Store location pending production configuration</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone size={14} className="text-blue-600 shrink-0" />
-                <span>+880 1700-000000 (Helpline)</span>
+                <HelpCircle size={14} className="text-[#145CFF] shrink-0" />
+                <button 
+                  onClick={onOpenSupport}
+                  className="footer-link-btn text-[#145CFF] font-medium hover:underline"
+                >
+                  Contact support & store inquiries
+                </button>
               </div>
             </div>
           </div>
 
           {/* Quick Shop Links */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#112A43]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">
               Categories
             </h4>
-            <ul className="text-xs text-[#4B637B] space-y-2">
+            <ul className="footer-nav-list">
               <li>
-                <button onClick={() => onSelectCategory('cases')} className="hover:text-blue-600 transition-colors">
+                <button 
+                  onClick={() => onSelectCategory('cases')} 
+                  className="footer-link-btn"
+                >
                   {t.catCases}
                 </button>
               </li>
               <li>
-                <button onClick={() => onSelectCategory('audio')} className="hover:text-blue-600 transition-colors">
+                <button 
+                  onClick={() => onSelectCategory('audio')} 
+                  className="footer-link-btn"
+                >
                   {t.catAudio}
                 </button>
               </li>
               <li>
-                <button onClick={() => onSelectCategory('charging')} className="hover:text-blue-600 transition-colors">
+                <button 
+                  onClick={() => onSelectCategory('charging')} 
+                  className="footer-link-btn"
+                >
                   {t.catCharging}
                 </button>
               </li>
               <li>
-                <button onClick={() => onSelectCategory('powerbanks')} className="hover:text-blue-600 transition-colors">
+                <button 
+                  onClick={() => onSelectCategory('powerbanks')} 
+                  className="footer-link-btn"
+                >
                   {t.catPowerBanks}
                 </button>
               </li>
@@ -70,28 +84,40 @@ export default function Footer({
 
           {/* Support & Policies */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#112A43]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">
               Assistance
             </h4>
-            <ul className="text-xs text-[#4B637B] space-y-2">
+            <ul className="footer-nav-list">
               <li>
-                <button onClick={onOpenTracking} className="hover:text-blue-600 transition-colors">
+                <button 
+                  onClick={onOpenTracking} 
+                  className="footer-link-btn"
+                >
                   Track Your Order
                 </button>
               </li>
               <li>
-                <button onClick={onOpenSupport} className="hover:text-blue-600 transition-colors">
-                  Warranty & Replacements
+                <button 
+                  onClick={onOpenSupport} 
+                  className="footer-link-btn"
+                >
+                  Warranty & Inquiries
                 </button>
               </li>
               <li>
-                <button onClick={onOpenSupport} className="hover:text-blue-600 transition-colors">
-                  Dhaka Shipping Times
+                <button 
+                  onClick={onOpenSupport} 
+                  className="footer-link-btn"
+                >
+                  Delivery Options & Tiers
                 </button>
               </li>
               <li>
-                <button onClick={onOpenSupport} className="hover:text-blue-600 transition-colors">
-                  7-Day Return Policy
+                <button 
+                  onClick={onOpenSupport} 
+                  className="footer-link-btn"
+                >
+                  Return & Exchange Policy
                 </button>
               </li>
             </ul>
@@ -99,24 +125,21 @@ export default function Footer({
 
           {/* Business & Operations */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#112A43]">
-              Business
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">
+              Operations
             </h4>
-            <ul className="text-xs text-[#4B637B] space-y-2">
+            <ul className="footer-nav-list">
               <li>
-                <button onClick={onOpenAdmin} className="text-slate-500 hover:text-blue-600 transition-colors font-medium">
+                <button 
+                  onClick={onOpenAdmin} 
+                  className="footer-link-btn font-medium"
+                >
                   Store Admin Portal
                 </button>
               </li>
               <li>
-                <a href="DESIGN.md" target="_blank" className="hover:text-blue-600 transition-colors">
-                  Design Specifications (DESIGN.md)
-                </a>
-              </li>
-              <li>
-                <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                  <ShieldCheck size={13} />
-                  SSL Secured Store
+                <span className="text-slate-500 text-[11px]">
+                  Storefront preview mode
                 </span>
               </li>
             </ul>
@@ -124,26 +147,17 @@ export default function Footer({
         </div>
 
         {/* Bottom Strip & Payment Methods */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#4B637B]">
+        <div className="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#52677B]">
           <p>{t.copyright}</p>
 
           {/* Payment Badges */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-semibold text-[#112A43] mr-1">Accepted in Bangladesh:</span>
-            <span className="px-2.5 py-1 rounded-md bg-white border border-pink-200 text-[#E2136E] font-bold text-[11px] shadow-2xs">
-              bKash
+            <span className="text-[11px] font-semibold text-[#10263D] mr-1">Payment Status:</span>
+            <span className="px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-[11px] shadow-2xs">
+              Cash on Delivery (Demo Mode)
             </span>
-            <span className="px-2.5 py-1 rounded-md bg-white border border-orange-200 text-[#F7941D] font-bold text-[11px] shadow-2xs">
-              Nagad
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-white border border-slate-200 text-blue-700 font-bold text-[11px] shadow-2xs">
-              VISA
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-white border border-slate-200 text-red-600 font-bold text-[11px] shadow-2xs">
-              Mastercard
-            </span>
-            <span className="px-2.5 py-1 rounded-md bg-white border border-slate-200 text-[#112A43] font-bold text-[11px] shadow-2xs">
-              COD
+            <span className="px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-500 font-medium text-[11px]">
+              Online Gateways (Pending Configuration)
             </span>
           </div>
         </div>

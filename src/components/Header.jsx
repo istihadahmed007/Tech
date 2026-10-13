@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShoppingBag, 
   Search, 
   Heart, 
-  ShieldCheck, 
-  Menu, 
   X, 
-  SlidersHorizontal, 
-  Globe, 
   User, 
-  Sparkles,
-  HelpCircle
+  Globe,
+  SlidersHorizontal,
+  HelpCircle,
+  Menu,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function Header({ 
@@ -27,153 +26,162 @@ export default function Header({
   onOpenTracking,
   searchQuery, 
   setSearchQuery,
-  onSelectCategory,
   onScrollToFinder
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const toggleMobileSearch = () => {
+    setSearchOpen((prev) => {
+      if (!prev) setMobileMenuOpen(false);
+      return !prev;
+    });
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen((prev) => {
+      if (!prev) setSearchOpen(false);
+      return !prev;
+    });
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full px-4 sm:px-8 py-3 transition-all duration-200">
-      <div 
-        className="max-w-[1360px] mx-auto rounded-2xl px-4 sm:px-6 py-2.5 flex items-center justify-between"
-        style={{
-          background: 'rgba(248, 252, 255, 0.88)',
-          backdropFilter: 'blur(20px) saturate(190%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(190%)',
-          border: '1px solid rgba(37, 99, 235, 0.14)',
-          boxShadow: '0 8px 32px -4px rgba(17, 42, 67, 0.06), inset 0 1px 1.5px rgba(255, 255, 255, 0.95)'
-        }}
-      >
-        {/* Brand / Logo */}
-        <div className="flex items-center gap-6">
-          <a href="#" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-blue-400 flex items-center justify-center text-white shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform">
-              <Sparkles size={18} />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-[#112A43] leading-none">
-                {storeName || t.brandName}
-              </span>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-blue-600">
-                Glacial Studio
-              </span>
-            </div>
+    <header className="sticky top-0 z-50 w-full px-5 sm:px-12 lg:px-14 py-3.5 transition-all bg-[#F7FBFF]/85 backdrop-blur-md border-b border-[#DCE7F0]">
+      <div className="max-w-[1320px] mx-auto flex items-center justify-between gap-4">
+        {/* Left: Brand Name & Main Nav Links */}
+        <div className="flex items-center gap-8 lg:gap-10">
+          <a 
+            href="#" 
+            className="font-extrabold text-2xl tracking-tight text-[#10263D] hover:text-[#145CFF] transition-colors leading-none"
+          >
+            Accessories
           </a>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-[14px] font-semibold text-[#4B637B]">
+          <nav className="hidden md:flex items-center gap-7 text-[15px] font-medium text-[#334155]">
             <a 
               href="#products-section" 
-              className="hover:text-blue-600 transition-colors py-1"
+              className="nav-link-btn"
             >
-              {t.navShop}
+              Shop
             </a>
             <button 
               onClick={onScrollToFinder}
-              className="hover:text-blue-600 transition-colors py-1 flex items-center gap-1.5"
+              className="nav-link-btn"
             >
-              <SlidersHorizontal size={14} />
-              {t.navFindFit}
+              Find my fit
             </button>
             <button 
               onClick={onOpenSupport}
-              className="hover:text-blue-600 transition-colors py-1 flex items-center gap-1"
+              className="nav-link-btn"
             >
-              {t.navSupport}
-            </button>
-            <button 
-              onClick={onOpenTracking}
-              className="hover:text-blue-600 transition-colors py-1 text-xs px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-200/50 hover:bg-blue-100"
-            >
-              {t.navTrackOrder}
+              Support
             </button>
           </nav>
         </div>
 
-        {/* Right Action Icons & Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Quick Search Bar (Desktop) */}
-          <div className="hidden lg:flex items-center relative w-56 xl:w-64">
-            <Search size={16} className="absolute left-3 text-[#8FA6BE]" />
+        {/* Center / Right: Search Input */}
+        <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
+          <div className="relative w-full">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t.searchPlaceholder}
-              className="w-full text-xs font-medium pl-9 pr-8 py-2 rounded-full bg-white/70 border border-blue-200/60 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-[#112A43] placeholder-[#8FA6BE] transition-all"
+              placeholder="Search for cases, earbuds, chargers and more..."
+              className="w-full text-xs font-normal pl-9 pr-8 py-2 rounded-full bg-white/85 border border-slate-200/90 focus:bg-white focus:border-[#0055FF] focus:ring-2 focus:ring-blue-100 outline-none text-[#0F172A] placeholder-[#94A3B8] transition-all shadow-2xs"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 text-[#8FA6BE] hover:text-[#112A43]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#0F172A]"
+                aria-label="Clear search"
               >
-                <X size={13} />
+                <X size={14} />
               </button>
             )}
           </div>
+        </div>
 
-          {/* Search Trigger for Mobile */}
+        {/* Rightmost Action Icons */}
+        <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+          {/* Mobile Search Trigger */}
           <button 
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="lg:hidden p-2 rounded-full hover:bg-blue-50 text-[#112A43] transition-colors"
-            aria-label="Search"
+            onClick={toggleMobileSearch}
+            className="md:hidden p-2 rounded-full hover:bg-slate-100 text-[#0F172A] transition-colors focus-visible:ring-2 focus-visible:ring-[#0055FF]"
+            aria-label="Toggle mobile search"
+            aria-expanded={searchOpen}
           >
-            <Search size={19} />
+            <Search size={20} />
           </button>
 
-          {/* Language Switcher (EN / বাংলা) */}
+          {/* Language Switcher Pill */}
           <button
             onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-            className="flex items-center gap-1 text-xs font-bold px-2.5 py-1.5 rounded-full border border-blue-200/60 bg-white/60 hover:bg-white text-[#112A43] transition-all"
+            className="hidden sm:flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-slate-200 bg-white/80 hover:bg-white text-slate-700 transition-colors"
             title="Switch Language (English / বাংলা)"
           >
-            <Globe size={13} className="text-blue-600" />
-            <span>{lang === 'en' ? 'বাংলা' : 'ENG'}</span>
+            <Globe size={13} className="text-[#0055FF]" />
+            <span>{lang === 'en' ? 'BN' : 'EN'}</span>
           </button>
 
-          {/* Wishlist Button */}
+          {/* Wishlist Icon */}
           <button
             onClick={onOpenWishlist}
-            className="relative p-2 rounded-full hover:bg-blue-50 text-[#112A43] transition-colors"
+            className="relative p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-pink-600 transition-colors"
             aria-label="Wishlist"
+            title="Saved items"
           >
-            <Heart size={19} />
+            <Heart size={20} />
             {wishlistCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-pink-500 text-white text-[10px] font-bold flex items-center justify-center shadow">
+              <span className="absolute 0 top-0.5 right-0.5 w-4 h-4 rounded-full bg-pink-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                 {wishlistCount}
               </span>
             )}
           </button>
 
-          {/* Cart Trigger Button */}
-          <button
-            onClick={onOpenCart}
-            className="relative flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all hover:scale-[1.02]"
-            aria-label="Shopping Cart"
-          >
-            <ShoppingBag size={15} />
-            <span className="hidden sm:inline">Bag</span>
-            <span className="w-5 h-5 rounded-full bg-white text-blue-600 text-[11px] font-extrabold flex items-center justify-center">
-              {cartCount}
-            </span>
-          </button>
-
-          {/* Admin shortcut */}
+          {/* User / Admin Profile Icon */}
           <button
             onClick={onOpenAdmin}
-            className="hidden sm:flex p-2 rounded-full hover:bg-blue-50 text-[#4B637B] hover:text-blue-600 transition-colors"
-            title="Admin Portal"
-            aria-label="Admin Portal"
+            className="p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-[#0055FF] transition-colors"
+            aria-label="User Account & Store Operations"
+            title="Account & Admin Operations"
           >
-            <User size={18} />
+            <User size={21} />
+          </button>
+
+          {/* Shopping Bag Trigger Icon */}
+          <button
+            onClick={onOpenCart}
+            className="relative p-2 rounded-full hover:bg-slate-100 text-[#0F172A] hover:text-[#0055FF] transition-colors"
+            aria-label="Shopping Bag"
+            title="Shopping Bag"
+          >
+            <ShoppingBag size={21} />
+            {cartCount > 0 && (
+              <span className="absolute top-0 right-0 w-4.5 h-4.5 rounded-full bg-[#0055FF] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
+                {cartCount}
+              </span>
+            )}
           </button>
 
           {/* Mobile Menu Toggle */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-full hover:bg-blue-50 text-[#112A43]"
-            aria-label="Toggle menu"
+            onClick={toggleMobileMenu}
+            className="md:hidden p-2 rounded-full hover:bg-slate-100 text-[#0F172A] focus-visible:ring-2 focus-visible:ring-[#0055FF]"
+            aria-label="Toggle mobile menu"
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -182,23 +190,23 @@ export default function Header({
 
       {/* Mobile Search Bar Dropdown */}
       {searchOpen && (
-        <div className="lg:hidden mt-2 px-2 max-w-[1360px] mx-auto animate-fadeIn">
+        <div className="md:hidden mt-3 px-2 max-w-[1280px] mx-auto animate-fadeIn">
           <div className="relative">
-            <Search size={16} className="absolute left-3.5 top-3 text-[#8FA6BE]" />
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t.searchPlaceholder}
+              placeholder="Search for cases, earbuds, chargers and more..."
               autoFocus
-              className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white border border-blue-200 shadow-md outline-none text-sm text-[#112A43]"
+              className="w-full pl-9 pr-9 py-2.5 rounded-full bg-white border border-slate-300 shadow-sm outline-none text-xs text-[#0F172A]"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-3 text-slate-400"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
               >
-                <X size={16} />
+                <X size={15} />
               </button>
             )}
           </div>
@@ -207,50 +215,48 @@ export default function Header({
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-2 max-w-[1360px] mx-auto rounded-2xl bg-white/95 backdrop-blur-2xl border border-blue-200/80 p-5 shadow-2xl flex flex-col gap-4 animate-fadeIn">
-          <div className="flex flex-col gap-2 font-medium text-sm text-[#112A43]">
+        <div className="md:hidden mt-3 max-w-[1280px] mx-auto rounded-2xl bg-white border border-slate-200 p-5 shadow-xl flex flex-col gap-3 animate-fadeIn">
+          <nav className="flex flex-col gap-1 text-sm font-medium text-[#0F172A]">
             <a 
               href="#products-section" 
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2 rounded-lg hover:bg-blue-50 font-semibold"
+              className="p-2.5 rounded-xl hover:bg-slate-50 font-semibold"
             >
-              {t.navShop}
+              Shop
             </a>
             <button 
               onClick={() => { setMobileMenuOpen(false); onScrollToFinder(); }}
-              className="p-2 rounded-lg hover:bg-blue-50 text-left flex items-center justify-between"
+              className="p-2.5 rounded-xl hover:bg-slate-50 text-left"
             >
-              <span>{t.navFindFit}</span>
-              <SlidersHorizontal size={15} className="text-blue-600" />
+              Find my fit
             </button>
             <button 
               onClick={() => { setMobileMenuOpen(false); onOpenSupport(); }}
-              className="p-2 rounded-lg hover:bg-blue-50 text-left flex items-center justify-between"
+              className="p-2.5 rounded-xl hover:bg-slate-50 text-left"
             >
-              <span>{t.navSupport}</span>
-              <HelpCircle size={15} className="text-blue-600" />
+              Support
             </button>
             <button 
               onClick={() => { setMobileMenuOpen(false); onOpenTracking(); }}
-              className="p-2 rounded-lg hover:bg-blue-50 text-left flex items-center justify-between text-blue-600 font-semibold"
+              className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-[#0055FF] font-semibold flex items-center justify-between"
             >
-              <span>{t.navTrackOrder}</span>
-              <ShieldCheck size={15} />
+              <span>Track Order</span>
+              <ShieldCheck size={16} />
             </button>
             <button 
               onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
-              className="p-2 rounded-lg hover:bg-blue-50 text-left flex items-center justify-between text-slate-600"
+              className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-slate-600 flex items-center justify-between"
             >
-              <span>{t.navAdmin}</span>
-              <User size={15} />
+              <span>Admin Operations</span>
+              <User size={16} />
             </button>
-          </div>
+          </nav>
 
           <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
             <span>Currency: <strong>BDT (৳)</strong></span>
             <button
               onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-              className="text-blue-600 font-bold"
+              className="text-[#0055FF] font-bold"
             >
               Switch to {lang === 'en' ? 'বাংলা' : 'English'}
             </button>

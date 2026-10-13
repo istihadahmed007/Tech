@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import ProductCard from './ProductCard';
-import { SlidersHorizontal, SearchX, CheckCircle, ArrowUpDown } from 'lucide-react';
+import { SearchX, ArrowUpDown } from 'lucide-react';
 
 export default function ProductGrid({ 
   products, 
@@ -21,7 +21,15 @@ export default function ProductGrid({
   const [sortBy, setSortBy] = useState('featured');
   const [inStockOnly, setInStockOnly] = useState(false);
 
-  // Filter and sort items
+  const categories = useMemo(() => [
+    { id: null, label: t.allProducts },
+    { id: 'cases', label: t.catCases },
+    { id: 'audio', label: t.catAudio },
+    { id: 'charging', label: t.catCharging },
+    { id: 'powerbanks', label: t.catPowerBanks }
+  ], [t]);
+
+  // Comprehensive filter and search matching
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
       // Category filter
@@ -29,16 +37,16 @@ export default function ProductGrid({
         return false;
       }
       // Phone compatibility filter
-      if (selectedPhone && !item.compatibleWith.includes(selectedPhone)) {
+      if (selectedPhone && !item.compatibleWith?.includes(selectedPhone)) {
         return false;
       }
-      // Search filter
+      // Search filter across title, Bengali title, category, description, and compatible models
       if (searchQuery) {
         const query = searchQuery.toLowerCase().trim();
-        const matchTitle = item.title.toLowerCase().includes(query) || (item.titleBn && item.titleBn.includes(query));
-        const matchCategory = item.category.toLowerCase().includes(query);
-        const matchDesc = item.description.toLowerCase().includes(query);
-        const matchCompatibility = item.compatibleWith.some(c => c.toLowerCase().includes(query));
+        const matchTitle = item.title?.toLowerCase().includes(query) || (item.titleBn && item.titleBn.toLowerCase().includes(query));
+        const matchCategory = item.category?.toLowerCase().includes(query);
+        const matchDesc = item.description?.toLowerCase().includes(query);
+        const matchCompatibility = item.compatibleWith?.some(c => c.toLowerCase().includes(query));
         if (!matchTitle && !matchCategory && !matchDesc && !matchCompatibility) {
           return false;
         }
@@ -51,43 +59,40 @@ export default function ProductGrid({
     }).sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price;
       if (sortBy === 'price-desc') return b.price - a.price;
-      if (sortBy === 'rating') return b.rating - a.rating;
+      if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
       return 0; // featured default order
     });
   }, [products, selectedCategory, selectedPhone, searchQuery, inStockOnly, sortBy]);
 
-  const categories = [
-    { id: null, label: t.allProducts },
-    { id: 'cases', label: t.catCases },
-    { id: 'audio', label: t.catAudio },
-    { id: 'charging', label: t.catCharging },
-    { id: 'powerbanks', label: t.catPowerBanks }
-  ];
+  const activeCategoryLabel = useMemo(() => {
+    return categories.find(c => c.id === selectedCategory)?.label || selectedCategory;
+  }, [categories, selectedCategory]);
 
   return (
-    <section id="products-section" className="w-full my-10">
+    <section id="products-section" className="w-full my-8 sm:my-10">
       {/* Filter and Sorting Control Bar */}
       <div 
-        className="rounded-2xl p-4 mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"
+        className="rounded-2xl p-3.5 sm:p-4 mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"
         style={{
-          background: 'rgba(248, 252, 255, 0.75)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(37, 99, 235, 0.12)',
-          boxShadow: '0 4px 20px -2px rgba(17, 42, 67, 0.04)'
+          background: '#FFFFFF',
+          border: '1px solid #DCE7F0',
+          boxShadow: '0 4px 18px -2px rgba(16, 38, 61, 0.04)'
         }}
       >
         {/* Horizontal Category Pill Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none" role="tablist" aria-label="Product categories">
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
             return (
               <button
                 key={cat.id || 'all'}
+                role="tab"
+                aria-selected={isActive}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-[#145CFF] ${
                   isActive 
-                    ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' 
-                    : 'bg-white/60 text-[#4B637B] hover:text-[#112A43] hover:bg-white border border-blue-200/50'
+                    ? 'bg-[#145CFF] text-white shadow-xs' 
+                    : 'bg-white text-[#52677B] hover:text-[#10263D] hover:bg-[#EAF4FC] border border-[#DCE7F0]'
                 }`}
               >
                 {cat.label}
@@ -97,25 +102,29 @@ export default function ProductGrid({
         </div>
 
         {/* Secondary Filters: In-stock toggle & Sort Dropdown */}
-        <div className="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-blue-100">
+        <div className="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-[#DCE7F0]">
           {/* In-Stock Toggle */}
-          <label className="flex items-center gap-2 text-xs font-semibold text-[#4B637B] cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-xs font-semibold text-[#52677B] cursor-pointer select-none">
             <input
               type="checkbox"
               checked={inStockOnly}
               onChange={(e) => setInStockOnly(e.target.checked)}
-              className="rounded text-blue-600 focus:ring-blue-500 border-slate-300"
+              className="rounded text-[#145CFF] focus:ring-[#145CFF] border-[#DCE7F0] h-4 w-4"
             />
-            <span>In-Stock Only</span>
+            <span>{t.inStockOnly || 'In-Stock Only'}</span>
           </label>
 
           {/* Sort By Dropdown */}
           <div className="flex items-center gap-1.5">
-            <ArrowUpDown size={14} className="text-[#8FA6BE]" />
+            <label htmlFor="catalog-sort" className="sr-only">
+              {t.sortBy || 'Sort by'}
+            </label>
+            <ArrowUpDown size={14} className="text-[#8FA6BE]" aria-hidden="true" />
             <select
+              id="catalog-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="text-xs font-semibold py-1.5 px-3 rounded-lg bg-white/80 border border-blue-200/60 text-[#112A43] outline-none focus:border-blue-500"
+              className="text-xs font-semibold py-1.5 px-3 rounded-lg bg-white border border-[#DCE7F0] text-[#10263D] outline-none focus:border-[#145CFF]"
             >
               <option value="featured">{t.sortFeatured}</option>
               <option value="price-asc">{t.sortPriceAsc}</option>
@@ -128,42 +137,67 @@ export default function ProductGrid({
 
       {/* Active Filter Indicators */}
       {(selectedPhone || searchQuery || selectedCategory) && (
-        <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-[#4B637B]">
-          <span>Active Filters:</span>
+        <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-[#52677B]" role="region" aria-label="Active filters">
+          <span className="font-semibold text-[#10263D]">{t.activeFilters || 'Active Filters:'}</span>
+          
           {selectedPhone && (
-            <span className="flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
-              Fits: {selectedPhone}
-              <button onClick={onClearPhoneFilter} className="ml-1 text-blue-600 hover:text-blue-900 font-bold">×</button>
+            <span className="flex items-center gap-1 bg-[#EAF4FC] text-[#10263D] border border-[#DCE7F0] px-3 py-1 rounded-full font-medium">
+              <span>{t.fitsFilter || 'Fits:'}</span>
+              <strong>{selectedPhone}</strong>
+              <button 
+                onClick={onClearPhoneFilter} 
+                className="ml-1 text-[#145CFF] hover:text-[#0D4BD9] font-bold p-0.5"
+                aria-label={`Remove filter for ${selectedPhone}`}
+              >
+                ×
+              </button>
             </span>
           )}
+
           {searchQuery && (
-            <span className="flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
-              Search: "{searchQuery}"
-              <button onClick={onClearSearch} className="ml-1 text-blue-600 hover:text-blue-900 font-bold">×</button>
+            <span className="flex items-center gap-1 bg-[#EAF4FC] text-[#10263D] border border-[#DCE7F0] px-3 py-1 rounded-full font-medium">
+              <span>{t.searchFilter || 'Search:'}</span>
+              <strong>"{searchQuery}"</strong>
+              <button 
+                onClick={onClearSearch} 
+                className="ml-1 text-[#145CFF] hover:text-[#0D4BD9] font-bold p-0.5"
+                aria-label="Clear search filter"
+              >
+                ×
+              </button>
             </span>
           )}
+
           {selectedCategory && (
-            <span className="flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
-              Category: {selectedCategory}
-              <button onClick={() => onSelectCategory(null)} className="ml-1 text-blue-600 hover:text-blue-900 font-bold">×</button>
+            <span className="flex items-center gap-1 bg-[#EAF4FC] text-[#10263D] border border-[#DCE7F0] px-3 py-1 rounded-full font-medium">
+              <span>{t.categoryFilter || 'Category:'}</span>
+              <strong>{activeCategoryLabel}</strong>
+              <button 
+                onClick={() => onSelectCategory(null)} 
+                className="ml-1 text-[#145CFF] hover:text-[#0D4BD9] font-bold p-0.5"
+                aria-label={`Remove category filter for ${activeCategoryLabel}`}
+              >
+                ×
+              </button>
             </span>
           )}
+
           <button 
             onClick={() => {
               onClearPhoneFilter();
               onClearSearch();
               onSelectCategory(null);
             }}
-            className="text-blue-600 font-semibold underline ml-2"
+            className="text-[#145CFF] hover:text-[#0D4BD9] font-semibold underline ml-1.5"
           >
-            Clear all
+            {t.clearAll || 'Clear all'}
           </button>
         </div>
       )}
 
-      {/* 2-Column (Mobile) to 4-Column (Desktop) Product Grid */}
+      {/* Responsive Product Grid */}
       {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -180,18 +214,16 @@ export default function ProductGrid({
           ))}
         </div>
       ) : (
-        /* Honest Zero-State Handling */
-        <div className="rounded-3xl p-12 text-center bg-white/70 backdrop-blur-md border border-blue-200/50 shadow-sm max-w-lg mx-auto">
-          <div className="w-16 h-16 rounded-full bg-blue-50 text-blue-500 mx-auto flex items-center justify-center mb-4">
+        /* Zero-State Handling */
+        <div className="rounded-3xl p-10 sm:p-12 text-center bg-white border border-[#DCE7F0] shadow-xs max-w-lg mx-auto" role="status">
+          <div className="w-16 h-16 rounded-full bg-[#EAF4FC] text-[#145CFF] mx-auto flex items-center justify-center mb-4">
             <SearchX size={32} />
           </div>
-          <h4 className="text-lg font-bold text-[#112A43] mb-1">
-            No matching accessories found
+          <h4 className="text-base sm:text-lg font-bold text-[#10263D] mb-1">
+            {t.noProductsFound || 'No matching accessories found'}
           </h4>
-          <p className="text-sm text-[#4B637B] mb-5">
-            {selectedPhone 
-              ? `We currently don't have catalog items tailored specifically for "${selectedPhone}". Try clearing the device filter to see universal accessories.`
-              : 'Try broadening your search query or switching categories.'}
+          <p className="text-xs sm:text-sm text-[#52677B] mb-5">
+            {t.noProductsSub || 'Try clearing your filters or exploring different categories.'}
           </p>
           <button
             onClick={() => {
@@ -200,17 +232,17 @@ export default function ProductGrid({
               onSelectCategory(null);
               setInStockOnly(false);
             }}
-            className="btn-primary"
+            className="px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs sm:text-sm shadow-xs"
           >
-            Reset All Filters
+            {t.resetFilters || 'Reset All Filters'}
           </button>
         </div>
       )}
 
-      {/* Development Seed Badge Notice */}
+      {/* Honest Catalog Notice */}
       <div className="mt-8 text-center">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-blue-50 border border-blue-200/50 text-[#4B637B]">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-medium bg-[#EAF4FC] border border-[#DCE7F0] text-[#52677B]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#145CFF]" />
           {t.devSeedNotice}
         </span>
       </div>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Search, Package, CheckCircle2, Clock, Truck, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Search, Package, CheckCircle2, ShieldAlert } from 'lucide-react';
 
 export default function OrderTrackingModal({ 
   isOpen, 
@@ -11,6 +11,7 @@ export default function OrderTrackingModal({
   const [searchedOrder, setSearchedOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const closeButtonRef = useRef(null);
 
   useEffect(() => {
     if (initialOrderId) {
@@ -18,6 +19,26 @@ export default function OrderTrackingModal({
       fetchOrder(initialOrderId);
     }
   }, [initialOrderId]);
+
+  // Escape-to-close
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    const timer = setTimeout(() => {
+      if (closeButtonRef.current) closeButtonRef.current.focus();
+    }, 50);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timer);
+    };
+  }, [isOpen, onClose]);
 
   const fetchOrder = async (id) => {
     if (!id.trim()) return;
@@ -47,13 +68,12 @@ export default function OrderTrackingModal({
 
   const steps = [
     { label: 'Order Placed', desc: 'Received in system' },
-    { label: 'Confirmed', desc: 'Inventory verified' },
-    { label: 'Packaging', desc: 'Quality checked' },
-    { label: 'In Transit', desc: 'Handed to courier' },
-    { label: 'Delivered', desc: 'Received by customer' }
+    { label: 'Confirmed', desc: 'Order verified' },
+    { label: 'Packaging', desc: 'Fulfillment queue' },
+    { label: 'In Transit', desc: 'Courier dispatch' },
+    { label: 'Delivered', desc: 'Delivered to customer' }
   ];
 
-  // Determine current active step
   const getStepIndex = (status) => {
     switch (status?.toLowerCase()) {
       case 'confirmed': return 1;
@@ -67,29 +87,39 @@ export default function OrderTrackingModal({
   const currentStep = getStepIndex(searchedOrder?.status);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div 
+      className="modal-overlay" 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tracking-dialog-title"
+    >
       <div 
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-white/95 backdrop-blur-2xl border border-blue-200/80 shadow-2xl animate-fadeIn"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCE7F0] shadow-2xl animate-fadeIn"
         onClick={(e) => e.stopPropagation()}
+        style={{
+          boxShadow: '0 25px 60px -15px rgba(16, 38, 61, 0.20)'
+        }}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-blue-100 mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#EAF4FC] flex items-center justify-center text-[#145CFF] font-bold">
               <Package size={18} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[#112A43]">
-                Order Tracking & Fulfillment
+              <h2 id="tracking-dialog-title" className="text-xl font-bold text-[#10263D]">
+                Order Tracking & Status
               </h2>
-              <p className="text-xs text-[#4B637B]">
-                Real-time updates directly from our Dhaka warehouse
+              <p className="text-xs text-[#52677B]">
+                Live status tracking from store database
               </p>
             </div>
           </div>
           <button
+            ref={closeButtonRef}
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-slate-500"
-            aria-label="Close"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            aria-label="Close tracking dialog"
           >
             <X size={20} />
           </button>
@@ -98,7 +128,11 @@ export default function OrderTrackingModal({
         {/* Search Input Bar */}
         <form onSubmit={handleSearch} className="flex gap-2 mb-6">
           <div className="relative flex-1">
+            <label htmlFor="tracking-input-id" className="sr-only">
+              Order Reference ID
+            </label>
             <input
+              id="tracking-input-id"
               type="text"
               placeholder="Enter Order Reference ID (e.g. AGY-849201)"
               value={orderIdInput}
@@ -109,7 +143,7 @@ export default function OrderTrackingModal({
           <button
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center gap-1.5"
+            className="px-5 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs"
           >
             {loading ? (
               <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -121,7 +155,7 @@ export default function OrderTrackingModal({
         </form>
 
         {error && (
-          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2 mb-6">
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2 mb-6" role="alert">
             <ShieldAlert size={16} className="shrink-0" />
             <span>{error}</span>
           </div>
@@ -130,25 +164,25 @@ export default function OrderTrackingModal({
         {searchedOrder ? (
           <div className="space-y-6">
             {/* Order Card Overview */}
-            <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200/60 flex flex-wrap justify-between items-center gap-3">
+            <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0] flex flex-wrap justify-between items-center gap-3">
               <div>
-                <span className="text-[11px] font-bold uppercase text-[#4B637B] block">
-                  Reference ID: <strong className="font-mono text-blue-700">{searchedOrder.id}</strong>
+                <span className="text-[11px] font-bold uppercase text-[#52677B] block">
+                  Reference ID: <strong className="font-mono text-[#145CFF]">{searchedOrder.id}</strong>
                 </span>
-                <span className="text-xs text-[#112A43]">
+                <span className="text-xs text-[#10263D]">
                   Recipient: <strong>{searchedOrder.customer?.name}</strong> ({searchedOrder.customer?.phone})
                 </span>
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-600 text-white capitalize shadow-sm">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#145CFF] text-white capitalize shadow-xs">
                 Status: {searchedOrder.status}
               </span>
             </div>
 
             {/* Visual 5-Step Timeline */}
             <div className="py-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#112A43] mb-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-4">
                 Delivery Progress
-              </h4>
+              </h3>
               <div className="grid grid-cols-5 gap-1 relative text-center">
                 {steps.map((step, idx) => {
                   const isDone = idx <= currentStep;
@@ -159,13 +193,13 @@ export default function OrderTrackingModal({
                       <div 
                         className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold mb-2 transition-all ${
                           isDone 
-                            ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' 
-                            : 'bg-slate-100 text-slate-400 border border-slate-200'
+                            ? 'bg-[#145CFF] text-white shadow-xs' 
+                            : 'bg-slate-100 text-slate-400 border border-[#DCE7F0]'
                         } ${isCurrent ? 'ring-4 ring-blue-100' : ''}`}
                       >
                         {isDone ? <CheckCircle2 size={16} /> : idx + 1}
                       </div>
-                      <span className={`text-[10px] sm:text-xs font-bold leading-tight ${isDone ? 'text-[#112A43]' : 'text-slate-400'}`}>
+                      <span className={`text-[10px] sm:text-xs font-bold leading-tight ${isDone ? 'text-[#10263D]' : 'text-slate-400'}`}>
                         {step.label}
                       </span>
                       <span className="text-[9px] text-[#8FA6BE] hidden sm:block mt-0.5">
@@ -178,27 +212,27 @@ export default function OrderTrackingModal({
             </div>
 
             {/* Items in this Order */}
-            <div className="p-4 rounded-2xl border border-slate-200 bg-white text-xs space-y-2">
-              <span className="font-bold text-[#112A43] block">Allocated Products:</span>
+            <div className="p-4 rounded-2xl border border-[#DCE7F0] bg-white text-xs space-y-2">
+              <span className="font-bold text-[#10263D] block">Ordered Items:</span>
               <ul className="divide-y divide-slate-100">
                 {searchedOrder.items?.map((item, idx) => (
                   <li key={idx} className="py-2 flex justify-between">
                     <span>{item.title} (x{item.quantity})</span>
-                    <span className="font-semibold text-[#112A43]">
+                    <span className="font-semibold text-[#10263D]">
                       {currencySymbol}{(item.price * item.quantity).toLocaleString()}
                     </span>
                   </li>
                 ))}
               </ul>
-              <div className="pt-2 border-t border-slate-100 flex justify-between font-bold text-[#112A43]">
+              <div className="pt-2 border-t border-[#DCE7F0] flex justify-between font-bold text-[#10263D]">
                 <span>Total Amount:</span>
-                <span className="text-blue-600">{currencySymbol}{searchedOrder.total?.toLocaleString()}</span>
+                <span className="text-[#145CFF]">{currencySymbol}{searchedOrder.total?.toLocaleString()}</span>
               </div>
             </div>
           </div>
         ) : !error && (
           <div className="text-center py-8 text-xs text-[#8FA6BE]">
-            Enter your order reference above (e.g. from your order confirmation) to track live delivery status.
+            Enter your order reference above to track live status updates.
           </div>
         )}
       </div>

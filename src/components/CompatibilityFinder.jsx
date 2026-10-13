@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Smartphone, CheckCircle, RotateCcw, ArrowRight } from 'lucide-react';
+import { Smartphone, ChevronDown, ChevronRight, X } from 'lucide-react';
 import { BRANDS_AND_MODELS } from '../data/catalog';
 
 export default function CompatibilityFinder({ 
   selectedPhone, 
   onSelectPhone, 
-  onClearFilter, 
-  t 
+  onClearFilter 
 }) {
   const [activeBrand, setActiveBrand] = useState('Apple');
   const [activeModel, setActiveModel] = useState('iPhone 15 Pro');
@@ -20,139 +19,89 @@ export default function CompatibilityFinder({
     }
   };
 
-  const popularPhones = [
-    "iPhone 15 Pro",
-    "Galaxy S24 Ultra",
-    "iPhone 15 Pro Max",
-    "Pixel 8 Pro",
-    "Xiaomi 14 Ultra"
-  ];
-
   return (
     <div 
       id="compatibility-finder"
-      className="w-full rounded-3xl p-6 sm:p-8 transition-all"
-      style={{
-        background: 'rgba(248, 252, 255, 0.85)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        border: '1px solid rgba(37, 99, 235, 0.16)',
-        boxShadow: '0 12px 36px -4px rgba(17, 42, 67, 0.06), inset 0 1px 1.5px rgba(255, 255, 255, 0.95)'
-      }}
+      className="w-full rounded-2xl p-3.5 sm:p-5 bg-[#EAF4FC] border border-[#DCE7F0] shadow-xs mb-8"
     >
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-blue-100/80 border border-blue-200/50 flex items-center justify-center text-blue-600 shadow-sm">
-            <Smartphone size={22} />
-          </div>
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#112A43] tracking-tight">
-              {t.finderTitle}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#4B637B]">
-              {t.finderSubtitle}
-            </p>
-          </div>
+      <form 
+        onSubmit={handleApply}
+        className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4"
+      >
+        {/* Left: Section Title */}
+        <div className="w-full md:w-auto shrink-0 pl-1 sm:pl-2">
+          <h2 className="text-base sm:text-lg font-bold text-[#10263D] tracking-tight">
+            Find the right fit
+          </h2>
         </div>
 
-        {selectedPhone && (
-          <div className="flex items-center gap-3 bg-blue-50/90 border border-blue-200/70 rounded-full px-4 py-2 self-start md:self-auto">
-            <CheckCircle size={16} className="text-emerald-600" />
-            <span className="text-xs font-semibold text-[#112A43]">
-              {t.showingCompatibleFor} <strong className="text-blue-700">{selectedPhone}</strong>
-            </span>
-            <button
-              onClick={onClearFilter}
-              className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium ml-1"
-              title="Clear Filter"
+        {/* Center: Brand Selector */}
+        <div className="relative w-full md:flex-1 max-w-xs">
+          <div className="relative flex items-center bg-white rounded-xl border border-[#DCE7F0] px-3.5 py-2.5 shadow-2xs hover:border-[#145CFF] transition-colors">
+            <Smartphone size={16} className="text-slate-400 mr-2 shrink-0" />
+            <select
+              value={activeBrand}
+              onChange={(e) => {
+                setActiveBrand(e.target.value);
+                const models = BRANDS_AND_MODELS.find(b => b.brand === e.target.value)?.models || [];
+                if (models.length > 0) setActiveModel(models[0]);
+              }}
+              className="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-700 outline-none cursor-pointer appearance-none pr-6"
             >
-              <RotateCcw size={12} />
-              <span>{t.clearFilter}</span>
-            </button>
+              {BRANDS_AND_MODELS.map(b => (
+                <option key={b.brand} value={b.brand}>
+                  {b.brand}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={15} className="absolute right-3 text-slate-400 pointer-events-none" />
           </div>
-        )}
-      </div>
-
-      {/* Selector Form */}
-      <form onSubmit={handleApply} className="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-4 items-end">
-        {/* Brand Selector */}
-        <div className="sm:col-span-4">
-          <label className="block text-xs font-bold text-[#112A43] uppercase tracking-wider mb-1.5">
-            {t.selectBrand}
-          </label>
-          <select
-            value={activeBrand}
-            onChange={(e) => {
-              setActiveBrand(e.target.value);
-              const brandModels = BRANDS_AND_MODELS.find(b => b.brand === e.target.value)?.models || [];
-              if (brandModels.length > 0) setActiveModel(brandModels[0]);
-            }}
-            className="w-full py-3 px-4 rounded-xl bg-white/80 border border-blue-200/70 text-[#112A43] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all shadow-sm"
-          >
-            {BRANDS_AND_MODELS.map(b => (
-              <option key={b.brand} value={b.brand}>
-                {b.brand}
-              </option>
-            ))}
-          </select>
         </div>
 
-        {/* Model Selector */}
-        <div className="sm:col-span-5">
-          <label className="block text-xs font-bold text-[#112A43] uppercase tracking-wider mb-1.5">
-            {t.selectModel}
-          </label>
-          <select
-            value={activeModel}
-            onChange={(e) => setActiveModel(e.target.value)}
-            className="w-full py-3 px-4 rounded-xl bg-white/80 border border-blue-200/70 text-[#112A43] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all shadow-sm"
-          >
-            {currentBrandModels.map(m => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
+        {/* Center: Model Selector */}
+        <div className="relative w-full md:flex-1 max-w-xs">
+          <div className="relative flex items-center bg-white rounded-xl border border-[#DCE7F0] px-3.5 py-2.5 shadow-2xs hover:border-[#145CFF] transition-colors">
+            <Smartphone size={16} className="text-slate-400 mr-2 shrink-0" />
+            <select
+              value={activeModel}
+              onChange={(e) => setActiveModel(e.target.value)}
+              className="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-700 outline-none cursor-pointer appearance-none pr-6"
+            >
+              {currentBrandModels.map(m => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={15} className="absolute right-3 text-slate-400 pointer-events-none" />
+          </div>
         </div>
 
-        {/* Submit Action Button */}
-        <div className="sm:col-span-3">
-          <button
-            type="submit"
-            className="w-full py-3 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99]"
-          >
-            <span>{t.findAccessories}</span>
-            <ArrowRight size={16} />
-          </button>
-        </div>
+        {/* Right: Submit Button */}
+        <button
+          type="submit"
+          className="w-full md:w-auto px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.98] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition-all whitespace-nowrap shrink-0"
+        >
+          <span>Find accessories</span>
+          <ChevronRight size={16} className="stroke-[2.5]" />
+        </button>
       </form>
 
-      {/* Quick Select Popular Phones Chips */}
-      <div className="mt-4 pt-4 border-t border-blue-100/80 flex flex-wrap items-center gap-2">
-        <span className="text-xs font-semibold text-[#4B637B]">
-          {t.quickSelect}
-        </span>
-        {popularPhones.map(phone => {
-          const isSelected = selectedPhone === phone;
-          return (
-            <button
-              key={phone}
-              type="button"
-              onClick={() => {
-                if (isSelected) onClearFilter();
-                else onSelectPhone(phone);
-              }}
-              className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all ${
-                isSelected 
-                  ? 'bg-blue-600 text-white shadow-sm' 
-                  : 'bg-white/80 text-[#112A43] border border-blue-200/50 hover:bg-blue-50 hover:border-blue-300'
-              }`}
-            >
-              {phone}
-            </button>
-          );
-        })}
-      </div>
+      {/* Active Filter Notification Pill (when filtered) */}
+      {selectedPhone && (
+        <div className="mt-2.5 pt-2 border-t border-[#DCE7F0] flex items-center justify-between text-xs px-2">
+          <span className="text-[#52677B]">
+            Showing accessories tailored for: <strong className="text-[#145CFF]">{selectedPhone}</strong>
+          </span>
+          <button
+            onClick={onClearFilter}
+            className="text-slate-500 hover:text-red-600 flex items-center gap-1 font-medium transition-colors"
+          >
+            <X size={13} />
+            <span>Clear filter</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

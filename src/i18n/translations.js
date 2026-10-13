@@ -2,7 +2,7 @@ export const translations = {
   en: {
     brandName: "Accessories",
     tagline: "Small upgrades. Everyday better.",
-    heroSub: "Cases, sound and power. Find your everyday essentials.",
+    heroSub: "Cases, sound and power for your everyday.",
     shopAccessories: "Shop accessories",
     findMyPhone: "Find my phone",
     
@@ -16,7 +16,7 @@ export const translations = {
     
     // Compatibility Finder
     finderTitle: "Device Compatibility Finder",
-    finderSubtitle: "Filter products precisely verified for your specific phone",
+    finderSubtitle: "Filter products precisely verified for your specific phone model",
     selectBrand: "Select Phone Brand",
     selectModel: "Select Phone Model",
     findAccessories: "Find accessories",
@@ -44,17 +44,26 @@ export const translations = {
     outOfStock: "Sold Out",
     fitsPhone: "Fits",
     bestseller: "Bestseller",
-    devSeedNotice: "Development Seed Data (Verified Specifications)",
+    activeFilters: "Active Filters:",
+    clearAll: "Clear all",
+    inStockOnly: "In-Stock Only",
+    categoryFilter: "Category:",
+    fitsFilter: "Fits:",
+    searchFilter: "Search:",
+    noProductsFound: "No matching accessories found",
+    noProductsSub: "Try clearing your filters or exploring different categories.",
+    resetFilters: "Reset All Filters",
+    devSeedNotice: "Demo Catalog Items for Storefront Preview (Development Seed Data)",
     
     // Value Props
-    prop1Title: "Next-Day Dhaka Delivery",
+    prop1Title: "Standard Courier Rates",
     prop1Sub: "Standard delivery ৳60 in Dhaka, ৳120 nationwide",
     prop2Title: "Free Delivery over ৳2,000",
-    prop2Sub: "Automatic discount applied at checkout",
-    prop3Title: "100% Genuine Imports",
-    prop3Sub: "Official verified serials & manufacturer warranty",
-    prop4Title: "7-Day Easy Returns",
-    prop4Sub: "Hassle-free replacement policy",
+    prop2Sub: "Automatically applied at checkout on orders of ৳2,000+",
+    prop3Title: "Curated Mobile Catalog",
+    prop3Sub: "Device-matched cases, audio and charging accessories",
+    prop4Title: "Direct Customer Inquiries",
+    prop4Sub: "Submit product and order questions online",
     
     // Cart
     cartTitle: "Your Shopping Bag",
@@ -68,41 +77,34 @@ export const translations = {
     checkoutBtn: "Proceed to Checkout",
     
     // Checkout
-    checkoutTitle: "Secure Checkout",
-    guestNotice: "Guest Checkout — No password required",
+    checkoutTitle: "Store Checkout",
+    guestNotice: "Guest Checkout — No account required",
     fullName: "Full Name",
     phone: "Phone Number (01XXXXXXXXX)",
     division: "Division / Region",
     city: "City / Area",
     address: "Detailed Street Address",
-    insideDhaka: "Inside Dhaka (24-48h delivery • ৳60)",
-    outsideDhaka: "Outside Dhaka (2-4 days delivery • ৳120)",
-    paymentMethod: "Select Payment Method",
-    payBkash: "bKash Online / Merchant",
-    payNagad: "Nagad Online / Merchant",
-    payCard: "Debit / Credit Card (Visa, Mastercard)",
-    payCod: "Cash on Delivery (COD)",
-    merchantSimulator: "Merchant Sandbox: Enter transaction ID after sending money or click simulate.",
-    transactionId: "Transaction ID (TrxID)",
-    placeOrder: "Place Verified Order",
+    insideDhaka: "Inside Dhaka (৳60 standard delivery)",
+    outsideDhaka: "Outside Dhaka (৳120 standard delivery)",
+    paymentMethod: "Payment Method",
+    payOnline: "Online Gateway (Currently unavailable — Setup required)",
+    payCod: "Cash on Delivery (Demo Store Order)",
+    proceedToPayment: "Proceed to Payment",
+    placeCodOrder: "Place Demo Order — Cash on Delivery",
     
     // Order Confirmation
-    orderConfirmedTitle: "Order Confirmed!",
+    orderConfirmedTitle: "Demo Order Recorded",
+    orderPendingTitle: "Payment Pending",
     orderIdLabel: "Order Reference ID:",
     trackingInstruction: "Save this reference ID to track your parcel status anytime.",
     continueShopping: "Continue Shopping",
     trackThisOrder: "Track Parcel Status",
     
-    // 3D Motion
-    motionPause: "Pause 3D",
-    motionResume: "Play 3D",
-    motionDisabled: "Reduced motion preference active",
-    
     // Footer
     footerAbout: "Optic-grade protection, GaN power, and acoustic clarity for modern devices. Designed with ice-blue glacial glassmorphism.",
-    footerSupport: "Customer Service Hotline: +880 1700-000000 (10 AM - 10 PM)",
-    footerDhaka: "Gulshan-2, Dhaka-1212, Bangladesh",
-    copyright: "© 2025 Accessories BD. All rights reserved."
+    footerSupport: "Online Customer Assistance: Available via Support & Inquiry Form",
+    footerDhaka: "Dhaka, Bangladesh (Demo Storefront)",
+    copyright: "© 2025 Accessories BD. Demonstration storefront."
   },
   bn: {
     brandName: "অ্যাক্সেসরিজ",
@@ -147,19 +149,27 @@ export const translations = {
     inStock: "স্টকে আছে",
     lowStock: "সীমিত স্টক",
     outOfStock: "স্টক শেষ",
-    fitsPhone: "উপযোগী",
     bestseller: "বেস্টসেলার",
-    devSeedNotice: "উন্নয়নমূলক ডেমো ডেটা (সঠিক স্পেসিফিকেশনসহ)",
+    activeFilters: "সক্রিয় ফিল্টারসমূহ:",
+    clearAll: "সব মুছুন",
+    inStockOnly: "শুধুমাত্র স্টকে থাকা পণ্য",
+    categoryFilter: "ক্যাটাগরি:",
+    fitsFilter: "উপযুক্ত:",
+    searchFilter: "অনুসন্ধান:",
+    noProductsFound: "কোন মানানসই অ্যাক্সেসরিজ পাওয়া যায়নি",
+    noProductsSub: "ফিল্টার মুছে ফেলুন অথবা অন্য ক্যাটাগরি ঘুরে দেখুন।",
+    resetFilters: "সব ফিল্টার রিসেট করুন",
+    devSeedNotice: "স্টোরফ্রন্ট প্রিভিউয়ের জন্য ডেমো ক্যাটালগ আইটেম (উন্নয়নমূলক ডেমো ডাটা)",
     
     // Value Props
-    prop1Title: "পরের দিনেই ঢাকা ডেলিভারি",
+    prop1Title: "স্ট্যান্ডার্ড কুরিয়ার ডেলিভারি",
     prop1Sub: "ঢাকায় মাত্র ৬০৳, সারা দেশে ১২০৳",
     prop2Title: "২,০০০৳ অর্ডারে ফ্রি ডেলিভারি",
-    prop2Sub: "স্বয়ংক্রিয়ভাবে ডেলিভারি চার্জ ফ্রি",
-    prop3Title: "১০০% আসল প্রোডাক্ট",
-    prop3Sub: "অফিসিয়াল ওয়ারেন্টি এবং আমদানি করা গ্যাজেট",
-    prop4Title: "৭ দিনের সহজ রিটার্ন",
-    prop4Sub: "সহজ প্রতিস্থাপন নিশ্চয়তা",
+    prop2Sub: "২,০০০৳ বা বেশি সাবটোটালে স্বয়ংক্রিয় ফ্রি ডেলিভারি",
+    prop3Title: "নির্বাচিত মোবাইল গিয়ার",
+    prop3Sub: "ডিভাইস-উপযোগী কেস, অডিও ও চার্জিং সামগ্রী",
+    prop4Title: "সরাসরি কাস্টমার সহায়তা",
+    prop4Sub: "অনলাইনে পণ্য ও অর্ডার সংক্রান্ত প্রশ্ন পাঠান",
     
     // Cart
     cartTitle: "আপনার শপিং ব্যাগ",
@@ -173,40 +183,33 @@ export const translations = {
     checkoutBtn: "অর্ডার কনফার্ম করুন",
     
     // Checkout
-    checkoutTitle: "নিরাপদ চেকআউট",
-    guestNotice: "গেস্ট চেকআউট — পাসওয়ার্ডের প্রয়োজন নেই",
+    checkoutTitle: "স্টোর চেকআউট",
+    guestNotice: "গেস্ট চেকআউট — অ্যাকাউন্টের প্রয়োজন নেই",
     fullName: "আপনার নাম",
     phone: "মোবাইল নম্বর (০১XXXXXXXXX)",
     division: "বিভাগ",
     city: "শহর / থানা",
     address: "সম্পূর্ণ ঠিকানা (বাসা/রোড নম্বর)",
-    insideDhaka: "ঢাকা সিটির ভেতরে (২৪-৪৮ ঘণ্টা • ৬০৳)",
-    outsideDhaka: "ঢাকার বাইরে (২-৪ দিন • ১২০৳)",
+    insideDhaka: "ঢাকা সিটির ভেতরে (৬০৳ ডেলিভারি)",
+    outsideDhaka: "ঢাকার বাইরে (১২০৳ ডেলিভারি)",
     paymentMethod: "পেমেন্ট মাধ্যম বেছে নিন",
-    payBkash: "বিকাশ (bKash)",
-    payNagad: "নগদ (Nagad)",
-    payCard: "ভিসা / মাস্টারকার্ড",
-    payCod: "ক্যাশ অন ডেলিভারি (ক্যাশ অন ডেলিভারি)",
-    merchantSimulator: "মার্চেন্ট স্যান্ডবক্স: টাকা পাঠিয়ে TrxID লিখুন বা সিমুলেট চাপুন।",
-    transactionId: "ট্রানজেকশন আইডি (TrxID)",
-    placeOrder: "অর্ডার নিশ্চিত করুন",
+    payOnline: "অনলাইন গেটওয়ে (বর্তমানে অনুপলব্ধ — সেটআপ প্রয়োজন)",
+    payCod: "ক্যাশ অন ডেলিভারি (ডেমো অর্ডার)",
+    proceedToPayment: "পেমেন্টে এগিয়ে যান",
+    placeCodOrder: "ডেমো অর্ডার নিশ্চিত করুন — ক্যাশ অন ডেলিভারি",
     
     // Order Confirmation
-    orderConfirmedTitle: "অর্ডার নিশ্চিত হয়েছে!",
+    orderConfirmedTitle: "ডেমো অর্ডার সংরক্ষিত",
+    orderPendingTitle: "পেমেন্ট অপেক্ষমান",
     orderIdLabel: "অর্ডার রেফারেন্স আইডি:",
     trackingInstruction: "পার্সেল ট্র্যাক করার জন্য এই রেফারেন্স আইডিটি সংরক্ষণ করুন।",
     continueShopping: "আরও কেনাকাটা করুন",
     trackThisOrder: "পার্সেল ট্র্যাক করুন",
     
-    // 3D Motion
-    motionPause: "৩ডি পজ",
-    motionResume: "৩ডি চালু",
-    motionDisabled: "মোশন বন্ধ রাখা হয়েছে",
-    
     // Footer
     footerAbout: "অপটিক্যাল গ্রেড সুরক্ষা, GaN চার্জিং এবং ক্রিস্টাল ক্লিয়ার সাউন্ড। গ্লেসিয়াল গ্লাস ডিজাইনে নির্মিত।",
-    footerSupport: "হেল্পলাইন: +৮৮০ ১৭০০-০০০০০০ (সকাল ১০টা - রাত ১০টা)",
-    footerDhaka: "গুলশান-২, ঢাকা-১২১২, বাংলাদেশ",
-    copyright: "© ২০২৫ অ্যাক্সেসরিজ বিডি। সর্বস্বত্ব সংরক্ষিত।"
+    footerSupport: "অনলাইন কাস্টমার সাপোর্ট: ইনকোয়ারি ফর্মের মাধ্যমে বার্তা পাঠান",
+    footerDhaka: "ঢাকা, বাংলাদেশ (ডেমো স্টোরফ্রন্ট)",
+    copyright: "© ২০২৫ অ্যাক্সেসরিজ বিডি। ডেমো স্টোরফ্রন্ট।"
   }
 };

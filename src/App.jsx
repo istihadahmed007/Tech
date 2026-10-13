@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
-import Hero3D from './components/Hero3D';
+import Hero from './components/Hero';
 import CompatibilityFinder from './components/CompatibilityFinder';
 import CategoryNav from './components/CategoryNav';
 import ProductGrid from './components/ProductGrid';
 import ProductDetailModal from './components/ProductDetailModal';
 import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
+import PaymentGatewayModal from './components/PaymentGatewayModal';
 import OrderConfirmationModal from './components/OrderConfirmationModal';
 import OrderTrackingModal from './components/OrderTrackingModal';
 import WishlistModal from './components/WishlistModal';
@@ -16,7 +17,7 @@ import Footer from './components/Footer';
 
 import { INITIAL_PRODUCTS } from './data/catalog';
 import { translations } from './i18n/translations';
-import { ShieldCheck, Truck, RotateCcw, Award, ArrowRight, ArrowDown } from 'lucide-react';
+import { ShieldCheck, Truck, RotateCcw, Award } from 'lucide-react';
 
 export default function App() {
   const [lang, setLang] = useState('en');
@@ -48,10 +49,11 @@ export default function App() {
     }
   });
 
-  // Modals
-  const [activeModal, setActiveModal] = useState(null); // 'cart', 'checkout', 'detail', 'order_success', 'tracking', 'wishlist', 'admin', 'support'
+  // Modals & Flows
+  const [activeModal, setActiveModal] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
+  const [paymentSessionInfo, setPaymentSessionInfo] = useState(null);
   const [trackingOrderId, setTrackingOrderId] = useState('');
   const [toastMessage, setToastMessage] = useState('');
 
@@ -69,10 +71,53 @@ export default function App() {
     } catch (e) {}
   }, [wishlistIds]);
 
+  // Handle gateway return parameters on page mount
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const paymentResult = url.searchParams.get('payment_result');
+    const orderId = url.searchParams.get('orderId');
+    const valId = url.searchParams.get('val_id');
+    const sessionId = url.searchParams.get('sessionId');
+
+    if (paymentResult && orderId) {
+      // Clean query parameters from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      if (paymentResult === 'success') {
+        // Verify server-side
+        fetch('/api/payment/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId,
+            val_id: valId,
+            sessionId,
+            status: 'success'
+          })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.verified && data.order) {
+              setConfirmedOrder(data.order);
+              setCart([]);
+              setActiveModal('order_success');
+            } else {
+              showToast(data.error || 'Payment verification failed');
+            }
+          })
+          .catch(() => showToast('Failed to verify payment with server'));
+      } else if (paymentResult === 'cancel') {
+        showToast('Payment was cancelled');
+      } else {
+        showToast('Payment transaction failed or declined');
+      }
+    }
+  }, []);
+
   // Toast Helper
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 2400);
+    setTimeout(() => setToastMessage(''), 2800);
   };
 
   // Cart Operations
@@ -149,15 +194,48 @@ export default function App() {
     setActiveModal('checkout');
   };
 
-  // Order Placed Success Handler
+  // Order Placed Success Handler (COD or Verified)
   const handleOrderSuccess = (order) => {
     setConfirmedOrder(order);
-    setCart([]); // Clear cart on validated success
+    setCart([]);
     setActiveModal('order_success');
+  };
+
+  // Online Payment Initiated
+  const handleInitiateOnlinePayment = (order, sessionData) => {
+    if (sessionData.provider === 'sandbox') {
+      // Open transparent sandbox modal
+      setPaymentSessionInfo({
+        orderId: order.id,
+        sessionId: sessionData.sessionId,
+        amount: order.total
+      });
+      setActiveModal('payment_gateway');
+    } else if (sessionData.redirectUrl) {
+      // Live gateway redirect
+      window.location.href = sessionData.redirectUrl;
+    }
+  };
+
+  const handlePaymentSuccess = (verifiedOrder) => {
+    setConfirmedOrder(verifiedOrder);
+    setCart([]);
+    setActiveModal('order_success');
+  };
+
+  const handlePaymentFailure = (reason) => {
+    showToast(`Payment declined: ${reason}`);
+    setActiveModal(null);
   };
 
   // Restock for Admin
   const handleRestock = (productId, count = 10) => {
+    fetch('/api/admin/inventory/restock', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, count })
+    }).catch(() => {});
+
     setProducts((prev) =>
       prev.map((p) => (p.id === productId ? { ...p, stock: p.stock + count } : p))
     );
@@ -170,6 +248,8 @@ export default function App() {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const featuredProduct = products.find(p => p.id === 'aura-frost-magsafe-case') || products[0];
 
   return (
     <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-600 selection:text-white">
@@ -205,89 +285,36 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="container flex-grow pt-4">
-        {/* Large Opening Section (Hero) */}
-        <section className="relative w-full rounded-3xl overflow-hidden my-4 sm:my-6 p-6 sm:p-10 lg:p-12 glass-panel border border-blue-200/50">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Column: Headline and Primary Actions */}
-            <div className="lg:col-span-7 flex flex-col items-start z-10">
-              {/* Seasonal Pill Tag */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-blue-50/90 text-blue-700 border border-blue-200/60 shadow-xs mb-4">
-                <span>❄️ The Glacial Collection 2025</span>
-                <span className="text-blue-300">•</span>
-                <span>Precision Optics</span>
-              </div>
-
-              {/* Bold Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-[#112A43] tracking-tight leading-[1.1] mb-4">
-                {t.tagline}
-              </h1>
-
-              {/* Supporting Subtext */}
-              <p className="text-base sm:text-lg text-[#4B637B] leading-relaxed max-w-xl mb-8">
-                {t.heroSub}
-              </p>
-
-              {/* Primary & Secondary Action CTAs */}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full sm:w-auto mb-8">
-                <button
-                  onClick={() => scrollToSection('products-section')}
-                  className="btn-primary w-full sm:w-auto text-sm py-3 px-7"
-                >
-                  <span>{t.shopAccessories}</span>
-                  <ArrowRight size={16} />
-                </button>
-
-                <button
-                  onClick={() => scrollToSection('compatibility-finder')}
-                  className="btn-secondary w-full sm:w-auto text-sm py-3 px-6"
-                >
-                  <span>{t.findMyPhone}</span>
-                  <ArrowDown size={15} />
-                </button>
-              </div>
-
-              {/* Social Proof & Metrics */}
-              <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[#4B637B] pt-4 border-t border-blue-100/80">
-                <div className="flex items-center gap-1.5 text-blue-600">
-                  <span className="text-amber-500 font-bold">★ 4.9/5</span>
-                  <span className="text-[#112A43]">Dhaka Store Rating</span>
-                </div>
-                <span>•</span>
-                <div className="flex items-center gap-1">
-                  <Truck size={14} className="text-blue-600" />
-                  <span>Next-Day Delivery</span>
-                </div>
-                <span>•</span>
-                <div className="flex items-center gap-1">
-                  <ShieldCheck size={14} className="text-emerald-600" />
-                  <span>100% Genuine BD Imports</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: 3D Floating Accessories Composition */}
-            <div className="lg:col-span-5 w-full">
-              <Hero3D t={t} />
-            </div>
-          </div>
-        </section>
+        {/* Static Polished Hero Section (Zero 3D/WebGL) */}
+        <Hero
+          onShopClick={() => scrollToSection('products-section')}
+          onFindPhoneClick={() => scrollToSection('compatibility-finder')}
+          t={t}
+        />
 
         {/* Compatibility Finder directly below hero */}
-        <div className="my-6">
-          <CompatibilityFinder
-            selectedPhone={selectedPhone}
-            onSelectPhone={(phone) => {
-              setSelectedPhone(phone);
-              scrollToSection('products-section');
-            }}
-            onClearFilter={() => setSelectedPhone(null)}
-            t={t}
-          />
-        </div>
+        <CompatibilityFinder
+          selectedPhone={selectedPhone}
+          onSelectPhone={(phone) => {
+            setSelectedPhone(phone);
+            scrollToSection('products-section');
+          }}
+          onClearFilter={() => setSelectedPhone(null)}
+          t={t}
+        />
+
+        {/* Four Image-led Categories Strip directly below Finder */}
+        <CategoryNav
+          selectedCategory={selectedCategory}
+          onSelectCategory={(catId) => {
+            setSelectedCategory(catId);
+            scrollToSection('products-section');
+          }}
+        />
 
         {/* Four Value Proposition Highlights */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 my-8">
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/70 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
               <Truck size={20} />
             </div>
@@ -297,7 +324,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/70 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
               <Award size={20} />
             </div>
@@ -307,7 +334,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/70 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
               <ShieldCheck size={20} />
             </div>
@@ -317,7 +344,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/70 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
               <RotateCcw size={20} />
             </div>
@@ -327,17 +354,6 @@ export default function App() {
             </div>
           </div>
         </div>
-
-        {/* Four Image-led Categories */}
-        <CategoryNav
-          selectedCategory={selectedCategory}
-          onSelectCategory={(catId) => {
-            setSelectedCategory(catId);
-            scrollToSection('products-section');
-          }}
-          t={t}
-          lang={lang}
-        />
 
         {/* Product Collection Grid with Filtering & Search */}
         <ProductGrid
@@ -397,12 +413,25 @@ export default function App() {
         onClose={() => setActiveModal(null)}
         cart={cart}
         onOrderSuccess={handleOrderSuccess}
+        onInitiateOnlinePayment={handleInitiateOnlinePayment}
         currencySymbol="৳"
         t={t}
         lang={lang}
       />
 
-      {/* 4. Order Confirmation Modal */}
+      {/* 4. Payment Gateway Modal (for Sandbox / Interactive Testing) */}
+      {activeModal === 'payment_gateway' && paymentSessionInfo && (
+        <PaymentGatewayModal
+          isOpen={true}
+          sessionInfo={paymentSessionInfo}
+          onClose={() => setActiveModal(null)}
+          onPaymentSuccess={handlePaymentSuccess}
+          onPaymentFailure={handlePaymentFailure}
+          currencySymbol="৳"
+        />
+      )}
+
+      {/* 5. Order Confirmation Modal */}
       {activeModal === 'order_success' && confirmedOrder && (
         <OrderConfirmationModal
           order={confirmedOrder}
@@ -420,7 +449,7 @@ export default function App() {
         />
       )}
 
-      {/* 5. Order Tracking Modal */}
+      {/* 6. Order Tracking Modal */}
       <OrderTrackingModal
         isOpen={activeModal === 'tracking'}
         onClose={() => setActiveModal(null)}
@@ -428,7 +457,7 @@ export default function App() {
         currencySymbol="৳"
       />
 
-      {/* 6. Wishlist Modal */}
+      {/* 7. Wishlist Modal */}
       <WishlistModal
         isOpen={activeModal === 'wishlist'}
         onClose={() => setActiveModal(null)}
@@ -439,7 +468,7 @@ export default function App() {
         t={t}
       />
 
-      {/* 7. Admin Dashboard Modal */}
+      {/* 8. Admin Dashboard Modal */}
       <AdminModal
         isOpen={activeModal === 'admin'}
         onClose={() => setActiveModal(null)}
@@ -448,7 +477,7 @@ export default function App() {
         currencySymbol="৳"
       />
 
-      {/* 8. Customer Support Modal */}
+      {/* 9. Customer Support Modal */}
       <SupportModal
         isOpen={activeModal === 'support'}
         onClose={() => setActiveModal(null)}
