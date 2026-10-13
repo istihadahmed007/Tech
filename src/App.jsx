@@ -285,11 +285,12 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="container flex-grow pt-4">
-        {/* Static Polished Hero Section (Zero 3D/WebGL) */}
+        {/* Directed 3D Hero Section */}
         <Hero
           onShopClick={() => scrollToSection('products-section')}
           onFindPhoneClick={() => scrollToSection('compatibility-finder')}
           t={t}
+          selectedCategory={selectedCategory}
         />
 
         {/* Compatibility Finder directly below hero */}

@@ -5,6 +5,8 @@ export const translations = {
     heroSub: "Cases, sound and power for your everyday.",
     shopAccessories: "Shop accessories",
     findMyPhone: "Find my phone",
+    motionPause: "Pause motion",
+    motionResume: "Resume motion",
     
     // Nav
     navShop: "Shop",
@@ -112,6 +114,8 @@ export const translations = {
     heroSub: "কেস, অডিও ও পাওয়ার—আপনার নিত্যদিনের সঙ্গী।",
     shopAccessories: "প্রোডাক্ট দেখুন",
     findMyPhone: "আমার ফোন খুঁজুন",
+    motionPause: "মোশন থামান",
+    motionResume: "মোশন চালান",
     
     // Nav
     navShop: "শপ",

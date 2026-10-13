@@ -72,7 +72,7 @@ The storefront visual identity is calm, precise, spacious, and trustworthy. The 
    - Line icon triggers for language switcher (`BN`/`EN`), Wishlist (`Heart` + count badge), Admin profile (`User`), and Shopping Bag (`Bag` + count badge).
    - Sticky frosted glass backdrop (`backdrop-blur-md bg-[#F7FBFF]/85 border-b border-[#DCE7F0]`).
 
-2. **Hero Section**:
+2. **Hero Section (Directed 3D Motion)**:
    - **Headline**:
      ```
      Small upgrades.
@@ -82,7 +82,12 @@ The storefront visual identity is calm, precise, spacious, and trustworthy. The 
    - **Action Buttons**:
      - Primary: `Shop accessories` (Solid `#145CFF` pill with chevron)
      - Secondary: `Find my phone` (Clean text link `#145CFF` with phone icon)
-   - **Visual Artwork**: High-resolution static product photography showing complementary accessories (Aura Frost MagSafe Case, Glacier Earbuds, GaN Charger) on a pale ice-blue studio background with soft believable shadows. Zero 3D/Three.js or spinning animations.
+   - **3D Motion Specification (Three.js WebGL)**:
+     - Floating: Slow 7–10s cycle with subtle 6–10px (~0.075 world units) displacement.
+     - Gentle Rotation: Small controlled oscillation range (±2.5°), without continuous spinning.
+     - Pointer Depth Tilt: Desktop mouse interaction with subtle 2–3° parallax, smoothly returning to resting origin on `mouseleave`.
+     - Category Reactivity: When a category is selected (`cases`, `audio`, `charging`), the featured 3D accessory smoothly translates into central spotlight with graceful lerping and stable camera continuity.
+     - Fast & Accessible: Lazy-loaded in a separate chunk (`Hero3DCanvas`), dimensions reserved (`h-[400px] sm:h-[460px] lg:h-[500px]`) to eliminate layout shift, respects `prefers-reduced-motion`, visible floating Pause/Resume control, halts rendering when offscreen or in background tabs, and renders high-fidelity static studio fallback if WebGL is unavailable.
 
 3. **Device Compatibility Finder**:
    - Compact module immediately beneath the hero.
