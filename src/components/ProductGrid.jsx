@@ -26,7 +26,8 @@ export default function ProductGrid({
     { id: 'cases', label: t.catCases },
     { id: 'audio', label: t.catAudio },
     { id: 'charging', label: t.catCharging },
-    { id: 'powerbanks', label: t.catPowerBanks }
+    { id: 'powerbanks', label: t.catPowerBanks },
+    { id: 'wearables', label: t.catWearables || 'Smartwatches' }
   ], [t]);
 
   // Comprehensive filter and search matching

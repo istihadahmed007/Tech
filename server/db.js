@@ -23,6 +23,7 @@ export function getDatabase() {
   dbInstance.exec('PRAGMA journal_mode = WAL;');
   dbInstance.exec('PRAGMA foreign_keys = ON;');
   dbInstance.exec('PRAGMA synchronous = NORMAL;');
+  dbInstance.exec('PRAGMA busy_timeout = 5000;');
 
   initSchema(dbInstance);
   migrateLegacyJson(dbInstance);
@@ -376,9 +377,6 @@ function migrateLegacyJson(db) {
 }
 
 function seedInitialCatalog(db) {
-  const rowCount = db.prepare('SELECT count(*) as count FROM products').get();
-  if (rowCount && rowCount.count > 0) return;
-
   const now = new Date().toISOString();
 
   // Seed Categories
@@ -401,7 +399,7 @@ function seedInitialCatalog(db) {
 
   // Seed Products
   const insertProduct = db.prepare(`
-    INSERT INTO products (
+    INSERT OR IGNORE INTO products (
       id, sku, title, title_bn, category_id, brand, price, original_price,
       stock, status, badge, warranty, description, specs_json, image,
       gallery_json, compatible_with_json, is_development_seed, created_at, updated_at
@@ -413,7 +411,7 @@ function seedInitialCatalog(db) {
   `);
 
   const insertVariant = db.prepare(`
-    INSERT INTO product_variants (id, product_id, sku, name, hex, stock, in_stock, created_at)
+    INSERT OR IGNORE INTO product_variants (id, product_id, sku, name, hex, stock, in_stock, created_at)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 

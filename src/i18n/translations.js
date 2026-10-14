@@ -33,6 +33,15 @@ export const translations = {
     catAudio: "Audio",
     catCharging: "Charging",
     catPowerBanks: "Power Banks",
+    catWearables: "Smartwatches",
+    
+    // Bundles
+    bundlesTitle: "Smart Free Delivery Bundles",
+    bundlesSubtitle: "Engineered combo packages that automatically unlock 100% Free Nationwide Delivery (৳2,000+)",
+    addBundleToCart: "Add Bundle to Bag",
+    bundleSavings: "Save ৳{amount}",
+    bundleFreeShippingBadge: "Free Delivery Unlocked",
+    bundleIncludes: "Includes:",
     
     // Catalog
     allProducts: "All Gear",
@@ -143,6 +152,15 @@ export const translations = {
     catAudio: "অডিও গিয়ার",
     catCharging: "ফাস্ট চার্জিং",
     catPowerBanks: "পাওয়ার ব্যাংক",
+    catWearables: "স্মার্টওয়াচ",
+    
+    // Bundles
+    bundlesTitle: "স্মার্ট ফ্রি ডেলিভারি বান্ডিল",
+    bundlesSubtitle: "৳২,০০০+ স্পেশাল কম্বো প্যাক — সারা দেশে ডেলিভারি সম্পূর্ণ ফ্রি!",
+    addBundleToCart: "বান্ডিল ব্যাগে যুক্ত করুন",
+    bundleSavings: "৳{amount} সাশ্রয়",
+    bundleFreeShippingBadge: "ফ্রি ডেলিভারি আনলকড",
+    bundleIncludes: "অন্তর্ভুক্ত রয়েছে:",
     
     // Catalog
     allProducts: "সকল প্রোডাক্ট",

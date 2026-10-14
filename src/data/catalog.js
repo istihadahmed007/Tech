@@ -80,6 +80,15 @@ export const CATEGORIES = [
     itemCount: 3,
     badge: "Qi2 Fast",
     icon: "BatteryCharging"
+  },
+  {
+    id: "wearables",
+    name: "Smartwatches",
+    nameBn: "স্মার্টওয়াচ ও ব্যান্ড",
+    description: "HD AMOLED displays, multi-strap packs, health tracking & Bluetooth calling.",
+    itemCount: 4,
+    badge: "Bluetooth Calling",
+    icon: "Watch"
   }
 ];
 
@@ -363,5 +372,468 @@ export const INITIAL_PRODUCTS = [
     gallery: [
       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=80"
     ]
+  },
+  {
+    id: "y80-ultra-smartwatch",
+    title: "Y80 Ultra Smartwatch (8+ Multi-Strap Edition)",
+    titleBn: "ওয়াই ৮০ আল্ট্রা স্মার্টওয়াচ (৮টি মাল্টি-স্ট্র্যাপ)",
+    category: "wearables",
+    badge: "8-Strap Pack",
+    price: 890,
+    originalPrice: 1250,
+    rating: 4.8,
+    reviewCount: 84,
+    stock: 45,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "2.02-inch HD edge-to-edge display smartwatch with 8 interchangeable silicone and ocean straps, wireless magnetic charging, and Bluetooth calling.",
+    specs: {
+      "Display": "2.02-inch HD IPS Screen",
+      "Included Straps": "8 Interchangeable (Ocean, Silicone, Alpine)",
+      "Calling": "Bluetooth Hands-Free Calling",
+      "Battery": "Up to 5 Days Standby",
+      "Charging": "Magnetic Wireless Charging Dock"
+    },
+    variants: [
+      { id: "v1", name: "Titanium Silver Case + 8 Straps", hex: "#D6DEE6", inStock: true },
+      { id: "v2", name: "Matte Black Case + 8 Straps", hex: "#1C1D1F", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15", "iPhone 14 Pro Max",
+      "Galaxy S24 Ultra", "Galaxy S24+", "Galaxy S24", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/y80-ultra-smartwatch.jpg",
+    gallery: [
+      "/assets/products/y80-ultra-smartwatch.jpg"
+    ]
+  },
+  {
+    id: "h2-anc-pro-tws",
+    title: "Pro 2 ANC True Wireless Earbuds",
+    titleBn: "প্রো ২ এএনসি ট্রু ওয়্যারলেস এয়ারবাডস",
+    category: "audio",
+    badge: "Active ANC",
+    price: 1190,
+    originalPrice: 1550,
+    rating: 4.8,
+    reviewCount: 112,
+    stock: 38,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "Compact high-grade white wireless earbuds with active noise reduction, transparency mode, wireless charging case, and auto-pairing.",
+    specs: {
+      "Audio": "High-Fidelity Dynamic Bass Driver",
+      "Noise Control": "Active Noise Reduction & Transparency",
+      "Battery": "Up to 24h Playtime with Case",
+      "Charging": "Lightning & MagSafe Wireless Support"
+    },
+    variants: [
+      { id: "v1", name: "Arctic White", hex: "#FFFFFF", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15", "iPhone 14 Pro Max",
+      "Galaxy S24 Ultra", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/h2-anc-pro-tws.jpg",
+    gallery: [
+      "/assets/products/h2-anc-pro-tws.jpg"
+    ]
+  },
+  {
+    id: "recrsi-4in1-65w-cable",
+    title: "RECRSI 65W 4-in-1 Universal Fast Cable",
+    titleBn: "রেকর্সি ৬৫ওয়াট ৪-ইন-১ ফাস্ট চার্জিং ক্যাবল",
+    category: "charging",
+    badge: "65W 4-in-1",
+    price: 420,
+    originalPrice: 480,
+    rating: 4.9,
+    reviewCount: 76,
+    stock: 60,
+    isDevelopmentSeed: true,
+    warranty: "6-Month Replacement Warranty",
+    description: "Universal 4-in-1 dual-head braided cable supporting USB-C to USB-C (65W) and Lightning PD (27W) for all modern smartphones and laptops.",
+    specs: {
+      "Max Output": "65W USB-C PD / 27W Lightning PD",
+      "Connectors": "USB-A & USB-C Input to Type-C & Lightning Output",
+      "Length": "1.2 Meters Braided",
+      "Durability": "Reinforced Zinc Alloy Connectors"
+    },
+    variants: [
+      { id: "v1", name: "Glacial Blue & Black Weave", hex: "#8EB8D8", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15", "iPhone 14 Pro Max",
+      "Galaxy S24 Ultra", "Galaxy S24+", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/recrsi-4in1-65w-cable.jpg",
+    gallery: [
+      "/assets/products/recrsi-4in1-65w-cable.jpg"
+    ]
+  },
+  {
+    id: "oraimo-or08-wireless-headset",
+    title: "Oraimo OR-08 Wireless Over-Ear Headset",
+    titleBn: "ওরাইমো ওআর-০৮ ওয়্যারলেস ওভার-ইয়ার হেডসেট",
+    category: "audio",
+    badge: "Born for Music",
+    price: 990,
+    originalPrice: 1250,
+    rating: 4.7,
+    reviewCount: 53,
+    stock: 24,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "Padded over-ear Bluetooth headset with rich bass response, adjustable ergonomic headband, tactile controls, and TF card slot.",
+    specs: {
+      "Drivers": "40mm Deep Bass Neodymium",
+      "Battery": "Up to 15 Hours Playback",
+      "Connectivity": "Bluetooth 5.1 & 3.5mm AUX Cable Support",
+      "Design": "Foldable Soft Protein Leather Ear Cups"
+    },
+    variants: [
+      { id: "v1", name: "Midnight Black & Silver", hex: "#22252A", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "Galaxy S24 Ultra", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/oraimo-or08-headset.jpg",
+    gallery: [
+      "/assets/products/oraimo-or08-headset.jpg"
+    ]
+  },
+  {
+    id: "sm-neckband-007",
+    title: "SM 007 Ultra-Long Battery Bluetooth Neckband",
+    titleBn: "এসএম ০০৭ আল্ট্রা-লং ব্যাটারি ব্লুটুথ নেকব্যান্ড",
+    category: "audio",
+    badge: "120H Standby",
+    price: 450,
+    originalPrice: 600,
+    rating: 4.6,
+    reviewCount: 91,
+    stock: 55,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "Lightweight silicone wireless neckband earphones with magnetic earbud tips, crisp calling mic, and extended battery endurance.",
+    specs: {
+      "Battery": "Extended High-Capacity Li-ion Battery",
+      "Earbuds": "Magnetic Anti-Tangle Lock",
+      "Microphone": "In-line Clear Voice Mic",
+      "Charging": "Fast USB-C Charging Port"
+    },
+    variants: [
+      { id: "v1", name: "Stealth Matte Black", hex: "#1A1A1A", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "Galaxy S24 Ultra", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/sm-neckband-007.jpg",
+    gallery: [
+      "/assets/products/sm-neckband-007.jpg"
+    ]
+  },
+  {
+    id: "remax-rc155a-120w-cable",
+    title: "REMAX RC-155a 120W Fast Charging Cable",
+    titleBn: "রিম্যাক্স আরসি-১৫৫এ ১২০ওয়াট ফাস্ট ক্যাবল",
+    category: "charging",
+    badge: "120W Fast",
+    price: 190,
+    originalPrice: 250,
+    rating: 4.8,
+    reviewCount: 138,
+    stock: 80,
+    isDevelopmentSeed: true,
+    warranty: "1-Month Replacement Warranty",
+    description: "Durable 1-meter high-current braided USB cable designed for rapid phone charging and swift data synchronization.",
+    specs: {
+      "Power": "Up to 120W Max Flash Charging",
+      "Length": "1.0 Meter (3.3ft)",
+      "Material": "High-Density Braided Nylon",
+      "Compatibility": "Type-C / Lightning / Micro-USB"
+    },
+    variants: [
+      { id: "v1", name: "Type-C to Type-C (Black)", hex: "#222222", inStock: true },
+      { id: "v2", name: "USB-A to Type-C (Blue)", hex: "#2E5B88", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "Galaxy S24 Ultra", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/recrsi-4in1-65w-cable.jpg",
+    gallery: [
+      "/assets/products/recrsi-4in1-65w-cable.jpg"
+    ]
+  },
+  {
+    id: "remax-rc155a-duo-bundle",
+    title: "REMAX RC-155a 120W Cable (2-Pack Value Deal)",
+    titleBn: "রিম্যাক্স ১২০ওয়াট ক্যাবল ২-প্যাক স্পেশাল ডিল",
+    category: "charging",
+    badge: "Save ৳30",
+    price: 350,
+    originalPrice: 500,
+    rating: 4.9,
+    reviewCount: 64,
+    stock: 40,
+    isDevelopmentSeed: true,
+    warranty: "1-Month Replacement Warranty",
+    description: "Twin pack of REMAX RC-155a 120W braided cables for home and office convenience at an unbeatable bundle price.",
+    specs: {
+      "Pack Count": "2 Full Cables Included",
+      "Rated Speed": "120W Fast Charge",
+      "Length": "1.0m Each"
+    },
+    variants: [
+      { id: "v1", name: "Dual Pack (2 Cables)", hex: "#1F2327", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "Galaxy S24 Ultra", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/recrsi-4in1-65w-cable.jpg",
+    gallery: [
+      "/assets/products/recrsi-4in1-65w-cable.jpg"
+    ]
+  },
+  {
+    id: "pink-glam-smartwatch",
+    title: "FitStyle Smartwatch (Rose Pink Edition)",
+    titleBn: "ফিটস্টাইল স্মার্টওয়াচ (রোজ পিংক এডিশন)",
+    category: "wearables",
+    badge: "Popular Gift",
+    price: 790,
+    originalPrice: 1100,
+    rating: 4.7,
+    reviewCount: 42,
+    stock: 25,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "Elegant rose pink smartwatch with soft liquid silicone strap, health activity tracker, call notifications, and HD touchscreen.",
+    specs: {
+      "Display": "1.85-inch Color Touchscreen",
+      "Strap": "Comfort Liquid Silicone (Pink)",
+      "Sensors": "Heart Rate & Step Tracker",
+      "Battery": "3-4 Days Active Use"
+    },
+    variants: [
+      { id: "v1", name: "Blush Pink Silicone", hex: "#E8A3B8", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "Galaxy S24 Ultra", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/y80-ultra-smartwatch.jpg",
+    gallery: [
+      "/assets/products/y80-ultra-smartwatch.jpg"
+    ]
+  },
+  {
+    id: "fighter-superbass-headset",
+    title: "Fighter Super-Bass Over-Ear Headset",
+    titleBn: "ফাইটার সুপার-বাস ওভার-ইয়ার হেডসেট",
+    category: "audio",
+    badge: "Deep Bass",
+    price: 550,
+    originalPrice: 800,
+    rating: 4.6,
+    reviewCount: 37,
+    stock: 30,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "Padded over-ear stereo headphones with reinforced bass chambers, flexible headband, and universal 3.5mm audio jack.",
+    specs: {
+      "Acoustics": "Super-Bass Tuned Diaphragm",
+      "Connector": "Gold-plated 3.5mm Audio Pin",
+      "Cord": "Tangle-resistant 1.2m Cable"
+    },
+    variants: [
+      { id: "v1", name: "Obsidian Black", hex: "#1A1A1A", inStock: true }
+    ],
+    compatibleWith: [
+      "Galaxy S24 Ultra", "Xiaomi 14 Ultra", "Pixel 8 Pro", "iPhone 15 Pro Max"
+    ],
+    image: "/assets/products/oraimo-or08-headset.jpg",
+    gallery: [
+      "/assets/products/oraimo-or08-headset.jpg"
+    ]
+  },
+  {
+    id: "q8-usb-callcenter-headset",
+    title: "Q8 USB PC Headset with Clear-Voice Mic",
+    titleBn: "কিউ৮ ইউএসবি হেডসেট উইথ ক্লিয়ার-ভয়েস মাইক",
+    category: "audio",
+    badge: "Work & Gaming",
+    price: 850,
+    originalPrice: 1200,
+    rating: 4.7,
+    reviewCount: 49,
+    stock: 22,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "Professional 40mm USB headset with flexible noise-filtering boom microphone, inline volume controls, and soft ear cushions for office calls and gaming.",
+    specs: {
+      "Driver": "40mm Clarity Drivers",
+      "Microphone": "Adjustable Noise-Cancelling Boom Mic",
+      "Interface": "USB-A Plug & Play",
+      "Cable": "2.0m Heavy-Duty Cord"
+    },
+    variants: [
+      { id: "v1", name: "Pro Black", hex: "#16181B", inStock: true }
+    ],
+    compatibleWith: [
+      "Galaxy S24 Ultra", "Xiaomi 14 Ultra", "Pixel 8 Pro"
+    ],
+    image: "/assets/products/oraimo-or08-headset.jpg",
+    gallery: [
+      "/assets/products/oraimo-or08-headset.jpg"
+    ]
+  },
+  {
+    id: "luminous-sa-rgb-headphones",
+    title: "Luminous SA-D02 Breathing LED Wireless Headphones",
+    titleBn: "লুমিনাস এসএ-ডি০২ এলইডি লাইট ওয়্যারলেস হেডফোন",
+    category: "audio",
+    badge: "RGB Light",
+    price: 790,
+    originalPrice: 1100,
+    rating: 4.7,
+    reviewCount: 31,
+    stock: 20,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "Stylish over-ear wireless headphones with decorative breathing LED light rings, TF card reader, FM tuner, and built-in handsfree mic.",
+    specs: {
+      "Lighting": "Multi-Color Breathing LED Rings",
+      "Playback": "Bluetooth 5.0, MicroSD Card, AUX",
+      "Battery": "Up to 8h Continuous Playtime"
+    },
+    variants: [
+      { id: "v1", name: "Cyber Black & Orange", hex: "#F26522", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "Galaxy S24 Ultra", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/products/oraimo-or08-headset.jpg",
+    gallery: [
+      "/assets/products/oraimo-or08-headset.jpg"
+    ]
+  },
+  {
+    id: "turbo-single-wall-charger",
+    title: "TurboCharge 20W USB Quick Wall Adapter",
+    titleBn: "টার্বোচার্জ ২০ওয়াট ইউএসবি কুইক চার্জার",
+    category: "charging",
+    badge: "20W Quick",
+    price: 250,
+    originalPrice: 350,
+    rating: 4.8,
+    reviewCount: 88,
+    stock: 75,
+    isDevelopmentSeed: true,
+    warranty: "1-Month Replacement Warranty",
+    description: "Compact two-pin wall power adapter with surge protection, intelligent current regulation, and fast device charging.",
+    specs: {
+      "Output": "20W Max Quick Charge",
+      "Pin Type": "Standard Bangladesh 2-Pin Round Plug",
+      "Safety": "Over-voltage and short-circuit protection"
+    },
+    variants: [
+      { id: "v1", name: "Glossy Arctic White", hex: "#FFFFFF", inStock: true }
+    ],
+    compatibleWith: [
+      "iPhone 15 Pro Max", "Galaxy S24 Ultra", "Pixel 8 Pro", "Xiaomi 14 Ultra"
+    ],
+    image: "/assets/cat-charging.jpg",
+    gallery: [
+      "/assets/cat-charging.jpg"
+    ]
+  },
+  {
+    id: "in-ear-bass-wired-earphones",
+    title: "Precision Bass In-Ear Wired Earphones with Mic",
+    titleBn: "প্রিসিশন বাস ইন-ইয়ার তারযুক্ত ইয়ারফোন",
+    category: "audio",
+    badge: "Everyday Pick",
+    price: 160,
+    originalPrice: 220,
+    rating: 4.5,
+    reviewCount: 65,
+    stock: 90,
+    isDevelopmentSeed: true,
+    warranty: "7-Day Replacement Warranty",
+    description: "Clear vocal in-ear earphones with comfortable silicone ear tips, tangle-resistant flat cable, and handsfree calling button.",
+    specs: {
+      "Connector": "3.5mm Stereo Audio Jack",
+      "Driver": "10mm High-Sensitivity Bass Diaphragm",
+      "Cable Length": "1.2 Meters"
+    },
+    variants: [
+      { id: "v1", name: "Glacial White", hex: "#FFFFFF", inStock: true },
+      { id: "v2", name: "Pitch Black", hex: "#111111", inStock: true }
+    ],
+    compatibleWith: [
+      "Galaxy S24 Ultra", "Xiaomi 14 Ultra", "Pixel 8 Pro", "iPhone 15 Pro Max"
+    ],
+    image: "/assets/products/sm-neckband-007.jpg",
+    gallery: [
+      "/assets/products/sm-neckband-007.jpg"
+    ]
   }
 ];
+
+export const FEATURED_BUNDLES = [
+  {
+    id: "bundle-everyday-power-audio",
+    title: "The Everyday Power & Audio Combo",
+    titleBn: "পাওয়ার ও অডিও অল-ইন-ওয়ান বান্ডিল",
+    subtitle: "Y80 Ultra Smartwatch (8 Straps) + Pro 2 ANC Wireless Earbuds",
+    subtitleBn: "ওয়াই ৮০ আল্ট্রা স্মার্টওয়াচ (৮টি স্ট্র্যাপ) + প্রো ২ এএনসি এয়ারবাডস",
+    badge: "Free Delivery Unlocked",
+    badgeBn: "ফ্রি ডেলিভারি আনলকড",
+    price: 2080,
+    originalPrice: 2800,
+    savings: 720,
+    freeDelivery: true,
+    image: "/assets/products/y80-ultra-smartwatch.jpg",
+    itemIds: ["y80-ultra-smartwatch", "h2-anc-pro-tws"],
+    itemsSummary: "Y80 Ultra Smartwatch (৳890) + Pro 2 ANC Earbuds (৳1,190) = ৳2,080"
+  },
+  {
+    id: "bundle-commuter-complete",
+    title: "The Commuter Complete Tech Pack",
+    titleBn: "কমিউটার কমপ্লিট টেক প্যাক",
+    subtitle: "Oraimo Wireless Headset + RECRSI 4-in-1 Cable + 20W Charger + REMAX Cable + Bass Earphones",
+    subtitleBn: "ওরাইমো হেডসেট + রেকর্সি ৪-ইন-১ ক্যাবল + ২০ওয়াট চার্জার + রিম্যাক্স ক্যাবল + ইয়ারফোন",
+    badge: "5-in-1 Setup",
+    badgeBn: "৫-ইন-১ সেটআপ",
+    price: 2050,
+    originalPrice: 2610,
+    savings: 560,
+    freeDelivery: true,
+    image: "/assets/products/recrsi-4in1-65w-cable.jpg",
+    itemIds: [
+      "oraimo-or08-wireless-headset", 
+      "recrsi-4in1-65w-cable", 
+      "turbo-single-wall-charger", 
+      "remax-rc155a-120w-cable", 
+      "in-ear-bass-wired-earphones"
+    ],
+    itemsSummary: "Oraimo Headset (৳990) + 4-in-1 Cable (৳420) + 20W Adapter (৳250) + REMAX Cable (৳190) + In-Ear Earphones (৳160) = ৳2,050"
+  },
+  {
+    id: "bundle-his-and-hers-wearables",
+    title: "His & Hers Smartwatch Pack",
+    titleBn: "হিজ অ্যান্ড হার্স স্মার্টওয়াচ প্যাক",
+    subtitle: "Y80 Ultra Smartwatch + FitStyle Rose Pink Watch + REMAX 2-Pack Cables",
+    subtitleBn: "ওয়াই ৮০ আল্ট্রা স্মার্টওয়াচ + ফিটস্টাইল রোজ পিংক ওয়াচ + রিম্যাক্স ২-প্যাক ক্যাবল",
+    badge: "Couples Special",
+    badgeBn: "কাপল স্পেশাল",
+    price: 2030,
+    originalPrice: 2600,
+    savings: 570,
+    freeDelivery: true,
+    image: "/assets/products/y80-ultra-smartwatch.jpg",
+    itemIds: ["y80-ultra-smartwatch", "pink-glam-smartwatch", "remax-rc155a-duo-bundle"],
+    itemsSummary: "Y80 Ultra (৳890) + Pink Watch (৳790) + 2x REMAX Cables (৳350) = ৳2,030"
+  }
+];
+

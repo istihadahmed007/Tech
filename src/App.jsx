@@ -14,6 +14,7 @@ import WishlistModal from './components/WishlistModal';
 import AccountModal from './components/AccountModal';
 import AdminModal from './components/AdminModal';
 import SupportModal from './components/SupportModal';
+import BundleDeals from './components/BundleDeals';
 import Footer from './components/Footer';
 
 import { INITIAL_PRODUCTS } from './data/catalog';
@@ -237,6 +238,47 @@ export default function App() {
     });
 
     showToast(`Added ${product.title} to bag`);
+  };
+
+  const handleAddBundle = (bundle) => {
+    if (!bundle?.itemIds || !Array.isArray(bundle.itemIds)) return;
+
+    setCart((prevCart) => {
+      let nextCart = [...prevCart];
+      for (const itemId of bundle.itemIds) {
+        const product = products.find(p => p.id === itemId) || INITIAL_PRODUCTS.find(p => p.id === itemId);
+        if (!product) continue;
+
+        const defaultVariant = product.variants ? product.variants[0] : null;
+        const variantId = defaultVariant?.id || 'default';
+        const existingIdx = nextCart.findIndex(
+          item => item.id === product.id && (item.variant?.id || 'default') === variantId
+        );
+
+        if (existingIdx > -1) {
+          nextCart[existingIdx] = {
+            ...nextCart[existingIdx],
+            quantity: nextCart[existingIdx].quantity + 1
+          };
+        } else {
+          nextCart.push({
+            id: product.id,
+            sku: product.sku || product.id,
+            title: product.title,
+            titleBn: product.titleBn,
+            price: product.price,
+            image: product.image,
+            category: product.category,
+            variant: defaultVariant,
+            quantity: 1
+          });
+        }
+      }
+      return nextCart;
+    });
+
+    showToast(lang === 'bn' ? '🎉 বান্ডিল যুক্ত হয়েছে! ফ্রি ডেলিভারি আনলকড!' : '🎉 Bundle added! Free Delivery Unlocked!');
+    setActiveModal('cart');
   };
 
   const handleUpdateQuantity = (productId, variantId, newQuantity) => {
@@ -478,6 +520,13 @@ export default function App() {
             scrollToSection('products-section');
           }}
           lang={lang}
+        />
+
+        {/* Smart Free Delivery Combos (৳2,000+ Threshold Deals) */}
+        <BundleDeals
+          onAddBundle={handleAddBundle}
+          lang={lang}
+          t={t}
         />
 
         {/* Product Collection Grid with Filtering & Search */}
