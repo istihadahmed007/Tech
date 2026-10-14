@@ -140,6 +140,17 @@ test('2. Unauthorized users cannot edit products or read another customer orders
     passwordHash: hashPassword('secret123')
   });
 
+  const prod2Id = `test_prod_2_${Date.now()}`;
+  createProduct({
+    id: prod2Id,
+    sku: `PROD2-${Date.now()}`,
+    title: 'Privacy Test Case',
+    category: 'cases',
+    price: 2450,
+    stock: 25,
+    status: 'published'
+  });
+
   const orderRes = await invokeApi('POST', '/api/orders', {
     customer: {
       name: 'Customer A',
@@ -147,7 +158,7 @@ test('2. Unauthorized users cannot edit products or read another customer orders
       address: 'House 5, Road 2, Gulshan',
       division: 'Dhaka'
     },
-    items: [{ id: 'aura-frost-magsafe-case', quantity: 1 }],
+    items: [{ id: prod2Id, quantity: 1 }],
     paymentMethod: 'cod'
   });
 
@@ -179,10 +190,21 @@ test('2. Unauthorized users cannot edit products or read another customer orders
 });
 
 test('3. Checkout uses server prices and rejects invalid quantities', async () => {
+  const prod3Id = `test_prod_3_${Date.now()}`;
+  const realProd = createProduct({
+    id: prod3Id,
+    sku: `PROD3-${Date.now()}`,
+    title: 'Tamper Test Case',
+    category: 'cases',
+    price: 2450,
+    stock: 25,
+    status: 'published'
+  });
+
   // Reject negative quantity
   const negativeQty = await invokeApi('POST', '/api/orders', {
     customer: { name: 'Test', phone: '01712345678', address: 'Dhaka' },
-    items: [{ id: 'aura-frost-magsafe-case', quantity: -3 }],
+    items: [{ id: prod3Id, quantity: -3 }],
     paymentMethod: 'cod'
   });
   assert.equal(negativeQty.status, 400);
@@ -190,16 +212,15 @@ test('3. Checkout uses server prices and rejects invalid quantities', async () =
   // Reject zero quantity
   const zeroQty = await invokeApi('POST', '/api/orders', {
     customer: { name: 'Test', phone: '01712345678', address: 'Dhaka' },
-    items: [{ id: 'aura-frost-magsafe-case', quantity: 0 }],
+    items: [{ id: prod3Id, quantity: 0 }],
     paymentMethod: 'cod'
   });
   assert.equal(zeroQty.status, 400);
 
   // Client tampering with price: server recalculates canonical database price
-  const realProd = getProductById('aura-frost-magsafe-case');
   const tamperedOrder = await invokeApi('POST', '/api/orders', {
     customer: { name: 'Price Tamperer', phone: '01712345678', address: 'Banani, Dhaka' },
-    items: [{ id: 'aura-frost-magsafe-case', quantity: 1, price: 50 }], // Tampered 50 vs real ~2450
+    items: [{ id: prod3Id, quantity: 1, price: 50 }], // Tampered 50 vs real ~2450
     paymentMethod: 'cod'
   });
 
@@ -246,10 +267,21 @@ test('4. Concurrent orders cannot oversell limited stock', () => {
 
 test('5. Duplicate checkout requests and payment notifications are idempotent', async () => {
   const idempKey = `idemp_unique_${Date.now()}`;
+  const prodId = `idemp_prod_${Date.now()}`;
+  createProduct({
+    id: prodId,
+    sku: `IDEMP-${Date.now()}`,
+    title: 'Idempotency Test Item',
+    category: 'cases',
+    price: 2450,
+    stock: 50,
+    status: 'published'
+  });
+
   const payload = {
     idempotencyKey: idempKey,
     customer: { name: 'Idempotency Tester', phone: '01788888888', address: 'Mirpur, Dhaka' },
-    items: [{ id: 'aura-frost-magsafe-case', quantity: 1 }],
+    items: [{ id: prodId, quantity: 1 }],
     paymentMethod: 'cod'
   };
 
@@ -266,14 +298,14 @@ test('5. Duplicate checkout requests and payment notifications are idempotent', 
   // Idempotent Payment Finalization: Calling finalizeOrderPayment multiple times
   const onlineOrder = createOrderWithReservation({
     customer: { name: 'Payment Tester', phone: '01799999999', division: 'Dhaka', address: 'Uttara' },
-    items: [{ id: 'aura-frost-magsafe-case', quantity: 1, price: 2450, title: 'Case' }],
+    items: [{ id: prodId, quantity: 1, price: 2450, title: 'Case' }],
     subtotal: 2450,
     deliveryFee: 0,
     total: 2450,
     paymentMethod: 'online'
   });
 
-  const stockBefore = getProductById('aura-frost-magsafe-case').stock;
+  const stockBefore = getProductById(prodId).stock;
 
   // First capture notification
   const pay1 = finalizeOrderPayment({
@@ -282,7 +314,7 @@ test('5. Duplicate checkout requests and payment notifications are idempotent', 
     transactionId: 'TXN_TEST_101'
   });
   assert.equal(pay1.paymentStatus, 'paid');
-  const stockAfter1 = getProductById('aura-frost-magsafe-case').stock;
+  const stockAfter1 = getProductById(prodId).stock;
   assert.equal(stockAfter1, stockBefore - 1);
 
   // Duplicate webhook / verification notification
@@ -292,7 +324,7 @@ test('5. Duplicate checkout requests and payment notifications are idempotent', 
     transactionId: 'TXN_TEST_101'
   });
   assert.equal(pay2.paymentStatus, 'paid');
-  const stockAfter2 = getProductById('aura-frost-magsafe-case').stock;
+  const stockAfter2 = getProductById(prodId).stock;
   assert.equal(stockAfter2, stockAfter1, 'Stock must NOT be decremented twice on duplicate notification');
 });
 

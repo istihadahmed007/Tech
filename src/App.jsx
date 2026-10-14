@@ -438,11 +438,20 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="container flex-grow pt-4">
-        {/* Static, Responsive Glacial Hero Section (No 3D / No Autoplay Motion) */}
+        {/* Hero Section with Interactive Story Tabs (Audio, Cases, Charging, Power) */}
         <Hero
           onShopClick={() => scrollToSection('products-section')}
           onFindPhoneClick={() => scrollToSection('compatibility-finder')}
+          onSelectCategory={(catId) => {
+            setSelectedCategory(catId);
+            scrollToSection('products-section');
+          }}
+          onSelectPhone={(phone) => {
+            setSelectedPhone(phone);
+            scrollToSection('products-section');
+          }}
           t={t}
+          lang={lang}
           selectedCategory={selectedCategory}
         />
 
@@ -457,13 +466,18 @@ export default function App() {
           t={t}
         />
 
-        {/* Category Collections Strip */}
+        {/* Category Collections Strip: The Everyday Edit */}
         <CategoryNav
           selectedCategory={selectedCategory}
           onSelectCategory={(catId) => {
             setSelectedCategory(catId);
             scrollToSection('products-section');
           }}
+          onShopAll={() => {
+            setSelectedCategory(null);
+            scrollToSection('products-section');
+          }}
+          lang={lang}
         />
 
         {/* Product Collection Grid with Filtering & Search */}

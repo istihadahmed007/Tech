@@ -1,129 +1,288 @@
-import React, { useState } from 'react';
-import { ChevronRight, Truck, Sparkles, ShieldCheck, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronRight, Smartphone, Pause, Play, ChevronDown } from 'lucide-react';
+import { BRANDS_AND_MODELS } from '../data/catalog';
 
-export default function Hero({ onShopClick, onFindPhoneClick, t = {}, selectedCategory = null }) {
+export default function Hero({ 
+  onShopClick, 
+  onFindPhoneClick, 
+  onSelectCategory,
+  onSelectPhone,
+  t = {}, 
+  lang = 'en' 
+}) {
+  // Available slides corresponding directly to the three reference designs
+  const SLIDES = [
+    {
+      id: 'cases',
+      tabLabel: 'Cases',
+      eyebrow: 'MADE FOR YOUR PHONE',
+      title: 'Your phone.\nYour perfect fit.',
+      titleBn: 'আপনার ফোন।\nআপনার পারফেক্ট ফিট।',
+      subtitle: 'Discover cases and essentials that go with you.',
+      subtitleBn: 'আপনার ডিভাইসের সাথে মানানসই সেরা কভার ও অ্যাক্সেসরিজ খুঁজুন।',
+      hasInlineForm: true,
+      image: '/assets/hero-phone-cases-fit.jpg',
+      imageAlt: 'Sleek smartphone, light-blue protective case, and MagSafe battery pack'
+    },
+    {
+      id: 'audio',
+      tabLabel: 'Audio',
+      eyebrow: 'THE AUDIO COLLECTION',
+      title: 'Better sound.\nBeautifully simple.',
+      titleBn: 'উন্নত সাউন্ড।\nঅনবদ্য সরলতা।',
+      subtitle: 'Discover the audio essentials for your everyday.',
+      subtitleBn: 'প্রতিদিনের ক্লিয়ার সাউন্ড ও প্রিমিয়াম অডিও গিয়ার সংগ্রহ।',
+      hasInlineForm: false,
+      ctaText: 'Explore audio',
+      ctaTextBn: 'অডিও কালেকশন দেখুন',
+      onCtaClick: () => onSelectCategory && onSelectCategory('audio'),
+      image: '/assets/hero-audio-headphones.jpg',
+      imageAlt: 'Premium silver over-ear headphones resting on a circular glass pedestal'
+    },
+    {
+      id: 'charging',
+      tabLabel: 'Charging',
+      eyebrow: 'EVERYDAY ESSENTIALS',
+      title: 'Small upgrades.\nEveryday better.',
+      titleBn: 'ছোট পরিবর্তন।\nপ্রতিদিনের শ্রেষ্ঠত্ব।',
+      subtitle: 'Cases, sound and power. Beautifully considered.',
+      subtitleBn: 'কেস, সাউন্ড ও পাওয়ার—প্রতিদিনের জন্য চিন্তাশীলভাবে বাছাইকৃত।',
+      hasInlineForm: false,
+      ctaText: 'Shop accessories',
+      ctaTextBn: 'সব প্রোডাক্ট দেখুন',
+      onCtaClick: onShopClick,
+      secondaryText: 'Find my phone',
+      secondaryTextBn: 'আমার ফোন খুঁজুন',
+      onSecondaryClick: onFindPhoneClick,
+      image: '/assets/hero-products-showcase.jpg',
+      imageAlt: 'Curated phone accessories including silicone case, wireless earbuds, and charger'
+    },
+    {
+      id: 'power',
+      tabLabel: 'Power',
+      eyebrow: 'PORTABLE ENERGY',
+      title: 'Power your day.\nAnywhere you go.',
+      titleBn: 'আপনার দিন হোক শক্তিশালী।\nসব সময়, সব স্থানে।',
+      subtitle: 'High-speed GaN chargers and ultra-slim magnetic battery packs.',
+      subtitleBn: 'দ্রুততম GaN চার্জার এবং স্লিম ম্যাগনেটিক পাওয়ার ব্যাংক।',
+      hasInlineForm: false,
+      ctaText: 'Explore power',
+      ctaTextBn: 'পাওয়ার ব্যাংক দেখুন',
+      onCtaClick: () => onSelectCategory && onSelectCategory('powerbanks'),
+      image: '/assets/hero-products-showcase.jpg',
+      imageAlt: 'Fast charging essentials and power accessories'
+    }
+  ];
+
+  // Active slide index (defaulting to slide 0: Cases / Made For Your Phone - Image 1)
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
 
-  // Internationalized customer-facing text with strict defaults matching design spec
-  const title = t?.heroTitle || "The right accessories. For your phone.";
-  const subtitle = t?.heroSub || "Discover cases, charging essentials and audio for everyday use.";
-  const findButtonLabel = t?.findMyAccessories || "Find my accessories";
-  const shopButtonLabel = t?.shopAll || "Shop all";
+  // Inline form state for Slide 0 (Cases / Fit)
+  const [activeBrand, setActiveBrand] = useState('Apple');
+  const [activeModel, setActiveModel] = useState('iPhone 15 Pro');
+
+  const currentSlide = SLIDES[activeSlideIndex];
+  const brandModels = BRANDS_AND_MODELS.find(b => b.brand === activeBrand)?.models || [];
+
+  // Handle inline form submit on Slide 0
+  const handleInlineFormSubmit = (e) => {
+    e.preventDefault();
+    if (activeModel && onSelectPhone) {
+      onSelectPhone(activeModel);
+    }
+    if (onShopClick) {
+      onShopClick();
+    }
+  };
+
+  // Auto-rotation timer (every 7.5 seconds when not paused)
+  useEffect(() => {
+    if (isPaused) return;
+
+    const timer = setInterval(() => {
+      setActiveSlideIndex(prev => (prev + 1) % SLIDES.length);
+    }, 7500);
+
+    return () => clearInterval(timer);
+  }, [isPaused, SLIDES.length]);
 
   return (
-    <section className="hero-section" aria-label="Hero Section">
-      <div className="hero-container">
-        <div className="hero-grid">
-          {/* Left Column (Desktop 45% / Mobile 1st): Clean Typography & Action Controls */}
-          <div className="hero-content">
-            {/* Curated Collection Badge */}
-            <div className="hero-badge">
-              <span className="hero-badge-dot" aria-hidden="true" />
-              <span className="hero-badge-text">
-                {t?.brandName || "Accessories"} • Bangladesh
-              </span>
-            </div>
+    <section className="relative w-full max-w-[1320px] mx-auto mb-8 sm:mb-12 overflow-hidden rounded-3xl bg-gradient-to-br from-[#EAF5FF] via-[#E4F2FD] to-[#EDF6FF] border border-[#DCE7F0] shadow-sm">
+      {/* Background Specular Ambient Glow */}
+      <div 
+        className="absolute -top-32 -right-32 w-96 h-96 rounded-full pointer-events-none opacity-40 blur-3xl"
+        style={{ background: 'radial-gradient(circle, #C8E3FC 0%, rgba(200, 227, 252, 0) 70%)' }}
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 px-6 sm:px-12 lg:px-16 pt-8 sm:pt-12 pb-16 lg:pb-14">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          {/* Left Column: Typography, Eyebrow & Controls */}
+          <div className="lg:col-span-5 flex flex-col items-start z-10">
+            {/* Eyebrow Pill / Label */}
+            <span className="text-[11px] font-bold tracking-[0.14em] text-[#52677B] uppercase mb-3.5">
+              {currentSlide.eyebrow}
+            </span>
 
             {/* Main Headline */}
-            <h1 className="hero-title">
-              {title}
+            <h1 className="text-4xl sm:text-5xl lg:text-[58px] font-extrabold text-[#10263D] tracking-tight leading-[1.08] mb-3.5 whitespace-pre-line">
+              {lang === 'bn' && currentSlide.titleBn ? currentSlide.titleBn : currentSlide.title}
             </h1>
 
-            {/* Supporting Sentence */}
-            <p className="hero-subtitle">
-              {subtitle}
+            {/* Subtitle */}
+            <p className="text-sm sm:text-base lg:text-[17px] text-[#52677B] leading-relaxed mb-6 max-w-md">
+              {lang === 'bn' && currentSlide.subtitleBn ? currentSlide.subtitleBn : currentSlide.subtitle}
             </p>
 
-            {/* Call-to-Action Buttons */}
-            <div className="hero-actions">
-              {/* Primary Button: Find my accessories -> Compatibility Finder */}
-              <button
-                type="button"
-                onClick={onFindPhoneClick}
-                className="hero-btn-primary"
-                id="hero-find-accessories-btn"
-                aria-label={findButtonLabel}
-              >
-                <span>{findButtonLabel}</span>
-                <ChevronRight size={17} className="stroke-[2.5]" aria-hidden="true" />
-              </button>
-
-              {/* Secondary Button: Shop all -> Product Collection */}
-              <button
-                type="button"
-                onClick={onShopClick}
-                className="hero-btn-secondary group"
-                id="hero-shop-all-btn"
-                aria-label={shopButtonLabel}
-              >
-                <span>{shopButtonLabel}</span>
-                <ChevronRight 
-                  size={17} 
-                  className="stroke-[2.5] hero-btn-secondary-icon group-hover:translate-x-0.5" 
-                  aria-hidden="true" 
-                />
-              </button>
-            </div>
-
-            {/* Honest Store Trust Indicators (Backed by real store policies) */}
-            <div className="hero-trust-bar">
-              <div className="hero-trust-item">
-                <Truck size={15} className="text-[#145CFF]" aria-hidden="true" />
-                <span>Courier Delivery (৳60 / ৳120)</span>
-              </div>
-              <span className="hero-trust-divider" aria-hidden="true">•</span>
-              <div className="hero-trust-item">
-                <Sparkles size={15} className="text-[#145CFF]" aria-hidden="true" />
-                <span>Free Delivery on ৳2,000+</span>
-              </div>
-              <span className="hero-trust-divider" aria-hidden="true">•</span>
-              <div className="hero-trust-item">
-                <ShieldCheck size={15} className="text-[#145CFF]" aria-hidden="true" />
-                <span>7-Day Return Policy</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column (Desktop 55% / Mobile 2nd): Polished Static Product Composition */}
-          <div className="hero-visual-wrapper">
-            <div className="hero-visual-card">
-              {/* Reserved Aspect-Ratio Fallback Skeleton (avoids layout shift) */}
-              {!imageLoaded && !imageError && (
-                <div 
-                  className="hero-visual-skeleton" 
-                  aria-hidden="true"
-                />
-              )}
-
-              {/* Error fallback occupying same reserved space */}
-              {imageError && (
-                <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-[#F8FCFF]">
-                  <AlertCircle size={32} className="text-[#145CFF] mb-2 opacity-80" />
-                  <p className="text-sm font-semibold text-[#10263D]">Accessories Lineup</p>
-                  <p className="text-xs text-[#52677B] mt-1">Cases • Chargers • Audio</p>
+            {/* Action Area: Either Inline Phone Selector (Image 1) OR Action Buttons (Images 2 & 3) */}
+            {currentSlide.hasInlineForm ? (
+              /* Inline Phone Selector Form (Exact match for Image 1) */
+              <form onSubmit={handleInlineFormSubmit} className="w-full max-w-sm space-y-3.5">
+                {/* Brand Selector */}
+                <div>
+                  <label htmlFor="hero-phone-brand" className="block text-xs font-semibold text-[#10263D] mb-1.5">
+                    Phone brand
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="hero-phone-brand"
+                      value={activeBrand}
+                      onChange={(e) => {
+                        setActiveBrand(e.target.value);
+                        const m = BRANDS_AND_MODELS.find(b => b.brand === e.target.value)?.models || [];
+                        if (m.length > 0) setActiveModel(m[0]);
+                      }}
+                      className="w-full bg-white text-xs sm:text-sm font-medium text-[#10263D] rounded-xl border border-[#DCE7F0] px-3.5 py-2.5 outline-none focus:border-[#145CFF] shadow-2xs appearance-none cursor-pointer pr-8"
+                    >
+                      {BRANDS_AND_MODELS.map(b => (
+                        <option key={b.brand} value={b.brand}>{b.brand}</option>
+                      ))}
+                    </select>
+                    <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  </div>
                 </div>
-              )}
 
-              {/* One Primary Static Visual Asset (No pause controls, no screenshots, no 3D) */}
-              {!imageError && (
-                <img
-                  src="/assets/hero-products-showcase.jpg"
-                  alt="Curated mobile phone accessories including protective cases, fast chargers, and wireless earbuds"
-                  className={`hero-visual-img ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                  width={1200}
-                  height={896}
-                  loading="eager"
-                  fetchPriority="high"
-                  onLoad={() => setImageLoaded(true)}
-                  onError={() => {
-                    setImageLoaded(true);
-                    setImageError(true);
-                  }}
-                />
-              )}
+                {/* Model Selector */}
+                <div>
+                  <label htmlFor="hero-phone-model" className="block text-xs font-semibold text-[#10263D] mb-1.5">
+                    Phone model
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="hero-phone-model"
+                      value={activeModel}
+                      onChange={(e) => setActiveModel(e.target.value)}
+                      className="w-full bg-white text-xs sm:text-sm font-medium text-[#10263D] rounded-xl border border-[#DCE7F0] px-3.5 py-2.5 outline-none focus:border-[#145CFF] shadow-2xs appearance-none cursor-pointer pr-8"
+                    >
+                      {brandModels.map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
+                    <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Submit & Browse Links */}
+                <div className="pt-1 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                  <button
+                    type="submit"
+                    className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.98] text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all"
+                  >
+                    <span>{lang === 'bn' ? 'আমার অ্যাক্সেসরিজ খুঁজুন' : 'Find my accessories'}</span>
+                    <ChevronRight size={16} className="stroke-[2.5]" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={onShopClick}
+                    className="text-xs sm:text-sm font-semibold text-[#145CFF] hover:underline flex items-center gap-1 pl-1 pt-1 sm:pt-0"
+                  >
+                    <span>{lang === 'bn' ? 'সব অ্যাক্সেসরিজ ব্রাউজ করুন' : 'Browse all accessories'}</span>
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* Action Buttons (Exact match for Images 2 & 3) */
+              <div className="flex flex-wrap items-center gap-4">
+                <button
+                  type="button"
+                  onClick={currentSlide.onCtaClick}
+                  className="px-6 py-3 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.98] text-white font-semibold text-sm sm:text-base flex items-center gap-2 shadow-sm transition-all"
+                >
+                  <span>{lang === 'bn' && currentSlide.ctaTextBn ? currentSlide.ctaTextBn : currentSlide.ctaText}</span>
+                  <ChevronRight size={17} className="stroke-[2.5]" />
+                </button>
+
+                {currentSlide.secondaryText && (
+                  <button
+                    type="button"
+                    onClick={currentSlide.onSecondaryClick}
+                    className="text-sm sm:text-base font-semibold text-[#145CFF] hover:underline flex items-center gap-1 pl-1"
+                  >
+                    <span>{lang === 'bn' && currentSlide.secondaryTextBn ? currentSlide.secondaryTextBn : currentSlide.secondaryText}</span>
+                    <ChevronRight size={16} />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Clean Studio Product Showcase Asset */}
+          <div className="lg:col-span-7 flex items-center justify-center relative">
+            <div className="relative w-full aspect-[4/3] max-w-[580px] flex items-center justify-center">
+              <img
+                key={currentSlide.image}
+                src={currentSlide.image}
+                alt={currentSlide.imageAlt}
+                className={`w-full h-full object-contain drop-shadow-md transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-90'}`}
+                loading="eager"
+                onLoad={() => setImageLoaded(true)}
+              />
             </div>
           </div>
+        </div>
+
+        {/* Bottom Bar: Interactive Category Tabs + Pause/Play Button (Exact match for Image 2) */}
+        <div className="mt-8 pt-4 border-t border-[#DCE7F0]/60 flex flex-wrap items-center justify-end gap-5 text-xs sm:text-sm">
+          {/* Tab buttons */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            {SLIDES.map((slide, idx) => {
+              const isActive = idx === activeSlideIndex;
+              return (
+                <button
+                  key={slide.id}
+                  onClick={() => {
+                    setActiveSlideIndex(idx);
+                    setIsPaused(true); // User click pauses rotation for deliberate viewing
+                  }}
+                  className={`pb-1 transition-all font-semibold relative ${
+                    isActive 
+                      ? 'text-[#145CFF]' 
+                      : 'text-[#52677B] hover:text-[#10263D]'
+                  }`}
+                >
+                  <span>{slide.tabLabel}</span>
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#145CFF] rounded-full" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Pause / Play Control */}
+          <button
+            onClick={() => setIsPaused(prev => !prev)}
+            className="p-1.5 rounded-full text-[#52677B] hover:text-[#10263D] hover:bg-white/80 transition-colors"
+            title={isPaused ? "Play auto-rotation" : "Pause auto-rotation"}
+            aria-label={isPaused ? "Play slide transition" : "Pause slide transition"}
+          >
+            {isPaused ? <Play size={15} /> : <Pause size={15} />}
+          </button>
         </div>
       </div>
     </section>
