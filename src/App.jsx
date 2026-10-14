@@ -466,7 +466,28 @@ export default function App() {
           }}
         />
 
-        {/* Value Proposition Highlights */}
+        {/* Product Collection Grid with Filtering & Search */}
+        <ProductGrid
+          products={products}
+          currencySymbol="৳"
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          selectedPhone={selectedPhone}
+          onClearPhoneFilter={() => setSelectedPhone(null)}
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery('')}
+          onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+          onOpenDetail={(p) => {
+            setSelectedProduct(p);
+            setActiveModal('detail');
+          }}
+          wishlistIds={wishlistIds}
+          onToggleWishlist={handleToggleWishlist}
+          t={t}
+          lang={lang}
+        />
+
+        {/* Value Proposition Highlights: Delivery, Warranty & Support */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 my-8">
           <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
@@ -508,27 +529,6 @@ export default function App() {
             </div>
           </div>
         </div>
-
-        {/* Product Collection Grid with Filtering & Search */}
-        <ProductGrid
-          products={products}
-          currencySymbol="৳"
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          selectedPhone={selectedPhone}
-          onClearPhoneFilter={() => setSelectedPhone(null)}
-          searchQuery={searchQuery}
-          onClearSearch={() => setSearchQuery('')}
-          onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-          onOpenDetail={(p) => {
-            setSelectedProduct(p);
-            setActiveModal('detail');
-          }}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={handleToggleWishlist}
-          t={t}
-          lang={lang}
-        />
       </main>
 
       {/* Modals & Flow Components */}

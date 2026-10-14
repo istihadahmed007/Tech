@@ -1,12 +1,13 @@
 export const translations = {
   en: {
     brandName: "Accessories",
-    tagline: "Small upgrades. Everyday better.",
-    heroSub: "Cases, sound and power for your everyday.",
-    shopAccessories: "Shop accessories",
-    findMyPhone: "Find my phone",
-    motionPause: "Pause motion",
-    motionResume: "Resume motion",
+    tagline: "The right accessories. For your phone.",
+    heroTitle: "The right accessories. For your phone.",
+    heroSub: "Discover cases, charging essentials and audio for everyday use.",
+    findMyAccessories: "Find my accessories",
+    shopAll: "Shop all",
+    shopAccessories: "Shop all",
+    findMyPhone: "Find my accessories",
     
     // Nav
     navShop: "Shop",
@@ -110,12 +111,13 @@ export const translations = {
   },
   bn: {
     brandName: "অ্যাক্সেসরিজ",
-    tagline: "ছোট পরিবর্তন। প্রতিদিনের শ্রেষ্ঠত্ব।",
-    heroSub: "কেস, অডিও ও পাওয়ার—আপনার নিত্যদিনের সঙ্গী।",
-    shopAccessories: "প্রোডাক্ট দেখুন",
-    findMyPhone: "আমার ফোন খুঁজুন",
-    motionPause: "মোশন থামান",
-    motionResume: "মোশন চালান",
+    tagline: "আপনার ফোনের জন্য সঠিক অ্যাক্সেসরিজ।",
+    heroTitle: "আপনার ফোনের জন্য সঠিক অ্যাক্সেসরিজ।",
+    heroSub: "প্রতিদিনের ব্যবহারের জন্য কেস, চার্জার এবং অডিও খুঁজুন।",
+    findMyAccessories: "আমার অ্যাক্সেসরিজ খুঁজুন",
+    shopAll: "সবগুলো দেখুন",
+    shopAccessories: "সবগুলো দেখুন",
+    findMyPhone: "আমার অ্যাক্সেসরিজ খুঁজুন",
     
     // Nav
     navShop: "শপ",

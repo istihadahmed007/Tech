@@ -11,7 +11,8 @@ import {
   Menu,
   ShieldCheck,
   Lock,
-  LogOut
+  LogOut,
+  Package
 } from 'lucide-react';
 
 export default function Header({ 
