@@ -2,6 +2,7 @@ import { PAYMENT_STATUS } from './types.js';
 
 export class BkashProvider {
   constructor(config = {}) {
+    this.name = 'bkash';
     this.appKey = config.appKey || process.env.BKASH_APP_KEY;
     this.appSecret = config.appSecret || process.env.BKASH_APP_SECRET;
     this.username = config.username || process.env.BKASH_USERNAME;
@@ -58,7 +59,7 @@ export class BkashProvider {
         mode: '0011',
         payerReference: order.customer.phone,
         callbackURL: `${host}/api/payment/callback/bkash?orderId=${order.id}`,
-        amount: order.total.toFixed(2),
+        amount: Number(order.total).toFixed(2),
         currency: 'BDT',
         intent: 'sale',
         merchantInvoiceNumber: order.id
@@ -96,6 +97,18 @@ export class BkashProvider {
     if (!this.isConfigured()) {
       throw new Error('bKash credentials not configured');
     }
+    if (!paymentId) {
+      throw new Error('paymentId is required for bKash verification');
+    }
+
+    // First attempt to execute if not already captured
+    let execData = null;
+    try {
+      execData = await this.executePayment(paymentId);
+    } catch (e) {
+      // If already executed or status check required, proceed to status query
+    }
+
     const token = await this.grantToken();
     const res = await fetch(`${this.baseUrl}/tokenized/checkout/payment/status`, {
       method: 'POST',
@@ -108,24 +121,25 @@ export class BkashProvider {
     });
 
     const data = await res.json();
-    const isCompleted = data.transactionStatus === 'Completed';
-    const amountMatches = Math.abs(parseFloat(data.amount) - order.total) < 0.01;
-    const invoiceMatches = data.merchantInvoiceNumber === order.id;
+    const isCompleted = (data.transactionStatus === 'Completed') || (execData && execData.transactionStatus === 'Completed');
+    const amountVal = parseFloat(data.amount || execData?.amount || '0');
+    const amountMatches = Math.abs(amountVal - Number(order.total)) < 0.01;
+    const invoiceMatches = (data.merchantInvoiceNumber === order.id) || (execData && execData.merchantInvoiceNumber === order.id);
 
     if (isCompleted && amountMatches && invoiceMatches) {
       return {
         verified: true,
         status: PAYMENT_STATUS.PAID,
-        transactionId: data.trxID,
-        paymentId: data.paymentID,
-        paymentTimestamp: data.paymentExecuteTime,
-        meta: data
+        transactionId: data.trxID || execData?.trxID || `BKASH_${paymentId}`,
+        paymentId: data.paymentID || paymentId,
+        paymentTimestamp: data.paymentExecuteTime || new Date().toISOString(),
+        meta: { ...execData, ...data }
       };
     } else {
       return {
         verified: false,
         status: PAYMENT_STATUS.FAILED,
-        reason: data.statusMessage || 'bKash verification failed'
+        reason: data.statusMessage || execData?.statusMessage || 'bKash verification failed'
       };
     }
   }

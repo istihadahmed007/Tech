@@ -116,9 +116,17 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Data store
+# Data store & SQLite
 data-store.json
+data/*.db
+data/*.db-*
+!data/.gitkeep
+
+# User media uploads
+public/uploads/*
+!public/uploads/.gitkeep
 
 # OS
 .DS_Store
 Thumbs.db
+

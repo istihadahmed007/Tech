@@ -7,7 +7,9 @@ import {
   Lock, 
   AlertCircle, 
   ArrowRight,
-  Info
+  Info,
+  Tag,
+  Check
 } from 'lucide-react';
 import { calculateOrderTotals } from '../utils/pricing';
 
@@ -15,11 +17,12 @@ export default function CheckoutModal({
   isOpen, 
   onClose, 
   cart, 
+  currentUser,
   onOrderSuccess,
   onInitiateOnlinePayment,
   currencySymbol = "৳",
-  t,
-  lang 
+  t = {},
+  lang = 'en'
 }) {
   const closeButtonRef = useRef(null);
 
@@ -32,11 +35,30 @@ export default function CheckoutModal({
     notes: ''
   });
 
-  const [paymentMethod, setPaymentMethod] = useState('cod'); // Default to COD demo mode
+  const [paymentMethod, setPaymentMethod] = useState('cod');
   const [onlineAvailable, setOnlineAvailable] = useState(false);
+  const [activeGatewayName, setActiveGatewayName] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [promoDiscount, setPromoDiscount] = useState(0);
   const [idempotencyKey] = useState(() => 'idemp_' + Math.random().toString(36).substring(2, 15) + Date.now());
+
+  // Auto-populate customer from logged in user profile
+  useEffect(() => {
+    if (currentUser) {
+      const defaultAddr = currentUser.addresses?.[0];
+      setCustomer({
+        name: currentUser.name || '',
+        phone: currentUser.phone || '',
+        division: defaultAddr?.division || 'Dhaka',
+        outsideCity: Boolean(defaultAddr?.outsideCity),
+        address: defaultAddr?.address || '',
+        notes: ''
+      });
+    }
+  }, [currentUser]);
 
   // Fetch gateway configuration status
   useEffect(() => {
@@ -45,13 +67,16 @@ export default function CheckoutModal({
       .then(data => {
         if (data.onlinePaymentAvailable) {
           setOnlineAvailable(true);
+          setActiveGatewayName(data.activeProvider);
         } else {
           setOnlineAvailable(false);
+          setActiveGatewayName(null);
           setPaymentMethod('cod');
         }
       })
       .catch(() => {
         setOnlineAvailable(false);
+        setActiveGatewayName(null);
         setPaymentMethod('cod');
       });
   }, []);
@@ -78,21 +103,50 @@ export default function CheckoutModal({
     };
   }, [isOpen, onClose]);
 
+  const handleApplyPromo = async () => {
+    if (!promoCodeInput.trim()) return;
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/cart/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart,
+          promoCode: promoCodeInput.trim()
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.appliedPromo) {
+        setAppliedPromo(data.appliedPromo);
+        setPromoDiscount(data.discount || 0);
+      } else {
+        setErrorMessage('Invalid or expired promotion code');
+        setAppliedPromo(null);
+        setPromoDiscount(0);
+      }
+    } catch (e) {
+      setErrorMessage('Failed to validate promotion code');
+    }
+  };
+
   if (!isOpen) return null;
 
   // Single shared pricing calculation
-  const { subtotal, deliveryFee, total, isFreeDelivery } = calculateOrderTotals(cart, {
+  const rawTotals = calculateOrderTotals(cart, {
     division: customer.division,
     outsideCity: customer.outsideCity
   });
 
-  const isInsideDhaka = customer.division === 'Dhaka' && !customer.outsideCity;
+  const finalSubtotal = Math.max(0, rawTotals.subtotal - promoDiscount);
+  const deliveryFee = rawTotals.deliveryFee;
+  const grandTotal = finalSubtotal + deliveryFee;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Client-side input validation
+    // Input validation
     if (!customer.name.trim()) {
       setErrorMessage('Please enter your full name');
       return;
@@ -108,17 +162,20 @@ export default function CheckoutModal({
     }
 
     if (paymentMethod === 'online' && !onlineAvailable) {
-      setErrorMessage('Online payment is currently unavailable. Please select Cash on Delivery (Demo Mode).');
+      setErrorMessage('Online payment is currently unavailable. Please select Cash on Delivery.');
       return;
     }
 
     setIsSubmitting(true);
 
+    const token = localStorage.getItem('accessories_customer_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     try {
-      // Submit order to server backend for canonical price calculation & validation
       const response = await fetch('/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           idempotencyKey,
           customer: {
@@ -130,6 +187,7 @@ export default function CheckoutModal({
             quantity: i.quantity,
             variant: i.variant?.name || 'Default'
           })),
+          promoCode: appliedPromo?.code || null,
           paymentMethod
         })
       });
@@ -141,10 +199,10 @@ export default function CheckoutModal({
       }
 
       const createdOrder = data.order;
+      const guestToken = data.guestToken;
 
       if (paymentMethod === 'cod') {
-        // Cash on delivery: recorded as demo order with unpaid status
-        onOrderSuccess(createdOrder);
+        onOrderSuccess(createdOrder, guestToken);
         onClose();
       } else {
         // Online payment: initiate gateway session
@@ -189,15 +247,15 @@ export default function CheckoutModal({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-[#EAF4FC] flex items-center justify-center text-[#145CFF] font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-[#EAF4FC] flex items-center justify-center text-[#145CFF] font-bold">
               <Lock size={19} />
             </div>
             <div>
               <h2 id="checkout-modal-title" className="text-lg sm:text-xl font-bold text-[#10263D]">
-                {t.checkoutTitle}
+                {t?.checkoutTitle || 'Store Checkout'}
               </h2>
               <p className="text-xs text-[#52677B]">
-                {t.guestNotice}
+                {currentUser ? `Signed in as ${currentUser.name}` : (t?.guestNotice || 'Guest Checkout — No account required')}
               </p>
             </div>
           </div>
@@ -223,224 +281,221 @@ export default function CheckoutModal({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Section 1: Customer Details */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-3">
-              1. Customer Information & Delivery Address
+          {/* Customer Details Form */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">
+              1. Delivery Information
             </h3>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
-                <label htmlFor="customer-name" className="block text-xs font-semibold text-[#10263D] mb-1">
-                  {t.fullName} *
+                <label className="block text-xs font-semibold text-[#10263D] mb-1.5">
+                  {t?.fullName || 'Full Name'} *
                 </label>
                 <input
-                  id="customer-name"
                   type="text"
                   required
                   autoComplete="name"
-                  placeholder="e.g. Tanvir Ahmed"
+                  placeholder="e.g. Rahim Chowdhury"
                   value={customer.name}
                   onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-                  className="input-field text-sm"
+                  className="input-field text-xs py-2.5"
                 />
               </div>
 
               <div>
-                <label htmlFor="customer-phone" className="block text-xs font-semibold text-[#10263D] mb-1">
-                  {t.phone} *
+                <label className="block text-xs font-semibold text-[#10263D] mb-1.5">
+                  {t?.phone || 'Phone Number'} *
                 </label>
                 <input
-                  id="customer-phone"
                   type="tel"
                   required
                   autoComplete="tel"
-                  placeholder="01712345678"
+                  placeholder="01XXXXXXXXX"
                   value={customer.phone}
                   onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
-                  className="input-field text-sm"
+                  className="input-field text-xs font-mono py-2.5"
                 />
               </div>
+            </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
-                <label htmlFor="customer-division" className="block text-xs font-semibold text-[#10263D] mb-1">
-                  {t.division}
+                <label className="block text-xs font-semibold text-[#10263D] mb-1.5">
+                  {t?.division || 'Division / Region'}
                 </label>
                 <select
-                  id="customer-division"
                   value={customer.division}
                   onChange={(e) => setCustomer({ ...customer, division: e.target.value })}
-                  className="input-field text-sm"
+                  className="input-field text-xs py-2.5"
                 >
-                  <option value="Dhaka">Dhaka (ঢাকা)</option>
-                  <option value="Chittagong">Chittagong (চট্টগ্রাম)</option>
-                  <option value="Sylhet">Sylhet (সিলেট)</option>
-                  <option value="Rajshahi">Rajshahi (রাজশাহী)</option>
-                  <option value="Khulna">Khulna (খুলনা)</option>
-                  <option value="Barishal">Barishal (বরিশাল)</option>
-                  <option value="Rangpur">Rangpur (রংপুর)</option>
-                  <option value="Mymensingh">Mymensingh (ময়মনসিংহ)</option>
+                  <option value="Dhaka">Dhaka (৳60 delivery)</option>
+                  <option value="Chittagong">Chittagong (৳120 delivery)</option>
+                  <option value="Sylhet">Sylhet (৳120 delivery)</option>
+                  <option value="Rajshahi">Rajshahi (৳120 delivery)</option>
+                  <option value="Khulna">Khulna (৳120 delivery)</option>
+                  <option value="Barisal">Barisal (৳120 delivery)</option>
+                  <option value="Rangpur">Rangpur (৳120 delivery)</option>
+                  <option value="Mymensingh">Mymensingh (৳120 delivery)</option>
                 </select>
               </div>
 
-              <div className="flex items-center gap-2 pt-6">
-                <input
-                  type="checkbox"
-                  id="outsideCity"
-                  checked={customer.outsideCity}
-                  onChange={(e) => setCustomer({ ...customer, outsideCity: e.target.checked })}
-                  className="rounded text-[#145CFF] focus:ring-[#145CFF] h-4 w-4"
-                />
-                <label htmlFor="outsideCity" className="text-xs text-[#52677B] cursor-pointer">
-                  Suburbs / Outside city center area
+              <div className="flex items-center pt-6">
+                <label className="flex items-center gap-2 cursor-pointer text-xs text-[#52677B]">
+                  <input
+                    type="checkbox"
+                    checked={customer.outsideCity}
+                    onChange={(e) => setCustomer({ ...customer, outsideCity: e.target.checked })}
+                    className="w-4 h-4 rounded text-[#145CFF] focus:ring-[#145CFF]"
+                  />
+                  <span>Suburban / Outside main city center (+৳60)</span>
                 </label>
               </div>
+            </div>
 
-              <div className="sm:col-span-2">
-                <label htmlFor="customer-address" className="block text-xs font-semibold text-[#10263D] mb-1">
-                  {t.address} *
-                </label>
-                <textarea
-                  id="customer-address"
-                  required
-                  autoComplete="street-address"
-                  rows={2}
-                  placeholder="House #, Road #, Sector / Area, Postcode"
-                  value={customer.address}
-                  onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
-                  className="input-field text-sm"
-                />
-              </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#10263D] mb-1.5">
+                {t?.address || 'Detailed Street Address'} *
+              </label>
+              <textarea
+                required
+                rows={2}
+                placeholder="House number, road number, area, landmarks"
+                value={customer.address}
+                onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
+                className="input-field text-xs py-2"
+              />
             </div>
           </div>
 
-          {/* Section 2: Payment Method Selection */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-3">
-              2. {t.paymentMethod}
+          {/* Promotion Code Bar */}
+          <div className="pt-2 border-t border-[#DCE7F0]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-2">
+              Discount Code / Coupon
+            </h3>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Enter coupon code (e.g. GLACIAL10)"
+                value={promoCodeInput}
+                onChange={(e) => setPromoCodeInput(e.target.value)}
+                className="input-field text-xs font-mono py-2 flex-1 uppercase"
+              />
+              <button
+                type="button"
+                onClick={handleApplyPromo}
+                className="px-4 py-2 rounded-xl bg-[#EAF4FC] text-[#145CFF] font-semibold text-xs hover:bg-[#145CFF] hover:text-white transition-colors"
+              >
+                Apply
+              </button>
+            </div>
+            {appliedPromo && (
+              <p className="text-xs text-emerald-700 flex items-center gap-1 font-medium mt-1.5">
+                <Check size={13} />
+                <span>Coupon applied: {appliedPromo.title} (-৳{promoDiscount})</span>
+              </p>
+            )}
+          </div>
+
+          {/* Payment Method Selector */}
+          <div className="space-y-3 pt-2 border-t border-[#DCE7F0]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">
+              2. Select Payment Method
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Option A: Cash on Delivery (Demo Mode) */}
-              <div
-                onClick={() => setPaymentMethod('cod')}
-                className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                  paymentMethod === 'cod'
-                    ? 'border-[#145CFF] bg-[#EAF4FC] ring-2 ring-[#145CFF]/20'
-                    : 'border-[#DCE7F0] bg-white hover:bg-[#EAF4FC]'
-                }`}
-              >
-                <div className="flex items-start justify-between mb-2">
+              {/* Cash on Delivery Option */}
+              <label className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between ${
+                paymentMethod === 'cod' ? 'border-[#145CFF] bg-[#EAF4FC]' : 'border-[#DCE7F0] bg-white hover:border-slate-300'
+              }`}>
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      id="pay-cod"
-                      name="payment_choice"
-                      checked={paymentMethod === 'cod'}
-                      onChange={() => setPaymentMethod('cod')}
-                      className="text-[#145CFF]"
-                    />
-                    <label htmlFor="pay-cod" className="font-bold text-xs sm:text-sm text-[#10263D] cursor-pointer">
-                      Cash on Delivery
-                    </label>
+                    <Truck size={18} className="text-[#145CFF]" />
+                    <span className="font-bold text-xs text-[#10263D]">Cash on Delivery</span>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                    Demo Mode
-                  </span>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cod"
+                    checked={paymentMethod === 'cod'}
+                    onChange={() => setPaymentMethod('cod')}
+                    className="text-[#145CFF]"
+                  />
                 </div>
-                <p className="text-[11px] text-[#52677B] pl-5">
-                  Place a demo order without paying online. Recorded in demo database with unpaid status for testing.
+                <p className="text-[11px] text-[#52677B]">
+                  Pay in cash when your parcel is delivered to your doorstep.
                 </p>
-              </div>
+              </label>
 
-              {/* Option B: Online Gateway (Unavailable if credentials unconfigured) */}
-              <div
-                onClick={() => {
-                  if (onlineAvailable) setPaymentMethod('online');
-                }}
-                className={`p-4 rounded-2xl border transition-all ${
-                  onlineAvailable
-                    ? (paymentMethod === 'online'
-                        ? 'border-[#145CFF] bg-[#EAF4FC] ring-2 ring-[#145CFF]/20 cursor-pointer'
-                        : 'border-[#DCE7F0] bg-white hover:bg-[#EAF4FC] cursor-pointer')
-                    : 'border-[#DCE7F0] bg-slate-50/90 opacity-75 cursor-not-allowed'
-                }`}
-              >
-                <div className="flex items-start justify-between mb-2">
+              {/* Online Payment Option */}
+              <label className={`p-4 rounded-2xl border-2 transition-all flex flex-col justify-between ${
+                !onlineAvailable ? 'opacity-60 bg-slate-50 border-slate-200 cursor-not-allowed' :
+                paymentMethod === 'online' ? 'border-[#145CFF] bg-[#EAF4FC] cursor-pointer' :
+                'border-[#DCE7F0] bg-white hover:border-slate-300 cursor-pointer'
+              }`}>
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      id="pay-online"
-                      name="payment_choice"
-                      disabled={!onlineAvailable}
-                      checked={paymentMethod === 'online'}
-                      onChange={() => {
-                        if (onlineAvailable) setPaymentMethod('online');
-                      }}
-                      className="text-[#145CFF] disabled:opacity-40"
-                    />
-                    <label 
-                      htmlFor="pay-online" 
-                      className={`font-bold text-xs sm:text-sm ${onlineAvailable ? 'text-[#10263D] cursor-pointer' : 'text-[#52677B] cursor-not-allowed'}`}
-                    >
-                      Online Payment Gateway
-                    </label>
+                    <CreditCard size={18} className="text-[#145CFF]" />
+                    <span className="font-bold text-xs text-[#10263D]">
+                      Online Payment (bKash / Card)
+                    </span>
                   </div>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${onlineAvailable ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}`}>
-                    {onlineAvailable ? 'Active' : 'Unavailable'}
-                  </span>
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="online"
+                    disabled={!onlineAvailable}
+                    checked={paymentMethod === 'online'}
+                    onChange={() => setPaymentMethod('online')}
+                    className="text-[#145CFF]"
+                  />
                 </div>
-                <p className="text-[11px] text-[#52677B] pl-5">
-                  {onlineAvailable 
-                    ? 'Redirects to official payment gateway (bKash / Nagad / Cards).'
-                    : 'Online payments are currently unavailable because payment gateway credentials have not been configured by the store owner.'}
+                <p className="text-[11px] text-[#52677B]">
+                  {onlineAvailable ? (
+                    `Direct gateway via ${activeGatewayName || 'SSLCommerz/bKash'}`
+                  ) : (
+                    'Currently unavailable (Merchant credentials required in .env)'
+                  )}
                 </p>
-              </div>
+              </label>
             </div>
           </div>
 
-          {/* Section 3: Pricing Summary */}
-          <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0] space-y-2 text-xs">
+          {/* Pricing Totals Card */}
+          <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#DCE7F0] space-y-2 text-xs">
             <div className="flex justify-between text-[#52677B]">
-              <span>Subtotal ({cart.length} items):</span>
-              <span className="font-semibold text-[#10263D]">{currencySymbol}{subtotal.toLocaleString()}</span>
+              <span>Subtotal:</span>
+              <span className="font-bold text-[#10263D]">{currencySymbol}{rawTotals.subtotal.toLocaleString()}</span>
             </div>
+            {promoDiscount > 0 && (
+              <div className="flex justify-between text-emerald-600 font-semibold">
+                <span>Promotion Discount:</span>
+                <span>-{currencySymbol}{promoDiscount.toLocaleString()}</span>
+              </div>
+            )}
             <div className="flex justify-between text-[#52677B]">
-              <span>Delivery Fee ({isInsideDhaka ? 'Inside Dhaka' : 'Outside Dhaka'}):</span>
-              <span className="font-semibold text-[#10263D]">
-                {isFreeDelivery ? (
-                  <strong className="text-emerald-700">FREE (Orders &gt;= ৳2,000)</strong>
-                ) : (
-                  `${currencySymbol}${deliveryFee}`
-                )}
-              </span>
+              <span>Delivery Fee ({customer.division}):</span>
+              <span>{rawTotals.isFreeDelivery ? <strong className="text-emerald-600">FREE</strong> : `${currencySymbol}${deliveryFee}`}</span>
             </div>
-            <div className="pt-2 border-t border-[#DCE7F0] flex justify-between text-sm font-extrabold text-[#10263D]">
-              <span>Total Payable Amount:</span>
-              <span className="text-[#145CFF] text-base">{currencySymbol}{total.toLocaleString()}</span>
+            <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline font-bold">
+              <span className="text-sm text-[#10263D]">Total Payable:</span>
+              <span className="text-xl text-[#145CFF] font-extrabold">{currencySymbol}{grandTotal.toLocaleString()}</span>
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3.5 px-6 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all disabled:opacity-60"
+            className="w-full py-3.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold text-sm shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
           >
             {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Recording Demo Order...</span>
-              </span>
-            ) : paymentMethod === 'online' ? (
-              <>
-                <CreditCard size={18} />
-                <span>Proceed to Payment ({currencySymbol}{total.toLocaleString()})</span>
-                <ArrowRight size={16} />
-              </>
+              <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                <ShieldCheck size={18} />
-                <span>Place Demo Order — Cash on Delivery ({currencySymbol}{total.toLocaleString()})</span>
+                <span>
+                  {paymentMethod === 'cod' ? 'Place Order — Cash on Delivery' : 'Proceed to Payment Gateway'}
+                </span>
+                <ArrowRight size={17} />
               </>
             )}
           </button>

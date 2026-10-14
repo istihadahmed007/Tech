@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Search, Package, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { X, Search, Package, CheckCircle2, ShieldAlert, Key, Lock, ShieldCheck } from 'lucide-react';
 
 export default function OrderTrackingModal({ 
   isOpen, 
   onClose, 
   initialOrderId = '', 
+  initialToken = '',
   currencySymbol = "৳" 
 }) {
   const [orderIdInput, setOrderIdInput] = useState(initialOrderId);
+  const [tokenInput, setTokenInput] = useState(initialToken);
   const [searchedOrder, setSearchedOrder] = useState(null);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const closeButtonRef = useRef(null);
@@ -16,9 +19,10 @@ export default function OrderTrackingModal({
   useEffect(() => {
     if (initialOrderId) {
       setOrderIdInput(initialOrderId);
-      fetchOrder(initialOrderId);
+      setTokenInput(initialToken || '');
+      fetchOrder(initialOrderId, initialToken || '');
     }
-  }, [initialOrderId]);
+  }, [initialOrderId, initialToken]);
 
   // Escape-to-close
   useEffect(() => {
@@ -40,20 +44,31 @@ export default function OrderTrackingModal({
     };
   }, [isOpen, onClose]);
 
-  const fetchOrder = async (id) => {
+  const fetchOrder = async (id, token = '') => {
     if (!id.trim()) return;
     setLoading(true);
     setError('');
+
+    const customerToken = localStorage.getItem('accessories_customer_token');
+    const headers = customerToken ? { Authorization: `Bearer ${customerToken}` } : {};
+
     try {
-      const res = await fetch(`/api/orders/${encodeURIComponent(id.trim())}`);
+      let url = `/api/orders/${encodeURIComponent(id.trim())}`;
+      if (token.trim()) {
+        url += `?token=${encodeURIComponent(token.trim())}`;
+      }
+
+      const res = await fetch(url, { headers });
       const data = await res.json();
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'No matching order found');
       }
       setSearchedOrder(data.order);
+      setIsAuthorized(Boolean(data.authorized));
     } catch (err) {
       setError(err.message || 'Order lookup failed.');
       setSearchedOrder(null);
+      setIsAuthorized(false);
     } finally {
       setLoading(false);
     }
@@ -61,7 +76,7 @@ export default function OrderTrackingModal({
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchOrder(orderIdInput);
+    fetchOrder(orderIdInput, tokenInput);
   };
 
   if (!isOpen) return null;
@@ -103,15 +118,15 @@ export default function OrderTrackingModal({
       >
         <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#EAF4FC] flex items-center justify-center text-[#145CFF] font-bold">
-              <Package size={18} />
+            <div className="w-10 h-10 rounded-2xl bg-[#EAF4FC] flex items-center justify-center text-[#145CFF] font-bold">
+              <Package size={20} />
             </div>
             <div>
-              <h2 id="tracking-dialog-title" className="text-xl font-bold text-[#10263D]">
-                Order Tracking & Status
+              <h2 id="tracking-dialog-title" className="text-lg sm:text-xl font-bold text-[#10263D]">
+                Order Tracking & Privacy Status
               </h2>
               <p className="text-xs text-[#52677B]">
-                Live status tracking from store database
+                Live status tracking protected by secure ownership checks
               </p>
             </div>
           </div>
@@ -126,32 +141,55 @@ export default function OrderTrackingModal({
         </div>
 
         {/* Search Input Bar */}
-        <form onSubmit={handleSearch} className="flex gap-2 mb-6">
-          <div className="relative flex-1">
-            <label htmlFor="tracking-input-id" className="sr-only">
-              Order Reference ID
-            </label>
-            <input
-              id="tracking-input-id"
-              type="text"
-              placeholder="Enter Order Reference ID (e.g. AGY-849201)"
-              value={orderIdInput}
-              onChange={(e) => setOrderIdInput(e.target.value)}
-              className="input-field text-sm font-mono pl-4 pr-10"
-            />
+        <form onSubmit={handleSearch} className="space-y-3 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label htmlFor="tracking-input-id" className="block text-[11px] font-bold text-[#10263D] mb-1">
+                Order Reference ID *
+              </label>
+              <input
+                id="tracking-input-id"
+                type="text"
+                required
+                placeholder="e.g. AGY-849201"
+                value={orderIdInput}
+                onChange={(e) => setOrderIdInput(e.target.value)}
+                className="input-field text-xs font-mono"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="tracking-input-token" className="block text-[11px] font-bold text-[#10263D] mb-1">
+                Security Token (Optional for guest full view)
+              </label>
+              <div className="relative">
+                <Key size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  id="tracking-input-token"
+                  type="text"
+                  placeholder="Guest access token"
+                  value={tokenInput}
+                  onChange={(e) => setTokenInput(e.target.value)}
+                  className="input-field pl-9 text-xs font-mono"
+                />
+              </div>
+            </div>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-5 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs"
-          >
-            {loading ? (
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Search size={15} />
-            )}
-            <span>Track</span>
-          </button>
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition-colors"
+            >
+              {loading ? (
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Search size={15} />
+              )}
+              <span>Track Parcel</span>
+            </button>
+          </div>
         </form>
 
         {error && (
@@ -161,10 +199,26 @@ export default function OrderTrackingModal({
           </div>
         )}
 
-        {searchedOrder ? (
+        {searchedOrder && (
           <div className="space-y-6">
+            {/* Privacy Level Notice Banner */}
+            <div className={`p-3.5 rounded-2xl border text-xs flex items-center justify-between ${
+              isAuthorized 
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
+                : 'bg-blue-50/70 border-blue-200 text-blue-900'
+            }`}>
+              <div className="flex items-center gap-2">
+                {isAuthorized ? <ShieldCheck size={17} className="text-emerald-600 shrink-0" /> : <Lock size={17} className="text-[#145CFF] shrink-0" />}
+                <span>
+                  {isAuthorized 
+                    ? 'Verified Owner Access: Full delivery address and recipient details unlocked.' 
+                    : 'Protected View: Personal street address and recipient details are masked to protect customer privacy.'}
+                </span>
+              </div>
+            </div>
+
             {/* Order Card Overview */}
-            <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0] flex flex-wrap justify-between items-center gap-3">
+            <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0] flex flex-wrap justify-between items-center gap-3 text-xs">
               <div>
                 <span className="text-[11px] font-bold uppercase text-[#52677B] block">
                   Reference ID: <strong className="font-mono text-[#145CFF]">{searchedOrder.id}</strong>
@@ -172,6 +226,11 @@ export default function OrderTrackingModal({
                 <span className="text-xs text-[#10263D]">
                   Recipient: <strong>{searchedOrder.customer?.name}</strong> ({searchedOrder.customer?.phone})
                 </span>
+                {isAuthorized && searchedOrder.customer?.address && (
+                  <p className="text-[11px] text-[#52677B] mt-0.5">
+                    Delivery Address: {searchedOrder.customer.address}, {searchedOrder.customer.division}
+                  </p>
+                )}
               </div>
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#145CFF] text-white capitalize shadow-xs">
                 Status: {searchedOrder.status}
@@ -211,28 +270,28 @@ export default function OrderTrackingModal({
               </div>
             </div>
 
-            {/* Items in this Order */}
+            {/* Ordered Items List */}
             <div className="p-4 rounded-2xl border border-[#DCE7F0] bg-white text-xs space-y-2">
               <span className="font-bold text-[#10263D] block">Ordered Items:</span>
               <ul className="divide-y divide-slate-100">
                 {searchedOrder.items?.map((item, idx) => (
                   <li key={idx} className="py-2 flex justify-between">
-                    <span>{item.title} (x{item.quantity})</span>
-                    <span className="font-semibold text-[#10263D]">
-                      {currencySymbol}{(item.price * item.quantity).toLocaleString()}
-                    </span>
+                    <span>{item.title} ({item.variant}) × {item.quantity}</span>
+                    {item.price && (
+                      <span className="font-semibold text-[#10263D]">
+                        {currencySymbol}{(item.price * item.quantity).toLocaleString()}
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>
-              <div className="pt-2 border-t border-[#DCE7F0] flex justify-between font-bold text-[#10263D]">
-                <span>Total Amount:</span>
-                <span className="text-[#145CFF]">{currencySymbol}{searchedOrder.total?.toLocaleString()}</span>
-              </div>
+              {searchedOrder.total && (
+                <div className="pt-2 border-t border-[#DCE7F0] flex justify-between font-bold text-[#10263D]">
+                  <span>Total Amount:</span>
+                  <span className="text-[#145CFF]">{currencySymbol}{searchedOrder.total?.toLocaleString()}</span>
+                </div>
+              )}
             </div>
-          </div>
-        ) : !error && (
-          <div className="text-center py-8 text-xs text-[#8FA6BE]">
-            Enter your order reference above to track live status updates.
           </div>
         )}
       </div>

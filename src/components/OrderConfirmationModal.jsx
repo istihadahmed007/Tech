@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { CheckCircle, Truck, Package, Copy, ArrowRight, ShieldCheck, X } from 'lucide-react';
+import { CheckCircle, Truck, Package, Copy, ArrowRight, ShieldCheck, X, Key } from 'lucide-react';
 
 export default function OrderConfirmationModal({ 
   order, 
@@ -25,6 +25,7 @@ export default function OrderConfirmationModal({
 
   // Escape-to-close
   useEffect(() => {
+    if (!order) return;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -40,13 +41,12 @@ export default function OrderConfirmationModal({
       document.removeEventListener('keydown', handleKeyDown);
       clearTimeout(timer);
     };
-  }, [onClose]);
+  }, [order, onClose]);
 
   if (!order) return null;
 
   const isPaid = order.paymentStatus === 'paid';
   const isCod = order.paymentMethod === 'cod';
-  const isSandbox = Boolean(order.paymentDetails?.isSandbox);
   const latestTimeline = order.timeline && order.timeline.length > 0 
     ? order.timeline[order.timeline.length - 1]
     : null;
@@ -80,26 +80,17 @@ export default function OrderConfirmationModal({
         </div>
 
         <h2 id="order-confirmed-heading" className="text-xl sm:text-2xl font-extrabold text-[#10263D] mb-1">
-          {order.isDemo ? 'Demo Order Recorded' : t.orderConfirmedTitle}
+          {order.isDemo ? 'Demo Order Recorded' : (t?.orderConfirmedTitle || 'Order Placed Successfully')}
         </h2>
         <p className="text-xs sm:text-sm text-[#52677B] mb-6">
-          {order.isDemo ? (
-            <>
-              Thank you, <strong>{order.customer?.name}</strong>. Your order has been recorded in the demo database.
-              <span className="block mt-1 text-[11px] text-amber-700 bg-amber-50 rounded-lg p-2 border border-amber-200 mt-2">
-                Notice: This is a demonstration order for storefront preview. No real funds were charged and no warehouse parcel will be dispatched.
-              </span>
-            </>
-          ) : (
-            <>Thank you, <strong>{order.customer?.name}</strong>. Your order has been recorded in our store system.</>
-          )}
+          Thank you, <strong>{order.customer?.name}</strong>. Your order has been recorded in our store system.
         </p>
 
         {/* Order Reference Box */}
-        <div className="bg-[#EAF4FC] border border-[#DCE7F0] rounded-2xl p-4 mb-6 text-left flex items-center justify-between">
+        <div className="bg-[#EAF4FC] border border-[#DCE7F0] rounded-2xl p-4 mb-4 text-left flex items-center justify-between">
           <div>
             <span className="text-[11px] font-bold uppercase text-[#52677B] block">
-              {t.orderIdLabel}
+              {t?.orderIdLabel || 'Order Reference ID:'}
             </span>
             <span className="font-mono text-base sm:text-lg font-extrabold text-[#145CFF]">
               {order.id}
@@ -115,6 +106,29 @@ export default function OrderConfirmationModal({
             <span>Copy ID</span>
           </button>
         </div>
+
+        {/* Guest Security Token Box */}
+        {order.guestToken && (
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 mb-6 text-left flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-1 text-[11px] font-bold text-[#10263D]">
+                <Key size={13} className="text-[#145CFF]" />
+                <span>Guest Order Security Token</span>
+              </div>
+              <span className="font-mono text-xs text-[#52677B] block truncate max-w-[280px] sm:max-w-sm mt-0.5">
+                {order.guestToken}
+              </span>
+            </div>
+            <button
+              onClick={() => navigator.clipboard.writeText(order.guestToken)}
+              className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors shrink-0"
+              title="Copy Security Token"
+            >
+              <Copy size={13} />
+              <span>Copy</span>
+            </button>
+          </div>
+        )}
 
         {/* Order Summary Details */}
         <div className="text-left divide-y divide-slate-100 border border-[#DCE7F0] rounded-2xl p-4 bg-white mb-6 text-xs space-y-2.5">
@@ -132,16 +146,8 @@ export default function OrderConfirmationModal({
           </div>
           <div className="flex justify-between pt-2">
             <span className="text-[#52677B]">Order Status:</span>
-            <span className="font-semibold text-right text-slate-700">
-              {order.status === 'demo_received' ? (
-                <span className="px-2 py-0.5 rounded bg-[#EAF4FC] text-[#10263D] border border-[#DCE7F0] text-[11px] font-bold">
-                  Demo Order Received
-                </span>
-              ) : (
-                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-800 text-[11px]">
-                  {order.status}
-                </span>
-              )}
+            <span className="font-semibold text-right text-slate-700 capitalize">
+              {order.status}
             </span>
           </div>
           <div className="flex justify-between pt-2">
@@ -149,11 +155,11 @@ export default function OrderConfirmationModal({
             <span className="font-bold text-right flex items-center gap-1">
               {isPaid ? (
                 <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">
-                  Paid &amp; Verified (TxID: {order.transactionId})
+                  Paid &amp; Verified ({order.transactionId})
                 </span>
               ) : isCod ? (
                 <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[11px]">
-                  Unpaid (Cash on Delivery demo)
+                  Unpaid (Cash on Delivery)
                 </span>
               ) : (
                 <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[11px]">
@@ -169,21 +175,18 @@ export default function OrderConfirmationModal({
               {currencySymbol}{order.subtotal?.toLocaleString()}
             </span>
           </div>
+          {order.discount > 0 && (
+            <div className="flex justify-between pt-2 text-emerald-600 font-medium">
+              <span>Promotion Discount:</span>
+              <span>-{currencySymbol}{order.discount?.toLocaleString()}</span>
+            </div>
+          )}
           <div className="flex justify-between pt-2">
             <span className="text-[#52677B]">Delivery Fee:</span>
             <span className="font-medium text-[#10263D]">
               {order.deliveryFee === 0 ? 'FREE' : `${currencySymbol}${order.deliveryFee}`}
             </span>
           </div>
-
-          {latestTimeline && (
-            <div className="flex justify-between pt-2">
-              <span className="text-[#52677B]">Timeline Note:</span>
-              <span className="font-medium text-[#52677B] text-right">
-                {latestTimeline.note}
-              </span>
-            </div>
-          )}
 
           <div className="flex justify-between pt-2 text-sm font-extrabold">
             <span className="text-[#10263D]">Total Amount:</span>
@@ -198,19 +201,19 @@ export default function OrderConfirmationModal({
           <button
             onClick={() => {
               onClose();
-              onOpenTracking(order.id);
+              onOpenTracking(order.id, order.guestToken);
             }}
             className="w-full sm:flex-1 py-3 px-4 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold text-xs shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 transition-all"
           >
             <Package size={15} />
-            <span>{t.trackThisOrder}</span>
+            <span>{t?.trackThisOrder || 'Track Parcel Status'}</span>
           </button>
 
           <button
             onClick={onClose}
             className="w-full sm:w-auto py-3 px-6 rounded-full bg-slate-100 hover:bg-slate-200 text-[#10263D] font-semibold text-xs transition-colors"
           >
-            {t.continueShopping}
+            {t?.continueShopping || 'Continue Shopping'}
           </button>
         </div>
       </div>

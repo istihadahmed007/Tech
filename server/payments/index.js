@@ -1,8 +1,21 @@
 import { SSLCommerzProvider } from './sslcommerz.js';
 import { BkashProvider } from './bkash.js';
+import { SandboxPaymentProvider } from './sandbox.js';
 import { PAYMENT_PROVIDERS } from './types.js';
 
 export * from './types.js';
+
+export function getPublicOrigin(req = null) {
+  const configured = process.env.APP_URL || process.env.PUBLIC_URL || process.env.BASE_URL;
+  if (configured) {
+    return configured.replace(/\/+$/, '');
+  }
+  if (req && req.headers && req.headers.host) {
+    const proto = req.headers['x-forwarded-proto'] || (req.socket?.encrypted ? 'https' : 'http');
+    return `${proto}://${req.headers.host}`;
+  }
+  return 'http://localhost:3000';
+}
 
 export function getPaymentProvider(requestedProvider) {
   const chosen = (requestedProvider || process.env.PAYMENT_GATEWAY_PROVIDER || '').toLowerCase();

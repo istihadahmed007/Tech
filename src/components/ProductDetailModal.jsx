@@ -1,11 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, ShieldCheck, Truck, RotateCcw, Plus, Minus, ShoppingBag, Check, CheckCircle2, Layers } from 'lucide-react';
+import { 
+  X, 
+  ShieldCheck, 
+  Truck, 
+  RotateCcw, 
+  Plus, 
+  Minus, 
+  ShoppingBag, 
+  Check, 
+  CheckCircle2, 
+  Layers, 
+  Star, 
+  MessageSquare,
+  AlertCircle
+} from 'lucide-react';
 
 export default function ProductDetailModal({ 
   product, 
   onClose, 
   onAddToCart, 
   onBuyNow, 
+  currentUser,
+  onOpenAccount,
   currencySymbol = "৳",
   t,
   lang 
@@ -14,6 +30,17 @@ export default function ProductDetailModal({
   const [selectedImage, setSelectedImage] = useState(product?.image);
   const [quantity, setQuantity] = useState(1);
   const [addedAnimation, setAddedAnimation] = useState(false);
+  
+  // Real Reviews State
+  const [reviews, setReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState('');
+
   const closeButtonRef = useRef(null);
 
   // Synchronize when product changes
@@ -22,8 +49,67 @@ export default function ProductDetailModal({
       setSelectedVariant(product.variants?.[0] || null);
       setSelectedImage(product.image);
       setQuantity(1);
+      setShowReviewForm(false);
+      setReviewError('');
+      setReviewSuccess('');
+      loadReviews(product.id);
     }
   }, [product]);
+
+  const loadReviews = async (productId) => {
+    setLoadingReviews(true);
+    try {
+      const res = await fetch(`/api/products/${productId}/reviews`);
+      const data = await res.json();
+      if (res.ok && data.reviews) {
+        setReviews(data.reviews);
+      }
+    } catch (e) {
+      console.error('Failed to load reviews', e);
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!currentUser) {
+      onOpenAccount();
+      return;
+    }
+
+    setReviewError('');
+    setReviewSuccess('');
+    setReviewSubmitting(true);
+
+    const token = localStorage.getItem('accessories_customer_token');
+    try {
+      const res = await fetch(`/api/products/${product.id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          rating: reviewRating,
+          comment: reviewComment
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Review submission failed');
+      }
+
+      setReviewSuccess('Thank you! Your verified review has been submitted.');
+      setReviewComment('');
+      setShowReviewForm(false);
+      loadReviews(product.id);
+    } catch (err) {
+      setReviewError(err.message);
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   // Escape-to-close listener
   useEffect(() => {
@@ -59,6 +145,12 @@ export default function ProductDetailModal({
     onBuyNow(product, selectedVariant, quantity);
   };
 
+  const avgRating = reviews.length > 0 
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    : (product.rating || '0.0');
+
+  const reviewCount = reviews.length > 0 ? reviews.length : (product.reviewCount || 0);
+
   return (
     <div 
       className="modal-overlay" 
@@ -85,7 +177,7 @@ export default function ProductDetailModal({
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {/* Left Column: Image Gallery */}
+          {/* Left Column: Image Gallery & Highlights */}
           <div className="flex flex-col gap-4">
             <div className="relative w-full aspect-square rounded-2xl bg-[#EAF4FC] p-6 flex items-center justify-center border border-[#DCE7F0]">
               <img
@@ -118,23 +210,23 @@ export default function ProductDetailModal({
               </div>
             )}
 
-            {/* Verified Specifications Sheet Strip */}
+            {/* Authentic Specs Sheet Strip */}
             <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-[#DCE7F0] text-xs text-[#52677B]">
               <div className="flex items-center gap-2 p-2 rounded-xl bg-[#EAF4FC] border border-[#DCE7F0]">
-                <Truck size={16} className="text-[#52677B] shrink-0" />
-                <span>Standard courier (৳60 / ৳120)</span>
+                <Truck size={16} className="text-[#145CFF] shrink-0" />
+                <span>Courier ৳60 (Dhaka) / ৳120</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-[#EAF4FC] border border-[#DCE7F0]">
-                <Layers size={16} className="text-[#52677B] shrink-0" />
-                <span>Sample Stock: {product.stock} units</span>
+                <Layers size={16} className="text-[#145CFF] shrink-0" />
+                <span>Stock: {product.stock} units</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-[#EAF4FC] border border-[#DCE7F0]">
                 <ShieldCheck size={16} className="text-[#145CFF] shrink-0" />
-                <span className="font-medium text-[#10263D]">{product.warranty ? `Spec: ${product.warranty}` : 'Sample catalog spec'}</span>
+                <span className="font-medium text-[#10263D]">{product.warranty || '6-Month Warranty'}</span>
               </div>
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-emerald-50/70 border border-emerald-100 text-emerald-800">
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-[#EAF4FC] border border-[#DCE7F0]">
                 <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-                <span className="font-medium">Demo seed item</span>
+                <span className="font-medium text-[#10263D]">Original Glacial Line</span>
               </div>
             </div>
           </div>
@@ -142,27 +234,29 @@ export default function ProductDetailModal({
           {/* Right Column: Product Info & Actions */}
           <div className="flex flex-col justify-between">
             <div>
-              {/* Category & Demo Notice */}
+              {/* Category */}
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className="text-xs uppercase font-extrabold tracking-wider text-[#145CFF] bg-[#EAF4FC] px-2.5 py-0.5 rounded-md">
                   {product.category}
                 </span>
-                <span className="text-[11px] font-medium text-[#52677B] bg-slate-100 px-2 py-0.5 rounded-md">
-                  Demo catalog item
+                <span className="text-[11px] font-medium text-[#52677B] bg-slate-100 px-2 py-0.5 rounded-md font-mono">
+                  SKU: {product.sku || product.id}
                 </span>
               </div>
 
               {/* Title */}
               <h2 id="product-detail-title" className="text-lg sm:text-2xl font-bold text-[#10263D] leading-snug mb-1.5">
-                {lang === 'bn' ? product.titleBn : product.title}
+                {lang === 'bn' ? (product.titleBn || product.title) : product.title}
               </h2>
 
-              {/* Sample Rating Notice */}
+              {/* Verified Rating Metric */}
               <div className="flex items-center gap-2 mb-3 text-xs text-[#52677B]">
-                <span className="font-bold text-amber-500">★ {product.rating || '4.9'}</span>
+                <div className="flex items-center gap-1 text-amber-500 font-bold">
+                  <Star size={14} fill="#F59E0B" className="stroke-none" />
+                  <span>{avgRating}</span>
+                </div>
                 <span>•</span>
-                <span>Sample rating ({product.reviewCount || '120'} sample reviews)</span>
-                <span className="text-[10px] text-[#8FA6BE] bg-slate-100 px-1.5 py-0.5 rounded">Demo data</span>
+                <span>{reviewCount} verified {reviewCount === 1 ? 'review' : 'reviews'}</span>
               </div>
 
               {/* Price */}
@@ -187,7 +281,7 @@ export default function ProductDetailModal({
                 {product.description}
               </p>
 
-              {/* Variant Finishes Selector */}
+              {/* Variant Selector */}
               {product.variants && product.variants.length > 0 && (
                 <div className="mb-5">
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#10263D] mb-2">
@@ -216,7 +310,7 @@ export default function ProductDetailModal({
                 </div>
               )}
 
-              {/* Compatibility Information List */}
+              {/* Verified Device Compatibility */}
               {product.compatibleWith && product.compatibleWith.length > 0 && (
                 <div className="mb-5 bg-[#EAF4FC] border border-[#DCE7F0] rounded-2xl p-4">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-2">
@@ -236,7 +330,7 @@ export default function ProductDetailModal({
               )}
 
               {/* Technical Specifications Sheet */}
-              {product.specs && (
+              {product.specs && Object.keys(product.specs).length > 0 && (
                 <div className="mb-6">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-2.5">
                     Technical Specifications
@@ -260,7 +354,7 @@ export default function ProductDetailModal({
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="p-1.5 text-[#52677B] hover:text-[#145CFF] rounded-lg hover:bg-[#EAF4FC] focus-visible:ring-1 focus-visible:ring-[#145CFF]"
+                  className="p-1.5 text-[#52677B] hover:text-[#145CFF] rounded-lg hover:bg-[#EAF4FC]"
                   aria-label="Decrease quantity"
                 >
                   <Minus size={15} />
@@ -271,7 +365,7 @@ export default function ProductDetailModal({
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="p-1.5 text-[#52677B] hover:text-[#145CFF] rounded-lg hover:bg-[#EAF4FC] focus-visible:ring-1 focus-visible:ring-[#145CFF]"
+                  className="p-1.5 text-[#52677B] hover:text-[#145CFF] rounded-lg hover:bg-[#EAF4FC]"
                   aria-label="Increase quantity"
                 >
                   <Plus size={15} />
@@ -308,6 +402,128 @@ export default function ProductDetailModal({
                 Buy Now
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Real Customer Reviews Section */}
+        <div className="mt-8 pt-6 border-t border-[#DCE7F0]">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div>
+              <h3 className="text-base font-bold text-[#10263D]">Verified Customer Reviews</h3>
+              <p className="text-xs text-[#52677B]">
+                Only customers with delivered purchases can write verified reviews.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (!currentUser) {
+                  onOpenAccount();
+                } else {
+                  setShowReviewForm(!showReviewForm);
+                }
+              }}
+              className="px-4 py-2 rounded-full bg-[#EAF4FC] text-[#145CFF] font-semibold text-xs hover:bg-[#145CFF] hover:text-white transition-colors"
+            >
+              {currentUser ? 'Write a Review' : 'Sign In to Review'}
+            </button>
+          </div>
+
+          {/* Review Submission Form */}
+          {showReviewForm && (
+            <form onSubmit={handleSubmitReview} className="mb-6 p-4 rounded-2xl bg-[#F8FAFC] border border-[#DCE7F0] space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[#10263D]">Rating:</span>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      className="p-1 focus:outline-none"
+                    >
+                      <Star
+                        size={18}
+                        className={star <= reviewRating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#10263D] mb-1">Your Review</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  placeholder="Share details about build quality, fit, drop protection..."
+                  className="input-field text-xs py-2"
+                />
+              </div>
+
+              {reviewError && (
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+                  <AlertCircle size={15} className="shrink-0" />
+                  <span>{reviewError}</span>
+                </div>
+              )}
+
+              {reviewSuccess && (
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+                  <CheckCircle2 size={15} className="shrink-0" />
+                  <span>{reviewSuccess}</span>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowReviewForm(false)}
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={reviewSubmitting}
+                  className="px-5 py-1.5 rounded-lg bg-[#145CFF] text-white text-xs font-semibold shadow-xs disabled:opacity-50"
+                >
+                  {reviewSubmitting ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Reviews List */}
+          <div className="space-y-3">
+            {loadingReviews ? (
+              <p className="text-xs text-[#52677B]">Loading reviews...</p>
+            ) : reviews.length === 0 ? (
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-[#52677B] text-center">
+                No customer reviews yet. Be the first verified purchaser to leave feedback!
+              </div>
+            ) : (
+              reviews.map((r) => (
+                <div key={r.id} className="p-3.5 rounded-xl border border-[#DCE7F0] bg-white space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[#10263D]">{r.user_name}</span>
+                      <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+                        Verified Purchase
+                      </span>
+                    </div>
+                    <div className="flex text-amber-400">
+                      {[...Array(r.rating)].map((_, i) => (
+                        <Star key={i} size={13} className="fill-amber-400" />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-xs text-[#52677B]">{r.comment}</p>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

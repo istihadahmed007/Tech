@@ -1,25 +1,101 @@
-import { getDb, saveDb, findOrderById, updateOrder, adjustInventory } from './db.js';
-import { verifyPassword, generateAdminToken, verifyAdminToken } from './auth.js';
-import { getPaymentProvider, getPaymentConfigurationStatus, isPaymentConfigured, PAYMENT_STATUS, ORDER_STATUS } from './payments/index.js';
-import { INITIAL_PRODUCTS } from '../src/data/catalog.js';
-import { calculateDeliveryFee } from '../src/utils/pricing.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  updateProductStatus,
+  adjustProductStock,
+  getInventoryAdjustments,
+  createOrderWithReservation,
+  finalizeOrderPayment,
+  cancelOrderAndReleaseReservation,
+  releaseExpiredReservations,
+  findOrderById,
+  getOrdersForUser,
+  getAllOrdersAdmin,
+  updateOrderStatus,
+  markCodPaymentCollected,
+  createReview,
+  getProductReviews,
+  getAllReviewsAdmin,
+  updateReviewStatus,
+  getActivePromotions,
+  getAllPromotionsAdmin,
+  createPromotion,
+  deletePromotion,
+  getServiceCatalog,
+  createServiceRequest,
+  getServiceRequestsAdmin,
+  updateServiceRequestStatus,
+  findUserByEmail,
+  findUserById,
+  createUser,
+  updateUserProfile,
+  getUserWishlist,
+  setUserWishlist,
+  getDatabase
+} from './db.js';
 
-// Server-side lookup of catalog products for canonical price and stock validation
-function getCanonicalProduct(productId) {
-  return INITIAL_PRODUCTS.find(p => p.id === productId) || null;
+import {
+  verifyPassword,
+  hashPassword,
+  verifyPasswordHash,
+  generateAdminToken,
+  verifyAdminToken,
+  createCustomerSession,
+  authenticateRequest,
+  logoutSession,
+  checkRateLimit,
+  recordFailedAttempt,
+  clearFailedAttempts
+} from './auth.js';
+
+import {
+  getPaymentProvider,
+  getPaymentConfigurationStatus,
+  isPaymentConfigured,
+  getPublicOrigin,
+  PAYMENT_STATUS,
+  ORDER_STATUS
+} from './payments/index.js';
+
+import { calculateDeliveryFee, calculateCartSubtotal } from '../src/utils/pricing.js';
+
+const UPLOADS_DIR = path.resolve(process.cwd(), 'public', 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
 export async function handleApiRequest(req, res) {
   const url = new URL(req.url, 'http://localhost');
   const pathname = url.pathname;
   const method = req.method;
+  const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+
+  // Release any expired inventory reservations periodically
+  releaseExpiredReservations();
 
   const parseBody = () => new Promise((resolve) => {
     let body = '';
     req.on('data', chunk => { body += chunk; });
     req.on('end', () => {
       try {
-        resolve(body ? JSON.parse(body) : {});
+        if (!body) return resolve({});
+        // Check if JSON
+        if (body.trim().startsWith('{') || body.trim().startsWith('[')) {
+          resolve(JSON.parse(body));
+        } else {
+          // URL-encoded form data (e.g. from payment callbacks)
+          const params = new URLSearchParams(body);
+          const obj = {};
+          for (const [k, v] of params.entries()) {
+            obj[k] = v;
+          }
+          resolve(obj);
+        }
       } catch (err) {
         resolve({});
       }
@@ -39,97 +115,163 @@ export async function handleApiRequest(req, res) {
   };
 
   try {
-    // 1. Health & Payment Config Info
+    // ---------------------------------------------------------------------------
+    // 1. Health & Payment Config
+    // ---------------------------------------------------------------------------
     if (pathname === '/api/health' && method === 'GET') {
-      const config = getPaymentConfigurationStatus();
       return sendJson(200, {
         status: 'healthy',
         timestamp: new Date().toISOString(),
-        paymentConfig: config
+        paymentConfig: getPaymentConfigurationStatus()
       });
     }
 
-    // 1b. Payment Configuration Status
     if (pathname === '/api/payment/config' && method === 'GET') {
       return sendJson(200, getPaymentConfigurationStatus());
     }
 
-    // 2. Admin Login
-    if (pathname === '/api/admin/login' && method === 'POST') {
-      const body = await parseBody();
-      if (verifyPassword(body.password)) {
-        const token = generateAdminToken();
-        return sendJson(200, { success: true, token });
-      }
-      return sendJson(401, { success: false, error: 'Invalid admin credentials' });
-    }
+    // ---------------------------------------------------------------------------
+    // 2. Public Catalog & Inventory
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/products' && method === 'GET') {
+      const category = url.searchParams.get('category');
+      const phone = url.searchParams.get('phone');
+      const query = url.searchParams.get('query') || url.searchParams.get('q') || '';
+      const inStockOnly = url.searchParams.get('inStockOnly') === 'true';
+      const lowStock = url.searchParams.get('lowStock') === 'true';
+      const includeArchived = url.searchParams.get('includeArchived') === 'true';
 
-    // 3. Admin Orders List
-    if (pathname === '/api/admin/orders' && method === 'GET') {
-      const authHeader = req.headers['authorization'];
-      if (!verifyAdminToken(authHeader)) {
-        return sendJson(403, { error: 'Unauthorized or expired admin session' });
-      }
-      const db = getDb();
-      return sendJson(200, { orders: db.orders || [] });
-    }
-
-    // 4. Admin Update Order Status
-    if (pathname.startsWith('/api/admin/orders/') && pathname.endsWith('/status') && method === 'PATCH') {
-      const authHeader = req.headers['authorization'];
-      if (!verifyAdminToken(authHeader)) {
-        return sendJson(403, { error: 'Unauthorized or expired admin session' });
-      }
-      const orderId = pathname.split('/')[4];
-      const body = await parseBody();
-      const validStatuses = ['confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
-      if (!validStatuses.includes(body.status)) {
-        return sendJson(400, { error: 'Invalid order status' });
-      }
-
-      const order = updateOrder(orderId, {
-        status: body.status,
-        timelineNote: body.note || `Status updated to ${body.status}`
+      const products = getAllProducts({
+        category,
+        phone,
+        query,
+        inStockOnly,
+        lowStockOnly: lowStock,
+        includeArchived
       });
 
-      if (!order) return sendJson(404, { error: 'Order not found' });
-      return sendJson(200, { success: true, order });
+      return sendJson(200, { products });
     }
 
-    // 5. Admin Restock Inventory
-    if (pathname === '/api/admin/inventory/restock' && method === 'POST') {
-      const authHeader = req.headers['authorization'];
-      if (!verifyAdminToken(authHeader)) {
-        return sendJson(403, { error: 'Unauthorized admin session' });
+    if (pathname.startsWith('/api/products/') && !pathname.includes('/reviews') && method === 'GET') {
+      const id = pathname.replace('/api/products/', '').trim();
+      const product = getProductById(id);
+      if (!product) {
+        return sendJson(404, { error: 'Product not found' });
       }
-      const body = await parseBody();
-      const { productId, count } = body;
-      if (!productId || typeof count !== 'number' || count <= 0) {
-        return sendJson(400, { error: 'Invalid restock parameters' });
-      }
-      adjustInventory(productId, -count); // Negative delta increases net available stock
-      return sendJson(200, { success: true, message: `Restocked ${count} units` });
+      return sendJson(200, { product });
     }
 
-    // 6. Create Order with Strict Server-Side Validation
-    if (pathname === '/api/orders' && method === 'POST') {
+    // ---------------------------------------------------------------------------
+    // 3. Cart Revalidation & Pricing (Strict Server Validation)
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/cart/validate' && method === 'POST') {
       const body = await parseBody();
-      const db = getDb();
+      const items = Array.isArray(body.items) ? body.items : [];
+      const destination = body.destination || {};
 
-      // Idempotency guard
-      if (body.idempotencyKey && db.processedIdempotencyKeys[body.idempotencyKey]) {
-        return sendJson(200, {
-          success: true,
-          duplicateDetected: true,
-          order: db.processedIdempotencyKeys[body.idempotencyKey]
+      const validatedItems = [];
+      const warnings = [];
+      let calculatedSubtotal = 0;
+
+      for (const reqItem of items) {
+        const product = getProductById(reqItem.id);
+        if (!product || product.status !== 'published') {
+          warnings.push(`Item "${reqItem.title || reqItem.id}" is no longer available.`);
+          continue;
+        }
+
+        const requestedQty = parseInt(reqItem.quantity, 10);
+        const safeQty = isNaN(requestedQty) || requestedQty <= 0 ? 1 : requestedQty;
+        const finalQty = Math.min(product.stock, safeQty);
+
+        if (finalQty <= 0) {
+          warnings.push(`"${product.title}" is currently out of stock.`);
+          continue;
+        }
+
+        if (finalQty < safeQty) {
+          warnings.push(`Quantity for "${product.title}" adjusted to available stock (${finalQty}).`);
+        }
+
+        if (reqItem.price && Number(reqItem.price) !== product.price) {
+          warnings.push(`Price for "${product.title}" updated from ৳${reqItem.price} to ৳${product.price}.`);
+        }
+
+        calculatedSubtotal += product.price * finalQty;
+
+        // Check variant
+        let matchedVariant = null;
+        if (reqItem.variant?.id && product.variants?.length) {
+          matchedVariant = product.variants.find(v => v.id === reqItem.variant.id) || product.variants[0];
+        }
+
+        validatedItems.push({
+          id: product.id,
+          sku: product.sku,
+          title: product.title,
+          titleBn: product.titleBn,
+          price: product.price,
+          originalPrice: product.originalPrice,
+          image: product.image,
+          category: product.category,
+          variant: matchedVariant || reqItem.variant || null,
+          quantity: finalQty,
+          maxStock: product.stock
         });
       }
 
-      // Input validation
-      if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
-        return sendJson(400, { success: false, error: 'Order must contain at least one item' });
+      // Check active promotions
+      const activePromos = getActivePromotions();
+      let promoDiscount = 0;
+      let appliedPromo = null;
+
+      if (body.promoCode) {
+        const found = activePromos.find(p => p.code.toLowerCase() === body.promoCode.toLowerCase().trim());
+        if (found && calculatedSubtotal >= found.min_order_amount) {
+          appliedPromo = found;
+          if (found.discount_type === 'percentage') {
+            promoDiscount = Math.round((calculatedSubtotal * found.discount_value) / 100);
+          } else {
+            promoDiscount = Math.min(calculatedSubtotal, found.discount_value);
+          }
+        }
       }
 
+      const discountedSubtotal = Math.max(0, calculatedSubtotal - promoDiscount);
+      const deliveryFee = calculateDeliveryFee(discountedSubtotal, destination);
+      const total = discountedSubtotal + deliveryFee;
+
+      return sendJson(200, {
+        valid: true,
+        items: validatedItems,
+        subtotal: calculatedSubtotal,
+        discount: promoDiscount,
+        deliveryFee,
+        total,
+        appliedPromo: appliedPromo ? { code: appliedPromo.code, title: appliedPromo.title } : null,
+        warnings
+      });
+    }
+
+    // ---------------------------------------------------------------------------
+    // 4. Order Creation (Idempotent, Transactional & Stock Reserved)
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/orders' && method === 'POST') {
+      const body = await parseBody();
+      const db = getDatabase();
+
+      // Idempotency check
+      if (body.idempotencyKey) {
+        const existingIdemp = db.prepare('SELECT response_json FROM idempotency_keys WHERE key = ?').get(body.idempotencyKey);
+        if (existingIdemp) {
+          try {
+            return sendJson(200, JSON.parse(existingIdemp.response_json));
+          } catch (e) {}
+        }
+      }
+
+      // Customer validation
       const cust = body.customer || {};
       if (!cust.name || !cust.name.trim()) {
         return sendJson(400, { success: false, error: 'Full customer name is required' });
@@ -142,112 +284,175 @@ export async function handleApiRequest(req, res) {
         return sendJson(400, { success: false, error: 'Delivery address is required' });
       }
 
-      // Canonical server calculation & stock verification
-      let calculatedSubtotal = 0;
-      const validatedItems = [];
+      if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
+        return sendJson(400, { success: false, error: 'Order must contain at least one item' });
+      }
 
-      for (const reqItem of body.items) {
-        const canonical = getCanonicalProduct(reqItem.id);
-        if (!canonical) {
-          return sendJson(400, { success: false, error: `Unrecognized product SKU: ${reqItem.id}` });
-        }
-
-        const qty = parseInt(reqItem.quantity, 10);
+      // Canonical price calculation & aggregation
+      const aggregatedItems = new Map();
+      for (const item of body.items) {
+        const qty = parseInt(item.quantity, 10);
         if (isNaN(qty) || qty <= 0) {
-          return sendJson(400, { success: false, error: `Invalid quantity for ${canonical.title}` });
+          return sendJson(400, { success: false, error: 'Item quantities must be positive integers' });
+        }
+        const key = `${item.id}_${item.variant?.name || item.variant || 'Standard'}`;
+        if (aggregatedItems.has(key)) {
+          aggregatedItems.get(key).quantity += qty;
+        } else {
+          aggregatedItems.set(key, { ...item, quantity: qty });
+        }
+      }
+
+      let subtotal = 0;
+      const orderItems = [];
+
+      for (const item of aggregatedItems.values()) {
+        const product = getProductById(item.id);
+        if (!product || product.status !== 'published') {
+          return sendJson(400, { success: false, error: `Product unavailable or out of stock: ${item.id}` });
         }
 
-        // Available stock check
-        const delta = db.inventoryDeltas[canonical.id] || 0;
-        const availableStock = canonical.stock - delta;
-        if (availableStock < qty) {
-          return sendJson(400, {
-            success: false,
-            error: `Insufficient stock for ${canonical.title}. Available: ${Math.max(0, availableStock)}`
-          });
-        }
-
-        calculatedSubtotal += canonical.price * qty;
-        validatedItems.push({
-          id: canonical.id,
-          title: canonical.title,
-          price: canonical.price,
-          quantity: qty,
-          variant: reqItem.variant || 'Standard'
+        subtotal += product.price * item.quantity;
+        orderItems.push({
+          id: product.id,
+          sku: product.sku,
+          title: product.title,
+          titleBn: product.titleBn,
+          price: product.price,
+          quantity: item.quantity,
+          variant: item.variant?.name || item.variant || 'Standard',
+          variantId: item.variant?.id || null
         });
       }
 
-      // Delivery charge calculation using shared pricing utility
-      const deliveryFee = calculateDeliveryFee(calculatedSubtotal, {
+      // Apply promo discount if present
+      let discount = 0;
+      if (body.promoCode) {
+        const promos = getActivePromotions();
+        const promo = promos.find(p => p.code.toLowerCase() === body.promoCode.toLowerCase().trim());
+        if (promo && subtotal >= promo.min_order_amount) {
+          discount = promo.discount_type === 'percentage'
+            ? Math.round((subtotal * promo.discount_value) / 100)
+            : Math.min(subtotal, promo.discount_value);
+        }
+      }
+
+      const discountedSubtotal = Math.max(0, subtotal - discount);
+      const deliveryFee = calculateDeliveryFee(discountedSubtotal, {
         division: cust.division || 'Dhaka',
         outsideCity: Boolean(cust.outsideCity)
       });
-      const total = calculatedSubtotal + deliveryFee;
+      const total = discountedSubtotal + deliveryFee;
 
-      const paymentMethod = body.paymentMethod === 'cod' ? 'cod' : 'online';
-      
-      // If customer requested online payment but provider is not configured, reject cleanly
+      const paymentMethod = body.paymentMethod === 'online' ? 'online' : 'cod';
+
+      // Check if online payment selected but not configured
       if (paymentMethod === 'online' && !isPaymentConfigured()) {
         return sendJson(400, {
           success: false,
-          error: 'Online payment is currently unavailable. Store payment credentials are not configured. Please use Cash on Delivery (Demo Mode).'
+          error: 'Online payment is currently unavailable. Payment gateway credentials are not configured.'
         });
       }
 
-      const orderId = 'AGY-' + Math.floor(100000 + Math.random() * 900000);
+      // Check authenticated user
+      const user = authenticateRequest(req);
+      const userId = user ? user.id : null;
 
-      // Order status distinction: COD is marked as demo_received and unpaid; Online is pending_payment
-      const initialStatus = paymentMethod === 'cod' ? ORDER_STATUS.DEMO_RECEIVED : ORDER_STATUS.PENDING_PAYMENT;
-      const initialPaymentStatus = paymentMethod === 'cod' ? PAYMENT_STATUS.UNPAID : PAYMENT_STATUS.PENDING;
+      try {
+        const result = createOrderWithReservation({
+          userId,
+          customer: {
+            name: cust.name,
+            phone: cleanPhone,
+            division: cust.division || 'Dhaka',
+            outsideCity: Boolean(cust.outsideCity),
+            address: cust.address,
+            notes: cust.notes || ''
+          },
+          items: orderItems,
+          subtotal,
+          discount,
+          deliveryFee,
+          total,
+          paymentMethod,
+          isDemo: Boolean(body.isDemo)
+        });
 
-      const newOrder = {
-        id: orderId,
-        createdAt: new Date().toISOString(),
-        isDemo: true,
+        const responsePayload = {
+          success: true,
+          order: result.order,
+          guestToken: result.guestToken
+        };
+
+        if (body.idempotencyKey) {
+          db.prepare('INSERT OR REPLACE INTO idempotency_keys (key, response_json, created_at) VALUES (?, ?, ?)')
+            .run(body.idempotencyKey, JSON.stringify(responsePayload), new Date().toISOString());
+        }
+
+        return sendJson(201, responsePayload);
+      } catch (err) {
+        return sendJson(400, { success: false, error: err.message });
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // 5. Order Tracking & Privacy Protection
+    // ---------------------------------------------------------------------------
+    if (pathname.startsWith('/api/orders/') && !pathname.includes('/status') && method === 'GET') {
+      const orderId = pathname.replace('/api/orders/', '').trim();
+      const order = findOrderById(orderId);
+      if (!order) {
+        return sendJson(404, { success: false, error: `No order found with ID: ${orderId}` });
+      }
+
+      const tokenParam = url.searchParams.get('token');
+      const authUser = authenticateRequest(req);
+
+      const isAuthorizedUser = authUser && (authUser.role === 'admin' || authUser.id === order.userId);
+      const isAuthorizedGuest = tokenParam && order.guestToken && tokenParam === order.guestToken;
+
+      // Full access if authorized
+      if (isAuthorizedUser || isAuthorizedGuest) {
+        return sendJson(200, { success: true, order, authorized: true });
+      }
+
+      // Masked public status access: Protect customer personal information
+      const nameParts = (order.customer.name || '').split(' ');
+      const maskedName = nameParts.map(p => p ? p[0] + '***' : '').join(' ');
+      const rawPhone = order.customer.phone || '';
+      const maskedPhone = rawPhone.length > 5 ? rawPhone.slice(0, 3) + '****' + rawPhone.slice(-4) : '*******';
+
+      const publicOrder = {
+        id: order.id,
+        createdAt: order.createdAt,
+        status: order.status,
+        paymentStatus: order.paymentStatus,
+        paymentMethod: order.paymentMethod,
+        timeline: order.timeline,
+        total: order.total,
         customer: {
-          name: cust.name.trim(),
-          phone: cleanPhone,
-          division: cust.division || 'Dhaka',
-          outsideCity: Boolean(cust.outsideCity),
-          address: cust.address.trim(),
-          notes: cust.notes || ''
+          name: maskedName,
+          phone: maskedPhone,
+          division: order.customer.division
         },
-        items: validatedItems,
-        subtotal: calculatedSubtotal,
-        deliveryFee,
-        total,
-        paymentMethod,
-        paymentStatus: initialPaymentStatus,
-        status: initialStatus,
-        timeline: [
-          { 
-            status: paymentMethod === 'cod' ? 'Demo Order Placed' : 'Order Placed', 
-            timestamp: new Date().toISOString(), 
-            note: paymentMethod === 'cod' ? 'Demo order recorded with unpaid Cash on Delivery status' : 'Order placed, awaiting payment confirmation' 
-          }
-        ]
+        items: order.items.map(i => ({
+          title: i.title,
+          quantity: i.quantity,
+          variant: i.variant
+        }))
       };
 
-      if (paymentMethod === 'cod') {
-        // Record demo inventory delta
-        for (const it of validatedItems) {
-          db.inventoryDeltas[it.id] = (db.inventoryDeltas[it.id] || 0) + it.quantity;
-        }
-      }
-
-      db.orders.unshift(newOrder);
-      if (body.idempotencyKey) {
-        db.processedIdempotencyKeys[body.idempotencyKey] = newOrder;
-      }
-      saveDb(db);
-
-      return sendJson(201, {
+      return sendJson(200, {
         success: true,
-        order: newOrder
+        order: publicOrder,
+        authorized: false,
+        notice: 'Personal details are protected. Full order details require signing in or tracking token.'
       });
     }
 
-    // 7. Initiate Payment Session
+    // ---------------------------------------------------------------------------
+    // 6. Online Payments (Session Initiation & Unified Verification)
+    // ---------------------------------------------------------------------------
     if (pathname === '/api/payment/initiate' && method === 'POST') {
       if (!isPaymentConfigured()) {
         return sendJson(400, {
@@ -258,7 +463,6 @@ export async function handleApiRequest(req, res) {
 
       const body = await parseBody();
       const { orderId, preferredProvider } = body;
-
       const order = findOrderById(orderId);
       if (!order) {
         return sendJson(404, { success: false, error: 'Order not found' });
@@ -273,8 +477,8 @@ export async function handleApiRequest(req, res) {
         return sendJson(400, { success: false, error: 'Payment provider not available' });
       }
 
-      const origin = req.headers.origin || req.headers.host ? `http://${req.headers.host}` : 'http://localhost:3000';
-      const sessionResult = await provider.initiatePayment(order, origin);
+      const publicOrigin = getPublicOrigin(req);
+      const sessionResult = await provider.initiatePayment(order, publicOrigin);
 
       return sendJson(200, {
         success: true,
@@ -283,16 +487,8 @@ export async function handleApiRequest(req, res) {
       });
     }
 
-    // 8. Server-Side Payment Verification (Direct or Polled)
+    // Centralized server payment verification
     if (pathname === '/api/payment/verify' && method === 'POST') {
-      if (!isPaymentConfigured()) {
-        return sendJson(400, {
-          success: false,
-          verified: false,
-          error: 'Payment verification refused: No live payment provider is integrated on this server.'
-        });
-      }
-
       const body = await parseBody();
       const { orderId, sessionId, val_id, paymentId, status, signature } = body;
 
@@ -301,7 +497,7 @@ export async function handleApiRequest(req, res) {
         return sendJson(404, { success: false, error: 'Order not found' });
       }
 
-      // Idempotency: if already verified as paid, return clean success
+      // Idempotency: If already paid, return clean success immediately
       if (order.paymentStatus === PAYMENT_STATUS.PAID) {
         return sendJson(200, {
           success: true,
@@ -316,7 +512,7 @@ export async function handleApiRequest(req, res) {
         return sendJson(400, {
           success: false,
           verified: false,
-          error: 'Payment verification refused: No active provider found'
+          error: 'Payment verification refused: No active payment provider found'
         });
       }
 
@@ -330,43 +526,20 @@ export async function handleApiRequest(req, res) {
       });
 
       if (verificationResult.verified) {
-        const db = getDb();
-        for (const it of order.items) {
-          db.inventoryDeltas[it.id] = (db.inventoryDeltas[it.id] || 0) + it.quantity;
-        }
-
-        order.paymentStatus = PAYMENT_STATUS.PAID;
-        order.status = ORDER_STATUS.CONFIRMED;
-        order.transactionId = verificationResult.transactionId;
-        order.paymentDetails = {
-          provider: provider.name || 'sslcommerz',
+        const finalizedOrder = finalizeOrderPayment({
+          orderId: order.id,
+          provider: provider.name || 'online_gateway',
           transactionId: verificationResult.transactionId,
-          verifiedAt: new Date().toISOString()
-        };
-        order.timeline.push({
-          status: 'Payment Verified',
-          timestamp: new Date().toISOString(),
-          note: `Verified server-side: TxID ${verificationResult.transactionId}`
+          paymentDetails: verificationResult.meta || {}
         });
-
-        saveDb(db);
 
         return sendJson(200, {
           success: true,
           verified: true,
-          order
+          order: finalizedOrder
         });
       } else {
-        order.paymentStatus = verificationResult.status || PAYMENT_STATUS.FAILED;
-        order.status = ORDER_STATUS.CANCELLED;
-        order.timeline.push({
-          status: 'Payment Failed',
-          timestamp: new Date().toISOString(),
-          note: verificationResult.reason || 'Payment verification failed'
-        });
-        const db = getDb();
-        saveDb(db);
-
+        cancelOrderAndReleaseReservation(order.id, verificationResult.reason || 'Payment verification failed');
         return sendJson(400, {
           success: false,
           verified: false,
@@ -375,27 +548,61 @@ export async function handleApiRequest(req, res) {
       }
     }
 
-    // 9. Payment Gateway Redirect Callback Handler (e.g. from SSLCommerz / bKash / Sandbox)
+    // Payment Gateway Redirect Callback Handler (Supports both GET and POST from gateways)
     if (pathname.startsWith('/api/payment/callback/')) {
-      const providerName = pathname.replace('/api/payment/callback/', '');
-      const orderId = url.searchParams.get('orderId');
-      const callbackStatus = url.searchParams.get('status') || 'success';
-      const valId = url.searchParams.get('val_id');
+      const providerName = pathname.replace('/api/payment/callback/', '').trim();
+      const body = method === 'POST' ? await parseBody() : {};
+
+      const orderId = url.searchParams.get('orderId') || body.tran_id || body.merchantInvoiceNumber;
+      const callbackStatus = url.searchParams.get('status') || body.status || 'success';
+      const valId = url.searchParams.get('val_id') || body.val_id;
+      const paymentId = url.searchParams.get('paymentID') || body.paymentID;
       const sessionId = url.searchParams.get('sessionId');
 
-      if (callbackStatus === 'success') {
-        sendRedirect(`/?payment_result=success&orderId=${orderId}&val_id=${valId || ''}&sessionId=${sessionId || ''}`);
-      } else if (callbackStatus === 'cancel') {
-        sendRedirect(`/?payment_result=cancel&orderId=${orderId}`);
-      } else {
-        sendRedirect(`/?payment_result=fail&orderId=${orderId}`);
+      if (!orderId) {
+        return sendRedirect('/?payment_result=fail&error=missing_order');
       }
-      return;
+
+      if (callbackStatus === 'success') {
+        const provider = getPaymentProvider(providerName);
+        const order = findOrderById(orderId);
+
+        if (provider && order) {
+          try {
+            const verification = await provider.verifyPayment({
+              order,
+              val_id: valId,
+              paymentId,
+              sessionId,
+              status: 'success'
+            });
+
+            if (verification.verified) {
+              finalizeOrderPayment({
+                orderId: order.id,
+                provider: providerName,
+                transactionId: verification.transactionId,
+                paymentDetails: verification.meta || {}
+              });
+              return sendRedirect(`/?payment_result=success&orderId=${orderId}&token=${order.guestToken || ''}`);
+            }
+          } catch (e) {
+            console.error('[Payment Callback Verification Error]', e.message);
+          }
+        }
+        return sendRedirect(`/?payment_result=fail&orderId=${orderId}`);
+      } else if (callbackStatus === 'cancel') {
+        cancelOrderAndReleaseReservation(orderId, 'Customer cancelled payment in gateway');
+        return sendRedirect(`/?payment_result=cancel&orderId=${orderId}`);
+      } else {
+        cancelOrderAndReleaseReservation(orderId, 'Payment gateway declined transaction');
+        return sendRedirect(`/?payment_result=fail&orderId=${orderId}`);
+      }
     }
 
-    // 10. Webhook / IPN Endpoint with Idempotency
+    // Payment IPN / Webhook Handler (Idempotent background notification)
     if (pathname.startsWith('/api/payment/ipn/')) {
-      const providerName = pathname.replace('/api/payment/ipn/', '');
+      const providerName = pathname.replace('/api/payment/ipn/', '').trim();
       const body = await parseBody();
       const orderId = body.tran_id || body.merchantInvoiceNumber || body.orderId;
 
@@ -408,12 +615,15 @@ export async function handleApiRequest(req, res) {
         return sendJson(404, { error: 'Order not found' });
       }
 
-      // Idempotency: Ignore duplicate webhooks
       if (order.paymentStatus === PAYMENT_STATUS.PAID) {
         return sendJson(200, { received: true, message: 'Already processed' });
       }
 
       const provider = getPaymentProvider(providerName);
+      if (!provider) {
+        return sendJson(400, { error: 'Unknown provider' });
+      }
+
       const result = await provider.verifyPayment({
         order,
         val_id: body.val_id,
@@ -422,36 +632,524 @@ export async function handleApiRequest(req, res) {
       });
 
       if (result.verified) {
-        const db = getDb();
-        order.paymentStatus = PAYMENT_STATUS.PAID;
-        order.status = ORDER_STATUS.CONFIRMED;
-        order.transactionId = result.transactionId;
-        order.timeline.push({
-          status: 'Payment Verified (IPN Webhook)',
-          timestamp: new Date().toISOString(),
-          note: `Verified via IPN: ${result.transactionId}`
+        finalizeOrderPayment({
+          orderId: order.id,
+          provider: providerName,
+          transactionId: result.transactionId,
+          paymentDetails: result.meta || {}
         });
-        saveDb(db);
         return sendJson(200, { success: true });
       }
 
       return sendJson(400, { success: false, reason: result.reason });
     }
 
-    // 11. Lookup Order by ID (Customer Tracking)
-    if (pathname.startsWith('/api/orders/') && method === 'GET') {
-      const id = pathname.replace('/api/orders/', '').trim();
-      const order = findOrderById(id);
-      if (!order) {
-        return sendJson(404, { success: false, error: 'No order found with ID: ' + id });
+    // ---------------------------------------------------------------------------
+    // 7. Customer Accounts & Authentication
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/auth/register' && method === 'POST') {
+      const body = await parseBody();
+      const { email, password, name, phone } = body;
+
+      if (!email || !email.includes('@')) {
+        return sendJson(400, { error: 'Valid email address is required' });
       }
+      if (!password || password.length < 6) {
+        return sendJson(400, { error: 'Password must be at least 6 characters' });
+      }
+      if (!name || !name.trim()) {
+        return sendJson(400, { error: 'Full name is required' });
+      }
+
+      const existing = findUserByEmail(email);
+      if (existing) {
+        return sendJson(409, { error: 'An account with this email already exists' });
+      }
+
+      const passwordHash = hashPassword(password);
+      const user = createUser({ email, phone, name, passwordHash, role: 'customer' });
+      const token = createCustomerSession(user.id);
+
+      return sendJson(201, {
+        success: true,
+        token,
+        user: { id: user.id, email: user.email, name: user.name, phone: user.phone, addresses: user.addresses }
+      });
+    }
+
+    if (pathname === '/api/auth/login' && method === 'POST') {
+      const body = await parseBody();
+      const { email, password } = body;
+
+      if (!checkRateLimit(ip, email || 'unknown', 5, 15 * 60 * 1000)) {
+        return sendJson(429, { error: 'Too many failed login attempts. Please wait 15 minutes before retrying.' });
+      }
+
+      const user = findUserByEmail(email);
+      if (!user || !verifyPasswordHash(password, user.password_hash)) {
+        recordFailedAttempt(ip, email || 'unknown');
+        return sendJson(401, { error: 'Invalid email or password' });
+      }
+
+      clearFailedAttempts(ip, email);
+      const token = createCustomerSession(user.id);
+
+      return sendJson(200, {
+        success: true,
+        token,
+        user: { id: user.id, email: user.email, name: user.name, phone: user.phone, role: user.role, addresses: user.addresses }
+      });
+    }
+
+    if (pathname === '/api/auth/logout' && method === 'POST') {
+      logoutSession(req.headers['authorization']);
+      return sendJson(200, { success: true });
+    }
+
+    if (pathname === '/api/auth/me' && method === 'GET') {
+      const user = authenticateRequest(req);
+      if (!user) {
+        return sendJson(401, { error: 'Unauthorized' });
+      }
+      return sendJson(200, { success: true, user });
+    }
+
+    if (pathname === '/api/auth/profile' && method === 'PUT') {
+      const user = authenticateRequest(req);
+      if (!user) {
+        return sendJson(401, { error: 'Unauthorized' });
+      }
+      const body = await parseBody();
+      const updated = updateUserProfile(user.id, body);
+      return sendJson(200, { success: true, user: updated });
+    }
+
+    if (pathname === '/api/auth/reset-password' && method === 'POST') {
+      const emailConfigured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER);
+      if (!emailConfigured) {
+        return sendJson(501, {
+          success: false,
+          error: 'Password reset email service is not configured on this server. Contact store manager directly.'
+        });
+      }
+      return sendJson(200, { success: true, message: 'Password reset link sent to your registered email' });
+    }
+
+    // Customer Order History
+    if (pathname === '/api/customer/orders' && method === 'GET') {
+      const user = authenticateRequest(req);
+      if (!user) {
+        return sendJson(401, { error: 'Unauthorized' });
+      }
+      const orders = getOrdersForUser(user.id);
+      return sendJson(200, { success: true, orders });
+    }
+
+    // Link guest order to customer account
+    if (pathname === '/api/customer/orders/link-guest' && method === 'POST') {
+      const user = authenticateRequest(req);
+      if (!user) {
+        return sendJson(401, { error: 'Unauthorized' });
+      }
+      const body = await parseBody();
+      const { orderId, guestToken } = body;
+      const order = findOrderById(orderId);
+
+      if (!order) {
+        return sendJson(404, { error: 'Order not found' });
+      }
+
+      if (order.guestToken !== guestToken && order.customer.phone !== user.phone) {
+        return sendJson(403, { error: 'Ownership verification failed: Token or phone mismatch' });
+      }
+
+      const db = getDatabase();
+      db.prepare('UPDATE orders SET user_id = ? WHERE id = ?').run(user.id, order.id);
+      return sendJson(200, { success: true, message: 'Order successfully linked to your account' });
+    }
+
+    // Customer Wishlist
+    if (pathname === '/api/customer/wishlist' && method === 'GET') {
+      const user = authenticateRequest(req);
+      if (!user) {
+        return sendJson(401, { error: 'Unauthorized' });
+      }
+      const productIds = getUserWishlist(user.id);
+      return sendJson(200, { success: true, productIds });
+    }
+
+    if (pathname === '/api/customer/wishlist' && method === 'POST') {
+      const user = authenticateRequest(req);
+      if (!user) {
+        return sendJson(401, { error: 'Unauthorized' });
+      }
+      const body = await parseBody();
+      setUserWishlist(user.id, body.productIds || []);
+      return sendJson(200, { success: true });
+    }
+
+    // ---------------------------------------------------------------------------
+    // 8. Verified Customer Reviews
+    // ---------------------------------------------------------------------------
+    if (pathname.startsWith('/api/products/') && pathname.endsWith('/reviews') && method === 'GET') {
+      const parts = pathname.split('/');
+      const productId = parts[3];
+      const reviews = getProductReviews(productId);
+      return sendJson(200, { reviews });
+    }
+
+    if (pathname.startsWith('/api/products/') && pathname.endsWith('/reviews') && method === 'POST') {
+      const user = authenticateRequest(req);
+      if (!user) {
+        return sendJson(401, { error: 'You must be signed in to submit a product review' });
+      }
+
+      const parts = pathname.split('/');
+      const productId = parts[3];
+      const body = await parseBody();
+
+      try {
+        const review = createReview({
+          productId,
+          userId: user.id,
+          orderId: body.orderId,
+          rating: body.rating,
+          comment: body.comment,
+          userName: user.name
+        });
+        return sendJson(201, { success: true, review });
+      } catch (err) {
+        return sendJson(400, { success: false, error: err.message });
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // 9. Promotions
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/promotions' && method === 'GET') {
+      const promotions = getActivePromotions();
+      return sendJson(200, { promotions });
+    }
+
+    // ---------------------------------------------------------------------------
+    // 10. Service Requests (Feature Flag)
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/services' && method === 'GET') {
+      const services = getServiceCatalog();
+      return sendJson(200, { services });
+    }
+
+    if (pathname === '/api/services/requests' && method === 'POST') {
+      const body = await parseBody();
+      if (!body.customerName || !body.customerPhone || !body.deviceModel || !body.description) {
+        return sendJson(400, { error: 'Missing required service request details' });
+      }
+      const user = authenticateRequest(req);
+      const srvReq = createServiceRequest({ ...body, userId: user?.id });
+      return sendJson(201, { success: true, serviceRequest: srvReq });
+    }
+
+    // ---------------------------------------------------------------------------
+    // 11. Admin Operations Console (Strictly Protected)
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/admin/login' && method === 'POST') {
+      if (!checkRateLimit(ip, 'admin_console', 5, 15 * 60 * 1000)) {
+        return sendJson(429, { error: 'Too many failed admin login attempts. Please wait 15 minutes.' });
+      }
+
+      const body = await parseBody();
+      if (verifyPassword(body.password)) {
+        clearFailedAttempts(ip, 'admin_console');
+        const token = generateAdminToken();
+        return sendJson(200, { success: true, token });
+      }
+      recordFailedAttempt(ip, 'admin_console');
+      return sendJson(401, { success: false, error: 'Invalid admin credentials' });
+    }
+
+    // Admin Dashboard Summary Metrics
+    if (pathname === '/api/admin/dashboard' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+
+      const allOrders = getAllOrdersAdmin({ limit: 1000 });
+      let paidRevenue = 0;
+      let unpaidCod = 0;
+      let cancelledCount = 0;
+      let testOrdersCount = 0;
+
+      for (const ord of allOrders) {
+        if (ord.isDemo) testOrdersCount++;
+        if (ord.status === 'cancelled') {
+          cancelledCount++;
+        } else if (ord.paymentStatus === 'paid') {
+          paidRevenue += ord.total;
+        } else if (ord.paymentMethod === 'cod') {
+          unpaidCod += ord.total;
+        }
+      }
+
+      const allProducts = getAllProducts({ includeArchived: true });
+      const lowStockProducts = allProducts.filter(p => p.stock > 0 && p.stock <= 5);
+      const outOfStockProducts = allProducts.filter(p => p.stock === 0);
+
+      return sendJson(200, {
+        metrics: {
+          paidRevenue,
+          unpaidCod,
+          totalOrders: allOrders.length,
+          cancelledCount,
+          testOrdersCount,
+          totalProducts: allProducts.length,
+          lowStockCount: lowStockProducts.length,
+          outOfStockCount: outOfStockProducts.length
+        }
+      });
+    }
+
+    // Admin Orders
+    if (pathname === '/api/admin/orders' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized or expired admin session' });
+      }
+      const status = url.searchParams.get('status');
+      const paymentStatus = url.searchParams.get('paymentStatus');
+      const search = url.searchParams.get('search') || '';
+      const orders = getAllOrdersAdmin({ status, paymentStatus, search, limit: 200 });
+      return sendJson(200, { orders });
+    }
+
+    if (pathname.startsWith('/api/admin/orders/') && pathname.endsWith('/status') && method === 'PATCH') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized or expired admin session' });
+      }
+      const orderId = pathname.split('/')[4];
+      const body = await parseBody();
+
+      try {
+        const order = updateOrderStatus(orderId, body.status, body.note);
+        if (!order) return sendJson(404, { error: 'Order not found' });
+        return sendJson(200, { success: true, order });
+      } catch (err) {
+        return sendJson(400, { error: err.message });
+      }
+    }
+
+    if (pathname.startsWith('/api/admin/orders/') && pathname.endsWith('/collect-cod') && method === 'POST') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const orderId = pathname.split('/')[4];
+      const body = await parseBody();
+      const order = markCodPaymentCollected(orderId, body.note);
+      if (!order) return sendJson(404, { error: 'Order not found' });
       return sendJson(200, { success: true, order });
     }
 
-    // 12. Inventory deltas for client sync
-    if (pathname === '/api/inventory' && method === 'GET') {
-      const db = getDb();
-      return sendJson(200, { deltas: db.inventoryDeltas || {} });
+    // Admin Product Management
+    if (pathname === '/api/admin/products' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const products = getAllProducts({ includeArchived: true });
+      return sendJson(200, { products });
+    }
+
+    if (pathname === '/api/admin/products' && method === 'POST') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const body = await parseBody();
+      try {
+        const created = createProduct(body);
+        return sendJson(201, { success: true, product: created });
+      } catch (err) {
+        return sendJson(400, { success: false, error: err.message });
+      }
+    }
+
+    if (pathname.startsWith('/api/admin/products/') && pathname.endsWith('/status') && method === 'PATCH') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const productId = pathname.split('/')[4];
+      const body = await parseBody();
+      try {
+        const updated = updateProductStatus(productId, body.status);
+        return sendJson(200, { success: true, product: updated });
+      } catch (err) {
+        return sendJson(400, { success: false, error: err.message });
+      }
+    }
+
+    if (pathname.startsWith('/api/admin/products/') && method === 'PUT') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const productId = pathname.replace('/api/admin/products/', '').trim();
+      const body = await parseBody();
+      try {
+        const updated = updateProduct(productId, body);
+        if (!updated) return sendJson(404, { error: 'Product not found' });
+        return sendJson(200, { success: true, product: updated });
+      } catch (err) {
+        return sendJson(400, { success: false, error: err.message });
+      }
+    }
+
+    // Stock Adjustments & Restocking
+    if (pathname === '/api/admin/inventory/restock' && method === 'POST') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const body = await parseBody();
+      const { productId, count, reason } = body;
+      if (!productId || typeof count !== 'number' || count <= 0) {
+        return sendJson(400, { error: 'Invalid restock parameters' });
+      }
+
+      try {
+        const result = adjustProductStock(productId, null, count, reason || `Manual Restock (+${count})`, 'admin');
+        const updated = getProductById(productId);
+        return sendJson(200, {
+          success: true,
+          message: `Restocked ${count} units`,
+          newStock: updated.stock,
+          product: updated
+        });
+      } catch (err) {
+        return sendJson(400, { error: err.message });
+      }
+    }
+
+    if (pathname.startsWith('/api/admin/products/') && pathname.endsWith('/adjust-stock') && method === 'POST') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const productId = pathname.split('/')[4];
+      const body = await parseBody();
+      try {
+        const result = adjustProductStock(
+          productId,
+          body.variantId || null,
+          parseInt(body.delta, 10),
+          body.reason || 'Manual Adjustment',
+          'admin'
+        );
+        const product = getProductById(productId);
+        return sendJson(200, { success: true, result, product });
+      } catch (err) {
+        return sendJson(400, { error: err.message });
+      }
+    }
+
+    if (pathname === '/api/admin/inventory/adjustments' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const productId = url.searchParams.get('productId');
+      const adjustments = getInventoryAdjustments(productId);
+      return sendJson(200, { adjustments });
+    }
+
+    // Admin Image Upload
+    if (pathname === '/api/admin/upload' && method === 'POST') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const body = await parseBody();
+      const { filename, contentType, dataBase64 } = body;
+
+      const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+      if (!contentType || !allowedMimes.includes(contentType)) {
+        return sendJson(400, { error: 'Only JPEG, PNG, WebP, or SVG images are allowed' });
+      }
+
+      if (!dataBase64) {
+        return sendJson(400, { error: 'Missing image file data' });
+      }
+
+      const buffer = Buffer.from(dataBase64, 'base64');
+      if (buffer.length > 5 * 1024 * 1024) {
+        return sendJson(400, { error: 'File size must not exceed 5MB' });
+      }
+
+      const ext = contentType === 'image/jpeg' ? '.jpg' :
+                  contentType === 'image/png' ? '.png' :
+                  contentType === 'image/webp' ? '.webp' : '.svg';
+
+      const safeName = `img_${Date.now()}_${crypto.randomBytes(6).toString('hex')}${ext}`;
+      const filePath = path.join(UPLOADS_DIR, safeName);
+      fs.writeFileSync(filePath, buffer);
+
+      return sendJson(200, { success: true, url: `/uploads/${safeName}` });
+    }
+
+    // Admin Review Moderation
+    if (pathname === '/api/admin/reviews' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      return sendJson(200, { reviews: getAllReviewsAdmin() });
+    }
+
+    if (pathname.startsWith('/api/admin/reviews/') && pathname.endsWith('/status') && method === 'PATCH') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const reviewId = pathname.split('/')[4];
+      const body = await parseBody();
+      const updated = updateReviewStatus(reviewId, body.status);
+      return sendJson(200, { success: true, review: updated });
+    }
+
+    // Admin Promotions
+    if (pathname === '/api/admin/promotions' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      return sendJson(200, { promotions: getAllPromotionsAdmin() });
+    }
+
+    if (pathname === '/api/admin/promotions' && method === 'POST') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const body = await parseBody();
+      try {
+        const promo = createPromotion(body);
+        return sendJson(201, { success: true, promotion: promo });
+      } catch (err) {
+        return sendJson(400, { error: err.message });
+      }
+    }
+
+    if (pathname.startsWith('/api/admin/promotions/') && method === 'DELETE') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const promoId = pathname.replace('/api/admin/promotions/', '').trim();
+      deletePromotion(promoId);
+      return sendJson(200, { success: true });
+    }
+
+    // Admin Service Requests
+    if (pathname === '/api/admin/services/requests' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      return sendJson(200, { requests: getServiceRequestsAdmin() });
+    }
+
+    if (pathname.startsWith('/api/admin/services/requests/') && pathname.endsWith('/status') && method === 'PATCH') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const reqId = pathname.split('/')[5];
+      const body = await parseBody();
+      const updated = updateServiceRequestStatus(reqId, body.status, body.quotedPrice, body.note);
+      return sendJson(200, { success: true, serviceRequest: updated });
     }
 
     return sendJson(404, { error: 'API route not found' });

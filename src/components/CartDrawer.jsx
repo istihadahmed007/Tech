@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { calculateOrderTotals, FREE_SHIPPING_THRESHOLD } from '../utils/pricing';
 
 export default function CartDrawer({ 
@@ -9,11 +9,14 @@ export default function CartDrawer({
   onUpdateQuantity, 
   onRemoveItem, 
   onOpenCheckout,
+  onRevalidateCart,
   currencySymbol = "৳",
   t,
   lang 
 }) {
   const closeButtonRef = useRef(null);
+  const [revalidationWarnings, setRevalidationWarnings] = useState([]);
+  const [isValidating, setIsValidating] = useState(false);
 
   // Accessible Escape-to-close
   useEffect(() => {
@@ -27,7 +30,6 @@ export default function CartDrawer({
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    // Focus management: initial focus on close button
     const timer = setTimeout(() => {
       if (closeButtonRef.current) {
         closeButtonRef.current.focus();
@@ -40,9 +42,51 @@ export default function CartDrawer({
     };
   }, [isOpen, onClose]);
 
+  // Revalidate cart items with server whenever cart drawer opens
+  useEffect(() => {
+    if (isOpen && cart.length > 0) {
+      revalidateWithServer();
+    }
+  }, [isOpen]);
+
+  const revalidateWithServer = async () => {
+    setIsValidating(true);
+    try {
+      const res = await fetch('/api/cart/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map(i => ({
+            id: i.id,
+            price: i.price,
+            quantity: i.quantity,
+            variant: i.variant,
+            title: i.title
+          }))
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.valid) {
+        if (data.warnings && data.warnings.length > 0) {
+          setRevalidationWarnings(data.warnings);
+        } else {
+          setRevalidationWarnings([]);
+        }
+
+        // If items were updated, notify parent
+        if (onRevalidateCart && data.items) {
+          onRevalidateCart(data.items);
+        }
+      }
+    } catch (e) {
+      console.error('Cart revalidation failed', e);
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
   if (!isOpen) return null;
 
-  // Single shared pricing calculation
   const { 
     subtotal, 
     remainingForFreeShipping, 
@@ -78,7 +122,7 @@ export default function CartDrawer({
             <div className="flex items-center gap-2">
               <ShoppingBag size={20} className="text-[#145CFF]" />
               <h2 id="cart-drawer-title" className="text-base sm:text-lg font-bold text-[#10263D]">
-                {t.cartTitle} ({totalItemCount})
+                {t?.cartTitle || 'Your Shopping Bag'} ({totalItemCount})
               </h2>
             </div>
             <button
@@ -91,17 +135,30 @@ export default function CartDrawer({
             </button>
           </div>
 
+          {/* Revalidation Warnings Notice */}
+          {revalidationWarnings.length > 0 && (
+            <div className="px-5 py-3 bg-amber-50 border-b border-amber-200 text-xs text-amber-800 space-y-1">
+              <div className="flex items-center gap-1.5 font-bold">
+                <AlertCircle size={14} className="shrink-0" />
+                <span>Inventory & Price Update Notice</span>
+              </div>
+              {revalidationWarnings.map((warn, i) => (
+                <p key={i} className="text-[11px] pl-5">{warn}</p>
+              ))}
+            </div>
+          )}
+
           {/* Free Shipping Progress Meter */}
           <div className="px-5 sm:px-6 py-3.5 bg-[#EAF4FC] border-b border-[#DCE7F0]" role="region" aria-label="Free delivery progress">
             <div className="flex items-center justify-between text-xs font-semibold text-[#10263D] mb-1.5">
               {isFreeDelivery ? (
                 <span className="text-emerald-700 flex items-center gap-1 font-bold">
                   <Sparkles size={13} />
-                  {t.freeShippingUnlocked}
+                  {t?.freeShippingUnlocked || 'You have unlocked Free Delivery!'}
                 </span>
               ) : (
                 <span>
-                  {t.freeShippingAway.replace('{amount}', remainingForFreeShipping.toLocaleString())}
+                  {(t?.freeShippingAway || 'Add ৳{amount} more to get Free Delivery!').replace('{amount}', remainingForFreeShipping.toLocaleString())}
                 </span>
               )}
               <span className="text-[#145CFF] font-bold">{progressPercent}%</span>
@@ -139,25 +196,23 @@ export default function CartDrawer({
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-start gap-2">
-                        <h3 className="font-bold text-xs sm:text-sm text-[#10263D] leading-snug line-clamp-1">
-                          {lang === 'bn' ? item.titleBn : item.title}
+                        <h3 className="font-bold text-xs sm:text-sm text-[#10263D] leading-tight">
+                          {lang === 'bn' ? (item.titleBn || item.title) : item.title}
                         </h3>
                         <button
                           onClick={() => onRemoveItem(item.id, item.variant?.id)}
-                          className="text-slate-400 hover:text-red-500 transition-colors p-1"
-                          title="Remove item"
+                          className="text-slate-400 hover:text-red-500 p-0.5 rounded transition-colors"
                           aria-label={`Remove ${item.title} from bag`}
                         >
-                          <Trash2 size={15} />
+                          <Trash2 size={16} />
                         </button>
                       </div>
 
                       {item.variant && (
-                        <div className="flex items-center gap-1.5 mt-1 text-xs text-[#52677B]">
+                        <div className="flex items-center gap-1.5 mt-1 text-[11px] text-[#52677B]">
                           <span 
-                            className="w-2.5 h-2.5 rounded-full border border-black/10 inline-block" 
+                            className="w-2.5 h-2.5 rounded-full border border-black/10" 
                             style={{ backgroundColor: item.variant.hex }} 
-                            aria-hidden="true"
                           />
                           <span>{item.variant.name}</span>
                         </div>
@@ -165,29 +220,28 @@ export default function CartDrawer({
                     </div>
 
                     <div className="flex items-center justify-between mt-3">
-                      {/* Quantity Controls */}
-                      <div className="flex items-center border border-[#DCE7F0] rounded-lg bg-white px-2 py-0.5">
+                      {/* Quantity Controller */}
+                      <div className="flex items-center border border-[#DCE7F0] rounded-lg bg-slate-50 p-0.5">
                         <button
                           onClick={() => onUpdateQuantity(item.id, item.variant?.id, item.quantity - 1)}
-                          className="p-1 text-[#52677B] hover:text-[#145CFF] focus-visible:ring-1 focus-visible:ring-[#145CFF]"
-                          aria-label={`Decrease quantity of ${item.title}`}
+                          className="p-1 rounded text-[#52677B] hover:bg-white hover:text-[#10263D] transition-colors"
+                          aria-label="Decrease quantity"
                         >
                           <Minus size={13} />
                         </button>
-                        <span className="w-7 text-center font-bold text-xs text-[#10263D]" aria-live="polite">
+                        <span className="w-8 text-center text-xs font-bold text-[#10263D]">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => onUpdateQuantity(item.id, item.variant?.id, item.quantity + 1)}
-                          className="p-1 text-[#52677B] hover:text-[#145CFF] focus-visible:ring-1 focus-visible:ring-[#145CFF]"
-                          aria-label={`Increase quantity of ${item.title}`}
+                          className="p-1 rounded text-[#52677B] hover:bg-white hover:text-[#10263D] transition-colors"
+                          aria-label="Increase quantity"
                         >
                           <Plus size={13} />
                         </button>
                       </div>
 
-                      {/* Price */}
-                      <span className="font-extrabold text-xs sm:text-sm text-[#10263D]">
+                      <span className="font-extrabold text-sm text-[#10263D]">
                         {currencySymbol}{(item.price * item.quantity).toLocaleString()}
                       </span>
                     </div>
@@ -195,53 +249,43 @@ export default function CartDrawer({
                 </div>
               ))
             ) : (
-              /* Empty Bag View */
-              <div className="h-full flex flex-col items-center justify-center text-center py-16">
+              <div className="h-full flex flex-col items-center justify-center text-center py-12">
                 <div className="w-16 h-16 rounded-full bg-[#EAF4FC] text-[#145CFF] flex items-center justify-center mb-4">
                   <ShoppingBag size={28} />
                 </div>
                 <h3 className="font-bold text-base text-[#10263D] mb-1">
-                  {t.cartEmpty}
+                  {t?.cartEmpty || 'Your bag is empty'}
                 </h3>
                 <p className="text-xs text-[#52677B] max-w-xs mb-6">
-                  {t.cartEmptySub}
+                  {t?.cartEmptySub || 'Explore our ice-blue collection and add everyday upgrades.'}
                 </p>
                 <button
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs shadow-md shadow-blue-500/20"
+                  className="px-6 py-2.5 rounded-full bg-[#145CFF] text-white text-xs font-semibold hover:bg-[#0D4BD9] transition-colors shadow-xs"
                 >
-                  {t.shopAccessories}
+                  Start Shopping
                 </button>
               </div>
             )}
           </div>
 
-          {/* Bottom Checkout Shelf */}
+          {/* Footer Checkout Summary */}
           {cart.length > 0 && (
-            <div className="p-5 sm:p-6 border-t border-[#DCE7F0] bg-white space-y-2.5">
-              <div className="flex justify-between text-xs sm:text-sm text-[#52677B]">
-                <span>{t.subtotal}</span>
-                <span className="font-bold text-[#10263D]">
-                  {currencySymbol}{subtotal.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between text-xs text-[#52677B]">
-                <span>{t.deliveryFee}</span>
-                <span className="font-semibold text-emerald-700">
-                  {isFreeDelivery ? 'FREE (Orders >= ৳2,000)' : '৳60 inside Dhaka / ৳120 outside'}
-                </span>
+            <div className="p-5 sm:p-6 border-t border-[#DCE7F0] bg-white space-y-4">
+              <div className="space-y-1.5 text-xs text-[#52677B]">
+                <div className="flex justify-between">
+                  <span>{t?.subtotal || 'Subtotal'}</span>
+                  <span className="font-bold text-[#10263D]">{currencySymbol}{subtotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>{t?.deliveryFee || 'Delivery Fee'}</span>
+                  <span>{isFreeDelivery ? <strong className="text-emerald-600">FREE</strong> : 'Calculated at checkout'}</span>
+                </div>
               </div>
 
-              <div className="pt-2 border-t border-[#DCE7F0] flex justify-between items-baseline text-sm sm:text-base font-extrabold text-[#10263D]">
-                <div>
-                  <span>{isFreeDelivery ? t.total : 'Estimated Total'}</span>
-                  {!isFreeDelivery && (
-                    <span className="block text-[10px] text-[#52677B] font-normal">
-                      Delivery fee finalized at checkout
-                    </span>
-                  )}
-                </div>
-                <span className="text-[#145CFF] text-base sm:text-lg">
+              <div className="pt-2 border-t border-slate-100 flex justify-between items-baseline">
+                <span className="text-sm font-bold text-[#10263D]">{t?.total || 'Total'}</span>
+                <span className="text-xl font-extrabold text-[#145CFF]">
                   {currencySymbol}{subtotal.toLocaleString()}
                 </span>
               </div>
@@ -251,16 +295,11 @@ export default function CartDrawer({
                   onClose();
                   onOpenCheckout();
                 }}
-                className="w-full py-3.5 px-6 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.99] text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all mt-2"
+                className="w-full py-3.5 px-6 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
-                <span>{t.checkoutBtn}</span>
-                <ArrowRight size={16} />
+                <span>{t?.checkoutBtn || 'Proceed to Checkout'}</span>
+                <ArrowRight size={17} />
               </button>
-
-              <p className="text-[11px] text-center text-[#52677B] flex items-center justify-center gap-1 pt-1">
-                <ShieldCheck size={13} className="text-emerald-600 shrink-0" />
-                <span>Verified checkout • Cash on Delivery or Online</span>
-              </p>
             </div>
           )}
         </div>

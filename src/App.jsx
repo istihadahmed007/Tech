@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import CompatibilityFinder from './components/CompatibilityFinder';
@@ -11,6 +11,7 @@ import PaymentGatewayModal from './components/PaymentGatewayModal';
 import OrderConfirmationModal from './components/OrderConfirmationModal';
 import OrderTrackingModal from './components/OrderTrackingModal';
 import WishlistModal from './components/WishlistModal';
+import AccountModal from './components/AccountModal';
 import AdminModal from './components/AdminModal';
 import SupportModal from './components/SupportModal';
 import Footer from './components/Footer';
@@ -23,11 +24,15 @@ export default function App() {
   const [lang, setLang] = useState('en');
   const t = translations[lang] || translations.en;
 
-  // Catalog State
+  // Authoritative Database Catalog State
   const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPhone, setSelectedPhone] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Customer Authentication State
+  const [currentUser, setCurrentUser] = useState(null);
 
   // Cart State (Persisted in localStorage)
   const [cart, setCart] = useState(() => {
@@ -49,13 +54,63 @@ export default function App() {
     }
   });
 
-  // Modals & Flows
+  // Modals & Navigation Flows
   const [activeModal, setActiveModal] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [paymentSessionInfo, setPaymentSessionInfo] = useState(null);
   const [trackingOrderId, setTrackingOrderId] = useState('');
+  const [trackingToken, setTrackingToken] = useState('');
   const [toastMessage, setToastMessage] = useState('');
+
+  // Toast Helper
+  const showToast = useCallback((msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3000);
+  }, []);
+
+  // Fetch Authoritative Database Catalog
+  const loadDatabaseProducts = useCallback(async () => {
+    setLoadingProducts(true);
+    try {
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.products) && data.products.length > 0) {
+        setProducts(data.products);
+      }
+    } catch (err) {
+      console.warn('Using local fallback catalog:', err.message);
+    } finally {
+      setLoadingProducts(false);
+    }
+  }, []);
+
+  // Fetch Current Logged-in Customer
+  const loadCurrentCustomer = useCallback(async () => {
+    const token = localStorage.getItem('accessories_customer_token');
+    if (!token) return;
+
+    try {
+      const res = await fetch('/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.user) {
+        setCurrentUser(data.user);
+      } else {
+        localStorage.removeItem('accessories_customer_token');
+        setCurrentUser(null);
+      }
+    } catch (e) {
+      // Ignored
+    }
+  }, []);
+
+  // Initial Data & Authentication Setup
+  useEffect(() => {
+    loadDatabaseProducts();
+    loadCurrentCustomer();
+  }, [loadDatabaseProducts, loadCurrentCustomer]);
 
   // Sync cart to localStorage
   useEffect(() => {
@@ -71,6 +126,42 @@ export default function App() {
     } catch (e) {}
   }, [wishlistIds]);
 
+  // Hash & URL Routing Synchronization (Direct links & browser back/forward)
+  useEffect(() => {
+    const handleHashRouting = () => {
+      const hash = window.location.hash;
+      if (hash === '#account') {
+        setActiveModal('account');
+      } else if (hash === '#admin') {
+        setActiveModal('admin');
+      } else if (hash === '#cart') {
+        setActiveModal('cart');
+      } else if (hash === '#checkout') {
+        setActiveModal('checkout');
+      } else if (hash.startsWith('#track')) {
+        const params = new URLSearchParams(hash.replace('#track', '').replace('?', ''));
+        const id = params.get('id');
+        const token = params.get('token');
+        if (id) {
+          setTrackingOrderId(id);
+          setTrackingToken(token || '');
+        }
+        setActiveModal('tracking');
+      } else if (hash.startsWith('#product/')) {
+        const productId = hash.replace('#product/', '').trim();
+        const found = products.find(p => p.id === productId);
+        if (found) {
+          setSelectedProduct(found);
+          setActiveModal('detail');
+        }
+      }
+    };
+
+    handleHashRouting();
+    window.addEventListener('hashchange', handleHashRouting);
+    return () => window.removeEventListener('hashchange', handleHashRouting);
+  }, [products]);
+
   // Handle gateway return parameters on page mount
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -78,6 +169,7 @@ export default function App() {
     const orderId = url.searchParams.get('orderId');
     const valId = url.searchParams.get('val_id');
     const sessionId = url.searchParams.get('sessionId');
+    const token = url.searchParams.get('token');
 
     if (paymentResult && orderId) {
       // Clean query parameters from URL
@@ -98,7 +190,7 @@ export default function App() {
           .then(res => res.json())
           .then(data => {
             if (data.verified && data.order) {
-              setConfirmedOrder(data.order);
+              setConfirmedOrder({ ...data.order, guestToken: token || data.order.guestToken });
               setCart([]);
               setActiveModal('order_success');
             } else {
@@ -112,13 +204,7 @@ export default function App() {
         showToast('Payment transaction failed or declined');
       }
     }
-  }, []);
-
-  // Toast Helper
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 2800);
-  };
+  }, [showToast]);
 
   // Cart Operations
   const handleAddToCart = (product, variant = null, quantity = 1) => {
@@ -137,6 +223,7 @@ export default function App() {
           ...prevCart,
           {
             id: product.id,
+            sku: product.sku || product.id,
             title: product.title,
             titleBn: product.titleBn,
             price: product.price,
@@ -175,17 +262,34 @@ export default function App() {
     );
   };
 
+  const handleRevalidateCart = (serverItems) => {
+    setCart(serverItems);
+  };
+
   // Wishlist Operations
-  const handleToggleWishlist = (product) => {
-    setWishlistIds((prev) => {
-      if (prev.includes(product.id)) {
-        showToast(`Removed from wishlist`);
-        return prev.filter((id) => id !== product.id);
-      } else {
-        showToast(`Saved to wishlist`);
-        return [...prev, product.id];
-      }
-    });
+  const handleToggleWishlist = async (product) => {
+    let nextWishlist;
+    if (wishlistIds.includes(product.id)) {
+      nextWishlist = wishlistIds.filter((id) => id !== product.id);
+      showToast('Removed from wishlist');
+    } else {
+      nextWishlist = [...wishlistIds, product.id];
+      showToast('Saved to wishlist');
+    }
+    setWishlistIds(nextWishlist);
+
+    // Sync to user account if signed in
+    const token = localStorage.getItem('accessories_customer_token');
+    if (token) {
+      fetch('/api/customer/wishlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ productIds: nextWishlist })
+      }).catch(() => {});
+    }
   };
 
   // Buy Now direct trigger
@@ -194,9 +298,9 @@ export default function App() {
     setActiveModal('checkout');
   };
 
-  // Order Placed Success Handler (COD or Verified)
-  const handleOrderSuccess = (order) => {
-    setConfirmedOrder(order);
+  // Order Placed Success Handler
+  const handleOrderSuccess = (order, guestToken = null) => {
+    setConfirmedOrder({ ...order, guestToken: guestToken || order.guestToken });
     setCart([]);
     setActiveModal('order_success');
   };
@@ -204,7 +308,6 @@ export default function App() {
   // Online Payment Initiated
   const handleInitiateOnlinePayment = (order, sessionData) => {
     if (sessionData.provider === 'sandbox') {
-      // Open transparent sandbox modal
       setPaymentSessionInfo({
         orderId: order.id,
         sessionId: sessionData.sessionId,
@@ -212,7 +315,6 @@ export default function App() {
       });
       setActiveModal('payment_gateway');
     } else if (sessionData.redirectUrl) {
-      // Live gateway redirect
       window.location.href = sessionData.redirectUrl;
     }
   };
@@ -228,18 +330,69 @@ export default function App() {
     setActiveModal(null);
   };
 
-  // Restock for Admin
-  const handleRestock = (productId, count = 10) => {
-    fetch('/api/admin/inventory/restock', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId, count })
-    }).catch(() => {});
+  // Authenticated Admin Restock (Fixing previous unauthenticated instant increase bug)
+  const handleRestock = async (productId, count = 10) => {
+    const adminToken = localStorage.getItem('accessories_admin_token');
+    if (!adminToken) {
+      showToast('Admin authentication required to restock');
+      setActiveModal('admin');
+      return;
+    }
 
-    setProducts((prev) =>
-      prev.map((p) => (p.id === productId ? { ...p, stock: p.stock + count } : p))
-    );
-    showToast(`Restocked +${count} units`);
+    try {
+      const res = await fetch('/api/admin/inventory/restock', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ productId, count, reason: `Quick restock (+${count})` })
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Server rejected restock request');
+      }
+
+      // Update stock ONLY from the successful server response
+      setProducts((prev) =>
+        prev.map((p) => (p.id === productId ? { ...p, stock: data.newStock } : p))
+      );
+      showToast(`Restocked +${count} units (Server Stock: ${data.newStock})`);
+    } catch (err) {
+      showToast(`Restock failed: ${err.message}`);
+    }
+  };
+
+  // Customer Login Success Handler (Merges guest cart and wishlist)
+  const handleCustomerLoginSuccess = (user, token) => {
+    setCurrentUser(user);
+    showToast(`Welcome back, ${user.name}`);
+
+    // Merge guest wishlist
+    if (wishlistIds.length > 0) {
+      fetch('/api/customer/wishlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ productIds: wishlistIds })
+      }).catch(() => {});
+    }
+  };
+
+  const handleCustomerLogout = () => {
+    const token = localStorage.getItem('accessories_customer_token');
+    if (token) {
+      fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      }).catch(() => {});
+    }
+    localStorage.removeItem('accessories_customer_token');
+    setCurrentUser(null);
+    showToast('Signed out of customer account');
   };
 
   const scrollToSection = (id) => {
@@ -249,43 +402,43 @@ export default function App() {
     }
   };
 
-  const featuredProduct = products.find(p => p.id === 'aura-frost-magsafe-case') || products[0];
-
   return (
-    <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-600 selection:text-white bg-[#EAF5FF]">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#112A43] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-blue-400/30 flex items-center gap-2 animate-fadeIn">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#10263D] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-blue-400/30 flex items-center gap-2 animate-fadeIn">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Slim Frosted Glass Header */}
+      {/* Frosted Glass Header */}
       <Header
         storeName={import.meta.env.VITE_STORE_NAME || "Accessories"}
         t={t}
         lang={lang}
         setLang={setLang}
+        currentUser={currentUser}
         cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
         wishlistCount={wishlistIds.length}
         onOpenCart={() => setActiveModal('cart')}
         onOpenWishlist={() => setActiveModal('wishlist')}
         onOpenSupport={() => setActiveModal('support')}
+        onOpenAccount={() => setActiveModal('account')}
         onOpenAdmin={() => setActiveModal('admin')}
-        onOpenTracking={() => {
-          setTrackingOrderId('');
+        onOpenTracking={(id) => {
+          setTrackingOrderId(id || '');
+          setTrackingToken('');
           setActiveModal('tracking');
         }}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        onSelectCategory={setSelectedCategory}
         onScrollToFinder={() => scrollToSection('compatibility-finder')}
       />
 
       {/* Main Content Area */}
       <main className="container flex-grow pt-4">
-        {/* Directed 3D Hero Section */}
+        {/* Static, Responsive Glacial Hero Section (No 3D / No Autoplay Motion) */}
         <Hero
           onShopClick={() => scrollToSection('products-section')}
           onFindPhoneClick={() => scrollToSection('compatibility-finder')}
@@ -304,7 +457,7 @@ export default function App() {
           t={t}
         />
 
-        {/* Four Image-led Categories Strip directly below Finder */}
+        {/* Category Collections Strip */}
         <CategoryNav
           selectedCategory={selectedCategory}
           onSelectCategory={(catId) => {
@@ -313,45 +466,45 @@ export default function App() {
           }}
         />
 
-        {/* Four Value Proposition Highlights */}
+        {/* Value Proposition Highlights */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 my-8">
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
               <Truck size={20} />
             </div>
             <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#112A43]">{t.prop1Title}</h4>
-              <p className="text-[11px] text-[#4B637B] hidden sm:block">{t.prop1Sub}</p>
+              <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop1Title}</h4>
+              <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop1Sub}</p>
             </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
               <Award size={20} />
             </div>
             <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#112A43]">{t.prop2Title}</h4>
-              <p className="text-[11px] text-[#4B637B] hidden sm:block">{t.prop2Sub}</p>
+              <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop2Title}</h4>
+              <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop2Sub}</p>
             </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
               <ShieldCheck size={20} />
             </div>
             <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#112A43]">{t.prop3Title}</h4>
-              <p className="text-[11px] text-[#4B637B] hidden sm:block">{t.prop3Sub}</p>
+              <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop3Title}</h4>
+              <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop3Sub}</p>
             </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/75 backdrop-blur-md border border-blue-200/50 shadow-xs flex items-center gap-3.5">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
               <RotateCcw size={20} />
             </div>
             <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#112A43]">{t.prop4Title}</h4>
-              <p className="text-[11px] text-[#4B637B] hidden sm:block">{t.prop4Sub}</p>
+              <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop4Title}</h4>
+              <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop4Sub}</p>
             </div>
           </div>
         </div>
@@ -378,11 +531,13 @@ export default function App() {
         />
       </main>
 
-      {/* Modals & Drawers */}
+      {/* Modals & Flow Components */}
       {/* 1. Product Detail Modal */}
       {activeModal === 'detail' && selectedProduct && (
         <ProductDetailModal
           product={selectedProduct}
+          currentUser={currentUser}
+          onOpenAccount={() => setActiveModal('account')}
           onClose={() => {
             setActiveModal(null);
             setSelectedProduct(null);
@@ -395,7 +550,7 @@ export default function App() {
         />
       )}
 
-      {/* 2. Slide-out Cart Drawer */}
+      {/* 2. Slide-out Cart Drawer with Revalidation */}
       <CartDrawer
         isOpen={activeModal === 'cart'}
         onClose={() => setActiveModal(null)}
@@ -403,6 +558,7 @@ export default function App() {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveFromCart}
         onOpenCheckout={() => setActiveModal('checkout')}
+        onRevalidateCart={handleRevalidateCart}
         currencySymbol="৳"
         t={t}
         lang={lang}
@@ -413,6 +569,7 @@ export default function App() {
         isOpen={activeModal === 'checkout'}
         onClose={() => setActiveModal(null)}
         cart={cart}
+        currentUser={currentUser}
         onOrderSuccess={handleOrderSuccess}
         onInitiateOnlinePayment={handleInitiateOnlinePayment}
         currencySymbol="৳"
@@ -420,7 +577,7 @@ export default function App() {
         lang={lang}
       />
 
-      {/* 4. Payment Gateway Modal (for Sandbox / Interactive Testing) */}
+      {/* 4. Payment Gateway Modal */}
       {activeModal === 'payment_gateway' && paymentSessionInfo && (
         <PaymentGatewayModal
           isOpen={true}
@@ -440,8 +597,9 @@ export default function App() {
             setActiveModal(null);
             setConfirmedOrder(null);
           }}
-          onOpenTracking={(id) => {
+          onOpenTracking={(id, token) => {
             setTrackingOrderId(id);
+            setTrackingToken(token || '');
             setActiveModal('tracking');
           }}
           currencySymbol="৳"
@@ -455,6 +613,7 @@ export default function App() {
         isOpen={activeModal === 'tracking'}
         onClose={() => setActiveModal(null)}
         initialOrderId={trackingOrderId}
+        initialToken={trackingToken}
         currencySymbol="৳"
       />
 
@@ -469,16 +628,32 @@ export default function App() {
         t={t}
       />
 
-      {/* 8. Admin Dashboard Modal */}
+      {/* 8. Customer Account Modal */}
+      <AccountModal
+        isOpen={activeModal === 'account'}
+        onClose={() => setActiveModal(null)}
+        currentUser={currentUser}
+        onLoginSuccess={handleCustomerLoginSuccess}
+        onLogout={handleCustomerLogout}
+        onSelectProduct={(p) => {
+          setSelectedProduct(p);
+          setActiveModal('detail');
+        }}
+        onAddToCart={handleAddToCart}
+        currencySymbol="৳"
+        t={t}
+        lang={lang}
+      />
+
+      {/* 9. Admin Operations Console */}
       <AdminModal
         isOpen={activeModal === 'admin'}
         onClose={() => setActiveModal(null)}
-        products={products}
-        onRestockProduct={handleRestock}
         currencySymbol="৳"
+        onProductsUpdated={loadDatabaseProducts}
       />
 
-      {/* 9. Customer Support Modal */}
+      {/* 10. Customer Support Modal */}
       <SupportModal
         isOpen={activeModal === 'support'}
         onClose={() => setActiveModal(null)}
@@ -491,6 +666,7 @@ export default function App() {
         onOpenSupport={() => setActiveModal('support')}
         onOpenTracking={() => {
           setTrackingOrderId('');
+          setTrackingToken('');
           setActiveModal('tracking');
         }}
         onSelectCategory={(catId) => {

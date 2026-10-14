@@ -9,19 +9,23 @@ import {
   SlidersHorizontal,
   HelpCircle,
   Menu,
-  ShieldCheck
+  ShieldCheck,
+  Lock,
+  LogOut
 } from 'lucide-react';
 
 export default function Header({ 
   storeName, 
-  t, 
-  lang, 
+  t = {}, 
+  lang = 'en', 
   setLang, 
+  currentUser,
   cartCount, 
   wishlistCount, 
   onOpenCart, 
   onOpenWishlist, 
   onOpenSupport,
+  onOpenAccount,
   onOpenAdmin,
   onOpenTracking,
   searchQuery, 
@@ -65,7 +69,7 @@ export default function Header({
             href="#" 
             className="font-extrabold text-2xl tracking-tight text-[#10263D] hover:text-[#145CFF] transition-colors leading-none"
           >
-            Accessories
+            {storeName || "Accessories"}
           </a>
 
           {/* Desktop Navigation Links */}
@@ -83,6 +87,13 @@ export default function Header({
               Find my fit
             </button>
             <button 
+              onClick={() => onOpenTracking('')}
+              className="nav-link-btn text-[#145CFF] font-semibold flex items-center gap-1"
+            >
+              <Package size={15} />
+              <span>Track Order</span>
+            </button>
+            <button 
               onClick={onOpenSupport}
               className="nav-link-btn"
             >
@@ -91,7 +102,7 @@ export default function Header({
           </nav>
         </div>
 
-        {/* Center / Right: Search Input */}
+        {/* Center: Search Input */}
         <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
           <div className="relative w-full">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
@@ -100,7 +111,7 @@ export default function Header({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for cases, earbuds, chargers and more..."
-              className="w-full text-xs font-normal pl-9 pr-8 py-2 rounded-full bg-white/85 border border-slate-200/90 focus:bg-white focus:border-[#0055FF] focus:ring-2 focus:ring-blue-100 outline-none text-[#0F172A] placeholder-[#94A3B8] transition-all shadow-2xs"
+              className="w-full text-xs font-normal pl-9 pr-8 py-2 rounded-full bg-white/85 border border-slate-200/90 focus:bg-white focus:border-[#145CFF] focus:ring-2 focus:ring-blue-100 outline-none text-[#0F172A] placeholder-[#94A3B8] transition-all shadow-2xs"
             />
             {searchQuery && (
               <button 
@@ -115,11 +126,11 @@ export default function Header({
         </div>
 
         {/* Rightmost Action Icons */}
-        <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Mobile Search Trigger */}
           <button 
             onClick={toggleMobileSearch}
-            className="md:hidden p-2 rounded-full hover:bg-slate-100 text-[#0F172A] transition-colors focus-visible:ring-2 focus-visible:ring-[#0055FF]"
+            className="md:hidden p-2 rounded-full hover:bg-slate-100 text-[#0F172A] transition-colors focus-visible:ring-2 focus-visible:ring-[#145CFF]"
             aria-label="Toggle mobile search"
             aria-expanded={searchOpen}
           >
@@ -132,7 +143,7 @@ export default function Header({
             className="hidden sm:flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-slate-200 bg-white/80 hover:bg-white text-slate-700 transition-colors"
             title="Switch Language (English / বাংলা)"
           >
-            <Globe size={13} className="text-[#0055FF]" />
+            <Globe size={13} className="text-[#145CFF]" />
             <span>{lang === 'en' ? 'BN' : 'EN'}</span>
           </button>
 
@@ -145,32 +156,47 @@ export default function Header({
           >
             <Heart size={20} />
             {wishlistCount > 0 && (
-              <span className="absolute 0 top-0.5 right-0.5 w-4 h-4 rounded-full bg-pink-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+              <span className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-pink-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                 {wishlistCount}
               </span>
             )}
           </button>
 
-          {/* User / Admin Profile Icon */}
+          {/* Customer Account Button */}
+          <button
+            onClick={onOpenAccount}
+            className="p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-[#145CFF] transition-colors flex items-center gap-1.5"
+            aria-label="Customer Account"
+            title={currentUser ? `Account: ${currentUser.name}` : "Sign In / Account"}
+          >
+            <User size={20} />
+            {currentUser && (
+              <span className="hidden xl:inline text-xs font-bold text-[#10263D] max-w-[80px] truncate">
+                {currentUser.name.split(' ')[0]}
+              </span>
+            )}
+          </button>
+
+          {/* Admin Operations Button */}
           <button
             onClick={onOpenAdmin}
-            className="p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-[#0055FF] transition-colors"
-            aria-label="User Account & Store Operations"
-            title="Account & Admin Operations"
+            className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[#10263D] transition-colors"
+            aria-label="Store Admin Console"
+            title="Admin Console"
           >
-            <User size={21} />
+            <Lock size={18} />
           </button>
 
           {/* Shopping Bag Trigger Icon */}
           <button
             onClick={onOpenCart}
-            className="relative p-2 rounded-full hover:bg-slate-100 text-[#0F172A] hover:text-[#0055FF] transition-colors"
+            className="relative p-2 rounded-full hover:bg-slate-100 text-[#0F172A] hover:text-[#145CFF] transition-colors"
             aria-label="Shopping Bag"
             title="Shopping Bag"
           >
             <ShoppingBag size={21} />
             {cartCount > 0 && (
-              <span className="absolute top-0 right-0 w-4.5 h-4.5 rounded-full bg-[#0055FF] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
+              <span className="absolute top-0 right-0 w-4.5 h-4.5 rounded-full bg-[#145CFF] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
                 {cartCount}
               </span>
             )}
@@ -179,7 +205,7 @@ export default function Header({
           {/* Mobile Menu Toggle */}
           <button
             onClick={toggleMobileMenu}
-            className="md:hidden p-2 rounded-full hover:bg-slate-100 text-[#0F172A] focus-visible:ring-2 focus-visible:ring-[#0055FF]"
+            className="md:hidden p-2 rounded-full hover:bg-slate-100 text-[#0F172A] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -231,24 +257,31 @@ export default function Header({
               Find my fit
             </button>
             <button 
+              onClick={() => { setMobileMenuOpen(false); onOpenTracking(''); }}
+              className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-[#145CFF] font-semibold flex items-center justify-between"
+            >
+              <span>Track Order</span>
+              <ShieldCheck size={16} />
+            </button>
+            <button 
+              onClick={() => { setMobileMenuOpen(false); onOpenAccount(); }}
+              className="p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-center justify-between"
+            >
+              <span>{currentUser ? `Account: ${currentUser.name}` : 'Sign In / Register'}</span>
+              <User size={16} />
+            </button>
+            <button 
               onClick={() => { setMobileMenuOpen(false); onOpenSupport(); }}
               className="p-2.5 rounded-xl hover:bg-slate-50 text-left"
             >
               Support
             </button>
             <button 
-              onClick={() => { setMobileMenuOpen(false); onOpenTracking(); }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-[#0055FF] font-semibold flex items-center justify-between"
-            >
-              <span>Track Order</span>
-              <ShieldCheck size={16} />
-            </button>
-            <button 
               onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-slate-600 flex items-center justify-between"
+              className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-slate-500 flex items-center justify-between text-xs"
             >
-              <span>Admin Operations</span>
-              <User size={16} />
+              <span>Store Admin Operations</span>
+              <Lock size={15} />
             </button>
           </nav>
 
@@ -256,7 +289,7 @@ export default function Header({
             <span>Currency: <strong>BDT (৳)</strong></span>
             <button
               onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-              className="text-[#0055FF] font-bold"
+              className="text-[#145CFF] font-bold"
             >
               Switch to {lang === 'en' ? 'বাংলা' : 'English'}
             </button>
