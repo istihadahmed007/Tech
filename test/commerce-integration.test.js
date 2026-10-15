@@ -367,7 +367,7 @@ test('6. Payment cancellation releases inventory reservation and supports retry'
 });
 
 test('7. Only customers with delivered orders can review products', () => {
-  const prodId = 'aura-frost-magsafe-case';
+  const prodId = 'h2-anc-pro-tws';
   const user = createUser({
     email: `reviewer_${Date.now()}@test.com`,
     name: 'Verified Customer',

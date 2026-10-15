@@ -23,10 +23,8 @@ export default function ProductGrid({
 
   const categories = useMemo(() => [
     { id: null, label: t.allProducts },
-    { id: 'cases', label: t.catCases },
     { id: 'audio', label: t.catAudio },
     { id: 'charging', label: t.catCharging },
-    { id: 'powerbanks', label: t.catPowerBanks },
     { id: 'wearables', label: t.catWearables || 'Smartwatches' }
   ], [t]);
 

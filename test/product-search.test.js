@@ -32,15 +32,15 @@ function filterProducts(products, { category = null, phone = null, query = '', i
 }
 
 test('Product Search: searches by English title', () => {
-  const results = filterProducts(INITIAL_PRODUCTS, { query: 'Aura Frost' });
+  const results = filterProducts(INITIAL_PRODUCTS, { query: 'Ultrapods Pro' });
   assert.ok(results.length > 0);
-  assert.ok(results.every(p => p.title.includes('Aura Frost')));
+  assert.ok(results.every(p => p.title.includes('Ultrapods Pro')));
 });
 
 test('Product Search: searches by Bengali title', () => {
-  const results = filterProducts(INITIAL_PRODUCTS, { query: 'অরা ফ্রস্ট' });
+  const results = filterProducts(INITIAL_PRODUCTS, { query: 'আল্ট্রাপডস' });
   assert.ok(results.length > 0);
-  assert.ok(results.every(p => p.titleBn?.includes('অরা ফ্রস্ট')));
+  assert.ok(results.every(p => p.titleBn?.includes('আল্ট্রাপডস')));
 });
 
 test('Product Search: searches by photo reference ID (P01, P04, P11)', () => {
@@ -60,9 +60,9 @@ test('Product Search: searches by device compatibility', () => {
 });
 
 test('Product Filtering: filters by category ID', () => {
-  const cases = filterProducts(INITIAL_PRODUCTS, { category: 'cases' });
-  assert.ok(cases.length > 0);
-  assert.ok(cases.every(p => p.category === 'cases'));
+  const charging = filterProducts(INITIAL_PRODUCTS, { category: 'charging' });
+  assert.ok(charging.length > 0);
+  assert.ok(charging.every(p => p.category === 'charging'));
 
   const audio = filterProducts(INITIAL_PRODUCTS, { category: 'audio' });
   assert.ok(audio.length > 0);

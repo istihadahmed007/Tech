@@ -429,6 +429,12 @@ function seedInitialCatalog(db) {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
+  // Remove any legacy/mock products that are not in the authentic inventory catalog
+  const validIds = INITIAL_PRODUCTS.map(p => p.id);
+  const placeholders = validIds.map(() => '?').join(',');
+  db.prepare(`DELETE FROM product_variants WHERE product_id NOT IN (${placeholders})`).run(...validIds);
+  db.prepare(`DELETE FROM products WHERE id NOT IN (${placeholders})`).run(...validIds);
+
   for (const p of INITIAL_PRODUCTS) {
     const sku = p.id;
     insertProduct.run(

@@ -9,28 +9,22 @@ export default function CategoryNav({
 }) {
   const categories = [
     {
-      id: 'cases',
-      name: lang === 'bn' ? 'কেস ও কভার' : 'Cases',
-      image: '/assets/cat-cases.jpg',
-      alt: 'Cases for iPhone, Samsung, Pixel'
-    },
-    {
       id: 'audio',
-      name: lang === 'bn' ? 'অডিও গিয়ার' : 'Audio',
+      name: lang === 'bn' ? 'অডিও ও ইয়ারবাডস' : 'Audio & Earbuds',
       image: '/assets/cat-audio.jpg',
-      alt: 'Wireless earbuds and audio accessories'
+      alt: 'Wireless earbuds, ANC headsets and earphones'
     },
     {
       id: 'charging',
-      name: lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Charging',
+      name: lang === 'bn' ? 'চার্জিং ও ক্যাবল' : 'Charging & Cables',
       image: '/assets/cat-charging.jpg',
-      alt: 'USB-C fast chargers and braided cables'
+      alt: 'Fast chargers and braided multi-tip cables'
     },
     {
-      id: 'powerbanks',
-      name: lang === 'bn' ? 'পাওয়ার ব্যাংক' : 'Power banks',
-      image: '/assets/cat-powerbanks.jpg',
-      alt: 'MagSafe and high-capacity portable power banks'
+      id: 'wearables',
+      name: lang === 'bn' ? 'স্মার্টওয়াচ ও ব্যান্ড' : 'Smartwatches',
+      image: '/assets/cat-wearables.jpg',
+      alt: 'Ultra smartwatches and multi-strap sets'
     }
   ];
 

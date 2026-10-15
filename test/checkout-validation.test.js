@@ -129,13 +129,13 @@ test('Customer validation: rejects missing name or address', () => {
 
 test('Items validation: validates SKUs against catalog and computes canonical subtotal', () => {
   const result = validateOrderItems([
-    { id: 'aura-frost-magsafe-case', quantity: 2 },
-    { id: 'glacier-tws-anc-earbuds', quantity: 1 }
+    { id: 'h2-anc-pro-tws', quantity: 2 },
+    { id: 'p04-ultrapods-pro-tws', quantity: 1 }
   ]);
 
   assert.equal(result.valid, true);
   assert.equal(result.validated.length, 2);
-  assert.equal(result.subtotal, (2450 * 2) + 5890);
+  assert.equal(result.subtotal, (1190 * 2) + 350);
 });
 
 test('Items validation: rejects invalid or out-of-stock items', () => {
@@ -147,7 +147,7 @@ test('Items validation: rejects invalid or out-of-stock items', () => {
 
   // Insufficient stock test
   const exceedStock = validateOrderItems(
-    [{ id: 'aura-frost-magsafe-case', quantity: 9999 }]
+    [{ id: 'h2-anc-pro-tws', quantity: 9999 }]
   );
   assert.equal(exceedStock.valid, false);
   assert.match(exceedStock.error, /Insufficient stock/i);
