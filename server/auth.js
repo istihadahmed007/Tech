@@ -21,7 +21,8 @@ const INSECURE_DEFAULTS = [
 
 // Production secrets validator
 export function validateProductionSecrets() {
-  if (!IS_PROD) return true;
+  const isProd = process.env.NODE_ENV === 'production';
+  if (!isProd) return true;
 
   const adminPass = process.env.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD_HASH;
   const sessionSec = process.env.ADMIN_SESSION_SECRET || process.env.SESSION_SECRET;
@@ -42,7 +43,7 @@ export function validateProductionSecrets() {
 
 // Secret key for HMAC token signing
 function getSessionSecret() {
-  if (IS_PROD) {
+  if (process.env.NODE_ENV === 'production') {
     validateProductionSecrets();
     return process.env.ADMIN_SESSION_SECRET || process.env.SESSION_SECRET;
   }

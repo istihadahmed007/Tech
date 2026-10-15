@@ -1131,6 +1131,11 @@ img {
   box-shadow: none;
   transform: none;
 }
+.btn-quick-add.is-added {
+  background-color: #059669 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 3px 12px rgba(5, 150, 105, 0.35) !important;
+}
 
 /* Navigation Links */
 .nav-link-btn {

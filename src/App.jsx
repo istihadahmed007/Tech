@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import CompatibilityFinder from './components/CompatibilityFinder';
@@ -65,6 +65,23 @@ export default function App() {
   const [trackingOrderId, setTrackingOrderId] = useState('');
   const [trackingToken, setTrackingToken] = useState('');
   const [toastMessage, setToastMessage] = useState('');
+  const lastActiveElementRef = useRef(null);
+
+  // Accessible focus restoration upon closing modals
+  useEffect(() => {
+    if (activeModal || selectedProduct) {
+      if (!lastActiveElementRef.current) {
+        lastActiveElementRef.current = document.activeElement;
+      }
+    } else {
+      if (lastActiveElementRef.current && typeof lastActiveElementRef.current.focus === 'function') {
+        try {
+          lastActiveElementRef.current.focus();
+        } catch (e) {}
+      }
+      lastActiveElementRef.current = null;
+    }
+  }, [activeModal, selectedProduct]);
 
   // Toast Helper
   const showToast = useCallback((msg) => {

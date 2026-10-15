@@ -22,30 +22,30 @@ export default function WovenBackground({ mode = 'home' }) {
 
   // Target animation parameters by page mode
   const targetParams = useRef({
-    amp: 1.0,
-    speed: 0.34,
-    lineOpacity: 0.96,
-    nodeOpacity: 1.0,
+    amp: 0.95,
+    speed: 0.22,
+    lineOpacity: 0.92,
+    nodeOpacity: 0.95,
     surfaceOpacity: 0.97
   });
 
   useEffect(() => {
     switch (mode) {
       case 'home':
-        targetParams.current = { amp: 1.0, speed: 0.34, lineOpacity: 0.96, nodeOpacity: 1.0, surfaceOpacity: 0.97 };
+        targetParams.current = { amp: 0.95, speed: 0.22, lineOpacity: 0.92, nodeOpacity: 0.95, surfaceOpacity: 0.97 };
         break;
       case 'category':
-        targetParams.current = { amp: 0.88, speed: 0.28, lineOpacity: 0.88, nodeOpacity: 0.92, surfaceOpacity: 0.97 };
+        targetParams.current = { amp: 0.85, speed: 0.18, lineOpacity: 0.86, nodeOpacity: 0.90, surfaceOpacity: 0.97 };
         break;
       case 'pdp':
-        targetParams.current = { amp: 0.78, speed: 0.24, lineOpacity: 0.82, nodeOpacity: 0.85, surfaceOpacity: 0.97 };
+        targetParams.current = { amp: 0.70, speed: 0.14, lineOpacity: 0.78, nodeOpacity: 0.82, surfaceOpacity: 0.97 };
         break;
       case 'checkout':
       case 'cart':
-        targetParams.current = { amp: 0.42, speed: 0.16, lineOpacity: 0.55, nodeOpacity: 0.6, surfaceOpacity: 0.97 };
+        targetParams.current = { amp: 0.35, speed: 0.09, lineOpacity: 0.50, nodeOpacity: 0.55, surfaceOpacity: 0.97 };
         break;
       default:
-        targetParams.current = { amp: 0.95, speed: 0.3, lineOpacity: 0.92, nodeOpacity: 0.95, surfaceOpacity: 0.97 };
+        targetParams.current = { amp: 0.90, speed: 0.20, lineOpacity: 0.88, nodeOpacity: 0.92, surfaceOpacity: 0.97 };
     }
   }, [mode]);
 
@@ -374,15 +374,17 @@ export default function WovenBackground({ mode = 'home' }) {
     let currentScrollOffset = 0;
 
     const handleMouseMove = (e) => {
+      if (prefersReducedMotion) return;
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -(e.clientY / window.innerHeight) * 2 + 1;
-      targetCamX = defaultCamX + nx * 2.8;
-      targetCamY = defaultCamY + ny * 1.4;
+      targetCamX = defaultCamX + nx * 1.2;
+      targetCamY = defaultCamY + ny * 0.6;
     };
 
     const handleScroll = () => {
+      if (prefersReducedMotion) return;
       const scrollY = window.scrollY || window.pageYOffset || 0;
-      targetScrollOffset = scrollY * 0.0018;
+      targetScrollOffset = scrollY * 0.0012;
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -438,12 +440,12 @@ export default function WovenBackground({ mode = 'home' }) {
       currentParams.surfaceOpacity += (targetParams.current.surfaceOpacity - currentParams.surfaceOpacity) * lerpSpeed;
 
       // Smooth camera parallax
-      camera.position.x += (targetCamX - camera.position.x) * 0.04;
-      camera.position.y += (targetCamY - camera.position.y) * 0.04;
+      if (!prefersReducedMotion) {
+        camera.position.x += (targetCamX - camera.position.x) * 0.04;
+        camera.position.y += (targetCamY - camera.position.y) * 0.04;
+        currentScrollOffset += (targetScrollOffset - currentScrollOffset) * 0.05;
+      }
       camera.lookAt(0, 1.2, -6.0);
-
-      // Smooth scroll displacement
-      currentScrollOffset += (targetScrollOffset - currentScrollOffset) * 0.05;
 
       surfaceUniforms.uTime.value = elapsedTime;
       surfaceUniforms.uSpeed.value = currentParams.speed;

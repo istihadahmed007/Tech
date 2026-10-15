@@ -38,6 +38,7 @@ export default function CheckoutModal({
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [onlineAvailable, setOnlineAvailable] = useState(false);
   const [activeGatewayName, setActiveGatewayName] = useState(null);
+  const [isSandboxMode, setIsSandboxMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [promoCodeInput, setPromoCodeInput] = useState('');
@@ -68,15 +69,19 @@ export default function CheckoutModal({
         if (data.onlinePaymentAvailable) {
           setOnlineAvailable(true);
           setActiveGatewayName(data.activeProvider);
+          const activeObj = data.activeProvider === 'sslcommerz' ? data.sslcommerz : data.bkash;
+          setIsSandboxMode(Boolean(activeObj?.sandbox));
         } else {
           setOnlineAvailable(false);
           setActiveGatewayName(null);
+          setIsSandboxMode(false);
           setPaymentMethod('cod');
         }
       })
       .catch(() => {
         setOnlineAvailable(false);
         setActiveGatewayName(null);
+        setIsSandboxMode(false);
         setPaymentMethod('cod');
       });
   }, []);
@@ -439,6 +444,15 @@ export default function CheckoutModal({
                     <span className="font-bold text-xs text-[#10263D]">
                       Online Payment (bKash / Card)
                     </span>
+                    {onlineAvailable && (
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        isSandboxMode 
+                          ? 'bg-amber-100 text-amber-800 border border-amber-300' 
+                          : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                      }`}>
+                        {isSandboxMode ? 'Sandbox / Test' : 'Live Gateway'}
+                      </span>
+                    )}
                   </div>
                   <input
                     type="radio"
@@ -452,7 +466,9 @@ export default function CheckoutModal({
                 </div>
                 <p className="text-[11px] text-[#52677B]">
                   {onlineAvailable ? (
-                    `Direct gateway via ${activeGatewayName || 'SSLCommerz/bKash'}`
+                    isSandboxMode 
+                      ? `Test payment simulation via ${activeGatewayName || 'SSLCommerz/bKash'} (no real card charged)`
+                      : `Live secure gateway via ${activeGatewayName || 'SSLCommerz/bKash'}`
                   ) : (
                     'Currently unavailable (Merchant credentials required in .env)'
                   )}

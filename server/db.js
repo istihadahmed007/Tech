@@ -10,14 +10,37 @@ const LEGACY_JSON_FILE = path.resolve(process.cwd(), 'data-store.json');
 
 let dbInstance = null;
 
+export function getDbPath() {
+  return process.env.SQLITE_DB_PATH || path.join(DB_DIR, 'store.db');
+}
+
+export function closeDatabase() {
+  if (dbInstance) {
+    try {
+      dbInstance.close();
+    } catch (e) {}
+    dbInstance = null;
+  }
+}
+
+export function resetDatabaseForTesting(customDbPath = null) {
+  closeDatabase();
+  if (customDbPath) {
+    process.env.SQLITE_DB_PATH = customDbPath;
+  }
+  return getDatabase();
+}
+
 export function getDatabase() {
   if (dbInstance) return dbInstance;
 
-  if (!fs.existsSync(DB_DIR)) {
-    fs.mkdirSync(DB_DIR, { recursive: true });
+  const dbPath = getDbPath();
+  const dir = path.dirname(dbPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
 
-  dbInstance = new DatabaseSync(DB_FILE);
+  dbInstance = new DatabaseSync(dbPath);
 
   // Set busy timeout FIRST so any concurrent lock waits rather than throwing ERR_SQLITE_ERROR
   dbInstance.exec('PRAGMA busy_timeout = 5000;');
@@ -476,29 +499,28 @@ function seedInitialCatalog(db) {
     }
   }
 
-  // Seed default admin account if not already created
-  const checkAdmin = db.prepare("SELECT id FROM users WHERE role = 'admin'").get();
-  if (!checkAdmin) {
-    // Salted hash for default admin in dev
-    const salt = crypto.randomBytes(16).toString('hex');
-    const derivedKey = crypto.scryptSync('admin123', salt, 64).toString('hex');
-    const passwordHash = `scrypt:${salt}:${derivedKey}`;
+  // Seed default admin account safely (idempotent with conflict handling)
+  const salt = crypto.randomBytes(16).toString('hex');
+  const derivedKey = crypto.scryptSync('admin123', salt, 64).toString('hex');
+  const passwordHash = `scrypt:${salt}:${derivedKey}`;
 
-    db.prepare(`
-      INSERT INTO users (id, email, phone, name, password_hash, role, addresses_json, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      'usr_admin_default',
-      'admin@techtrove.local',
-      '01700000000',
-      'Store Administrator',
-      passwordHash,
-      'admin',
-      '[]',
-      now,
-      now
-    );
-  }
+  db.prepare(`
+    INSERT INTO users (id, email, phone, name, password_hash, role, addresses_json, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(email) DO UPDATE SET
+      role = 'admin',
+      updated_at = excluded.updated_at
+  `).run(
+    'usr_admin_default',
+    'admin@techtrove.local',
+    '01700000000',
+    'Store Administrator',
+    passwordHash,
+    'admin',
+    '[]',
+    now,
+    now
+  );
 }
 
 // -----------------------------------------------------------------------------

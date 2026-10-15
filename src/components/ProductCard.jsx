@@ -1,5 +1,5 @@
-import React from 'react';
-import { Plus, Heart, Check, Zap, Info } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Heart, Check } from 'lucide-react';
 
 export default function ProductCard({ 
   product, 
@@ -12,6 +12,8 @@ export default function ProductCard({
   t,
   lang 
 }) {
+  const [isQuickAdded, setIsQuickAdded] = useState(false);
+
   const isCompatible = selectedPhone 
     ? product.compatibleWith?.includes(selectedPhone)
     : true;
@@ -27,13 +29,28 @@ export default function ProductCard({
     }
   };
 
+  const handleQuickAddClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (isOutOfStock) return;
+    onQuickAdd(product);
+    setIsQuickAdded(true);
+    setTimeout(() => setIsQuickAdded(false), 1200);
+  };
+
+  const handleWishlistClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    onToggleWishlist(product);
+  };
+
   return (
     <div 
       role="article"
       tabIndex="0"
       onKeyDown={handleCardKeyDown}
       onClick={() => onOpenDetail(product)}
-      className="group relative rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer focus-visible:outline-2 focus-visible:outline-[#145CFF] focus-visible:outline-offset-2"
+      className="group relative rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between h-full transition-all duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer focus-visible:outline-2 focus-visible:outline-[#145CFF] focus-visible:outline-offset-2"
       style={{
         background: '#FFFFFF',
         border: '1px solid #DCE7F0',
@@ -43,44 +60,52 @@ export default function ProductCard({
       aria-label={`${product.title}, ${currencySymbol}${product.price}`}
     >
       {/* Top Media Display Pedestal */}
-      <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-3.5 bg-[#EAF4FC] p-3 flex items-center justify-center">
+      <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-[#EAF4FC] p-3 flex items-center justify-center border border-[#DCE7F0]/60">
         <img
           src={product.image}
           alt={lang === 'bn' ? product.titleBn : product.title}
-          className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
+          className={`w-full h-full object-contain object-center transition-transform duration-300 ${
+            isOutOfStock ? 'opacity-65 grayscale-[25%]' : 'group-hover:scale-105'
+          }`}
           loading="lazy"
         />
 
         {/* Top Floating Badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
-          {product.badge && (
+          {product.badge && !isOutOfStock && (
             <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#145CFF] text-white shadow-xs">
               {product.badge}
             </span>
           )}
-          {isLowStock && (
+          {isLowStock && !isOutOfStock && (
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-xs">
               {t.lowStock} ({product.stock})
             </span>
           )}
         </div>
 
-        {/* Wishlist Button with event isolation */}
+        {/* Out of Stock Overlay */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-[#020712]/35 backdrop-blur-[1px] flex items-center justify-center z-10 pointer-events-none">
+            <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#10263D] text-white shadow-md border border-white/20">
+              {lang === 'bn' ? 'স্টক শেষ' : 'Sold Out'}
+            </span>
+          </div>
+        )}
+
+        {/* Wishlist Button with strict event isolation */}
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleWishlist(product);
-          }}
+          onClick={handleWishlistClick}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
-              e.stopPropagation();
+              handleWishlistClick(e);
             }
           }}
-          className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center transition-all z-10 focus-visible:ring-2 focus-visible:ring-pink-500 ${
+          className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center transition-all z-20 focus-visible:ring-2 focus-visible:ring-pink-500 ${
             isWishlisted 
               ? 'bg-pink-500 text-white shadow-md' 
-              : 'bg-white/85 backdrop-blur-md text-[#4B637B] hover:text-pink-500 hover:bg-white'
+              : 'bg-white/90 backdrop-blur-md text-[#4B637B] hover:text-pink-500 hover:bg-white border border-[#DCE7F0]'
           }`}
           aria-label={isWishlisted ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
         >
@@ -121,31 +146,41 @@ export default function ProductCard({
             </span>
           </div>
 
-          {/* Title */}
-          <h3 className="font-bold text-xs sm:text-sm md:text-base text-[#10263D] leading-snug group-hover:text-[#145CFF] transition-colors line-clamp-2 mb-2">
+          {/* Title with reserved 2-line height for clean grid alignment */}
+          <h3 className="font-bold text-xs sm:text-sm md:text-base text-[#10263D] leading-snug group-hover:text-[#145CFF] transition-colors line-clamp-2 min-h-[2.6rem] sm:min-h-[2.85rem] mb-1.5">
             {lang === 'bn' ? product.titleBn : product.title}
           </h3>
 
-          {/* Color Variant Dots Preview */}
-          {product.variants && product.variants.length > 0 && (
-            <div className="flex items-center gap-1.5 mb-3">
-              {product.variants.map((v) => (
-                <span
-                  key={v.id}
-                  className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border border-black/10 shadow-inner"
-                  style={{ backgroundColor: v.hex }}
-                  title={v.name}
-                />
-              ))}
-              <span className="text-[10px] sm:text-[11px] text-[#8FA6BE] ml-1">
-                {product.variants.length} finishes
+          {/* Finishes / Specs Slot with reserved height */}
+          <div className="h-6 flex items-center gap-1.5 mb-2.5">
+            {product.variants && product.variants.length > 0 ? (
+              <>
+                <div className="flex items-center gap-1">
+                  {product.variants.map((v) => (
+                    <span
+                      key={v.id}
+                      className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border border-black/10 shadow-inner inline-block"
+                      style={{ backgroundColor: v.hex }}
+                      title={v.name}
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] sm:text-[11px] text-[#8FA6BE] ml-0.5">
+                  {product.variants.length} finishes
+                </span>
+              </>
+            ) : (
+              <span className="text-[10px] sm:text-[11px] text-[#8FA6BE] truncate">
+                {product.compatibleWith && product.compatibleWith.length > 0 
+                  ? `Fits ${product.compatibleWith[0]}` 
+                  : (lang === 'bn' ? 'স্ট্যান্ডার্ড এক্সেসরি' : 'Standard Edition')}
               </span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Price & Quick Add Button */}
-        <div className="flex items-center justify-between pt-3 border-t border-[#DCE7F0] mt-auto">
+        <div className="flex items-center justify-between pt-2.5 border-t border-[#DCE7F0] mt-auto">
           <div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-base sm:text-lg md:text-xl font-extrabold text-[#10263D]">
@@ -157,30 +192,37 @@ export default function ProductCard({
                 </span>
               )}
             </div>
-            {/* Show sample stock count without unverified warranties */}
             <span className="text-[10px] font-medium text-slate-500 block truncate max-w-[130px]">
-              {product.stock > 0 ? `Stock: ${product.stock} (Demo)` : 'Out of stock'}
+              {product.stock > 0 
+                ? (isLowStock ? `Only ${product.stock} left` : `Stock: ${product.stock}`)
+                : (lang === 'bn' ? 'স্টক শেষ' : 'Sold out')}
             </span>
           </div>
 
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onQuickAdd(product);
-            }}
+            onClick={handleQuickAddClick}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                e.stopPropagation();
+                handleQuickAddClick(e);
               }
             }}
             disabled={isOutOfStock}
-            className={`btn-quick-add ${isOutOfStock ? 'is-disabled' : ''}`}
-            title={`Add ${product.title} to bag`}
-            aria-label={`Quick add ${product.title} to bag`}
+            className={`btn-quick-add ${isOutOfStock ? 'is-disabled' : ''} ${isQuickAdded ? 'is-added' : ''}`}
+            title={isOutOfStock ? 'Out of stock' : `Add ${product.title} to bag`}
+            aria-label={isOutOfStock ? 'Item is out of stock' : `Quick add ${product.title} to bag`}
           >
-            <Plus size={15} />
-            <span>{lang === 'bn' ? 'যোগ করুন' : 'Add'}</span>
+            {isQuickAdded ? (
+              <>
+                <Check size={14} />
+                <span>{lang === 'bn' ? 'যোগ হয়েছে' : 'Added'}</span>
+              </>
+            ) : (
+              <>
+                <Plus size={14} />
+                <span>{lang === 'bn' ? 'যোগ করুন' : 'Add'}</span>
+              </>
+            )}
           </button>
         </div>
       </div>

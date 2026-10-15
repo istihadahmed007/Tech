@@ -6,13 +6,17 @@ A high-performance, polished e-commerce platform for mobile accessories in Bangl
 
 ## 💎 Design Identity & Aesthetics
 
-- **Static, High-Contrast Hero**: Clean, fast, and completely static hero composition—**zero Three.js, zero WebGL, zero autoplay animations, and zero parallax or floating motion**.
+- **Subtle 3D Woven Background & Atmosphere**:
+  - Calm, product-focused cybernetic wave landscape built with **Three.js** and high-performance WebGL shaders.
+  - Complements storefront readability with restrained motion, soft atmospheric horizon glow, and pinpoint vertex nodes.
+  - Non-blocking (`pointer-events: none`, background layer) with solid, opaque cards and reading surfaces.
+  - Strict **`prefers-reduced-motion`** compliance: automatically pauses wave elevation and camera displacement, providing a static, high-contrast appearance when motion reduction is requested or WebGL is unavailable.
 - **Glacial Glassmorphic Aesthetic**:
-  - **Canvas Background**: `#EAF5FF` (soft ice-blue tint)
-  - **Surfaces**: `#F8FCFF` (translucent frosted panels with high background blur)
-  - **Typography**: `#112A43` (Deep navy ink meeting WCAG AAA contrast guidelines)
-  - **Action Triggers**: `#2563EB` (Tactile electric-blue buttons with visible `:focus-visible` focus rings)
-  - **Glass Borders**: `rgba(37, 99, 235, 0.12)` with delicate specular rims
+  - **Canvas Horizon**: `#020712` deep midnight with atmospheric cyan radial glow
+  - **Surfaces**: Solid `#FFFFFF` card pedestals and `#FFFFFF` modal surfaces to guarantee maximum legibility
+  - **Typography**: `#10263D` deep navy ink meeting WCAG AAA contrast guidelines
+  - **Action Triggers**: `#145CFF` tactile electric-blue buttons with high-contrast `:focus-visible` rings and quick-add feedback
+  - **Borders & Shadows**: Crisp `#DCE7F0` boundaries and soft ambient depth shadows fitting the background's retail presence
 - **Honest Signals & Clear Trust**: Explicit badges for Official Warranty, 7-Day Return Policy, Genuine Import, and Courier Shipping (Dhaka ৳60 / Outside Dhaka ৳120).
 
 ---
@@ -149,6 +153,8 @@ Key environment variables:
 | `BKASH_PASSWORD` | bKash merchant API password |
 | `BKASH_IS_SANDBOX` | `true` for bKash sandbox, `false` for live production |
 | `SANDBOX_SIGNING_SECRET` | HMAC signing secret for local developer sandbox |
+| `TRUSTED_PROXY` | Set to `true` when behind a reverse proxy (Nginx, Cloudflare) to trust `x-forwarded-for` |
+| `SQLITE_DB_PATH` | Custom path to SQLite file (defaults to `data/store.db`; used for isolated tests) |
 
 ### 3. Development Mode
 Run the Vite development server with the integrated backend API middleware:
@@ -174,7 +180,7 @@ The repository includes automated unit and integration tests using Node.js's nat
 ```bash
 npm test
 ```
-The test suite (**41 passing tests**) verifies:
+The test suite (**48 passing tests**) verifies:
 - **Pricing & Cart Totals (`test/cart.test.js`)**: Subtotal calculation, free delivery threshold (৳2,000), regional shipping rates (Dhaka ৳60 / Outside Dhaka ৳120), and quantity bounds.
 - **Checkout Customer Validation (`test/checkout-validation.test.js`)**: Bangladeshi mobile number formats (`01[3-9]\d{8}`), required customer name/address, catalog SKU verification, and out-of-stock rejection.
 - **Commerce Architecture & Integration (`test/commerce-integration.test.js`)**:
@@ -190,6 +196,13 @@ The test suite (**41 passing tests**) verifies:
 - **Printable Invoices, QR Codes & Logistics Dispatch (`test/invoice.test.js`)**: Pure JavaScript Model 2 QR code SVG generation, Code-128 linear barcode generation, BDT amount in words converter, print-optimized commercial tax invoice HTML, warehouse packing slip with picker checklist and courier handover manifest, batch printing, and admin CSV order exports.
 - **Payment & Security Engine (`test/payment.test.js`)**: Safe fallback, cryptographic session tokens, HMAC-SHA256 signature verification, decline/cancellation handling, and timing-safe admin authentication.
 - **Product Search & Filtering (`test/product-search.test.js`)**: Multi-field search across English and Bengali names, device compatibility lookup, category filtering, and in-stock toggling.
+- **Production Readiness & System Resilience (`test/production-readiness.test.js`)**:
+  - Isolated database lifecycle and idempotent catalog/admin seeding without duplicate constraint failures (`ON CONFLICT`).
+  - Strict JSON validation rejecting malformed bodies with HTTP 400 Bad Request.
+  - Request payload size protection capping stream payloads at 1MB with HTTP 413.
+  - Reverse proxy security gating `x-forwarded-for` header evaluation behind `TRUSTED_PROXY`.
+  - Dynamic production secret validation failing fast on insecure defaults in production environments.
+  - Unauthenticated customer order privacy masking with full unmasking for authorized guest tokens.
 
 ---
 

@@ -74,32 +74,67 @@ export async function handleApiRequest(req, res) {
   const url = new URL(req.url, 'http://localhost');
   const pathname = url.pathname;
   const method = req.method;
-  const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+  const isTrustedProxy = process.env.TRUSTED_PROXY === 'true' || process.env.TRUSTED_PROXY === '1';
+  let ip = req.socket?.remoteAddress || '127.0.0.1';
+  if (isTrustedProxy && req.headers['x-forwarded-for']) {
+    const forwarded = String(req.headers['x-forwarded-for']).split(',')[0].trim();
+    if (forwarded) ip = forwarded;
+  }
 
   // Release any expired inventory reservations periodically
   releaseExpiredReservations();
 
-  const parseBody = () => new Promise((resolve) => {
+  const parseBody = () => new Promise((resolve, reject) => {
     let body = '';
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
-      try {
-        if (!body) return resolve({});
-        // Check if JSON
-        if (body.trim().startsWith('{') || body.trim().startsWith('[')) {
-          resolve(JSON.parse(body));
-        } else {
-          // URL-encoded form data (e.g. from payment callbacks)
-          const params = new URLSearchParams(body);
-          const obj = {};
-          for (const [k, v] of params.entries()) {
-            obj[k] = v;
-          }
-          resolve(obj);
-        }
-      } catch (err) {
-        resolve({});
+    let size = 0;
+    const MAX_SIZE = 1024 * 1024; // 1 MB limit for standard JSON / form endpoints
+
+    req.on('data', chunk => {
+      size += chunk.length;
+      if (size > MAX_SIZE) {
+        const err = new Error('Payload too large (maximum 1MB allowed)');
+        err.statusCode = 413;
+        req.destroy();
+        return reject(err);
       }
+      body += chunk;
+    });
+
+    req.on('end', () => {
+      const contentType = (req.headers['content-type'] || '').toLowerCase();
+      const trimmed = body.trim();
+      if (!trimmed) {
+        return resolve({});
+      }
+
+      if (contentType.includes('application/json') || trimmed.startsWith('{') || trimmed.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(body);
+          return resolve(parsed);
+        } catch (err) {
+          const parseErr = new Error('Malformed JSON payload: ' + err.message);
+          parseErr.statusCode = 400;
+          return reject(parseErr);
+        }
+      }
+
+      // URL-encoded form data (e.g. from payment callbacks)
+      try {
+        const params = new URLSearchParams(body);
+        const obj = {};
+        for (const [k, v] of params.entries()) {
+          obj[k] = v;
+        }
+        return resolve(obj);
+      } catch (err) {
+        const parseErr = new Error('Malformed request body');
+        parseErr.statusCode = 400;
+        return reject(parseErr);
+      }
+    });
+
+    req.on('error', err => {
+      reject(err);
     });
   });
 
@@ -1238,6 +1273,7 @@ export async function handleApiRequest(req, res) {
     return sendJson(404, { error: 'API route not found' });
   } catch (error) {
     console.error('[API Error]', error);
-    return sendJson(500, { error: error.message || 'Internal server error' });
+    const statusCode = error.statusCode || 500;
+    return sendJson(statusCode, { error: error.message || 'Internal server error' });
   }
 }
