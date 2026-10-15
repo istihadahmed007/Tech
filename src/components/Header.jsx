@@ -64,10 +64,10 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full px-5 sm:px-12 lg:px-14 py-3.5 transition-all bg-[#F7FBFF]/85 backdrop-blur-md border-b border-[#DCE7F0]">
-      <div className="max-w-[1320px] mx-auto flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-50 w-full px-3.5 sm:px-8 lg:px-12 py-3 transition-all bg-[#F7FBFF]/90 backdrop-blur-md border-b border-[#DCE7F0]">
+      <div className="max-w-[1320px] mx-auto flex items-center justify-between gap-3">
         {/* Left: Brand Name & Main Nav Links */}
-        <div className="flex items-center gap-8 lg:gap-10">
+        <div className="flex items-center gap-4 sm:gap-8 lg:gap-10 min-w-0">
           <a 
             href="/" 
             onClick={(e) => {
@@ -76,13 +76,13 @@ export default function Header({
                 onGoHome();
               }
             }}
-            className="font-extrabold text-2xl tracking-tight text-[#10263D] hover:text-[#145CFF] transition-colors leading-none"
+            className="font-extrabold text-xl sm:text-2xl tracking-tight text-[#10263D] hover:text-[#145CFF] transition-colors leading-none truncate shrink-0"
           >
             {storeName || "Glacial Tech"}
           </a>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-7 text-[15px] font-medium text-[#334155]">
+          <nav className="hidden lg:flex items-center gap-7 text-[15px] font-medium text-[#334155]">
             <a 
               href="#products-section" 
               onClick={(e) => {
@@ -118,7 +118,7 @@ export default function Header({
         </div>
 
         {/* Center: Search Input */}
-        <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
+        <div className="hidden lg:flex items-center flex-1 max-w-md mx-4">
           <div className="relative w-full">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
             <input
@@ -141,21 +141,21 @@ export default function Header({
         </div>
 
         {/* Rightmost Action Icons */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
           {/* Mobile Search Trigger */}
           <button 
             onClick={toggleMobileSearch}
-            className="md:hidden p-2 rounded-full hover:bg-slate-100 text-[#0F172A] transition-colors focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            className="lg:hidden p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#0F172A] transition-colors focus-visible:ring-2 focus-visible:ring-[#145CFF]"
             aria-label="Toggle mobile search"
             aria-expanded={searchOpen}
           >
-            <Search size={20} />
+            <Search size={19} />
           </button>
 
           {/* Language Switcher Pill */}
           <button
             onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-            className="hidden sm:flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-slate-200 bg-white/80 hover:bg-white text-slate-700 transition-colors"
+            className="hidden md:flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-slate-200 bg-white/80 hover:bg-white text-slate-700 transition-colors"
             title="Switch Language (English / বাংলা)"
           >
             <Globe size={13} className="text-[#145CFF]" />
@@ -165,11 +165,11 @@ export default function Header({
           {/* Wishlist Icon */}
           <button
             onClick={onOpenWishlist}
-            className="relative p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-pink-600 transition-colors"
+            className="relative p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-pink-600 transition-colors"
             aria-label="Wishlist"
             title="Saved items"
           >
-            <Heart size={20} />
+            <Heart size={19} />
             {wishlistCount > 0 && (
               <span className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-pink-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                 {wishlistCount}
@@ -180,11 +180,11 @@ export default function Header({
           {/* Customer Account Button */}
           <button
             onClick={onOpenAccount}
-            className="p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-[#145CFF] transition-colors flex items-center gap-1.5"
+            className="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-[#145CFF] transition-colors flex items-center gap-1.5"
             aria-label="Customer Account"
             title={currentUser ? `Account: ${currentUser.name}` : "Sign In / Account"}
           >
-            <User size={20} />
+            <User size={19} />
             {currentUser && (
               <span className="hidden xl:inline text-xs font-bold text-[#10263D] max-w-[80px] truncate">
                 {currentUser.name.split(' ')[0]}
@@ -195,7 +195,7 @@ export default function Header({
           {/* Admin Operations Button */}
           <button
             onClick={onOpenAdmin}
-            className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[#10263D] transition-colors"
+            className="hidden sm:flex p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[#10263D] transition-colors"
             aria-label="Store Admin Console"
             title="Admin Console"
           >
@@ -205,11 +205,11 @@ export default function Header({
           {/* Shopping Bag Trigger Icon */}
           <button
             onClick={onOpenCart}
-            className="relative p-2 rounded-full hover:bg-slate-100 text-[#0F172A] hover:text-[#145CFF] transition-colors"
+            className="relative p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#0F172A] hover:text-[#145CFF] transition-colors"
             aria-label="Shopping Bag"
             title="Shopping Bag"
           >
-            <ShoppingBag size={21} />
+            <ShoppingBag size={20} />
             {cartCount > 0 && (
               <span className="absolute top-0 right-0 w-4.5 h-4.5 rounded-full bg-[#145CFF] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
                 {cartCount}
@@ -220,7 +220,7 @@ export default function Header({
           {/* Mobile Menu Toggle */}
           <button
             onClick={toggleMobileMenu}
-            className="md:hidden p-2 rounded-full hover:bg-slate-100 text-[#0F172A] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            className="lg:hidden p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#0F172A] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -231,7 +231,7 @@ export default function Header({
 
       {/* Mobile Search Bar Dropdown */}
       {searchOpen && (
-        <div className="md:hidden mt-3 px-2 max-w-[1280px] mx-auto animate-fadeIn">
+        <div className="lg:hidden mt-3 px-2 max-w-[1280px] mx-auto animate-fadeIn">
           <div className="relative">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input

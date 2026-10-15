@@ -567,7 +567,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="container flex-grow pt-4">
+      <main className={selectedProduct ? "flex-grow w-full" : "container flex-grow pt-4"}>
         {selectedProduct ? (
           <ProductDetailPage
             product={selectedProduct}
