@@ -30,8 +30,8 @@ export default function CategoryNav({
 
   return (
     <section className="w-full my-8 sm:my-12">
-      {/* Section Header (Exact match for Image 3) */}
-      <div className="flex items-end justify-between mb-6">
+      {/* Section Header */}
+      <div className="flex items-end justify-between mb-6 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#10263D] tracking-tight">
             {lang === 'bn' ? 'প্রতিদিনের সেরা সংগ্রহ' : 'The everyday edit'}

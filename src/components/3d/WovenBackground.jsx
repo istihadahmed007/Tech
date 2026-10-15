@@ -4,47 +4,48 @@ import * as THREE from 'three';
 /**
  * Glacial Tech — Woven 3D Technology Atmosphere
  * 
- * Core Features:
- * - Real-time 3D background featuring flowing, interwoven digital waves.
- * - Thousands of fine, luminous threads forming a gently undulating 3D mesh.
- * - Multiple layers of smooth, interwoven 3D wireframe waves that weave over and under.
- * - Interconnected curves and subtle luminous nodes with soft ice-blue and white lighting.
- * - Gentle transparency, restrained glow, and pale silver highlights.
- * - Subtle pointer-responsive depth movement on desktop and smooth scroll influence.
- * - Context-aware modes: 'home' (expressive), 'category' (soft), 'pdp' (ambient), 'checkout' (minimal).
- * - Full reduced-motion compliance and background tab pause.
- * - Strictly background: fixed, zero pointer-events, does not interfere with any UI elements.
+ * Hyper-accurate recreation matching the user's reference image:
+ * - Expansive rolling 3D cybernetic wave landscape (undulating ocean/sand-dune swells).
+ * - High-density triangulated wireframe lattice (~28,000 vertices, ~55,000 fine diagonal lines).
+ * - Crisp, brilliant pinpoint node dots at every single vertex intersection.
+ * - Multi-ridge wave topology with 4-5 visible rolling crests receding into atmospheric haze.
+ * - Glowing electric cyan lines with radiant white crest highlights (#FFFFFF, #7FE5FF, #00D2FF).
+ * - Solid dark midnight surface occlusion between waves (#020814) so foreground ridges cleanly occlude background valleys.
+ * - Soft atmospheric horizon glow and distance depth fade.
+ * - Subtle mouse parallax and smooth scroll response.
+ * - Context-aware modes for Home, Categories, PDP, and Checkout.
+ * - Strictly background: fixed, pointer-events: none, z-index: 0.
  */
 export default function WovenBackground({ mode = 'home' }) {
   const mountRef = useRef(null);
   const [webglSupported, setWebglSupported] = useState(true);
 
-  // Mode-based target uniform values
+  // Target animation parameters by page mode
   const targetParams = useRef({
     amp: 1.0,
-    speed: 0.35,
-    opacity: 0.65,
-    nodeOpacity: 0.7
+    speed: 0.34,
+    lineOpacity: 0.96,
+    nodeOpacity: 1.0,
+    surfaceOpacity: 0.97
   });
 
-  // Update target parameters when mode changes
   useEffect(() => {
     switch (mode) {
       case 'home':
-        targetParams.current = { amp: 1.0, speed: 0.35, opacity: 0.65, nodeOpacity: 0.7 };
+        targetParams.current = { amp: 1.0, speed: 0.34, lineOpacity: 0.96, nodeOpacity: 1.0, surfaceOpacity: 0.97 };
         break;
       case 'category':
-        targetParams.current = { amp: 0.7, speed: 0.28, opacity: 0.48, nodeOpacity: 0.45 };
+        targetParams.current = { amp: 0.88, speed: 0.28, lineOpacity: 0.88, nodeOpacity: 0.92, surfaceOpacity: 0.97 };
         break;
       case 'pdp':
-        targetParams.current = { amp: 0.55, speed: 0.22, opacity: 0.38, nodeOpacity: 0.35 };
+        targetParams.current = { amp: 0.78, speed: 0.24, lineOpacity: 0.82, nodeOpacity: 0.85, surfaceOpacity: 0.97 };
         break;
       case 'checkout':
       case 'cart':
-        targetParams.current = { amp: 0.25, speed: 0.12, opacity: 0.22, nodeOpacity: 0.18 };
+        targetParams.current = { amp: 0.42, speed: 0.16, lineOpacity: 0.55, nodeOpacity: 0.6, surfaceOpacity: 0.97 };
         break;
       default:
-        targetParams.current = { amp: 0.85, speed: 0.3, opacity: 0.55, nodeOpacity: 0.55 };
+        targetParams.current = { amp: 0.95, speed: 0.3, lineOpacity: 0.92, nodeOpacity: 0.95, surfaceOpacity: 0.97 };
     }
   }, [mode]);
 
@@ -52,7 +53,6 @@ export default function WovenBackground({ mode = 'home' }) {
     const container = mountRef.current;
     if (!container) return;
 
-    // Detect WebGL support
     try {
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -65,21 +65,22 @@ export default function WovenBackground({ mode = 'home' }) {
       return;
     }
 
-    // Check user reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // 1. Scene, Camera, Renderer
     const scene = new THREE.Scene();
-    // Atmospheric ice-blue depth fog
-    scene.fog = new THREE.FogExp2(0xF7FBFF, 0.024);
+    scene.fog = new THREE.FogExp2(0x011326, 0.012);
 
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    const camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
-    // Camera positioned slightly elevated, looking slightly across the undulating woven mesh
-    camera.position.set(0, -6.5, 23);
-    camera.rotation.set(0.28, 0, 0);
+    // Cinematic landscape camera looking across rolling horizontal swells
+    const camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 160);
+    const defaultCamX = 0;
+    const defaultCamY = 6.8;
+    const defaultCamZ = 21.5;
+    camera.position.set(defaultCamX, defaultCamY, defaultCamZ);
+    camera.lookAt(0, 1.2, -6.0);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -88,261 +89,295 @@ export default function WovenBackground({ mode = 'home' }) {
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.setSize(width, height, false);
-    renderer.setClearColor(0xF7FBFF, 0.0); // Transparent so underlying ice-blue gradient is visible
+    renderer.setClearColor(0x000000, 0.0); // Transparent so radiant atmospheric horizon glow shines through
     container.appendChild(renderer.domElement);
 
-    // Apply strict non-blocking styling to canvas
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.pointerEvents = 'none';
 
-    // 2. Vertex & Fragment Shaders for the Woven Digital Silk Waves
-    const waveVertexShader = `
-      uniform float uTime;
-      uniform float uWaveSpeed;
-      uniform float uWaveAmp;
-      uniform float uScrollOffset;
-      uniform float uLayerPhase;
-      uniform float uLayerFreq;
+    // 2. High-Density Plane Geometry (190 x 140 segments = 26,600 vertices, 53,200 triangles)
+    // 145 width x 105 depth
+    const planeGeom = new THREE.PlaneGeometry(145, 105, 190, 140);
+    const meshRotationX = -Math.PI * 0.38; // Tilted toward horizon
 
-      varying vec2 vUv;
+    // 3. Shared Vertex Shader (Displaces surface, wireframe lines, and node points synchronously)
+    const commonVertexShader = `
+      uniform float uTime;
+      uniform float uSpeed;
+      uniform float uAmp;
+      uniform float uScroll;
+      uniform float uZOffset;
+
       varying float vElevation;
       varying vec3 vWorldPos;
 
       void main() {
-        vUv = uv;
         vec3 pos = position;
 
-        // Coordinates across wave plane
-        float x = pos.x * 0.082;
-        float y = pos.y * 0.092;
-        float t = uTime * uWaveSpeed;
+        // Wave spatial coordinates
+        float kx = pos.x * 0.088;
+        float ky = pos.y * 0.142; // recedes into depth
+        float t = uTime * uSpeed;
 
-        // Primary interwoven harmonics
-        float w1 = sin(x * uLayerFreq + t * 0.72 + uLayerPhase + uScrollOffset * 0.35) * cos(y * 0.88 + t * 0.52);
-        float w2 = sin((x * 0.95 + y * 1.05) * 0.75 - t * 0.58 + uLayerPhase * 0.7) * 0.55;
-        float w3 = cos((x * 0.7 - y * 1.15) + t * 0.42) * 0.38;
-        float w4 = sin(x * 1.8 - t * 0.3) * sin(y * 1.6 + t * 0.35) * 0.22;
+        // Diagonal wave projection matching reference photo angle
+        float u = kx * 0.88 + ky * 0.46;
+        float v = ky * 0.90 - kx * 0.38;
 
-        float elevation = (w1 + w2 + w3 + w4) * uWaveAmp * 4.2;
-        pos.z += elevation;
+        // Primary rolling transverse swells
+        float swell1 = sin(v * 1.82 + sin(u * 0.72) * 1.35 + t * 0.78 + uScroll * 0.3);
+
+        // Secondary cross-undulation creating peaks and valleys along ridges
+        float swell2 = cos(v * 0.88 - u * 0.92 - t * 0.54) * 0.62;
+
+        // Sharpen crest ridges (Trochoidal profile: narrow glowing peaks, wide troughs)
+        float ridgeFactor = (swell1 + 1.0) * 0.5;
+        float ridgeShaped = pow(ridgeFactor, 1.4) * 2.0 - 1.0;
+
+        // Subtle micro-ripples adding fine silky woven digital texture
+        float micro1 = sin((u * 2.3 + v * 1.9) + t * 0.88) * 0.22;
+        float micro2 = cos((u * 1.5 - v * 2.5) - t * 0.68) * 0.14;
+
+        // Total elevation along normal
+        float elevation = (ridgeShaped * 3.3 + swell2 * 1.55 + micro1 + micro2) * uAmp * 1.42;
+        
+        // Displace along local Z (normal to tilted plane)
+        pos.z += elevation + uZOffset;
 
         vElevation = elevation;
         vWorldPos = (modelMatrix * vec4(pos, 1.0)).xyz;
-        gl_Position = projectionMatrix * viewMatrix * vec4(pos, 1.0);
+        gl_Position = projectionMatrix * viewMatrix * vec4(vWorldPos, 1.0);
       }
     `;
 
-    const waveFragmentShader = `
-      uniform vec3 uColorBase;
-      uniform vec3 uColorThread;
-      uniform vec3 uColorHighlight;
-      uniform float uOpacity;
-      uniform float uThreadDensity;
-      uniform float uCrestLight;
+    // 4. Base Surface Mesh (Solid dark occlusion so foreground waves obscure valleys behind them)
+    const surfaceFragmentShader = `
+      uniform vec3 uColorValley;
+      uniform vec3 uColorSlope;
+      uniform vec3 uColorCrest;
+      uniform float uSurfaceOpacity;
 
-      varying vec2 vUv;
       varying float vElevation;
       varying vec3 vWorldPos;
 
       void main() {
-        // High-precision anti-aliased procedural wireframe threads
-        vec2 grid = abs(fract(vUv * uThreadDensity - 0.5) - 0.5) / fwidth(vUv * uThreadDensity);
-        float line = min(grid.x, grid.y);
-        float thread = 1.0 - min(line, 1.0); // 1.0 on thread line, 0.0 inside cell
+        // Deep obsidian-navy in valleys to midnight-cyan on slopes
+        float t = smoothstep(-3.5, 4.0, vElevation);
+        vec3 col = mix(uColorValley, uColorSlope, t);
+        col = mix(col, uColorCrest, smoothstep(1.0, 4.5, vElevation) * 0.6);
 
-        // Subtle face transparency between threads so layers weave over and under visibly
-        float faceAlpha = 0.035;
-        float threadAlpha = 0.75;
-        float alpha = mix(faceAlpha, threadAlpha, thread) * uOpacity;
-
-        // Shimmering crest lighting: wave peaks catch pale silver/white light
-        float crest = smoothstep(-1.8, 3.2, vElevation);
-        vec3 threadColor = mix(uColorThread, uColorHighlight, crest * uCrestLight);
-
-        // Distance fog attenuation (fades smoothly into atmospheric background)
+        // Atmospheric distance fog attenuation
         float depth = gl_FragCoord.z / gl_FragCoord.w;
-        float fogFactor = smoothstep(14.0, 52.0, depth);
-        vec3 finalColor = mix(threadColor, uColorBase, fogFactor * 0.65);
+        float fogFactor = smoothstep(22.0, 80.0, depth);
+        vec3 finalCol = mix(col, vec3(0.01, 0.045, 0.09), fogFactor);
 
-        gl_FragColor = vec4(finalColor, alpha * (1.0 - fogFactor * 0.82));
+        gl_FragColor = vec4(finalCol, uSurfaceOpacity);
       }
     `;
 
-    // 3. Create Layer A (Primary Flowing Digital Silk Wave)
-    const geomA = new THREE.PlaneGeometry(86, 54, 76, 52);
-    const uniformsA = {
+    const surfaceUniforms = {
       uTime: { value: 0 },
-      uWaveSpeed: { value: prefersReducedMotion ? 0 : 0.35 },
-      uWaveAmp: { value: targetParams.current.amp },
-      uScrollOffset: { value: 0 },
-      uLayerPhase: { value: 0.0 },
-      uLayerFreq: { value: 1.15 },
-      uColorBase: { value: new THREE.Color(0xEDF6FF) },      // Ice-blue atmosphere base
-      uColorThread: { value: new THREE.Color(0x2563EB) },    // Glacial Tech brand royal ice-blue
-      uColorHighlight: { value: new THREE.Color(0xFFFFFF) }, // Pure luminous white peak highlights
-      uOpacity: { value: targetParams.current.opacity },
-      uThreadDensity: { value: 36.0 },
-      uCrestLight: { value: 0.85 }
+      uSpeed: { value: prefersReducedMotion ? 0 : 0.34 },
+      uAmp: { value: targetParams.current.amp },
+      uScroll: { value: 0 },
+      uZOffset: { value: 0.0 },
+      uColorValley: { value: new THREE.Color(0x010712) },  // Deep obsidian black-navy
+      uColorSlope: { value: new THREE.Color(0x02162c) },   // Cyan-tinted navy
+      uColorCrest: { value: new THREE.Color(0x06335a) },   // Luminous twilight cyan
+      uSurfaceOpacity: { value: targetParams.current.surfaceOpacity }
     };
 
-    const matA = new THREE.ShaderMaterial({
-      vertexShader: waveVertexShader,
-      fragmentShader: waveFragmentShader,
-      uniforms: uniformsA,
+    const surfaceMat = new THREE.ShaderMaterial({
+      vertexShader: commonVertexShader,
+      fragmentShader: surfaceFragmentShader,
+      uniforms: surfaceUniforms,
       transparent: true,
-      depthWrite: false,
-      blending: THREE.NormalBlending,
+      depthWrite: true,
+      depthTest: true,
       side: THREE.DoubleSide
     });
 
-    const meshA = new THREE.Mesh(geomA, matA);
-    meshA.position.set(0, 0, 0);
-    scene.add(meshA);
+    const surfaceMesh = new THREE.Mesh(planeGeom, surfaceMat);
+    surfaceMesh.rotation.x = meshRotationX;
+    scene.add(surfaceMesh);
 
-    // 4. Create Layer B (Interwoven Counter Wave that weaves over and under)
-    const geomB = new THREE.PlaneGeometry(86, 54, 72, 48);
-    const uniformsB = {
+    // 5. Wireframe Lattice (Fine cyan lines matching reference photo)
+    const wireframeGeom = new THREE.WireframeGeometry(planeGeom);
+
+    const lineFragmentShader = `
+      uniform vec3 uLineTrough;
+      uniform vec3 uLineSlope;
+      uniform vec3 uLineCrest;
+      uniform vec3 uLinePeak;
+      uniform float uLineOpacity;
+
+      varying float vElevation;
+      varying vec3 vWorldPos;
+
+      void main() {
+        // Multi-stop electric cyan gradient across wave elevations
+        float t = smoothstep(-3.0, 3.5, vElevation);
+        vec3 col = mix(uLineTrough, uLineSlope, t);
+        col = mix(col, uLineCrest, smoothstep(0.4, 2.6, vElevation));
+
+        // Radiant white-cyan crest highlight (matches the glowing ridges in reference)
+        float peakFactor = smoothstep(1.3, 4.0, vElevation);
+        col = mix(col, uLinePeak, peakFactor * 0.96);
+
+        // Distance depth fade into atmospheric haze
+        float depth = gl_FragCoord.z / gl_FragCoord.w;
+        float depthFade = smoothstep(25.0, 85.0, depth);
+
+        // Emissive boost on crests
+        float crestBoost = 1.0 + peakFactor * 0.7;
+
+        gl_FragColor = vec4(col * crestBoost, uLineOpacity * (1.0 - depthFade * 0.4));
+      }
+    `;
+
+    const lineUniforms = {
       uTime: { value: 0 },
-      uWaveSpeed: { value: prefersReducedMotion ? 0 : 0.32 },
-      uWaveAmp: { value: targetParams.current.amp * 0.92 },
-      uScrollOffset: { value: 0 },
-      uLayerPhase: { value: 2.35 }, // Phase shift causes this wave to rise where Layer A dips
-      uLayerFreq: { value: 1.05 },
-      uColorBase: { value: new THREE.Color(0xEDF6FF) },
-      uColorThread: { value: new THREE.Color(0x60A5FA) },    // Pale sapphire / sky blue
-      uColorHighlight: { value: new THREE.Color(0xE2E8F0) }, // Pale silver highlight
-      uOpacity: { value: targetParams.current.opacity * 0.85 },
-      uThreadDensity: { value: 32.0 },
-      uCrestLight: { value: 0.75 }
+      uSpeed: { value: prefersReducedMotion ? 0 : 0.34 },
+      uAmp: { value: targetParams.current.amp },
+      uScroll: { value: 0 },
+      uZOffset: { value: 0.05 }, // Offset slightly above surface to eliminate z-fighting
+      uLineTrough: { value: new THREE.Color(0x014B73) }, // Deep electric cyan-blue
+      uLineSlope: { value: new THREE.Color(0x00D2F4) },  // Glowing cybernetic cyan
+      uLineCrest: { value: new THREE.Color(0x7FE5FF) },  // Ice-cyan crest
+      uLinePeak: { value: new THREE.Color(0xFFFFFF) },   // Pure white crest peak highlight
+      uLineOpacity: { value: targetParams.current.lineOpacity }
     };
 
-    const matB = new THREE.ShaderMaterial({
-      vertexShader: waveVertexShader,
-      fragmentShader: waveFragmentShader,
-      uniforms: uniformsB,
+    const lineMat = new THREE.ShaderMaterial({
+      vertexShader: commonVertexShader,
+      fragmentShader: lineFragmentShader,
+      uniforms: lineUniforms,
       transparent: true,
+      depthTest: true,
       depthWrite: false,
-      blending: THREE.NormalBlending,
-      side: THREE.DoubleSide
+      polygonOffset: true,
+      polygonOffsetFactor: -1.0,
+      polygonOffsetUnits: -1.0
     });
 
-    const meshB = new THREE.Mesh(geomB, matB);
-    meshB.position.set(1.5, 0.8, -1.2);
-    meshB.rotation.set(-0.08, 0.12, 0.05); // Slight counter-angle enhances weave perception
-    scene.add(meshB);
+    const wireframeMesh = new THREE.LineSegments(wireframeGeom, lineMat);
+    wireframeMesh.rotation.x = meshRotationX;
+    scene.add(wireframeMesh);
 
-    // 5. Create Layer C: Luminous Fiber-Optic Nodes (Points at wave junctions)
-    // Create a circular glowing sprite texture procedurally
+    // 6. Luminous Node Dots (Rendered at every grid vertex intersection)
     const createNodeTexture = () => {
       const c = document.createElement('canvas');
       c.width = 64;
       c.height = 64;
       const ctx = c.getContext('2d');
       const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-      grad.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
-      grad.addColorStop(0.25, 'rgba(165, 201, 255, 0.85)');
-      grad.addColorStop(0.65, 'rgba(37, 99, 235, 0.3)');
-      grad.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+      grad.addColorStop(0.0, 'rgba(255, 255, 255, 1.0)');     // Pure brilliant white core
+      grad.addColorStop(0.22, 'rgba(235, 252, 255, 1.0)');    // Ice white-cyan
+      grad.addColorStop(0.48, 'rgba(0, 225, 255, 0.85)');    // Luminous electric cyan halo
+      grad.addColorStop(0.78, 'rgba(0, 185, 255, 0.35)');    // Soft atmospheric glow
+      grad.addColorStop(1.0, 'rgba(0, 185, 255, 0.0)');      // Transparent edge
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 64, 64);
       return new THREE.CanvasTexture(c);
     };
 
     const nodeTexture = createNodeTexture();
-    const nodeCount = 380;
-    const nodePositions = new Float32Array(nodeCount * 3);
-    const nodeSeeds = new Float32Array(nodeCount);
 
-    for (let i = 0; i < nodeCount; i++) {
-      nodePositions[i * 3 + 0] = (Math.random() - 0.5) * 78;
-      nodePositions[i * 3 + 1] = (Math.random() - 0.5) * 46;
-      nodePositions[i * 3 + 2] = 0;
-      nodeSeeds[i] = Math.random() * Math.PI * 2;
-    }
-
-    const nodeGeometry = new THREE.BufferGeometry();
-    nodeGeometry.setAttribute('position', new THREE.BufferAttribute(nodePositions, 3));
-    nodeGeometry.setAttribute('aSeed', new THREE.BufferAttribute(nodeSeeds, 1));
-
-    const nodeVertexShader = `
-      attribute float aSeed;
+    const pointsVertexShader = `
       uniform float uTime;
-      uniform float uWaveSpeed;
-      uniform float uWaveAmp;
-      uniform float uScrollOffset;
+      uniform float uSpeed;
+      uniform float uAmp;
+      uniform float uScroll;
 
-      varying float vNodeAlpha;
+      varying float vNodeIntensity;
 
       void main() {
         vec3 pos = position;
-        float x = pos.x * 0.082;
-        float y = pos.y * 0.092;
-        float t = uTime * uWaveSpeed;
 
-        float w1 = sin(x * 1.15 + t * 0.72 + uScrollOffset * 0.35) * cos(y * 0.88 + t * 0.52);
-        float w2 = sin((x * 0.95 + y * 1.05) * 0.75 - t * 0.58) * 0.55;
-        float elevation = (w1 + w2) * uWaveAmp * 4.2;
-        pos.z = elevation + 0.15; // Slightly above mesh surface
+        float kx = pos.x * 0.088;
+        float ky = pos.y * 0.142;
+        float t = uTime * uSpeed;
 
-        // Gentle breathing pulse
-        vNodeAlpha = 0.55 + 0.45 * sin(t * 1.8 + aSeed);
+        float u = kx * 0.88 + ky * 0.46;
+        float v = ky * 0.90 - kx * 0.38;
 
-        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-        gl_PointSize = (12.0 * vNodeAlpha) * (20.0 / -mvPosition.z);
+        float swell1 = sin(v * 1.82 + sin(u * 0.72) * 1.35 + t * 0.78 + uScroll * 0.3);
+        float swell2 = cos(v * 0.88 - u * 0.92 - t * 0.54) * 0.62;
+
+        float ridgeFactor = (swell1 + 1.0) * 0.5;
+        float ridgeShaped = pow(ridgeFactor, 1.4) * 2.0 - 1.0;
+
+        float micro1 = sin((u * 2.3 + v * 1.9) + t * 0.88) * 0.22;
+        float micro2 = cos((u * 1.5 - v * 2.5) - t * 0.68) * 0.14;
+
+        float elevation = (ridgeShaped * 3.3 + swell2 * 1.55 + micro1 + micro2) * uAmp * 1.42;
+        
+        // Elevated safely above surface and wireframe so dots never clip
+        pos.z += elevation + 0.12;
+
+        // Node size and intensity: luminous beads scaling gracefully with perspective
+        float crest = smoothstep(-1.0, 3.8, elevation);
+        vNodeIntensity = 0.75 + 0.55 * crest;
+
+        vec3 worldPos = (modelMatrix * vec4(pos, 1.0)).xyz;
+        vec4 mvPosition = viewMatrix * vec4(worldPos, 1.0);
+
+        // Point size calibrated: luminous beads matching reference photo
+        float baseSize = 5.6 + 6.5 * crest;
+        gl_PointSize = clamp(baseSize * (20.0 / -mvPosition.z), 2.2, 12.0);
         gl_Position = projectionMatrix * mvPosition;
       }
     `;
 
-    const nodeFragmentShader = `
+    const pointsFragmentShader = `
       uniform sampler2D uTexture;
       uniform float uNodeOpacity;
-      varying float vNodeAlpha;
+      varying float vNodeIntensity;
 
       void main() {
         vec4 tex = texture2D(uTexture, gl_PointCoord);
-        gl_FragColor = vec4(tex.rgb, tex.a * vNodeAlpha * uNodeOpacity);
+        gl_FragColor = vec4(tex.rgb, tex.a * vNodeIntensity * uNodeOpacity);
       }
     `;
 
-    const nodeUniforms = {
+    const pointsUniforms = {
       uTime: { value: 0 },
-      uWaveSpeed: { value: prefersReducedMotion ? 0 : 0.35 },
-      uWaveAmp: { value: targetParams.current.amp },
-      uScrollOffset: { value: 0 },
+      uSpeed: { value: prefersReducedMotion ? 0 : 0.34 },
+      uAmp: { value: targetParams.current.amp },
+      uScroll: { value: 0 },
       uTexture: { value: nodeTexture },
       uNodeOpacity: { value: targetParams.current.nodeOpacity }
     };
 
-    const nodeMaterial = new THREE.ShaderMaterial({
-      vertexShader: nodeVertexShader,
-      fragmentShader: nodeFragmentShader,
-      uniforms: nodeUniforms,
+    const pointsMat = new THREE.ShaderMaterial({
+      vertexShader: pointsVertexShader,
+      fragmentShader: pointsFragmentShader,
+      uniforms: pointsUniforms,
       transparent: true,
+      depthTest: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending
+      blending: THREE.AdditiveBlending,
+      polygonOffset: true,
+      polygonOffsetFactor: -2.0,
+      polygonOffsetUnits: -2.0
     });
 
-    const nodePoints = new THREE.Points(nodeGeometry, nodeMaterial);
-    scene.add(nodePoints);
+    const pointsMesh = new THREE.Points(planeGeom, pointsMat);
+    pointsMesh.rotation.x = meshRotationX;
+    scene.add(pointsMesh);
 
-    // 6. Interaction: Smooth Pointer Parallax (Desktop) & Scroll Tracking
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetCamX = 0;
-    let targetCamY = -6.5;
+    // 7. Interaction: Subtle Pointer Parallax & Scroll
+    let targetCamX = defaultCamX;
+    let targetCamY = defaultCamY;
     let targetScrollOffset = 0;
     let currentScrollOffset = 0;
 
     const handleMouseMove = (e) => {
-      // Normalized coordinates (-1 to 1)
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -(e.clientY / window.innerHeight) * 2 + 1;
-      mouseX = nx;
-      mouseY = ny;
-      targetCamX = mouseX * 2.8;
-      targetCamY = -6.5 + mouseY * 1.6;
+      targetCamX = defaultCamX + nx * 2.8;
+      targetCamY = defaultCamY + ny * 1.4;
     };
 
     const handleScroll = () => {
@@ -353,7 +388,6 @@ export default function WovenBackground({ mode = 'home' }) {
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Handle Window Resize
     const handleResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
@@ -365,14 +399,13 @@ export default function WovenBackground({ mode = 'home' }) {
 
     window.addEventListener('resize', handleResize);
 
-    // Visibility Listener: Pause animation when tab is inactive to save battery/CPU
     let isTabVisible = !document.hidden;
     const handleVisibilityChange = () => {
       isTabVisible = !document.hidden;
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // 7. Smooth Animation Loop
+    // 8. Smooth Animation Loop
     let animationFrameId;
     let lastTime = performance.now();
     let elapsedTime = 0;
@@ -380,8 +413,9 @@ export default function WovenBackground({ mode = 'home' }) {
     const currentParams = {
       amp: targetParams.current.amp,
       speed: targetParams.current.speed,
-      opacity: targetParams.current.opacity,
-      nodeOpacity: targetParams.current.nodeOpacity
+      lineOpacity: targetParams.current.lineOpacity,
+      nodeOpacity: targetParams.current.nodeOpacity,
+      surfaceOpacity: targetParams.current.surfaceOpacity
     };
 
     const animate = (now) => {
@@ -396,47 +430,44 @@ export default function WovenBackground({ mode = 'home' }) {
         elapsedTime += delta;
       }
 
-      // Smooth interpolation towards mode target parameters
-      const lerpSpeed = 0.06;
+      const lerpSpeed = 0.055;
       currentParams.amp += (targetParams.current.amp - currentParams.amp) * lerpSpeed;
       currentParams.speed += (targetParams.current.speed - currentParams.speed) * lerpSpeed;
-      currentParams.opacity += (targetParams.current.opacity - currentParams.opacity) * lerpSpeed;
+      currentParams.lineOpacity += (targetParams.current.lineOpacity - currentParams.lineOpacity) * lerpSpeed;
       currentParams.nodeOpacity += (targetParams.current.nodeOpacity - currentParams.nodeOpacity) * lerpSpeed;
+      currentParams.surfaceOpacity += (targetParams.current.surfaceOpacity - currentParams.surfaceOpacity) * lerpSpeed;
 
-      // Smooth camera pointer parallax interpolation
-      camera.position.x += (targetCamX - camera.position.x) * 0.038;
-      camera.position.y += (targetCamY - camera.position.y) * 0.038;
+      // Smooth camera parallax
+      camera.position.x += (targetCamX - camera.position.x) * 0.04;
+      camera.position.y += (targetCamY - camera.position.y) * 0.04;
+      camera.lookAt(0, 1.2, -6.0);
 
-      // Smooth scroll offset interpolation
+      // Smooth scroll displacement
       currentScrollOffset += (targetScrollOffset - currentScrollOffset) * 0.05;
 
-      // Update uniforms for Layer A
-      uniformsA.uTime.value = elapsedTime;
-      uniformsA.uWaveSpeed.value = currentParams.speed;
-      uniformsA.uWaveAmp.value = currentParams.amp;
-      uniformsA.uScrollOffset.value = currentScrollOffset;
-      uniformsA.uOpacity.value = currentParams.opacity;
+      surfaceUniforms.uTime.value = elapsedTime;
+      surfaceUniforms.uSpeed.value = currentParams.speed;
+      surfaceUniforms.uAmp.value = currentParams.amp;
+      surfaceUniforms.uScroll.value = currentScrollOffset;
+      surfaceUniforms.uSurfaceOpacity.value = currentParams.surfaceOpacity;
 
-      // Update uniforms for Layer B
-      uniformsB.uTime.value = elapsedTime;
-      uniformsB.uWaveSpeed.value = currentParams.speed * 0.92;
-      uniformsB.uWaveAmp.value = currentParams.amp * 0.92;
-      uniformsB.uScrollOffset.value = currentScrollOffset;
-      uniformsB.uOpacity.value = currentParams.opacity * 0.85;
+      lineUniforms.uTime.value = elapsedTime;
+      lineUniforms.uSpeed.value = currentParams.speed;
+      lineUniforms.uAmp.value = currentParams.amp;
+      lineUniforms.uScroll.value = currentScrollOffset;
+      lineUniforms.uLineOpacity.value = currentParams.lineOpacity;
 
-      // Update uniforms for Luminous Nodes
-      nodeUniforms.uTime.value = elapsedTime;
-      nodeUniforms.uWaveSpeed.value = currentParams.speed;
-      nodeUniforms.uWaveAmp.value = currentParams.amp;
-      nodeUniforms.uScrollOffset.value = currentScrollOffset;
-      nodeUniforms.uNodeOpacity.value = currentParams.nodeOpacity;
+      pointsUniforms.uTime.value = elapsedTime;
+      pointsUniforms.uSpeed.value = currentParams.speed;
+      pointsUniforms.uAmp.value = currentParams.amp;
+      pointsUniforms.uScroll.value = currentScrollOffset;
+      pointsUniforms.uNodeOpacity.value = currentParams.nodeOpacity;
 
       renderer.render(scene, camera);
     };
 
     animationFrameId = requestAnimationFrame(animate);
 
-    // 8. Cleanup WebGL Resources & Listeners on Unmount
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('mousemove', handleMouseMove);
@@ -444,12 +475,11 @@ export default function WovenBackground({ mode = 'home' }) {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
 
-      geomA.dispose();
-      matA.dispose();
-      geomB.dispose();
-      matB.dispose();
-      nodeGeometry.dispose();
-      nodeMaterial.dispose();
+      planeGeom.dispose();
+      wireframeGeom.dispose();
+      surfaceMat.dispose();
+      lineMat.dispose();
+      pointsMat.dispose();
       nodeTexture.dispose();
       renderer.dispose();
 
@@ -469,28 +499,29 @@ export default function WovenBackground({ mode = 'home' }) {
         width: '100vw',
         height: '100vh',
         zIndex: 0,
-        pointerEvents: 'none'
+        pointerEvents: 'none',
+        background: '#020712'
       }}
       aria-hidden="true"
     >
-      {/* Underlying Ice-Blue Ambient Light Base Gradient */}
+      {/* Soft Cyan Horizon Atmospheric Ambient Glow (matching reference background) */}
       <div 
         className="absolute inset-0 w-full h-full pointer-events-none"
         style={{
-          background: 'radial-gradient(130% 90% at 50% 10%, #FFFFFF 0%, #F5FAFF 45%, #EAF4FC 100%)',
+          background: 'radial-gradient(130% 90% at 50% 28%, rgba(0, 220, 255, 0.42) 0%, rgba(0, 160, 240, 0.22) 32%, rgba(2, 14, 34, 0.92) 68%, #020712 100%)',
           zIndex: -1
         }}
       />
 
-      {/* Real-time 3D WebGL Canvas Mount */}
+      {/* Real-Time 3D WebGL Canvas */}
       {webglSupported ? (
         <div ref={mountRef} className="w-full h-full pointer-events-none" />
       ) : (
-        /* Graceful CSS Animated Gradient Fallback if WebGL unavailable */
+        /* Graceful CSS Fallback */
         <div 
-          className="w-full h-full opacity-60 pointer-events-none animate-pulse"
+          className="w-full h-full opacity-60 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at 50% 40%, rgba(37,99,235,0.08) 0%, rgba(96,165,250,0.05) 40%, transparent 70%)'
+            background: 'radial-gradient(ellipse at 50% 35%, rgba(56,189,248,0.2) 0%, rgba(2,132,199,0.08) 50%, #020712 100%)'
           }}
         />
       )}

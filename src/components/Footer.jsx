@@ -11,7 +11,7 @@ export default function Footer({
   lang 
 }) {
   return (
-    <footer className="w-full mt-16 sm:mt-20 pt-12 sm:pt-16 pb-12 border-t border-[#DCE7F0] bg-white/80 backdrop-blur-md">
+    <footer className="w-full mt-16 sm:mt-20 pt-12 sm:pt-16 pb-12 border-t border-[#DCE7F0] bg-white/94 backdrop-blur-md shadow-lg">
       <div className="max-w-[1320px] mx-auto px-5 sm:px-12 lg:px-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#DCE7F0]">
           {/* Brand Column */}

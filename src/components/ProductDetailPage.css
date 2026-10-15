@@ -54,9 +54,14 @@
    1. BREADCRUMBS & TOP QUICK ACTIONS
    ========================================================================== */
 .pdp-breadcrumb-bar {
-  padding-top: 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(220, 231, 240, 0.85);
+  margin-top: 14px;
+  margin-bottom: 8px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #DCE7F0;
+  border-radius: 14px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -64,6 +69,7 @@
   gap: 12px;
   font-size: 13px;
   color: #52677B;
+  box-shadow: 0 4px 14px -2px rgba(16, 38, 61, 0.04);
 }
 
 .pdp-breadcrumb-trail {
@@ -417,6 +423,19 @@
   flex-direction: column;
   gap: 18px;
   width: 100%;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #DCE7F0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 18px -2px rgba(16, 38, 61, 0.04);
+}
+
+@media (min-width: 640px) {
+  .pdp-details-col {
+    padding: 24px;
+  }
 }
 
 .pdp-meta-row {

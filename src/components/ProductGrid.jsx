@@ -74,7 +74,8 @@ export default function ProductGrid({
       <div 
         className="rounded-2xl p-3.5 sm:p-4 mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"
         style={{
-          background: '#FFFFFF',
+          background: 'rgba(255, 255, 255, 0.94)',
+          backdropFilter: 'blur(16px)',
           border: '1px solid #DCE7F0',
           boxShadow: '0 4px 18px -2px rgba(16, 38, 61, 0.04)'
         }}

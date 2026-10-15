@@ -1,6 +1,6 @@
 :root {
-  --canvas-bg: #F7FBFF;
-  --canvas-bg-radial: radial-gradient(120% 100% at 50% 0%, #FFFFFF 0%, #F7FBFF 50%, #EAF4FC 100%);
+  --canvas-bg: #020712;
+  --canvas-bg-radial: radial-gradient(130% 90% at 50% 28%, rgba(0, 220, 255, 0.35) 0%, rgba(0, 160, 240, 0.18) 32%, rgba(2, 14, 34, 0.92) 68%, #020712 100%);
   --surface-glass-l1: rgba(255, 255, 255, 0.90);
   --surface-glass-l2: rgba(255, 255, 255, 0.96);
   --surface-glass-l3: #FFFFFF;

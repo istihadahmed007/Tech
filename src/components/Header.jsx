@@ -64,7 +64,7 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full px-3.5 sm:px-8 lg:px-12 py-3 transition-all bg-[#F7FBFF]/90 backdrop-blur-md border-b border-[#DCE7F0]">
+    <header className="sticky top-0 z-50 w-full px-3.5 sm:px-8 lg:px-12 py-3 transition-all bg-white/95 backdrop-blur-md border-b border-[#DCE7F0] shadow-2xs">
       <div className="max-w-[1320px] mx-auto flex items-center justify-between gap-3">
         {/* Left: Brand Name & Main Nav Links */}
         <div className="flex items-center gap-4 sm:gap-8 lg:gap-10 min-w-0">

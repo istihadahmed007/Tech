@@ -111,7 +111,14 @@ export default function Hero({
   }, [isPaused, SLIDES.length]);
 
   return (
-    <section className="relative w-full max-w-[1320px] mx-auto mb-8 sm:mb-12 overflow-hidden rounded-3xl bg-gradient-to-br from-[#EAF5FF]/80 via-[#E4F2FD]/70 to-[#EDF6FF]/80 backdrop-blur-md border border-[#DCE7F0]/80 shadow-sm">
+    <section 
+      className="relative w-full max-w-[1320px] mx-auto mb-8 sm:mb-12 overflow-hidden rounded-3xl border border-[#DCE7F0] shadow-sm"
+      style={{
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(234, 245, 255, 0.90) 50%, rgba(255, 255, 255, 0.95) 100%)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)'
+      }}
+    >
       {/* Background Specular Ambient Glow */}
       <div 
         className="absolute -top-32 -right-32 w-96 h-96 rounded-full pointer-events-none opacity-40 blur-3xl"

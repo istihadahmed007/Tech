@@ -22,7 +22,12 @@ export default function CompatibilityFinder({
   return (
     <div 
       id="compatibility-finder"
-      className="w-full rounded-2xl p-3.5 sm:p-5 bg-[#EAF4FC] border border-[#DCE7F0] shadow-xs mb-8"
+      className="w-full rounded-2xl p-3.5 sm:p-5 border border-[#DCE7F0] shadow-2xs mb-8"
+      style={{
+        background: 'rgba(255, 255, 255, 0.94)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)'
+      }}
     >
       <form 
         onSubmit={handleApply}
