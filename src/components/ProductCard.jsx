@@ -116,8 +116,8 @@ export default function ProductCard({
             <span className={`text-[11px] font-medium ${product.stock > 0 ? 'text-emerald-700' : 'text-slate-500'}`}>
               {product.stock > 0 ? t.inStock : t.outOfStock}
             </span>
-            <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md ml-auto" title="Sample catalog item for demonstration">
-              Demo item
+            <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md ml-auto" title={product.photoRef ? `Reference ${product.photoRef}` : 'Stock verified'}>
+              {product.photoRef ? `Ref: ${product.photoRef}` : (product.badge || 'Verified')}
             </span>
           </div>
 

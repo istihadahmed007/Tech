@@ -46,9 +46,10 @@ export default function ProductGrid({
         const query = searchQuery.toLowerCase().trim();
         const matchTitle = item.title?.toLowerCase().includes(query) || (item.titleBn && item.titleBn.toLowerCase().includes(query));
         const matchCategory = item.category?.toLowerCase().includes(query);
-        const matchDesc = item.description?.toLowerCase().includes(query);
+        const matchDesc = item.description?.toLowerCase().includes(query) || (item.descriptionBn && item.descriptionBn.toLowerCase().includes(query));
+        const matchRef = item.photoRef && item.photoRef.toLowerCase().includes(query);
         const matchCompatibility = item.compatibleWith?.some(c => c.toLowerCase().includes(query));
-        if (!matchTitle && !matchCategory && !matchDesc && !matchCompatibility) {
+        if (!matchTitle && !matchCategory && !matchDesc && !matchRef && !matchCompatibility) {
           return false;
         }
       }

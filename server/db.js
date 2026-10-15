@@ -19,11 +19,11 @@ export function getDatabase() {
 
   dbInstance = new DatabaseSync(DB_FILE);
 
-  // WAL mode for high concurrency & atomic writes
+  // Set busy timeout FIRST so any concurrent lock waits rather than throwing ERR_SQLITE_ERROR
+  dbInstance.exec('PRAGMA busy_timeout = 5000;');
   dbInstance.exec('PRAGMA journal_mode = WAL;');
   dbInstance.exec('PRAGMA foreign_keys = ON;');
   dbInstance.exec('PRAGMA synchronous = NORMAL;');
-  dbInstance.exec('PRAGMA busy_timeout = 5000;');
 
   initSchema(dbInstance);
   migrateLegacyJson(dbInstance);
@@ -399,7 +399,7 @@ function seedInitialCatalog(db) {
 
   // Seed Products
   const insertProduct = db.prepare(`
-    INSERT OR IGNORE INTO products (
+    INSERT INTO products (
       id, sku, title, title_bn, category_id, brand, price, original_price,
       stock, status, badge, warranty, description, specs_json, image,
       gallery_json, compatible_with_json, is_development_seed, created_at, updated_at
@@ -408,6 +408,20 @@ function seedInitialCatalog(db) {
       ?, ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?
     )
+    ON CONFLICT(id) DO UPDATE SET
+      title = excluded.title,
+      title_bn = excluded.title_bn,
+      category_id = excluded.category_id,
+      price = excluded.price,
+      original_price = excluded.original_price,
+      badge = excluded.badge,
+      warranty = excluded.warranty,
+      description = excluded.description,
+      specs_json = excluded.specs_json,
+      image = excluded.image,
+      gallery_json = excluded.gallery_json,
+      compatible_with_json = excluded.compatible_with_json,
+      updated_at = excluded.updated_at
   `);
 
   const insertVariant = db.prepare(`

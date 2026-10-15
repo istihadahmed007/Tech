@@ -16,9 +16,11 @@ function filterProducts(products, { category = null, phone = null, query = '', i
       const matchTitle = item.title?.toLowerCase().includes(cleanQuery) || 
                          (item.titleBn && item.titleBn.toLowerCase().includes(cleanQuery));
       const matchCategory = item.category?.toLowerCase().includes(cleanQuery);
-      const matchDesc = item.description?.toLowerCase().includes(cleanQuery);
+      const matchDesc = item.description?.toLowerCase().includes(cleanQuery) ||
+                        (item.descriptionBn && item.descriptionBn.toLowerCase().includes(cleanQuery));
+      const matchRef = item.photoRef && item.photoRef.toLowerCase().includes(cleanQuery);
       const matchCompatibility = item.compatibleWith?.some(c => c.toLowerCase().includes(cleanQuery));
-      if (!matchTitle && !matchCategory && !matchDesc && !matchCompatibility) {
+      if (!matchTitle && !matchCategory && !matchDesc && !matchRef && !matchCompatibility) {
         return false;
       }
     }
@@ -39,6 +41,16 @@ test('Product Search: searches by Bengali title', () => {
   const results = filterProducts(INITIAL_PRODUCTS, { query: 'অরা ফ্রস্ট' });
   assert.ok(results.length > 0);
   assert.ok(results.every(p => p.titleBn?.includes('অরা ফ্রস্ট')));
+});
+
+test('Product Search: searches by photo reference ID (P01, P04, P11)', () => {
+  const p01 = filterProducts(INITIAL_PRODUCTS, { query: 'P01' });
+  assert.ok(p01.length > 0);
+  assert.ok(p01.some(p => p.photoRef === 'P01'));
+
+  const p04 = filterProducts(INITIAL_PRODUCTS, { query: 'P04' });
+  assert.ok(p04.length > 0);
+  assert.ok(p04.some(p => p.photoRef === 'P04'));
 });
 
 test('Product Search: searches by device compatibility', () => {

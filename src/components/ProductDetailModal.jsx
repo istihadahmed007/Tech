@@ -239,6 +239,11 @@ export default function ProductDetailModal({
                 <span className="text-xs uppercase font-extrabold tracking-wider text-[#145CFF] bg-[#EAF4FC] px-2.5 py-0.5 rounded-md">
                   {product.category}
                 </span>
+                {product.photoRef && (
+                  <span className="text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                    Ref: {product.photoRef}
+                  </span>
+                )}
                 <span className="text-[11px] font-medium text-[#52677B] bg-slate-100 px-2 py-0.5 rounded-md font-mono">
                   SKU: {product.sku || product.id}
                 </span>
@@ -277,9 +282,29 @@ export default function ProductDetailModal({
               </div>
 
               {/* Description */}
-              <p className="text-xs sm:text-sm text-[#52677B] leading-relaxed mb-5">
-                {product.description}
+              <p className="text-xs sm:text-sm text-[#52677B] leading-relaxed mb-4">
+                {lang === 'bn' ? (product.descriptionBn || product.description) : product.description}
               </p>
+
+              {/* Authenticity & Verification Callout */}
+              {product.verificationNotes && (
+                <div className="mb-5 bg-amber-50/90 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2.5">
+                  <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold block text-amber-950 mb-0.5">
+                      {lang === 'bn' ? 'পণ্যের পরিচয় ও যাচাইকরণ নোট' : 'Authenticity & Batch Verification'}:
+                    </span>
+                    <span className="leading-relaxed block">
+                      {lang === 'bn' ? (product.verificationNotesBn || product.verificationNotes) : product.verificationNotes}
+                    </span>
+                    {product.retailRange && (
+                      <span className="block mt-1 font-semibold text-amber-800">
+                        {lang === 'bn' ? 'বাংলাদেশ বাজার মূল্য রেফারেন্স' : 'Observed Bangladesh Retail Reference'}: ৳{product.retailRange.low.toLocaleString()} – ৳{product.retailRange.high.toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Variant Selector */}
               {product.variants && product.variants.length > 0 && (
