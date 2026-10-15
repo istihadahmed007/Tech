@@ -126,10 +126,10 @@ export function generateAdminToken() {
 }
 
 export function verifyAdminToken(authHeader) {
-  if (!authHeader || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || typeof authHeader !== 'string') {
     return false;
   }
-  const token = authHeader.slice(7).trim();
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader.trim();
   const parts = token.split('.');
   if (parts.length !== 3 || parts[0] !== 'agy_admin') {
     return false;

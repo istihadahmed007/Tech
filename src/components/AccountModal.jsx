@@ -15,8 +15,10 @@ import {
   ShieldCheck,
   Plus,
   Trash2,
-  ExternalLink
+  ExternalLink,
+  Printer
 } from 'lucide-react';
+import { openPrintWindow } from '../utils/invoice.js';
 
 export default function AccountModal({
   isOpen,
@@ -512,8 +514,19 @@ export default function AccountModal({
                       </div>
 
                       <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#10263D]">
-                        <span>Total Amount:</span>
-                        <span className="text-sm text-[#145CFF]">{currencySymbol}{ord.total.toLocaleString()}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-[#52677B]">Total:</span>
+                          <span className="text-sm text-[#145CFF]">{currencySymbol}{ord.total.toLocaleString()}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => openPrintWindow(ord, 'invoice')}
+                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#EAF4FC] hover:text-[#145CFF] text-[#10263D] text-[11px] font-semibold transition-colors"
+                          title="Print or view invoice receipt"
+                        >
+                          <Printer size={12} />
+                          <span>Invoice</span>
+                        </button>
                       </div>
                     </div>
                   ))

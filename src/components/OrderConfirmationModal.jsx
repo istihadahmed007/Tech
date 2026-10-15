@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { CheckCircle, Truck, Package, Copy, ArrowRight, ShieldCheck, X, Key } from 'lucide-react';
+import { CheckCircle, Truck, Package, Copy, ArrowRight, ShieldCheck, X, Key, Printer } from 'lucide-react';
+import { openPrintWindow } from '../utils/invoice.js';
 
 export default function OrderConfirmationModal({ 
   order, 
@@ -197,7 +198,7 @@ export default function OrderConfirmationModal({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center gap-2.5">
           <button
             onClick={() => {
               onClose();
@@ -210,8 +211,18 @@ export default function OrderConfirmationModal({
           </button>
 
           <button
+            type="button"
+            onClick={() => openPrintWindow(order, 'invoice')}
+            className="w-full sm:w-auto py-3 px-4 rounded-full bg-white border border-[#DCE7F0] hover:bg-[#EAF4FC] text-[#145CFF] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+            title="Print or download official tax invoice PDF"
+          >
+            <Printer size={15} />
+            <span>{lang === 'bn' ? 'চালান প্রিন্ট' : 'Print Invoice'}</span>
+          </button>
+
+          <button
             onClick={onClose}
-            className="w-full sm:w-auto py-3 px-6 rounded-full bg-slate-100 hover:bg-slate-200 text-[#10263D] font-semibold text-xs transition-colors"
+            className="w-full sm:w-auto py-3 px-5 rounded-full bg-slate-100 hover:bg-slate-200 text-[#10263D] font-semibold text-xs transition-colors"
           >
             {t?.continueShopping || 'Continue Shopping'}
           </button>

@@ -174,7 +174,7 @@ The repository includes automated unit and integration tests using Node.js's nat
 ```bash
 npm test
 ```
-The test suite (**34 passing tests**) verifies:
+The test suite (**41 passing tests**) verifies:
 - **Pricing & Cart Totals (`test/cart.test.js`)**: Subtotal calculation, free delivery threshold (৳2,000), regional shipping rates (Dhaka ৳60 / Outside Dhaka ৳120), and quantity bounds.
 - **Checkout Customer Validation (`test/checkout-validation.test.js`)**: Bangladeshi mobile number formats (`01[3-9]\d{8}`), required customer name/address, catalog SKU verification, and out-of-stock rejection.
 - **Commerce Architecture & Integration (`test/commerce-integration.test.js`)**:
@@ -187,6 +187,7 @@ The test suite (**34 passing tests**) verifies:
   - Verified reviews validation.
   - Expired promotion rejection.
   - Standalone production server endpoint routing.
+- **Printable Invoices, QR Codes & Logistics Dispatch (`test/invoice.test.js`)**: Pure JavaScript Model 2 QR code SVG generation, Code-128 linear barcode generation, BDT amount in words converter, print-optimized commercial tax invoice HTML, warehouse packing slip with picker checklist and courier handover manifest, batch printing, and admin CSV order exports.
 - **Payment & Security Engine (`test/payment.test.js`)**: Safe fallback, cryptographic session tokens, HMAC-SHA256 signature verification, decline/cancellation handling, and timing-safe admin authentication.
 - **Product Search & Filtering (`test/product-search.test.js`)**: Multi-field search across English and Bengali names, device compatibility lookup, category filtering, and in-stock toggling.
 

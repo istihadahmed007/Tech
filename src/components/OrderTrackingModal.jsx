@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Search, Package, CheckCircle2, ShieldAlert, Key, Lock, ShieldCheck } from 'lucide-react';
+import { X, Search, Package, CheckCircle2, ShieldAlert, Key, Lock, ShieldCheck, Printer } from 'lucide-react';
+import { openPrintWindow } from '../utils/invoice.js';
 
 export default function OrderTrackingModal({ 
   isOpen, 
@@ -232,9 +233,22 @@ export default function OrderTrackingModal({
                   </p>
                 )}
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#145CFF] text-white capitalize shadow-xs">
-                Status: {searchedOrder.status}
-              </span>
+              <div className="flex items-center gap-2">
+                {isAuthorized && (
+                  <button
+                    type="button"
+                    onClick={() => openPrintWindow(searchedOrder, 'invoice')}
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#DCE7F0] hover:bg-slate-50 text-[#145CFF] font-bold text-xs shadow-2xs transition-colors"
+                    title="Print or download official invoice receipt"
+                  >
+                    <Printer size={13} />
+                    <span>Print Invoice</span>
+                  </button>
+                )}
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#145CFF] text-white capitalize shadow-xs">
+                  Status: {searchedOrder.status}
+                </span>
+              </div>
             </div>
 
             {/* Visual 5-Step Timeline */}

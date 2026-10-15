@@ -63,6 +63,7 @@ import {
 } from './payments/index.js';
 
 import { calculateDeliveryFee, calculateCartSubtotal } from '../src/utils/pricing.js';
+import { generateInvoiceHtml, numberToWordsBDT } from '../src/utils/invoice.js';
 
 const UPLOADS_DIR = path.resolve(process.cwd(), 'public', 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) {
@@ -396,9 +397,54 @@ export async function handleApiRequest(req, res) {
     }
 
     // ---------------------------------------------------------------------------
-    // 5. Order Tracking & Privacy Protection
+    // 5. Order Tracking, Invoices & Dispatch Packing Slips
     // ---------------------------------------------------------------------------
-    if (pathname.startsWith('/api/orders/') && !pathname.includes('/status') && method === 'GET') {
+    if (pathname.startsWith('/api/orders/') && pathname.endsWith('/invoice') && method === 'GET') {
+      const parts = pathname.split('/');
+      // /api/orders/:id/invoice
+      const orderId = parts[3];
+      const order = findOrderById(orderId);
+      if (!order) {
+        return sendJson(404, { success: false, error: `No order found with ID: ${orderId}` });
+      }
+
+      const tokenParam = url.searchParams.get('token');
+      const adminTokenParam = url.searchParams.get('admin_token');
+      const authHeader = req.headers['authorization'];
+      const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+      const isAdmin = (adminTokenParam && verifyAdminToken(adminTokenParam)) || (bearerToken && verifyAdminToken(bearerToken));
+
+      const authUser = authenticateRequest(req);
+      const isAuthorizedUser = authUser && (authUser.role === 'admin' || authUser.id === order.userId);
+      const isAuthorizedGuest = tokenParam && order.guestToken && tokenParam === order.guestToken;
+
+      if (!isAdmin && !isAuthorizedUser && !isAuthorizedGuest) {
+        return sendJson(403, {
+          success: false,
+          error: 'Access denied. Valid guest security token or admin authorization required to view invoice.'
+        });
+      }
+
+      const docType = url.searchParams.get('type') === 'packing-slip' ? 'packing-slip' : 'invoice';
+      const format = url.searchParams.get('format') || (req.headers['accept']?.includes('text/html') ? 'html' : 'html');
+
+      if (format === 'json') {
+        return sendJson(200, {
+          success: true,
+          type: docType,
+          order,
+          amountInWords: numberToWordsBDT(order.total)
+        });
+      }
+
+      const origin = getPublicOrigin(req);
+      const html = generateInvoiceHtml(order, { type: docType, origin });
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.statusCode = 200;
+      return res.end(html);
+    }
+
+    if (pathname.startsWith('/api/orders/') && !pathname.includes('/status') && !pathname.endsWith('/invoice') && method === 'GET') {
       const orderId = pathname.replace('/api/orders/', '').trim();
       const order = findOrderById(orderId);
       if (!order) {
@@ -918,6 +964,43 @@ export async function handleApiRequest(req, res) {
       const search = url.searchParams.get('search') || '';
       const orders = getAllOrdersAdmin({ status, paymentStatus, search, limit: 200 });
       return sendJson(200, { orders });
+    }
+
+    // Admin Export Orders (CSV)
+    if (pathname === '/api/admin/orders/export-csv' && method === 'GET') {
+      const authHeader = req.headers['authorization'];
+      const queryToken = url.searchParams.get('admin_token');
+      const token = queryToken || (authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null);
+      if (!verifyAdminToken(token)) {
+        return sendJson(403, { error: 'Unauthorized or expired admin session' });
+      }
+
+      const orders = getAllOrdersAdmin({ limit: 1000 });
+      const headers = ['Order ID', 'Date', 'Customer Name', 'Phone', 'Address', 'Division', 'Payment Method', 'Payment Status', 'Subtotal (BDT)', 'Delivery Fee (BDT)', 'Total (BDT)', 'Status', 'Items Ordered'];
+      const rows = orders.map(ord => {
+        const itemsStr = (ord.items || []).map(i => `${i.title} (${i.variant || 'Standard'}) x${i.quantity}`).join('; ');
+        return [
+          ord.id,
+          new Date(ord.createdAt).toISOString(),
+          `"${(ord.customer?.name || '').replace(/"/g, '""')}"`,
+          `"${ord.customer?.phone || ''}"`,
+          `"${(ord.customer?.address || '').replace(/"/g, '""')}"`,
+          `"${ord.customer?.division || ''}"`,
+          ord.paymentMethod,
+          ord.paymentStatus,
+          ord.subtotal,
+          ord.deliveryFee,
+          ord.total,
+          ord.status,
+          `"${itemsStr.replace(/"/g, '""')}"`
+        ].join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="glacial-tech-orders-${Date.now()}.csv"`);
+      res.statusCode = 200;
+      return res.end(csvContent);
     }
 
     if (pathname.startsWith('/api/admin/orders/') && pathname.endsWith('/status') && method === 'PATCH') {

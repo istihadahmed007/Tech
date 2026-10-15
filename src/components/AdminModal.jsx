@@ -22,8 +22,14 @@ import {
   Tag,
   Wrench,
   Check,
-  Percent
+  Percent,
+  Printer,
+  FileText,
+  Download,
+  CheckSquare,
+  Square
 } from 'lucide-react';
+import { openPrintWindow, openBatchPrintWindow } from '../utils/invoice.js';
 
 export default function AdminModal({ 
   isOpen, 
@@ -49,6 +55,7 @@ export default function AdminModal({
   // Filters
   const [orderSearch, setOrderSearch] = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState('');
+  const [selectedOrderIds, setSelectedOrderIds] = useState(new Set());
   const [productSearch, setProductSearch] = useState('');
   const [productLowStockOnly, setProductLowStockOnly] = useState(false);
 
@@ -380,6 +387,34 @@ export default function AdminModal({
     }
   };
 
+  const toggleSelectOrder = (id) => {
+    setSelectedOrderIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAllOrders = () => {
+    if (selectedOrderIds.size === orders.length) {
+      setSelectedOrderIds(new Set());
+    } else {
+      setSelectedOrderIds(new Set(orders.map(o => o.id)));
+    }
+  };
+
+  const handleExportOrdersCsv = () => {
+    const downloadUrl = `/api/admin/orders/export-csv?admin_token=${encodeURIComponent(authToken)}`;
+    window.open(downloadUrl, '_blank');
+  };
+
+  const handleBatchPrint = (type) => {
+    const chosen = orders.filter(o => selectedOrderIds.has(o.id));
+    if (chosen.length === 0) return;
+    openBatchPrintWindow(chosen, type);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -598,12 +633,68 @@ export default function AdminModal({
 
                     <button
                       onClick={() => loadTabData('orders')}
-                      className="px-3 py-1.5 rounded-lg bg-[#145CFF] text-white text-xs font-semibold"
+                      className="px-3 py-1.5 rounded-lg bg-[#145CFF] hover:bg-[#0D4BD9] text-white text-xs font-semibold transition-colors"
                     >
                       Filter
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={handleExportOrdersCsv}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-colors"
+                      title="Export orders to CSV format for Excel / courier dispatch"
+                    >
+                      <Download size={13} />
+                      <span>Export CSV</span>
+                    </button>
                   </div>
                 </div>
+
+                {/* Batch Printing Actions Bar */}
+                {orders.length > 0 && (
+                  <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-blue-50/60 border border-blue-100 text-xs">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={toggleSelectAllOrders}
+                        className="flex items-center gap-1.5 font-semibold text-[#10263D] hover:text-[#145CFF] transition-colors"
+                      >
+                        {selectedOrderIds.size === orders.length && orders.length > 0 ? (
+                          <CheckSquare size={16} className="text-[#145CFF]" />
+                        ) : (
+                          <Square size={16} className="text-slate-400" />
+                        )}
+                        <span>Select All ({orders.length})</span>
+                      </button>
+                      {selectedOrderIds.size > 0 && (
+                        <span className="text-[11px] font-bold text-[#145CFF]">
+                          • {selectedOrderIds.size} selected
+                        </span>
+                      )}
+                    </div>
+
+                    {selectedOrderIds.size > 0 && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleBatchPrint('invoice')}
+                          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-[#DCE7F0] hover:bg-[#EAF4FC] text-[#145CFF] font-bold text-xs shadow-xs transition-colors"
+                        >
+                          <Printer size={13} />
+                          <span>Print Invoices ({selectedOrderIds.size})</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleBatchPrint('packing-slip')}
+                          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-[#DCE7F0] hover:bg-[#EAF4FC] text-[#10263D] font-bold text-xs shadow-xs transition-colors"
+                        >
+                          <FileText size={13} />
+                          <span>Print Packing Slips ({selectedOrderIds.size})</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Orders List */}
                 {loading ? (
@@ -614,16 +705,53 @@ export default function AdminModal({
                 ) : orders.length === 0 ? (
                   <div className="text-center py-8 text-xs text-[#52677B]">No matching orders found.</div>
                 ) : (
-                  orders.map((ord) => (
-                    <div key={ord.id} className="p-4 rounded-2xl border border-[#DCE7F0] bg-white space-y-3">
+                  orders.map((ord) => {
+                    const isSelected = selectedOrderIds.has(ord.id);
+                    return (
+                    <div key={ord.id} className={`p-4 rounded-2xl border transition-all space-y-3 ${
+                      isSelected ? 'border-[#145CFF] bg-blue-50/20 shadow-xs' : 'border-[#DCE7F0] bg-white'
+                    }`}>
                       <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
-                        <div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => toggleSelectOrder(ord.id)}
+                            className="text-slate-400 hover:text-[#145CFF]"
+                            aria-label={`Select order ${ord.id}`}
+                          >
+                            {isSelected ? (
+                              <CheckSquare size={16} className="text-[#145CFF]" />
+                            ) : (
+                              <Square size={16} />
+                            )}
+                          </button>
                           <span className="font-mono font-bold text-xs text-[#145CFF]">{ord.id}</span>
-                          <span className="text-[11px] text-[#52677B] ml-2">
+                          <span className="text-[11px] text-[#52677B]">
                             {new Date(ord.createdAt).toLocaleDateString()}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
+                          {/* Print Invoice & Packing Slip Triggers */}
+                          <button
+                            type="button"
+                            onClick={() => openPrintWindow(ord, 'invoice')}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-[#145CFF] text-[#10263D] text-xs font-semibold transition-colors"
+                            title="Print Customer Tax Invoice"
+                          >
+                            <Printer size={13} />
+                            <span>Invoice</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => openPrintWindow(ord, 'packing-slip')}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#10263D] text-xs font-semibold transition-colors"
+                            title="Print Warehouse Packing & Courier Dispatch Slip"
+                          >
+                            <FileText size={13} />
+                            <span>Slip</span>
+                          </button>
+
                           <select
                             value={ord.status}
                             onChange={(e) => updateOrderStatus(ord.id, e.target.value)}
@@ -676,7 +804,8 @@ export default function AdminModal({
                         ))}
                       </div>
                     </div>
-                  ))
+                  );
+                })
                 )}
               </div>
             )}
