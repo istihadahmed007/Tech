@@ -174,7 +174,7 @@ The repository includes automated unit and integration tests using Node.js's nat
 ```bash
 npm test
 ```
-The test suite (**31 passing tests**) verifies:
+The test suite (**34 passing tests**) verifies:
 - **Pricing & Cart Totals (`test/cart.test.js`)**: Subtotal calculation, free delivery threshold (৳2,000), regional shipping rates (Dhaka ৳60 / Outside Dhaka ৳120), and quantity bounds.
 - **Checkout Customer Validation (`test/checkout-validation.test.js`)**: Bangladeshi mobile number formats (`01[3-9]\d{8}`), required customer name/address, catalog SKU verification, and out-of-stock rejection.
 - **Commerce Architecture & Integration (`test/commerce-integration.test.js`)**:
