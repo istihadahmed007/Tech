@@ -30,11 +30,8 @@ import {
   HelpCircle,
   Award,
   CheckSquare,
-  Square,
-  Box,
-  Image as ImageIcon
+  Square
 } from 'lucide-react';
-import Product3DViewer, { hasProduct3DModel } from './Product3DViewer';
 import './ProductDetailPage.css';
 
 export default function ProductDetailPage({
@@ -87,8 +84,6 @@ export default function ProductDetailPage({
     return Array.from(new Set(list.filter(Boolean)));
   }, [product]);
 
-  const has3D = useMemo(() => hasProduct3DModel(product), [product]);
-  const [is3DActive, setIs3DActive] = useState(false);
   const [selectedImage, setSelectedImage] = useState(product.image || galleryImages[0]);
   const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
   const [quantity, setQuantity] = useState(1);
@@ -140,7 +135,6 @@ export default function ProductDetailPage({
   useEffect(() => {
     setSelectedImage(product.image || galleryImages[0]);
     setSelectedVariant(product.variants?.[0] || null);
-    setIs3DActive(false);
     setQuantity(1);
     setShowReviewForm(false);
     setReviewError('');
@@ -422,157 +416,88 @@ export default function ProductDetailPage({
         <div className="pdp-gallery-col">
           {/* Gallery Stage Wrapper */}
           <div className="pdp-gallery-stage-wrap">
-            {/* Gallery View Mode Switcher (Photos vs Interactive 3D) */}
-            {has3D && (
-              <div className="flex items-center justify-between mb-2.5">
-                <div className="inline-flex items-center gap-1 p-1 bg-white/95 backdrop-blur-md rounded-xl border border-[#DCE7F0] shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => setIs3DActive(false)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      !is3DActive
-                        ? 'bg-[#145CFF] text-white shadow-xs'
-                        : 'text-[#52677B] hover:text-[#10263D]'
-                    }`}
-                  >
-                    <ImageIcon size={13} />
-                    <span>{lang === 'bn' ? 'ফটো গ্যালারি' : 'Photos'}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setIs3DActive(true)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      is3DActive
-                        ? 'bg-[#145CFF] text-white shadow-xs'
-                        : 'text-[#52677B] hover:text-[#10263D]'
-                    }`}
-                  >
-                    <Box size={13} />
-                    <span>{lang === 'bn' ? 'ইন্টারেক্টিভ ৩ডি' : 'Interactive 3D'}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  </button>
-                </div>
-
-                <span className="text-[11px] font-medium text-[#64748B] hidden sm:inline">
-                  {lang === 'bn' ? '৩৬০° ইন্টারেক্টিভ মডেল' : '360° Real-time Model'}
+            <div className="pdp-stage-card group">
+              {/* Product Badge Overlay */}
+              {product.badge && (
+                <span className="pdp-stage-badge">
+                  {product.badge}
                 </span>
-              </div>
-            )}
+              )}
 
-            {/* Stage Content: Either Interactive 3D Viewer OR High-Res Zoomable Photo */}
-            {is3DActive && has3D ? (
-              <Product3DViewer
-                product={product}
-                selectedVariant={selectedVariant}
-                onClose3D={() => setIs3DActive(false)}
-                lang={lang}
-              />
-            ) : (
-              <div className="pdp-stage-card group">
-                {/* Product Badge Overlay */}
-                {product.badge && (
-                  <span className="pdp-stage-badge">
-                    {product.badge}
-                  </span>
-                )}
+              {/* Wishlist Button Overlay */}
+              <button
+                type="button"
+                onClick={() => onToggleWishlist(product)}
+                className={`pdp-stage-wishlist-btn ${isWishlisted ? 'active' : ''}`}
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
+              </button>
 
-                {/* Wishlist Button Overlay */}
-                <button
-                  type="button"
-                  onClick={() => onToggleWishlist(product)}
-                  className={`pdp-stage-wishlist-btn ${isWishlisted ? 'active' : ''}`}
-                  aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                >
-                  <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
-                </button>
+              {/* Expand Fullscreen Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  const idx = galleryImages.indexOf(selectedImage);
+                  setLightboxIndex(idx >= 0 ? idx : 0);
+                  setIsLightboxOpen(true);
+                }}
+                className="pdp-stage-fullscreen-btn"
+                title="View Fullscreen"
+              >
+                <Maximize2 size={16} />
+              </button>
 
-                {/* Expand Fullscreen Button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const idx = galleryImages.indexOf(selectedImage);
-                    setLightboxIndex(idx >= 0 ? idx : 0);
-                    setIsLightboxOpen(true);
+              {/* Main Image with Desktop Smooth Magnifier Zoom */}
+              <div 
+                className="pdp-stage-image-container"
+                onMouseEnter={() => setIsZooming(true)}
+                onMouseLeave={() => setIsZooming(false)}
+                onMouseMove={handleMouseMove}
+                onClick={() => {
+                  const idx = galleryImages.indexOf(selectedImage);
+                  setLightboxIndex(idx >= 0 ? idx : 0);
+                  setIsLightboxOpen(true);
+                }}
+              >
+                <img
+                  src={selectedImage}
+                  alt={product.title}
+                  className="pdp-stage-img"
+                  style={{
+                    transformOrigin: `${zoomCoords.x}% ${zoomCoords.y}%`,
+                    transform: isZooming ? 'scale(2.2)' : 'scale(1)'
                   }}
-                  className="pdp-stage-fullscreen-btn"
-                  title="View Fullscreen"
-                >
-                  <Maximize2 size={16} />
-                </button>
-
-                {/* Main Image with Desktop Smooth Magnifier Zoom */}
-                <div 
-                  className="pdp-stage-image-container"
-                  onMouseEnter={() => setIsZooming(true)}
-                  onMouseLeave={() => setIsZooming(false)}
-                  onMouseMove={handleMouseMove}
-                  onClick={() => {
-                    const idx = galleryImages.indexOf(selectedImage);
-                    setLightboxIndex(idx >= 0 ? idx : 0);
-                    setIsLightboxOpen(true);
-                  }}
-                >
-                  <img
-                    src={selectedImage}
-                    alt={product.title}
-                    className="pdp-stage-img"
-                    style={{
-                      transformOrigin: `${zoomCoords.x}% ${zoomCoords.y}%`,
-                      transform: isZooming ? 'scale(2.2)' : 'scale(1)'
-                    }}
-                    loading="eager"
-                  />
-                </div>
-
-                {/* Desktop Hover Hint */}
-                <div className="pdp-stage-zoom-hint">
-                  Roll over image to zoom in
-                </div>
+                  loading="eager"
+                />
               </div>
-            )}
+
+              {/* Desktop Hover Hint */}
+              <div className="pdp-stage-zoom-hint">
+                Roll over image to zoom in
+              </div>
+            </div>
           </div>
 
           {/* Thumbnail Gallery Rail (Vertical on Desktop, Horizontal on Mobile) */}
-          {(galleryImages.length > 1 || has3D) && (
+          {galleryImages.length > 1 && (
             <div className="pdp-thumbnails-rail">
-              {/* 3D Model Quick Switcher Thumbnail */}
-              {has3D && (
-                <button
-                  type="button"
-                  onClick={() => setIs3DActive(true)}
-                  className={`pdp-thumb-btn flex flex-col items-center justify-center p-1 bg-gradient-to-b from-blue-50 to-indigo-50/60 ${
-                    is3DActive ? 'selected border-[#145CFF]' : ''
-                  }`}
-                  title="View Interactive 3D Model"
-                  aria-label="View Interactive 3D Model"
-                >
-                  <Box size={20} className="text-[#145CFF]" />
-                  <span className="text-[10px] font-extrabold text-[#145CFF] tracking-wider mt-0.5">3D</span>
-                </button>
-              )}
-
               {galleryImages.map((img, idx) => {
-                const isSelected = !is3DActive && selectedImage === img;
+                const isSelected = selectedImage === img;
                 return (
                   <button
                     key={idx}
                     type="button"
-                    onMouseEnter={() => {
-                      setIs3DActive(false);
-                      setSelectedImage(img);
-                    }}
-                    onClick={() => {
-                      setIs3DActive(false);
-                      setSelectedImage(img);
-                    }}
+                    onMouseEnter={() => setSelectedImage(img)}
+                    onClick={() => setSelectedImage(img)}
                     className={`pdp-thumb-btn ${isSelected ? 'selected' : ''}`}
                     aria-label={`View angle ${idx + 1}`}
                   >
-                    <img
-                      src={img}
-                      alt={`Angle preview ${idx + 1}`}
-                      className="pdp-thumb-img"
+                    <img 
+                      src={img} 
+                      alt="" 
+                      className="pdp-thumb-img" 
+                      loading="lazy" 
                     />
                   </button>
                 );

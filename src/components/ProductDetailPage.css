@@ -8,11 +8,13 @@
 .pdp-page {
   width: 100%;
   min-height: 100vh;
-  background-color: #F7FBFF;
+  background-color: transparent;
   color: #10263D;
   font-family: var(--font-family, 'Inter', 'Noto Sans Bengali', -apple-system, sans-serif);
   padding-bottom: 72px;
   overflow-x: hidden;
+  position: relative;
+  z-index: 1;
 }
 
 /* Central Page Container (Matches Header & Footer max-width of 1320px) */
@@ -217,7 +219,9 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid #DCE7F0;
   border-radius: 16px;
   padding: 20px;
@@ -759,7 +763,9 @@
 }
 
 .pdp-buybox-card {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid #DCE7F0;
   border-radius: 16px;
   padding: 20px;
@@ -1186,7 +1192,9 @@
    ========================================================================== */
 .pdp-tabs-card {
   margin-top: 36px;
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid #DCE7F0;
   border-radius: 20px;
   padding: 16px;

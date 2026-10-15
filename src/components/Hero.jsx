@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Smartphone, Pause, Play, ChevronDown, Sparkles, Image as ImageIcon, Box } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, Smartphone, Pause, Play, ChevronDown, Sparkles } from 'lucide-react';
 import { BRANDS_AND_MODELS } from '../data/catalog';
-import Hero3DCanvas from './3d/Hero3DCanvas';
 
 export default function Hero({ 
   onShopClick, 
@@ -81,8 +80,6 @@ export default function Hero({
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  // View mode: '3d' (Real-time WebGL studio) or 'photo' (Studio photography)
-  const [heroViewMode, setHeroViewMode] = useState('3d');
 
   // Inline form state
   const [activeBrand, setActiveBrand] = useState('Apple');
@@ -114,7 +111,7 @@ export default function Hero({
   }, [isPaused, SLIDES.length]);
 
   return (
-    <section className="relative w-full max-w-[1320px] mx-auto mb-8 sm:mb-12 overflow-hidden rounded-3xl bg-gradient-to-br from-[#EAF5FF] via-[#E4F2FD] to-[#EDF6FF] border border-[#DCE7F0] shadow-sm">
+    <section className="relative w-full max-w-[1320px] mx-auto mb-8 sm:mb-12 overflow-hidden rounded-3xl bg-gradient-to-br from-[#EAF5FF]/80 via-[#E4F2FD]/70 to-[#EDF6FF]/80 backdrop-blur-md border border-[#DCE7F0]/80 shadow-sm">
       {/* Background Specular Ambient Glow */}
       <div 
         className="absolute -top-32 -right-32 w-96 h-96 rounded-full pointer-events-none opacity-40 blur-3xl"
@@ -236,67 +233,19 @@ export default function Hero({
             )}
           </div>
 
-          {/* Right Column: Real-Time 3D Technology Studio or Studio Photo */}
+          {/* Right Column: Authentic Studio Photography Presentation */}
           <div className="lg:col-span-7 flex flex-col items-center justify-center relative">
-            {/* View Mode Toggle (3D Studio vs Studio Photo) */}
-            <div className="w-full flex items-center justify-end mb-2 pr-1">
-              <div className="inline-flex items-center gap-1 p-1 bg-white/80 backdrop-blur-md rounded-xl border border-[#DCE7F0] shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => setHeroViewMode('3d')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                    heroViewMode === '3d'
-                      ? 'bg-[#145CFF] text-white shadow-xs'
-                      : 'text-[#52677B] hover:text-[#10263D]'
-                  }`}
-                  title="Real-Time 3D WebGL Studio"
-                >
-                  <Box size={13} />
-                  <span>3D Studio</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setHeroViewMode('photo')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                    heroViewMode === 'photo'
-                      ? 'bg-[#145CFF] text-white shadow-xs'
-                      : 'text-[#52677B] hover:text-[#10263D]'
-                  }`}
-                  title="Studio Photography View"
-                >
-                  <ImageIcon size={13} />
-                  <span>Photo</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Interactive Showcase Box */}
             <div className="w-full max-w-[620px]">
-              {heroViewMode === '3d' ? (
-                <Hero3DCanvas
-                  activeProductType={currentSlide.productType || 'audio'}
-                  onSelectProductType={(type) => {
-                    const idx = SLIDES.findIndex(s => s.productType === type);
-                    if (idx !== -1) {
-                      setActiveSlideIndex(idx);
-                      setIsPaused(true);
-                    }
-                  }}
-                  lang={lang}
+              <div className="relative w-full aspect-[4/3] flex items-center justify-center p-4 sm:p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-[#DCE7F0]/80 shadow-sm transition-all">
+                <img
+                  key={currentSlide.image}
+                  src={currentSlide.image}
+                  alt={currentSlide.imageAlt}
+                  className={`w-full h-full object-contain drop-shadow-md transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-90'}`}
+                  loading="eager"
+                  onLoad={() => setImageLoaded(true)}
                 />
-              ) : (
-                <div className="relative w-full aspect-[4/3] flex items-center justify-center p-4 bg-white/40 rounded-3xl border border-[#DCE7F0]/60">
-                  <img
-                    key={currentSlide.image}
-                    src={currentSlide.image}
-                    alt={currentSlide.imageAlt}
-                    className={`w-full h-full object-contain drop-shadow-md transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-90'}`}
-                    loading="eager"
-                    onLoad={() => setImageLoaded(true)}
-                  />
-                </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
