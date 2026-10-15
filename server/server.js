@@ -131,6 +131,23 @@ const server = http.createServer((req, res) => {
   `);
 });
 
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`[Server Error] Port ${PORT} is already in use by another process.`);
+  } else {
+    console.error('[Server Error]', err);
+  }
+  process.exit(1);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('[Uncaught Exception]', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[Unhandled Rejection]', reason);
+});
+
 server.listen(PORT, HOST, () => {
   console.log(`[Production Server] Glacial Tech Storefront & API listening on http://${HOST}:${PORT}`);
 });
