@@ -1,30 +1,30 @@
 :root {
-  --canvas-bg: #020712;
-  --canvas-bg-radial: radial-gradient(130% 90% at 50% 28%, rgba(0, 220, 255, 0.35) 0%, rgba(0, 160, 240, 0.18) 32%, rgba(2, 14, 34, 0.92) 68%, #020712 100%);
-  --surface-glass-l1: rgba(255, 255, 255, 0.90);
-  --surface-glass-l2: rgba(255, 255, 255, 0.96);
+  --canvas-bg: #F4F8FC;
+  --canvas-bg-radial: linear-gradient(180deg, #F9FBFE 0%, #F1F6FB 40%, #EBF3FA 100%);
+  --surface-glass-l1: rgba(255, 255, 255, 0.94);
+  --surface-glass-l2: rgba(255, 255, 255, 0.98);
   --surface-glass-l3: #FFFFFF;
   --surface-solid: #FFFFFF;
-  --section-ice: #EAF4FC;
+  --section-ice: #EDF5FC;
   
   --text-primary: #10263D;
-  --text-secondary: #52677B;
-  --text-tertiary: #8FA6BE;
+  --text-secondary: #475E75;
+  --text-tertiary: #7C95AE;
   --text-inverted: #FFFFFF;
 
   --brand-primary: #145CFF;
   --brand-hover: #0D4BD9;
   --brand-active: #0B3FB8;
   --brand-subtle: rgba(20, 92, 255, 0.08);
-  --brand-glow: rgba(20, 92, 255, 0.22);
+  --brand-glow: rgba(20, 92, 255, 0.16);
 
   --border-glass: #DCE7F0;
-  --border-glass-hover: rgba(20, 92, 255, 0.25);
-  --border-highlight: rgba(255, 255, 255, 0.9);
+  --border-glass-hover: rgba(20, 92, 255, 0.28);
+  --border-highlight: rgba(255, 255, 255, 0.95);
 
-  --shadow-l1: 0 4px 18px -2px rgba(16, 38, 61, 0.04), 0 1px 2px 0 rgba(220, 231, 240, 0.6);
-  --shadow-l2: 0 10px 28px -4px rgba(16, 38, 61, 0.07), 0 2px 6px -1px rgba(20, 92, 255, 0.04);
-  --shadow-l3: 0 20px 48px -8px rgba(16, 38, 61, 0.12), 0 4px 12px -2px rgba(20, 92, 255, 0.08);
+  --shadow-l1: 0 2px 10px -2px rgba(16, 38, 61, 0.04), 0 1px 2px 0 rgba(16, 38, 61, 0.02);
+  --shadow-l2: 0 8px 24px -4px rgba(16, 38, 61, 0.06), 0 2px 6px -1px rgba(20, 92, 255, 0.03);
+  --shadow-l3: 0 16px 36px -6px rgba(16, 38, 61, 0.10), 0 4px 10px -2px rgba(20, 92, 255, 0.05);
   --inset-specular: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
 
   --radius-sm: 8px;

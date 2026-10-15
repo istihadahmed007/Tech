@@ -6,17 +6,17 @@ A high-performance, polished e-commerce platform for mobile accessories in Bangl
 
 ## 💎 Design Identity & Aesthetics
 
-- **Subtle 3D Woven Background & Atmosphere**:
-  - Calm, product-focused cybernetic wave landscape built with **Three.js** and high-performance WebGL shaders.
-  - Complements storefront readability with restrained motion, soft atmospheric horizon glow, and pinpoint vertex nodes.
-  - Non-blocking (`pointer-events: none`, background layer) with solid, opaque cards and reading surfaces.
-  - Strict **`prefers-reduced-motion`** compliance: automatically pauses wave elevation and camera displacement, providing a static, high-contrast appearance when motion reduction is requested or WebGL is unavailable.
-- **Glacial Glassmorphic Aesthetic**:
-  - **Canvas Horizon**: `#020712` deep midnight with atmospheric cyan radial glow
-  - **Surfaces**: Solid `#FFFFFF` card pedestals and `#FFFFFF` modal surfaces to guarantee maximum legibility
-  - **Typography**: `#10263D` deep navy ink meeting WCAG AAA contrast guidelines
+- **Static, Understated Background Canvas**:
+  - Calm, product-focused pale ice-blue canvas (`#F4F8FC` to `#EBF3FA`) with subtle non-animated gradients.
+  - Zero Three.js, zero WebGL, zero autoplay animations, and zero distracting motion for maximum performance, battery efficiency, and instant page loads.
+  - Puts authentic product photography in the center spotlight without competing visual background effects.
+- **Glacial Clean Retail Aesthetic**:
+  - **Canvas Surface**: Soft pale ice-blue canvas (`#F4F8FC`) with subtle linear vertical depth
+  - **Product Cards**: Crisp, solid white (`#FFFFFF`) cards with restrained borders (`#DCE7F0`) and soft, natural ambient shadows
+  - **Media Pedestals**: Dedicated `#F2F7FC` product pedestals with subtle `#E2ECF4` rims that let product finishes stand out
+  - **Section Accents**: Gentle, non-animated color tints in key areas (e.g. Hero `#EDF5FC`, Bundle Deals `#F0F7FF`)
+  - **Typography**: `#10263D` deep navy ink meeting WCAG AAA contrast standards against light surfaces
   - **Action Triggers**: `#145CFF` tactile electric-blue buttons with high-contrast `:focus-visible` rings and quick-add feedback
-  - **Borders & Shadows**: Crisp `#DCE7F0` boundaries and soft ambient depth shadows fitting the background's retail presence
 - **Honest Signals & Clear Trust**: Explicit badges for Official Warranty, 7-Day Return Policy, Genuine Import, and Courier Shipping (Dhaka ৳60 / Outside Dhaka ৳120).
 
 ---

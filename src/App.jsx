@@ -16,7 +16,6 @@ import AccountModal from './components/AccountModal';
 import AdminModal from './components/AdminModal';
 import SupportModal from './components/SupportModal';
 import BundleDeals from './components/BundleDeals';
-import WovenBackground from './components/3d/WovenBackground';
 import Footer from './components/Footer';
 
 import { INITIAL_PRODUCTS } from './data/catalog';
@@ -551,20 +550,8 @@ export default function App() {
     showToast('Signed out of customer account');
   };
 
-  // Dynamic 3D Woven Wave Atmosphere Mode based on current view/route
-  const wovenMode = useMemo(() => {
-    if (activeModal === 'checkout' || activeModal === 'payment') return 'checkout';
-    if (activeModal === 'cart') return 'cart';
-    if (selectedProduct) return 'pdp';
-    if (selectedCategory) return 'category';
-    return 'home';
-  }, [activeModal, selectedProduct, selectedCategory]);
-
   return (
-    <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-600 selection:text-white bg-transparent">
-      {/* Glacial Tech — Woven 3D Technology Atmosphere */}
-      <WovenBackground mode={wovenMode} />
-
+    <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-600 selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#10263D] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-blue-400/30 flex items-center gap-2 animate-fadeIn">

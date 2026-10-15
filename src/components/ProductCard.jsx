@@ -50,17 +50,17 @@ export default function ProductCard({
       tabIndex="0"
       onKeyDown={handleCardKeyDown}
       onClick={() => onOpenDetail(product)}
-      className="group relative rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between h-full transition-all duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer focus-visible:outline-2 focus-visible:outline-[#145CFF] focus-visible:outline-offset-2"
+      className="group relative rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between h-full transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-[#B8D5ED] cursor-pointer focus-visible:outline-2 focus-visible:outline-[#145CFF] focus-visible:outline-offset-2"
       style={{
         background: '#FFFFFF',
         border: '1px solid #DCE7F0',
         borderRadius: '16px',
-        boxShadow: '0 4px 18px -2px rgba(16, 38, 61, 0.04)'
+        boxShadow: '0 2px 10px -2px rgba(16, 38, 61, 0.04), 0 1px 3px 0 rgba(16, 38, 61, 0.02)'
       }}
       aria-label={`${product.title}, ${currencySymbol}${product.price}`}
     >
       {/* Top Media Display Pedestal */}
-      <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-[#EAF4FC] p-3 flex items-center justify-center border border-[#DCE7F0]/60">
+      <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-[#F2F7FC] p-3 flex items-center justify-center border border-[#E2ECF4]">
         <img
           src={product.image}
           alt={lang === 'bn' ? product.titleBn : product.title}
