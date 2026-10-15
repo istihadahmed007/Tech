@@ -5,6 +5,7 @@ import CompatibilityFinder from './components/CompatibilityFinder';
 import CategoryNav from './components/CategoryNav';
 import ProductGrid from './components/ProductGrid';
 import ProductDetailModal from './components/ProductDetailModal';
+import ProductDetailPage from './components/ProductDetailPage';
 import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import PaymentGatewayModal from './components/PaymentGatewayModal';
@@ -127,10 +128,86 @@ export default function App() {
     } catch (e) {}
   }, [wishlistIds]);
 
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Dedicated Product Page Navigation (Preserves back/forward and clean deep links)
+  const navigateToProduct = useCallback((productOrId, pushHistory = true) => {
+    const prodId = typeof productOrId === 'string' ? productOrId : productOrId?.id;
+    const prod = typeof productOrId === 'object' && productOrId?.title
+      ? productOrId
+      : (products.find(p => p.id === prodId) || INITIAL_PRODUCTS.find(p => p.id === prodId));
+
+    if (prod) {
+      setSelectedProduct(prod);
+      setActiveModal(null);
+      if (pushHistory) {
+        window.history.pushState({ productId: prod.id }, '', `/product/${prod.id}`);
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } else if (prodId) {
+      setSelectedProduct({ id: prodId, notFound: true, title: 'Product Not Found' });
+      setActiveModal(null);
+      if (pushHistory) {
+        window.history.pushState({ productId: prodId }, '', `/product/${prodId}`);
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [products]);
+
+  // Navigate back to Home / Catalog
+  const navigateToHome = useCallback((pushHistory = true) => {
+    setSelectedProduct(null);
+    if (pushHistory) {
+      window.history.pushState(null, '', '/');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // Navigate to category from breadcrumb or category link
+  const navigateToCategory = useCallback((catId) => {
+    setSelectedProduct(null);
+    setSelectedCategory(catId);
+    window.history.pushState(null, '', '/');
+    setTimeout(() => {
+      scrollToSection('products-section');
+    }, 50);
+  }, []);
+
   // Hash & URL Routing Synchronization (Direct links & browser back/forward)
   useEffect(() => {
-    const handleHashRouting = () => {
+    const handleUrlRouting = () => {
+      const pathname = window.location.pathname;
       const hash = window.location.hash;
+
+      // 1. Pathname routing for dedicated product page: /product/:id
+      if (pathname.startsWith('/product/')) {
+        const productId = pathname.replace('/product/', '').split('/')[0].trim();
+        if (productId) {
+          const found = products.find(p => p.id === productId) || INITIAL_PRODUCTS.find(p => p.id === productId);
+          if (found) {
+            setSelectedProduct(found);
+          } else {
+            setSelectedProduct({ id: productId, notFound: true, title: 'Product Not Found' });
+          }
+        }
+      } else if (hash.startsWith('#product/') || hash.startsWith('#/product/')) {
+        const productId = hash.replace(/^#(?:[/])?product\//, '').trim();
+        if (productId) {
+          const found = products.find(p => p.id === productId) || INITIAL_PRODUCTS.find(p => p.id === productId);
+          if (found) {
+            setSelectedProduct(found);
+          }
+        }
+      } else if (!hash.startsWith('#') && pathname === '/') {
+        setSelectedProduct(null);
+      }
+
+      // 2. Hash modal routing
       if (hash === '#account') {
         setActiveModal('account');
       } else if (hash === '#admin') {
@@ -148,19 +225,16 @@ export default function App() {
           setTrackingToken(token || '');
         }
         setActiveModal('tracking');
-      } else if (hash.startsWith('#product/')) {
-        const productId = hash.replace('#product/', '').trim();
-        const found = products.find(p => p.id === productId);
-        if (found) {
-          setSelectedProduct(found);
-          setActiveModal('detail');
-        }
       }
     };
 
-    handleHashRouting();
-    window.addEventListener('hashchange', handleHashRouting);
-    return () => window.removeEventListener('hashchange', handleHashRouting);
+    handleUrlRouting();
+    window.addEventListener('popstate', handleUrlRouting);
+    window.addEventListener('hashchange', handleUrlRouting);
+    return () => {
+      window.removeEventListener('popstate', handleUrlRouting);
+      window.removeEventListener('hashchange', handleUrlRouting);
+    };
   }, [products]);
 
   // Handle gateway return parameters on page mount
@@ -437,13 +511,6 @@ export default function App() {
     showToast('Signed out of customer account');
   };
 
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-600 selection:text-white bg-[#EAF5FF]">
       {/* Toast Notification */}
@@ -456,7 +523,7 @@ export default function App() {
 
       {/* Frosted Glass Header */}
       <Header
-        storeName={import.meta.env.VITE_STORE_NAME || "Accessories"}
+        storeName={import.meta.env.VITE_STORE_NAME || "Glacial Tech"}
         t={t}
         lang={lang}
         setLang={setLang}
@@ -474,129 +541,168 @@ export default function App() {
           setActiveModal('tracking');
         }}
         searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        onScrollToFinder={() => scrollToSection('compatibility-finder')}
+        setSearchQuery={(query) => {
+          setSearchQuery(query);
+          if (selectedProduct && query.trim()) {
+            navigateToHome(false);
+          }
+        }}
+        onScrollToFinder={() => {
+          if (selectedProduct) {
+            navigateToHome(false);
+            setTimeout(() => scrollToSection('compatibility-finder'), 50);
+          } else {
+            scrollToSection('compatibility-finder');
+          }
+        }}
+        onGoHome={() => navigateToHome(true)}
+        onGoToShop={() => {
+          if (selectedProduct) {
+            navigateToHome(true);
+            setTimeout(() => scrollToSection('products-section'), 50);
+          } else {
+            scrollToSection('products-section');
+          }
+        }}
       />
 
       {/* Main Content Area */}
       <main className="container flex-grow pt-4">
-        {/* Hero Section with Interactive Story Tabs (Audio, Cases, Charging, Power) */}
-        <Hero
-          onShopClick={() => scrollToSection('products-section')}
-          onFindPhoneClick={() => scrollToSection('compatibility-finder')}
-          onSelectCategory={(catId) => {
-            setSelectedCategory(catId);
-            scrollToSection('products-section');
-          }}
-          onSelectPhone={(phone) => {
-            setSelectedPhone(phone);
-            scrollToSection('products-section');
-          }}
-          t={t}
-          lang={lang}
-          selectedCategory={selectedCategory}
-        />
+        {selectedProduct ? (
+          <ProductDetailPage
+            product={selectedProduct}
+            allProducts={products}
+            currentUser={currentUser}
+            onOpenAccount={() => setActiveModal('account')}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+            wishlistIds={wishlistIds}
+            onToggleWishlist={handleToggleWishlist}
+            onBackToHome={() => navigateToHome(true)}
+            onSelectCategory={navigateToCategory}
+            onSelectProduct={(p) => navigateToProduct(p, true)}
+            currencySymbol="৳"
+            t={t}
+            lang={lang}
+          />
+        ) : (
+          <>
+            {/* Hero Section with Interactive Story Tabs (Audio, Cases, Charging, Power) */}
+            <Hero
+              onShopClick={() => scrollToSection('products-section')}
+              onFindPhoneClick={() => scrollToSection('compatibility-finder')}
+              onSelectCategory={(catId) => {
+                setSelectedCategory(catId);
+                scrollToSection('products-section');
+              }}
+              onSelectPhone={(phone) => {
+                setSelectedPhone(phone);
+                scrollToSection('products-section');
+              }}
+              t={t}
+              lang={lang}
+              selectedCategory={selectedCategory}
+            />
 
-        {/* Compatibility Finder directly below hero */}
-        <CompatibilityFinder
-          selectedPhone={selectedPhone}
-          onSelectPhone={(phone) => {
-            setSelectedPhone(phone);
-            scrollToSection('products-section');
-          }}
-          onClearFilter={() => setSelectedPhone(null)}
-          t={t}
-        />
+            {/* Compatibility Finder directly below hero */}
+            <CompatibilityFinder
+              selectedPhone={selectedPhone}
+              onSelectPhone={(phone) => {
+                setSelectedPhone(phone);
+                scrollToSection('products-section');
+              }}
+              onClearFilter={() => setSelectedPhone(null)}
+              t={t}
+            />
 
-        {/* Category Collections Strip: The Everyday Edit */}
-        <CategoryNav
-          selectedCategory={selectedCategory}
-          onSelectCategory={(catId) => {
-            setSelectedCategory(catId);
-            scrollToSection('products-section');
-          }}
-          onShopAll={() => {
-            setSelectedCategory(null);
-            scrollToSection('products-section');
-          }}
-          lang={lang}
-        />
+            {/* Category Collections Strip: The Everyday Edit */}
+            <CategoryNav
+              selectedCategory={selectedCategory}
+              onSelectCategory={(catId) => {
+                setSelectedCategory(catId);
+                scrollToSection('products-section');
+              }}
+              onShopAll={() => {
+                setSelectedCategory(null);
+                scrollToSection('products-section');
+              }}
+              lang={lang}
+            />
 
-        {/* Smart Free Delivery Combos (৳2,000+ Threshold Deals) */}
-        <BundleDeals
-          onAddBundle={handleAddBundle}
-          lang={lang}
-          t={t}
-        />
+            {/* Smart Free Delivery Combos (৳2,000+ Threshold Deals) */}
+            <BundleDeals
+              onAddBundle={handleAddBundle}
+              lang={lang}
+              t={t}
+            />
 
-        {/* Product Collection Grid with Filtering & Search */}
-        <ProductGrid
-          products={products}
-          currencySymbol="৳"
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          selectedPhone={selectedPhone}
-          onClearPhoneFilter={() => setSelectedPhone(null)}
-          searchQuery={searchQuery}
-          onClearSearch={() => setSearchQuery('')}
-          onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-          onOpenDetail={(p) => {
-            setSelectedProduct(p);
-            setActiveModal('detail');
-          }}
-          wishlistIds={wishlistIds}
-          onToggleWishlist={handleToggleWishlist}
-          t={t}
-          lang={lang}
-        />
+            {/* Product Collection Grid with Filtering & Search */}
+            <ProductGrid
+              products={products}
+              currencySymbol="৳"
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+              selectedPhone={selectedPhone}
+              onClearPhoneFilter={() => setSelectedPhone(null)}
+              searchQuery={searchQuery}
+              onClearSearch={() => setSearchQuery('')}
+              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+              onOpenDetail={(p) => navigateToProduct(p, true)}
+              wishlistIds={wishlistIds}
+              onToggleWishlist={handleToggleWishlist}
+              t={t}
+              lang={lang}
+            />
 
-        {/* Value Proposition Highlights: Delivery, Warranty & Support */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 my-8">
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
-              <Truck size={20} />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop1Title}</h4>
-              <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop1Sub}</p>
-            </div>
-          </div>
+            {/* Value Proposition Highlights: Delivery, Warranty & Support */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 my-8">
+              <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
+                  <Truck size={20} />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop1Title}</h4>
+                  <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop1Sub}</p>
+                </div>
+              </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <Award size={20} />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop2Title}</h4>
-              <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop2Sub}</p>
-            </div>
-          </div>
+              <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <Award size={20} />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop2Title}</h4>
+                  <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop2Sub}</p>
+                </div>
+              </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
-              <ShieldCheck size={20} />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop3Title}</h4>
-              <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop3Sub}</p>
-            </div>
-          </div>
+              <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
+                  <ShieldCheck size={20} />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop3Title}</h4>
+                  <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop3Sub}</p>
+                </div>
+              </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-              <RotateCcw size={20} />
+              <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                  <RotateCcw size={20} />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop4Title}</h4>
+                  <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop4Sub}</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop4Title}</h4>
-              <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop4Sub}</p>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </main>
 
       {/* Modals & Flow Components */}
-      {/* 1. Product Detail Modal */}
-      {activeModal === 'detail' && selectedProduct && (
+      {/* 1. Product Detail Modal (Fallback) */}
+      {activeModal === 'detail' && selectedProduct && !selectedProduct.notFound && (
         <ProductDetailModal
           product={selectedProduct}
           currentUser={currentUser}
@@ -687,6 +793,10 @@ export default function App() {
         wishlistProducts={products.filter((p) => wishlistIds.includes(p.id))}
         onRemoveFromWishlist={(id) => setWishlistIds((prev) => prev.filter((i) => i !== id))}
         onAddToCart={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+        onSelectProduct={(p) => {
+          setActiveModal(null);
+          navigateToProduct(p, true);
+        }}
         currencySymbol="৳"
         t={t}
       />
@@ -699,8 +809,8 @@ export default function App() {
         onLoginSuccess={handleCustomerLoginSuccess}
         onLogout={handleCustomerLogout}
         onSelectProduct={(p) => {
-          setSelectedProduct(p);
-          setActiveModal('detail');
+          setActiveModal(null);
+          navigateToProduct(p, true);
         }}
         onAddToCart={handleAddToCart}
         currencySymbol="৳"
@@ -725,7 +835,7 @@ export default function App() {
 
       {/* Concise Footer */}
       <Footer
-        storeName={import.meta.env.VITE_STORE_NAME || "Accessories"}
+        storeName={import.meta.env.VITE_STORE_NAME || "Glacial Tech"}
         onOpenSupport={() => setActiveModal('support')}
         onOpenTracking={() => {
           setTrackingOrderId('');
@@ -733,8 +843,7 @@ export default function App() {
           setActiveModal('tracking');
         }}
         onSelectCategory={(catId) => {
-          setSelectedCategory(catId);
-          scrollToSection('products-section');
+          navigateToCategory(catId);
         }}
         onOpenAdmin={() => setActiveModal('admin')}
         t={t}

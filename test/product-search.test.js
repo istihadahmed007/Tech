@@ -85,3 +85,27 @@ test('Product Filtering: in-stock only filter excludes sold-out items', () => {
   assert.equal(inStockResults.length, 1);
   assert.equal(inStockResults[0].id, 'item-1');
 });
+
+test('Product Detail Route Resolution: resolves valid product routes for all 26 catalog items', () => {
+  for (const product of INITIAL_PRODUCTS) {
+    // 1. Path format: /product/:id
+    const pathname = `/product/${product.id}`;
+    const resolvedPathId = pathname.replace('/product/', '').split('/')[0];
+    const foundByPath = INITIAL_PRODUCTS.find(p => p.id === resolvedPathId);
+    assert.ok(foundByPath, `Product ${product.id} must be resolvable via /product/:id`);
+    assert.equal(foundByPath.id, product.id);
+
+    // 2. Hash format: #product/:id
+    const hash = `#product/${product.id}`;
+    const resolvedHashId = hash.replace(/^#(?:[/])?product\//, '').trim();
+    const foundByHash = INITIAL_PRODUCTS.find(p => p.id === resolvedHashId);
+    assert.ok(foundByHash, `Product ${product.id} must be resolvable via #product/:id`);
+    assert.equal(foundByHash.id, product.id);
+
+    // 3. Studio asset and pricing integrity
+    assert.ok(product.price > 0, `Product ${product.id} must have a positive BDT price`);
+    assert.ok(product.image.startsWith('/assets/products/'), `Product ${product.id} image must be a studio asset`);
+    assert.ok(product.title.length > 0, `Product ${product.id} must have a non-empty title`);
+    assert.ok(product.specs && typeof product.specs === 'object', `Product ${product.id} must have structured specifications`);
+  }
+});

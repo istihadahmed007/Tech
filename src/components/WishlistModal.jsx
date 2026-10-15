@@ -7,6 +7,7 @@ export default function WishlistModal({
   wishlistProducts, 
   onRemoveFromWishlist, 
   onAddToCart, 
+  onSelectProduct,
   currencySymbol = "৳",
   t 
 }) {
@@ -76,12 +77,15 @@ export default function WishlistModal({
           <div className="divide-y divide-slate-100">
             {wishlistProducts.map((product) => (
               <div key={product.id} className="py-3.5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-xl bg-[#EAF4FC] p-2 shrink-0 border border-[#DCE7F0] flex items-center justify-center">
-                    <img src={product.image} alt={product.title} className="w-full h-full object-contain" />
+                <div 
+                  className={`flex items-center gap-3 ${onSelectProduct ? 'cursor-pointer group' : ''}`}
+                  onClick={() => onSelectProduct && onSelectProduct(product)}
+                >
+                  <div className="w-14 h-14 rounded-xl bg-[#EAF4FC] p-2 shrink-0 border border-[#DCE7F0] flex items-center justify-center group-hover:border-[#145CFF] transition-colors">
+                    <img src={product.image} alt={product.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-xs sm:text-sm text-[#10263D] line-clamp-1">
+                    <h3 className="font-bold text-xs sm:text-sm text-[#10263D] group-hover:text-[#145CFF] transition-colors line-clamp-1">
                       {product.title}
                     </h3>
                     <span className="font-bold text-xs text-[#145CFF] block mt-0.5">

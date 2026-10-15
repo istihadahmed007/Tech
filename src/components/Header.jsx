@@ -31,7 +31,9 @@ export default function Header({
   onOpenTracking,
   searchQuery, 
   setSearchQuery,
-  onScrollToFinder
+  onScrollToFinder,
+  onGoHome,
+  onGoToShop
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -67,16 +69,28 @@ export default function Header({
         {/* Left: Brand Name & Main Nav Links */}
         <div className="flex items-center gap-8 lg:gap-10">
           <a 
-            href="#" 
+            href="/" 
+            onClick={(e) => {
+              if (onGoHome) {
+                e.preventDefault();
+                onGoHome();
+              }
+            }}
             className="font-extrabold text-2xl tracking-tight text-[#10263D] hover:text-[#145CFF] transition-colors leading-none"
           >
-            {storeName || "Accessories"}
+            {storeName || "Glacial Tech"}
           </a>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-7 text-[15px] font-medium text-[#334155]">
             <a 
               href="#products-section" 
+              onClick={(e) => {
+                if (onGoToShop) {
+                  e.preventDefault();
+                  onGoToShop();
+                }
+              }}
               className="nav-link-btn"
             >
               Shop
@@ -246,7 +260,13 @@ export default function Header({
           <nav className="flex flex-col gap-1 text-sm font-medium text-[#0F172A]">
             <a 
               href="#products-section" 
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                if (onGoToShop) {
+                  e.preventDefault();
+                  onGoToShop();
+                }
+              }}
               className="p-2.5 rounded-xl hover:bg-slate-50 font-semibold"
             >
               Shop
