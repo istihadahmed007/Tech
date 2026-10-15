@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { handleApiRequest } from './server/api.js';
+import { generateStaticRoutes } from './scripts/generate-static-routes.js';
 
 function commerceApiPlugin() {
   return {
@@ -16,8 +17,21 @@ function commerceApiPlugin() {
   };
 }
 
+function staticRoutesPlugin() {
+  return {
+    name: 'static-product-routes',
+    closeBundle() {
+      try {
+        generateStaticRoutes();
+      } catch (err) {
+        console.warn('Could not generate static routes during build:', err.message);
+      }
+    }
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), commerceApiPlugin()],
+  plugins: [react(), commerceApiPlugin(), staticRoutesPlugin()],
   server: {
     port: 3000,
     host: true

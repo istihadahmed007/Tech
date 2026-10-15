@@ -102,7 +102,13 @@ const server = http.createServer((req, res) => {
 
   // 4. Built Frontend Assets from dist/
   if (fs.existsSync(DIST_DIR)) {
-    const filePath = path.join(DIST_DIR, pathname === '/' ? 'index.html' : pathname);
+    let filePath = path.join(DIST_DIR, pathname === '/' ? 'index.html' : pathname);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+      const nestedIndex = path.join(filePath, 'index.html');
+      if (fs.existsSync(nestedIndex)) {
+        filePath = nestedIndex;
+      }
+    }
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
       const ext = path.extname(filePath).toLowerCase();
       const mime = MIME_TYPES[ext] || 'application/octet-stream';

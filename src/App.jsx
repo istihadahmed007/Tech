@@ -178,32 +178,54 @@ export default function App() {
     }, 50);
   }, []);
 
-  // Hash & URL Routing Synchronization (Direct links & browser back/forward)
+  // Hash & URL Routing Synchronization (Direct links, SPA fallback & browser back/forward)
   useEffect(() => {
     const handleUrlRouting = () => {
       const pathname = window.location.pathname;
       const hash = window.location.hash;
+      const search = window.location.search;
 
-      // 1. Pathname routing for dedicated product page: /product/:id
-      if (pathname.startsWith('/product/')) {
-        const productId = pathname.replace('/product/', '').split('/')[0].trim();
-        if (productId) {
-          const found = products.find(p => p.id === productId) || INITIAL_PRODUCTS.find(p => p.id === productId);
-          if (found) {
-            setSelectedProduct(found);
-          } else {
-            setSelectedProduct({ id: productId, notFound: true, title: 'Product Not Found' });
-          }
+      // Extract target product ID from any routing convention:
+      // A. Standard clean pathname: /product/:id or /product/:id/
+      let targetProductId = null;
+      const pathMatch = pathname.match(/\/product\/([^/?#]+)/i);
+      if (pathMatch) {
+        targetProductId = decodeURIComponent(pathMatch[1]).trim();
+      }
+
+      // B. Hash-based routing: #/product/:id or #product/:id
+      if (!targetProductId && (hash.startsWith('#product/') || hash.startsWith('#/product/'))) {
+        const hashMatch = hash.match(/^#\/?product\/([^/?#]+)/i);
+        if (hashMatch) {
+          targetProductId = decodeURIComponent(hashMatch[1]).trim();
         }
-      } else if (hash.startsWith('#product/') || hash.startsWith('#/product/')) {
-        const productId = hash.replace(/^#(?:[/])?product\//, '').trim();
-        if (productId) {
-          const found = products.find(p => p.id === productId) || INITIAL_PRODUCTS.find(p => p.id === productId);
-          if (found) {
-            setSelectedProduct(found);
+      }
+
+      // C. Query param fallback: ?product=:id or ?p=/product/:id
+      if (!targetProductId && search) {
+        try {
+          const searchParams = new URLSearchParams(search);
+          const queryP = searchParams.get('product') || searchParams.get('p');
+          if (queryP) {
+            const cleanQueryP = queryP.replace(/^\/?(?:product\/)?/, '').split('/')[0].split('?')[0];
+            if (cleanQueryP) targetProductId = decodeURIComponent(cleanQueryP).trim();
           }
+        } catch (e) {}
+      }
+
+      // 1. Process product resolution
+      if (targetProductId) {
+        const found = products.find(p => p.id === targetProductId) || INITIAL_PRODUCTS.find(p => p.id === targetProductId);
+        if (found) {
+          setSelectedProduct(found);
+          // If arrived via hash or query param fallback on a server with SPA rewrite support, cleanly normalize URL bar
+          if ((hash.includes('product/') || search.includes('product') || search.includes('p=')) && window.history?.replaceState) {
+            window.history.replaceState({ productId: found.id }, '', `/product/${found.id}`);
+          }
+        } else {
+          setSelectedProduct({ id: targetProductId, notFound: true, title: 'Product Not Found' });
         }
-      } else if (!hash.startsWith('#') && pathname === '/') {
+      } else if (!hash.startsWith('#') && (pathname === '/' || pathname === '')) {
         setSelectedProduct(null);
       }
 

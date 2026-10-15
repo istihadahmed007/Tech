@@ -1,0 +1,2 @@
+# SPA redirect rule for Netlify, Cloudflare Pages, and static web servers
+/*    /index.html   200

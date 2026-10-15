@@ -1,0 +1,18 @@
+# Glacial Tech - Apache / LiteSpeed SPA Rewrite Configuration
+# Enables clean Single Page Application (SPA) routing for /product/:id and other deep links
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Allow direct access to existing files and directories
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Rewrite all other paths to index.html
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Fallback error document to index.html for servers/subdomains without mod_rewrite
+ErrorDocument 404 /index.html
