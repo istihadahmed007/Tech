@@ -16,6 +16,7 @@ import AccountModal from './components/AccountModal';
 import AdminModal from './components/AdminModal';
 import SupportModal from './components/SupportModal';
 import BundleDeals from './components/BundleDeals';
+import Interactive3DShowcase from './components/Interactive3DShowcase';
 import Footer from './components/Footer';
 
 import { INITIAL_PRODUCTS } from './data/catalog';
@@ -635,6 +636,13 @@ export default function App() {
               }}
               onClearFilter={() => setSelectedPhone(null)}
               t={t}
+            />
+
+            {/* Real-Time 3D Technology Studio Showcase */}
+            <Interactive3DShowcase
+              onSelectProduct={(productId) => navigateToProduct(productId, true)}
+              onShopClick={() => scrollToSection('products-section')}
+              lang={lang}
             />
 
             {/* Category Collections Strip: The Everyday Edit */}

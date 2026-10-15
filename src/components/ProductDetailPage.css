@@ -201,6 +201,17 @@
   }
 }
 
+/* Main Image Stage Wrapper */
+.pdp-gallery-stage-wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+}
+
 /* Main Image Stage */
 .pdp-stage-card {
   position: relative;

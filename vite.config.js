@@ -32,6 +32,15 @@ function staticRoutesPlugin() {
 
 export default defineConfig({
   plugins: [react(), commerceApiPlugin(), staticRoutesPlugin()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'three-vendor': ['three']
+        }
+      }
+    }
+  },
   server: {
     port: 3000,
     host: true

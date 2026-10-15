@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Smartphone, Pause, Play, ChevronDown } from 'lucide-react';
+import { ChevronRight, Smartphone, Pause, Play, ChevronDown, Sparkles, Image as ImageIcon, Box } from 'lucide-react';
 import { BRANDS_AND_MODELS } from '../data/catalog';
+import Hero3DCanvas from './3d/Hero3DCanvas';
 
 export default function Hero({ 
   onShopClick, 
@@ -8,62 +9,67 @@ export default function Hero({
   onSelectCategory,
   onSelectPhone,
   t = {}, 
-  lang = 'en' 
+  lang = 'en',
+  selectedCategory = null
 }) {
-  // Available slides corresponding directly to the three reference designs
+  // Available slides corresponding directly to flagship collections
   const SLIDES = [
     {
       id: 'audio',
+      productType: 'audio',
       tabLabel: 'Audio',
       eyebrow: 'AUTHENTIC SOUND COLLECTION',
       title: 'Better sound.\nBeautifully simple.',
       titleBn: 'উন্নত সাউন্ড।\nঅনবদ্য সরলতা।',
-      subtitle: 'Discover wireless earbuds, studio gaming headsets & sports neckbands.',
+      subtitle: 'Discover wireless earbuds, studio gaming headsets & sports neckbands with active noise cancellation.',
       subtitleBn: 'ওয়্যারলেস এয়ারবাডস, গেমিং হেডসেট ও স্পোর্টস নেকব্যান্ডের সেরা কালেকশন।',
       hasInlineForm: false,
-      ctaText: 'Explore audio',
-      ctaTextBn: 'অডিও কালেকশন দেখুন',
+      ctaText: 'Shop Audio Collection',
+      ctaTextBn: 'অডিও কালেকশন কিনুন',
       onCtaClick: () => onSelectCategory && onSelectCategory('audio'),
       image: '/assets/hero-audio-headphones.jpg',
       imageAlt: 'Premium wireless audio headphones and crystal TWS earbuds'
     },
     {
       id: 'wearables',
+      productType: 'wearables',
       tabLabel: 'Smartwatches',
       eyebrow: 'ULTRA WEARABLES',
       title: 'Smart style.\nAll-day connected.',
       titleBn: 'স্মার্ট স্টাইল।\nসারাদিনের কানেক্টিভিটি।',
-      subtitle: 'Cellular SIM smartwatches, multi-strap combo editions & fitness trackers.',
+      subtitle: 'Cellular SIM smartwatches, multi-strap combo editions & aerospace titanium designs.',
       subtitleBn: 'সিম সাপোর্টেড স্মার্টওয়াচ, ৮+১ স্ট্র্যাপ কম্বো ও হেলথ ট্র্যাকিং।',
       hasInlineForm: false,
-      ctaText: 'Explore watches',
-      ctaTextBn: 'স্মার্টওয়াচ দেখুন',
+      ctaText: 'Shop Smartwatches',
+      ctaTextBn: 'স্মার্টওয়াচ কালেকশন কিনুন',
       onCtaClick: () => onSelectCategory && onSelectCategory('wearables'),
       image: '/assets/cat-wearables.jpg',
       imageAlt: 'Ultra smartwatch with interchangeable straps'
     },
     {
       id: 'charging',
+      productType: 'charging',
       tabLabel: 'Charging',
       eyebrow: 'POWER & CABLES',
       title: 'Fast charging.\nEveryday ready.',
       titleBn: 'দ্রুত চার্জিং।\nপ্রতিদিনের প্রস্তুতি।',
-      subtitle: 'Braided multi-tip cables, OTG adapters & turbo wall chargers.',
+      subtitle: 'High-speed braided multi-tip cables, OTG adapters & cryogenic 65W GaN turbo chargers.',
       subtitleBn: 'ব্রেইডেড ৪-ইন-১ ক্যাবল, ওটিজি অ্যাডাপ্টার ও ফাস্ট চার্জার।',
       hasInlineForm: false,
-      ctaText: 'Shop charging',
-      ctaTextBn: 'চার্জিং সামগ্রী দেখুন',
+      ctaText: 'Shop Charging Gear',
+      ctaTextBn: 'চার্জিং সামগ্রী কিনুন',
       onCtaClick: () => onSelectCategory && onSelectCategory('charging'),
       image: '/assets/cat-charging.jpg',
       imageAlt: 'Fast charging adapters and multi-tip braided cables'
     },
     {
       id: 'compatibility',
+      productType: 'audio',
       tabLabel: 'Device Fit',
       eyebrow: 'MADE FOR YOUR PHONE',
       title: 'Your phone.\nYour perfect fit.',
       titleBn: 'আপনার ফোন।\nআপনার পারফেক্ট ফিট।',
-      subtitle: 'Find compatible cables, chargers, and audio gear for your phone model.',
+      subtitle: 'Find verified compatible cables, chargers, and audio gear for your phone model.',
       subtitleBn: 'আপনার ফোন মডেলের জন্য সম্পূর্ণ মানানসই ক্যাবল, চার্জার ও অডিও খুঁজুন।',
       hasInlineForm: true,
       image: '/assets/hero-phone-cases-fit.jpg',
@@ -71,19 +77,21 @@ export default function Hero({
     }
   ];
 
-  // Active slide index (defaulting to slide 0: Cases / Made For Your Phone - Image 1)
+  // Active slide index
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  // View mode: '3d' (Real-time WebGL studio) or 'photo' (Studio photography)
+  const [heroViewMode, setHeroViewMode] = useState('3d');
 
-  // Inline form state for Slide 0 (Cases / Fit)
+  // Inline form state
   const [activeBrand, setActiveBrand] = useState('Apple');
   const [activeModel, setActiveModel] = useState('iPhone 15 Pro');
 
   const currentSlide = SLIDES[activeSlideIndex];
   const brandModels = BRANDS_AND_MODELS.find(b => b.brand === activeBrand)?.models || [];
 
-  // Handle inline form submit on Slide 0
+  // Handle inline form submit
   const handleInlineFormSubmit = (e) => {
     e.preventDefault();
     if (activeModel && onSelectPhone) {
@@ -94,13 +102,13 @@ export default function Hero({
     }
   };
 
-  // Auto-rotation timer (every 7.5 seconds when not paused)
+  // Auto-rotation timer (every 8.5 seconds when not paused)
   useEffect(() => {
     if (isPaused) return;
 
     const timer = setInterval(() => {
       setActiveSlideIndex(prev => (prev + 1) % SLIDES.length);
-    }, 7500);
+    }, 8500);
 
     return () => clearInterval(timer);
   }, [isPaused, SLIDES.length]);
@@ -114,18 +122,23 @@ export default function Hero({
         aria-hidden="true"
       />
 
-      <div className="relative z-10 px-6 sm:px-12 lg:px-16 pt-8 sm:pt-12 pb-16 lg:pb-14">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div className="relative z-10 px-4 sm:px-8 lg:px-16 pt-6 sm:pt-12 pb-10 sm:pb-14">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
           
           {/* Left Column: Typography, Eyebrow & Controls */}
           <div className="lg:col-span-5 flex flex-col items-start z-10">
             {/* Eyebrow Pill / Label */}
-            <span className="text-[11px] font-bold tracking-[0.14em] text-[#52677B] uppercase mb-3.5">
-              {currentSlide.eyebrow}
-            </span>
+            <div className="flex items-center gap-2 mb-3.5">
+              <span className="text-[11px] font-bold tracking-[0.14em] text-[#52677B] uppercase">
+                {currentSlide.eyebrow}
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-blue-100/70 text-[#145CFF] text-[10px] font-bold tracking-wider uppercase">
+                Glacial Tech
+              </span>
+            </div>
 
             {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[58px] font-extrabold text-[#10263D] tracking-tight leading-[1.08] mb-3.5 whitespace-pre-line">
+            <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-extrabold text-[#10263D] tracking-tight leading-[1.08] mb-3.5 whitespace-pre-line">
               {lang === 'bn' && currentSlide.titleBn ? currentSlide.titleBn : currentSlide.title}
             </h1>
 
@@ -134,11 +147,9 @@ export default function Hero({
               {lang === 'bn' && currentSlide.subtitleBn ? currentSlide.subtitleBn : currentSlide.subtitle}
             </p>
 
-            {/* Action Area: Either Inline Phone Selector (Image 1) OR Action Buttons (Images 2 & 3) */}
+            {/* Action Area: Either Inline Phone Selector OR Primary Action Buttons */}
             {currentSlide.hasInlineForm ? (
-              /* Inline Phone Selector Form (Exact match for Image 1) */
               <form onSubmit={handleInlineFormSubmit} className="w-full max-w-sm space-y-3.5">
-                {/* Brand Selector */}
                 <div>
                   <label htmlFor="hero-phone-brand" className="block text-xs font-semibold text-[#10263D] mb-1.5">
                     Phone brand
@@ -162,7 +173,6 @@ export default function Hero({
                   </div>
                 </div>
 
-                {/* Model Selector */}
                 <div>
                   <label htmlFor="hero-phone-model" className="block text-xs font-semibold text-[#10263D] mb-1.5">
                     Phone model
@@ -182,7 +192,6 @@ export default function Hero({
                   </div>
                 </div>
 
-                {/* Submit & Browse Links */}
                 <div className="pt-1 flex flex-col sm:flex-row items-start sm:items-center gap-3">
                   <button
                     type="submit"
@@ -203,50 +212,104 @@ export default function Hero({
                 </div>
               </form>
             ) : (
-              /* Action Buttons (Exact match for Images 2 & 3) */
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-3.5">
+                {/* Working Primary Shop Now Button */}
                 <button
                   type="button"
-                  onClick={currentSlide.onCtaClick}
+                  onClick={onShopClick}
                   className="px-6 py-3 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.98] text-white font-semibold text-sm sm:text-base flex items-center gap-2 shadow-sm transition-all"
                 >
-                  <span>{lang === 'bn' && currentSlide.ctaTextBn ? currentSlide.ctaTextBn : currentSlide.ctaText}</span>
+                  <span>{lang === 'bn' ? 'শপ নাও • ক্যাটালগ দেখুন' : 'Shop Now'}</span>
                   <ChevronRight size={17} className="stroke-[2.5]" />
                 </button>
 
-                {currentSlide.secondaryText && (
-                  <button
-                    type="button"
-                    onClick={currentSlide.onSecondaryClick}
-                    className="text-sm sm:text-base font-semibold text-[#145CFF] hover:underline flex items-center gap-1 pl-1"
-                  >
-                    <span>{lang === 'bn' && currentSlide.secondaryTextBn ? currentSlide.secondaryTextBn : currentSlide.secondaryText}</span>
-                    <ChevronRight size={16} />
-                  </button>
-                )}
+                {/* Secondary Collection / Category Filter Button */}
+                <button
+                  type="button"
+                  onClick={currentSlide.onCtaClick}
+                  className="px-5 py-3 rounded-full bg-white/90 hover:bg-white text-[#10263D] font-semibold text-sm sm:text-base flex items-center gap-2 border border-[#DCE7F0] shadow-2xs transition-colors"
+                >
+                  <span>{lang === 'bn' && currentSlide.ctaTextBn ? currentSlide.ctaTextBn : currentSlide.ctaText}</span>
+                  <ChevronRight size={15} className="text-[#145CFF]" />
+                </button>
               </div>
             )}
           </div>
 
-          {/* Right Column: Clean Studio Product Showcase Asset */}
-          <div className="lg:col-span-7 flex items-center justify-center relative">
-            <div className="relative w-full aspect-[4/3] max-w-[580px] flex items-center justify-center">
-              <img
-                key={currentSlide.image}
-                src={currentSlide.image}
-                alt={currentSlide.imageAlt}
-                className={`w-full h-full object-contain drop-shadow-md transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-90'}`}
-                loading="eager"
-                onLoad={() => setImageLoaded(true)}
-              />
+          {/* Right Column: Real-Time 3D Technology Studio or Studio Photo */}
+          <div className="lg:col-span-7 flex flex-col items-center justify-center relative">
+            {/* View Mode Toggle (3D Studio vs Studio Photo) */}
+            <div className="w-full flex items-center justify-end mb-2 pr-1">
+              <div className="inline-flex items-center gap-1 p-1 bg-white/80 backdrop-blur-md rounded-xl border border-[#DCE7F0] shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setHeroViewMode('3d')}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                    heroViewMode === '3d'
+                      ? 'bg-[#145CFF] text-white shadow-xs'
+                      : 'text-[#52677B] hover:text-[#10263D]'
+                  }`}
+                  title="Real-Time 3D WebGL Studio"
+                >
+                  <Box size={13} />
+                  <span>3D Studio</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setHeroViewMode('photo')}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                    heroViewMode === 'photo'
+                      ? 'bg-[#145CFF] text-white shadow-xs'
+                      : 'text-[#52677B] hover:text-[#10263D]'
+                  }`}
+                  title="Studio Photography View"
+                >
+                  <ImageIcon size={13} />
+                  <span>Photo</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Interactive Showcase Box */}
+            <div className="w-full max-w-[620px]">
+              {heroViewMode === '3d' ? (
+                <Hero3DCanvas
+                  activeProductType={currentSlide.productType || 'audio'}
+                  onSelectProductType={(type) => {
+                    const idx = SLIDES.findIndex(s => s.productType === type);
+                    if (idx !== -1) {
+                      setActiveSlideIndex(idx);
+                      setIsPaused(true);
+                    }
+                  }}
+                  lang={lang}
+                />
+              ) : (
+                <div className="relative w-full aspect-[4/3] flex items-center justify-center p-4 bg-white/40 rounded-3xl border border-[#DCE7F0]/60">
+                  <img
+                    key={currentSlide.image}
+                    src={currentSlide.image}
+                    alt={currentSlide.imageAlt}
+                    className={`w-full h-full object-contain drop-shadow-md transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-90'}`}
+                    loading="eager"
+                    onLoad={() => setImageLoaded(true)}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar: Interactive Category Tabs + Pause/Play Button (Exact match for Image 2) */}
-        <div className="mt-8 pt-4 border-t border-[#DCE7F0]/60 flex flex-wrap items-center justify-end gap-5 text-xs sm:text-sm">
-          {/* Tab buttons */}
-          <div className="flex items-center gap-4 sm:gap-6">
+        {/* Bottom Bar: Interactive Category Tabs + Pause/Play Button */}
+        <div className="mt-8 pt-4 border-t border-[#DCE7F0]/60 flex flex-wrap items-center justify-between gap-5 text-xs sm:text-sm">
+          {/* Subtle Live Status Indicator */}
+          <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[#52677B]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#145CFF]" />
+            <span>Glacial Tech Premium Electronics Bangladesh</span>
+          </div>
+
+          <div className="flex items-center gap-2.5 sm:gap-6 ml-auto overflow-x-auto max-w-full py-1">
             {SLIDES.map((slide, idx) => {
               const isActive = idx === activeSlideIndex;
               return (
@@ -254,9 +317,9 @@ export default function Hero({
                   key={slide.id}
                   onClick={() => {
                     setActiveSlideIndex(idx);
-                    setIsPaused(true); // User click pauses rotation for deliberate viewing
+                    setIsPaused(true);
                   }}
-                  className={`pb-1 transition-all font-semibold relative ${
+                  className={`pb-1 transition-all font-semibold relative whitespace-nowrap shrink-0 text-xs sm:text-sm ${
                     isActive 
                       ? 'text-[#145CFF]' 
                       : 'text-[#52677B] hover:text-[#10263D]'
@@ -269,17 +332,17 @@ export default function Hero({
                 </button>
               );
             })}
-          </div>
 
-          {/* Pause / Play Control */}
-          <button
-            onClick={() => setIsPaused(prev => !prev)}
-            className="p-1.5 rounded-full text-[#52677B] hover:text-[#10263D] hover:bg-white/80 transition-colors"
-            title={isPaused ? "Play auto-rotation" : "Pause auto-rotation"}
-            aria-label={isPaused ? "Play slide transition" : "Pause slide transition"}
-          >
-            {isPaused ? <Play size={15} /> : <Pause size={15} />}
-          </button>
+            {/* Pause / Play Control */}
+            <button
+              onClick={() => setIsPaused(prev => !prev)}
+              className="p-1.5 rounded-full text-[#52677B] hover:text-[#10263D] hover:bg-white/80 transition-colors"
+              title={isPaused ? "Play auto-rotation" : "Pause auto-rotation"}
+              aria-label={isPaused ? "Play slide transition" : "Pause slide transition"}
+            >
+              {isPaused ? <Play size={15} /> : <Pause size={15} />}
+            </button>
+          </div>
         </div>
       </div>
     </section>
