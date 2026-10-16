@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { calculateOrderTotals, FREE_SHIPPING_THRESHOLD } from '../utils/pricing';
 import { safeFetchJson } from '../utils/api';
+import { trackCheckoutStarted } from '../utils/analytics';
 import './CheckoutModal.css';
 
 export const OFFICIAL_PAYMENTLY_URL = "https://vartualtutor.paymently.io/paymentlink/default/BDT";
@@ -65,6 +66,13 @@ export default function CheckoutModal({
   const [showPromoBox, setShowPromoBox] = useState(false);
 
   const [idempotencyKey] = useState(() => 'idemp_' + Math.random().toString(36).substring(2, 15) + Date.now());
+
+  // Track checkout started (privacy-conscious: item counts and monetary subtotal only)
+  useEffect(() => {
+    if (cart && cart.length > 0) {
+      trackCheckoutStarted(cart);
+    }
+  }, []);
 
   // Auto-populate customer from logged-in user profile
   useEffect(() => {

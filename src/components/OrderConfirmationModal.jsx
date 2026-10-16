@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { CheckCircle, Truck, Package, Copy, ArrowRight, ShieldCheck, X, Key, Printer } from 'lucide-react';
 import { openPrintWindow } from '../utils/invoice.js';
+import { trackPurchaseCompleted } from '../utils/analytics.js';
 
 export default function OrderConfirmationModal({ 
   order, 
@@ -23,6 +24,13 @@ export default function OrderConfirmationModal({
       });
     } catch (e) {}
   }, []);
+
+  // Track purchase completed (duplicate-safe: skips if order was already recorded)
+  useEffect(() => {
+    if (order && order.id) {
+      trackPurchaseCompleted(order);
+    }
+  }, [order]);
 
   // Escape-to-close
   useEffect(() => {

@@ -21,8 +21,13 @@ import Footer from './components/Footer';
 
 import { INITIAL_PRODUCTS } from './data/catalog';
 import { translations } from './i18n/translations';
-import { ShieldCheck, Truck, RotateCcw, Award } from 'lucide-react';
 import { safeFetchJson } from './utils/api';
+import { 
+  initUmami, 
+  trackAddToCart, 
+  trackCheckoutStarted, 
+  trackPurchaseCompleted 
+} from './utils/analytics';
 
 export default function App() {
   const [lang, setLang] = useState('en');
@@ -139,8 +144,9 @@ export default function App() {
     }
   }, []);
 
-  // Initial Data & Authentication Setup
+  // Initial Data, Authentication & Analytics Setup
   useEffect(() => {
+    initUmami();
     loadDatabaseProducts();
     loadCurrentCustomer();
   }, [loadDatabaseProducts, loadCurrentCustomer]);
@@ -218,8 +224,9 @@ export default function App() {
     if (pushHistory) {
       window.history.pushState({ view: 'checkout' }, '', '/checkout');
     }
+    trackCheckoutStarted(itemsToCheckout && itemsToCheckout.length > 0 ? itemsToCheckout : cart);
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, []);
+  }, [cart]);
 
   // Navigate back to Home / Catalog
   const navigateToHome = useCallback((pushHistory = true) => {
@@ -372,9 +379,11 @@ export default function App() {
         })
           .then(res => {
             if (res.ok && res.data?.verified && res.data?.order) {
-              setConfirmedOrder({ ...res.data.order, guestToken: token || res.data.order.guestToken });
+              const fullOrder = { ...res.data.order, guestToken: token || res.data.order.guestToken };
+              setConfirmedOrder(fullOrder);
               setCart([]);
               setActiveModal('order_success');
+              trackPurchaseCompleted(fullOrder);
             } else {
               showToast(res.error || 'Payment verification failed');
             }
@@ -418,6 +427,7 @@ export default function App() {
       }
     });
 
+    trackAddToCart(product, quantity, variant);
     showToast(`Added ${product.title} to bag`);
   };
 
@@ -523,9 +533,11 @@ export default function App() {
 
   // Order Placed Success Handler
   const handleOrderSuccess = (order, guestToken = null) => {
-    setConfirmedOrder({ ...order, guestToken: guestToken || order.guestToken });
+    const fullOrder = { ...order, guestToken: guestToken || order.guestToken };
+    setConfirmedOrder(fullOrder);
     setCart([]);
     setActiveModal('order_success');
+    trackPurchaseCompleted(fullOrder);
   };
 
   // Online Payment Initiated
@@ -549,6 +561,7 @@ export default function App() {
     setConfirmedOrder(verifiedOrder);
     setCart([]);
     setActiveModal('order_success');
+    trackPurchaseCompleted(verifiedOrder);
   };
 
   const handlePaymentFailure = (reason) => {

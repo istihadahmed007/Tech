@@ -15,6 +15,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { safeFetchJson } from '../utils/api';
+import { trackProductView } from '../utils/analytics';
 
 export default function ProductDetailModal({ 
   product, 
@@ -54,6 +55,7 @@ export default function ProductDetailModal({
       setReviewError('');
       setReviewSuccess('');
       loadReviews(product.id);
+      trackProductView(product);
     }
   }, [product]);
 

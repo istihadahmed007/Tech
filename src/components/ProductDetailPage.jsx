@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import './ProductDetailPage.css';
 import { safeFetchJson } from '../utils/api';
+import { trackProductView } from '../utils/analytics';
 
 export default function ProductDetailPage({
   product,
@@ -143,6 +144,9 @@ export default function ProductDetailPage({
     setIncludeCompanion(true);
     setActiveTab('overview');
     loadReviews(product.id);
+
+    // Track product view (privacy-conscious)
+    trackProductView(product);
 
     // Update document title for SEO
     const originalTitle = document.title;
