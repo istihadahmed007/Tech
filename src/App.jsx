@@ -6,6 +6,7 @@ import CategoryNav from './components/CategoryNav';
 import ProductGrid from './components/ProductGrid';
 import ProductDetailModal from './components/ProductDetailModal';
 import ProductDetailPage from './components/ProductDetailPage';
+import CartPage from './components/CartPage';
 import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import PaymentGatewayModal from './components/PaymentGatewayModal';
@@ -60,6 +61,8 @@ export default function App() {
   // Modals & Navigation Flows
   const [activeModal, setActiveModal] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isCartView, setIsCartView] = useState(false);
+  const [checkoutItems, setCheckoutItems] = useState(null);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [paymentSessionInfo, setPaymentSessionInfo] = useState(null);
   const [trackingOrderId, setTrackingOrderId] = useState('');
@@ -67,9 +70,20 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState('');
   const lastActiveElementRef = useRef(null);
 
+  // Prevent background body scroll when modals are open (eliminates overlapping & bleed-through)
+  useEffect(() => {
+    if (activeModal) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [activeModal]);
+
   // Accessible focus restoration upon closing modals
   useEffect(() => {
-    if (activeModal || selectedProduct) {
+    if (activeModal || selectedProduct || isCartView) {
       if (!lastActiveElementRef.current) {
         lastActiveElementRef.current = document.activeElement;
       }
@@ -81,7 +95,7 @@ export default function App() {
       }
       lastActiveElementRef.current = null;
     }
-  }, [activeModal, selectedProduct]);
+  }, [activeModal, selectedProduct, isCartView]);
 
   // Toast Helper
   const showToast = useCallback((msg) => {
@@ -158,6 +172,8 @@ export default function App() {
       ? productOrId
       : (products.find(p => p.id === prodId) || INITIAL_PRODUCTS.find(p => p.id === prodId));
 
+    setIsCartView(false);
+    setCheckoutItems(null);
     if (prod) {
       setSelectedProduct(prod);
       setActiveModal(null);
@@ -175,9 +191,35 @@ export default function App() {
     }
   }, [products]);
 
+  // Dedicated Amazon-Style Cart Page Navigation (Full page, zero overlapping)
+  const navigateToCart = useCallback((pushHistory = true) => {
+    setIsCartView(true);
+    setSelectedProduct(null);
+    setActiveModal(null);
+    if (pushHistory) {
+      window.history.pushState({ view: 'cart' }, '', '/cart');
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
+  // Dedicated Amazon Checkout Navigation (Supports selected items subset)
+  const navigateToCheckout = useCallback((itemsToCheckout = null, pushHistory = true) => {
+    if (itemsToCheckout && Array.isArray(itemsToCheckout) && itemsToCheckout.length > 0) {
+      setCheckoutItems(itemsToCheckout);
+    } else {
+      setCheckoutItems(null);
+    }
+    setActiveModal('checkout');
+    if (pushHistory) {
+      window.history.pushState({ view: 'checkout' }, '', '/checkout');
+    }
+  }, []);
+
   // Navigate back to Home / Catalog
   const navigateToHome = useCallback((pushHistory = true) => {
     setSelectedProduct(null);
+    setIsCartView(false);
+    setCheckoutItems(null);
     if (pushHistory) {
       window.history.pushState(null, '', '/');
     }
@@ -187,6 +229,8 @@ export default function App() {
   // Navigate to category from breadcrumb or category link
   const navigateToCategory = useCallback((catId) => {
     setSelectedProduct(null);
+    setIsCartView(false);
+    setCheckoutItems(null);
     setSelectedCategory(catId);
     window.history.pushState(null, '', '/');
     setTimeout(() => {
@@ -201,7 +245,23 @@ export default function App() {
       const hash = window.location.hash;
       const search = window.location.search;
 
-      // Extract target product ID from any routing convention:
+      // 1. Dedicated Amazon Cart Page routing (/cart, #cart, or ?view=cart)
+      if (pathname === '/cart' || pathname === '/cart/' || hash === '#cart' || hash.startsWith('#cart?') || search.includes('view=cart')) {
+        setIsCartView(true);
+        setSelectedProduct(null);
+        setActiveModal(null);
+        document.title = 'Amazon.com Shopping Cart — Glacial Tech';
+        return;
+      }
+
+      // 2. Dedicated Checkout routing (/checkout, #checkout, or ?view=checkout)
+      if (pathname === '/checkout' || pathname === '/checkout/' || hash === '#checkout' || hash.startsWith('#checkout?') || search.includes('view=checkout')) {
+        setActiveModal('checkout');
+        document.title = 'Amazon.com Checkout — Glacial Tech';
+        return;
+      }
+
+      // 3. Extract target product ID from any routing convention:
       // A. Standard clean pathname: /product/:id or /product/:id/
       let targetProductId = null;
       const pathMatch = pathname.match(/\/product\/([^/?#]+)/i);
@@ -229,9 +289,10 @@ export default function App() {
         } catch (e) {}
       }
 
-      // 1. Process product resolution
+      // Process product resolution
       if (targetProductId) {
         const found = products.find(p => p.id === targetProductId) || INITIAL_PRODUCTS.find(p => p.id === targetProductId);
+        setIsCartView(false);
         if (found) {
           setSelectedProduct(found);
           // If arrived via hash or query param fallback on a server with SPA rewrite support, cleanly normalize URL bar
@@ -243,17 +304,14 @@ export default function App() {
         }
       } else if (!hash.startsWith('#') && (pathname === '/' || pathname === '')) {
         setSelectedProduct(null);
+        setIsCartView(false);
       }
 
-      // 2. Hash modal routing
+      // Hash modal routing
       if (hash === '#account') {
         setActiveModal('account');
       } else if (hash === '#admin') {
         setActiveModal('admin');
-      } else if (hash === '#cart') {
-        setActiveModal('cart');
-      } else if (hash === '#checkout') {
-        setActiveModal('checkout');
       } else if (hash.startsWith('#track')) {
         const params = new URLSearchParams(hash.replace('#track', '').replace('?', ''));
         const id = params.get('id');
@@ -389,7 +447,7 @@ export default function App() {
     });
 
     showToast(lang === 'bn' ? '🎉 বান্ডিল যুক্ত হয়েছে! ফ্রি ডেলিভারি আনলকড!' : '🎉 Bundle added! Free Delivery Unlocked!');
-    setActiveModal('cart');
+    navigateToCart(true);
   };
 
   const handleUpdateQuantity = (productId, variantId, newQuantity) => {
@@ -448,7 +506,7 @@ export default function App() {
   // Buy Now direct trigger
   const handleBuyNow = (product, variant, quantity) => {
     handleAddToCart(product, variant, quantity);
-    setActiveModal('checkout');
+    navigateToCheckout();
   };
 
   // Order Placed Success Handler
@@ -569,7 +627,7 @@ export default function App() {
         currentUser={currentUser}
         cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
         wishlistCount={wishlistIds.length}
-        onOpenCart={() => setActiveModal('cart')}
+        onOpenCart={() => navigateToCart(true)}
         onOpenWishlist={() => setActiveModal('wishlist')}
         onOpenSupport={() => setActiveModal('support')}
         onOpenAccount={() => setActiveModal('account')}
@@ -587,7 +645,7 @@ export default function App() {
           }
         }}
         onScrollToFinder={() => {
-          if (selectedProduct) {
+          if (selectedProduct || isCartView) {
             navigateToHome(false);
             setTimeout(() => scrollToSection('compatibility-finder'), 50);
           } else {
@@ -596,7 +654,7 @@ export default function App() {
         }}
         onGoHome={() => navigateToHome(true)}
         onGoToShop={() => {
-          if (selectedProduct) {
+          if (selectedProduct || isCartView) {
             navigateToHome(true);
             setTimeout(() => scrollToSection('products-section'), 50);
           } else {
@@ -606,7 +664,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className={selectedProduct ? "flex-grow w-full" : "container flex-grow pt-4"}>
+      <main className={selectedProduct || isCartView ? "flex-grow w-full" : "container flex-grow pt-4"}>
         {selectedProduct ? (
           <ProductDetailPage
             product={selectedProduct}
@@ -620,6 +678,20 @@ export default function App() {
             onBackToHome={() => navigateToHome(true)}
             onSelectCategory={navigateToCategory}
             onSelectProduct={(p) => navigateToProduct(p, true)}
+            currencySymbol="৳"
+            t={t}
+            lang={lang}
+          />
+        ) : isCartView ? (
+          <CartPage
+            cart={cart}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemoveItem={handleRemoveFromCart}
+            onProceedToCheckout={(selectedItems) => navigateToCheckout(selectedItems)}
+            onContinueShopping={() => navigateToHome(true)}
+            onSelectProduct={(p) => navigateToProduct(p, true)}
+            allProducts={products}
+            onAddToCart={handleAddToCart}
             currencySymbol="৳"
             t={t}
             lang={lang}
@@ -766,7 +838,7 @@ export default function App() {
         cart={cart}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveFromCart}
-        onOpenCheckout={() => setActiveModal('checkout')}
+        onOpenCheckout={() => navigateToCheckout()}
         onRevalidateCart={handleRevalidateCart}
         currencySymbol="৳"
         t={t}
@@ -776,8 +848,14 @@ export default function App() {
       {/* 3. Checkout Modal */}
       <CheckoutModal
         isOpen={activeModal === 'checkout'}
-        onClose={() => setActiveModal(null)}
-        cart={cart}
+        onClose={() => {
+          setActiveModal(null);
+          setCheckoutItems(null);
+          if (window.location.pathname === '/checkout') {
+            window.history.replaceState(null, '', isCartView ? '/cart' : '/');
+          }
+        }}
+        cart={checkoutItems && checkoutItems.length > 0 ? checkoutItems : cart}
         currentUser={currentUser}
         onOrderSuccess={handleOrderSuccess}
         onInitiateOnlinePayment={handleInitiateOnlinePayment}

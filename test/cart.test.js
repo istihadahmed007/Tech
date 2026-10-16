@@ -68,3 +68,30 @@ test('Cart boundaries: quantity limits and validation', () => {
   assert.equal(sanitizeQuantity(5, 10), 5);
   assert.equal(sanitizeQuantity(15, 10), 10);
 });
+
+test('Amazon Cart Selection: computes subtotal and items count only for active selected items', () => {
+  const cart = [
+    { id: 'item-1', price: 1500, quantity: 1, variant: { id: 'v1' } },
+    { id: 'item-2', price: 800, quantity: 2, variant: { id: 'v2' } },
+    { id: 'item-3', price: 2200, quantity: 1, variant: { id: 'default' } }
+  ];
+
+  const selectedKeys = new Set(['item-1_v1', 'item-3_default']); // item-2 is deselected
+  const getItemKey = (item) => `${item.id}_${item.variant?.id || 'default'}`;
+  const selectedCart = cart.filter(item => selectedKeys.has(getItemKey(item)));
+
+  const result = calculateOrderTotals(selectedCart, { division: 'Dhaka', outsideCity: false });
+  // item-1 (1500) + item-3 (2200) = 3700. item-2 (1600) is excluded.
+  assert.equal(result.subtotal, 3700);
+  assert.equal(result.isFreeDelivery, true);
+  assert.equal(selectedCart.reduce((sum, i) => sum + i.quantity, 0), 2);
+});
+
+test('Amazon Free Delivery Progress: accurately calculates remaining amount to ৳2,000 threshold', () => {
+  const cartUnder = [{ id: 'cable', price: 1450, quantity: 1 }];
+  const result = calculateOrderTotals(cartUnder);
+  assert.equal(result.subtotal, 1450);
+  assert.equal(result.isFreeDelivery, false);
+  assert.equal(result.remainingForFreeShipping, 550);
+  assert.equal(Math.round(result.progressPercent), 73);
+});

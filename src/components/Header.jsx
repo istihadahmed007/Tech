@@ -279,6 +279,13 @@ export default function Header({
               {t.navFindFit || 'Find my fit'}
             </button>
             <button 
+              onClick={() => { setMobileMenuOpen(false); onOpenCart(); }}
+              className="p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-center justify-between font-semibold text-[#0F1111]"
+            >
+              <span>{lang === 'bn' ? 'শপিং কার্ট' : 'Shopping Cart'} ({cartCount})</span>
+              <ShoppingBag size={16} className="text-[#145CFF]" />
+            </button>
+            <button 
               onClick={() => { setMobileMenuOpen(false); onOpenTracking(''); }}
               className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-[#145CFF] font-semibold flex items-center justify-between"
             >

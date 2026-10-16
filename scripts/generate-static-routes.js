@@ -27,6 +27,28 @@ export function generateStaticRoutes() {
   );
   fs.writeFileSync(path.join(productDir, 'index.html'), productFallbackHtml, 'utf-8');
 
+  // Generate /cart/index.html (Amazon-style Shopping Cart)
+  const cartDir = path.join(DIST_DIR, 'cart');
+  if (!fs.existsSync(cartDir)) {
+    fs.mkdirSync(cartDir, { recursive: true });
+  }
+  const cartHtml = baseHtml.replace(
+    /<title>.*?<\/title>/i,
+    '<title>Amazon.com Shopping Cart — Glacial Tech</title>'
+  );
+  fs.writeFileSync(path.join(cartDir, 'index.html'), cartHtml, 'utf-8');
+
+  // Generate /checkout/index.html
+  const checkoutDir = path.join(DIST_DIR, 'checkout');
+  if (!fs.existsSync(checkoutDir)) {
+    fs.mkdirSync(checkoutDir, { recursive: true });
+  }
+  const checkoutHtml = baseHtml.replace(
+    /<title>.*?<\/title>/i,
+    '<title>Amazon.com Checkout — Glacial Tech</title>'
+  );
+  fs.writeFileSync(path.join(checkoutDir, 'index.html'), checkoutHtml, 'utf-8');
+
   // Generate /product/:id/index.html for every authentic product in catalog
   let count = 0;
   for (const prod of INITIAL_PRODUCTS) {

@@ -219,6 +219,8 @@ a {
   justify-content: center;
   padding: 16px;
   animation: fadeIn 200ms ease;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Container - Global Symmetrical Content Grid */

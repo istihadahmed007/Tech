@@ -1,0 +1,735 @@
+/* ==========================================================================
+   Glacial Tech — Amazon Shopping Cart Page Stylesheet
+   Matches exact layout & typography of https://www.amazon.com/cart
+   Color Palette: Amazon Cool Neutral (#EAEDED), White Cards (#FFFFFF), 
+   Amazon Gold (#FFD814), Forest Green Stock (#007600), Link Blue (#007185)
+   ========================================================================== */
+
+.amazon-cart-page {
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  background-color: #EAEDED;
+  color: #0F1111;
+  font-family: var(--font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+  padding-top: 18px;
+  padding-bottom: 60px;
+  box-sizing: border-box;
+}
+
+.amazon-cart-container {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .amazon-cart-container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* Amazon Top Free Shipping Qualified Banner */
+.amazon-cart-top-banner {
+  background: #FFFFFF;
+  border: 1px solid #D5D9D9;
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.amazon-cart-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.amazon-free-ship-icon {
+  width: 24px;
+  height: 24px;
+  color: #007600;
+  flex-shrink: 0;
+}
+
+.amazon-cart-banner-text {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #0F1111;
+}
+
+.amazon-cart-banner-text strong {
+  color: #007600;
+  font-weight: 700;
+}
+
+.amazon-free-ship-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #E6E6E6;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.amazon-free-ship-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #145CFF 0%, #007600 100%);
+  border-radius: 9999px;
+  transition: width 300ms ease;
+}
+
+/* 2-Column Responsive Layout */
+.amazon-cart-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .amazon-cart-layout {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .amazon-cart-layout {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 28px;
+  }
+}
+
+/* Main Left Card: Shopping Cart */
+.amazon-cart-main-card {
+  background: #FFFFFF;
+  border: 1px solid #D5D9D9;
+  border-radius: 8px;
+  padding: 20px 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 640px) {
+  .amazon-cart-main-card {
+    padding: 24px 24px;
+  }
+}
+
+.amazon-cart-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #E7E7E7;
+  gap: 12px;
+}
+
+.amazon-cart-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0F1111;
+  margin: 0;
+  line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+  .amazon-cart-title {
+    font-size: 28px;
+  }
+}
+
+.amazon-deselect-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #007185;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 4px;
+  display: inline-block;
+  transition: color 150ms ease;
+}
+
+.amazon-deselect-btn:hover {
+  color: #C45500;
+  text-decoration: underline;
+}
+
+.amazon-cart-price-col-header {
+  font-size: 14px;
+  color: #565959;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Cart Item Row */
+.amazon-cart-item-row {
+  display: grid;
+  grid-template-columns: auto 100px 1fr;
+  gap: 14px;
+  padding: 20px 0;
+  border-bottom: 1px solid #E7E7E7;
+  align-items: start;
+  transition: opacity 160ms ease, background 160ms ease;
+}
+
+@media (min-width: 640px) {
+  .amazon-cart-item-row {
+    grid-template-columns: auto 140px 1fr auto;
+    gap: 20px;
+  }
+}
+
+.amazon-cart-item-row.is-deselected {
+  opacity: 0.55;
+  background-color: #FAFAFA;
+}
+
+/* Checkbox */
+.amazon-checkbox-col {
+  padding-top: 6px;
+}
+
+.amazon-cart-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #007185;
+  cursor: pointer;
+}
+
+/* Thumbnail */
+.amazon-cart-thumb-col {
+  cursor: pointer;
+}
+
+.amazon-cart-thumb-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  background: #FFFFFF;
+  border: 1px solid #E7E7E7;
+  border-radius: 6px;
+  padding: 4px;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+@media (min-width: 640px) {
+  .amazon-cart-thumb-img {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+.amazon-cart-thumb-img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Item Details */
+.amazon-cart-item-details {
+  min-width: 0;
+}
+
+.amazon-cart-item-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #0F1111;
+  line-height: 1.35;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 150ms ease;
+}
+
+@media (min-width: 640px) {
+  .amazon-cart-item-title {
+    font-size: 17px;
+  }
+}
+
+.amazon-cart-item-title:hover {
+  color: #007185;
+  text-decoration: underline;
+}
+
+.amazon-cart-stock-status {
+  font-size: 12px;
+  font-weight: 700;
+  color: #007600;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.amazon-cart-shipping-note {
+  font-size: 12px;
+  color: #565959;
+  margin-top: 2px;
+}
+
+.amazon-cart-variant-tag {
+  font-size: 12px;
+  color: #0F1111;
+  margin-top: 4px;
+}
+
+.amazon-cart-gift-option {
+  font-size: 12px;
+  color: #0F1111;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* Controls Toolbar (Qty, Delete, Save for later, Share) */
+.amazon-cart-actions-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: #565959;
+}
+
+.amazon-qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: #F0F2F2;
+  border: 1px solid #D5D9D9;
+  border-radius: 8px;
+  padding: 2px 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.amazon-qty-btn {
+  background: #FFFFFF;
+  border: 1px solid #D5D9D9;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0F1111;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.amazon-qty-btn:hover {
+  background: #F7FAFA;
+  border-color: #888C8C;
+}
+
+.amazon-qty-value {
+  padding: 0 8px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #0F1111;
+  min-width: 22px;
+  text-align: center;
+}
+
+.amazon-toolbar-sep {
+  color: #D5D9D9;
+}
+
+.amazon-action-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #007185;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.amazon-action-link:hover {
+  color: #C45500;
+  text-decoration: underline;
+}
+
+/* Item Price Column */
+.amazon-cart-price-col {
+  text-align: right;
+  padding-top: 2px;
+}
+
+.amazon-item-price {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0F1111;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .amazon-item-price {
+    font-size: 19px;
+  }
+}
+
+/* Subtotal Bottom Row in Main Card */
+.amazon-cart-subtotal-footer {
+  padding-top: 18px;
+  text-align: right;
+  font-size: 16px;
+  color: #0F1111;
+}
+
+.amazon-cart-subtotal-footer strong {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0F1111;
+  margin-left: 6px;
+}
+
+/* Empty Cart State */
+.amazon-cart-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+}
+
+.amazon-empty-cart-icon {
+  width: 64px;
+  height: 64px;
+  color: #94A3B8;
+  margin: 0 auto 16px;
+}
+
+.amazon-empty-cart-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0F1111;
+  margin-bottom: 8px;
+}
+
+.amazon-empty-cart-sub {
+  font-size: 14px;
+  color: #565959;
+  max-width: 480px;
+  margin: 0 auto 20px;
+}
+
+/* Right Sticky Subtotal Card */
+.amazon-cart-sidebar-card {
+  background: #FFFFFF;
+  border: 1px solid #D5D9D9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 1024px) {
+  .amazon-cart-sidebar-card {
+    position: sticky;
+    top: 80px;
+  }
+}
+
+.amazon-sidebar-free-ship {
+  font-size: 12px;
+  color: #007600;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.35;
+}
+
+.amazon-sidebar-subtotal-title {
+  font-size: 17px;
+  color: #0F1111;
+  line-height: 1.3;
+}
+
+.amazon-sidebar-subtotal-price {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0F1111;
+  margin-left: 4px;
+}
+
+.amazon-sidebar-gift-row {
+  margin-top: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #0F1111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* Signature Amazon Yellow/Gold Button */
+.amazon-btn-proceed {
+  width: 100%;
+  background: #FFD814;
+  border: 1px solid #FCD200;
+  border-radius: 9999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0F1111;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+  transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.amazon-btn-proceed:hover:not(:disabled) {
+  background: #F7CA00;
+  border-color: #F2C200;
+  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.75);
+}
+
+.amazon-btn-proceed:active:not(:disabled) {
+  background: #F0B800;
+  border-color: #008296;
+}
+
+.amazon-btn-proceed:disabled {
+  background: #E2E8F0;
+  border-color: #CBD5E1;
+  color: #94A3B8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Amazon Trust & Payment Assurance */
+.amazon-sidebar-trust-box {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #E7E7E7;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 11px;
+  color: #565959;
+}
+
+.amazon-trust-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.amazon-payment-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.amazon-pay-badge {
+  background: #F0F2F2;
+  border: 1px solid #D5D9D9;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #0F1111;
+}
+
+/* Saved For Later Section */
+.amazon-saved-for-later-section {
+  margin-top: 24px;
+  background: #FFFFFF;
+  border: 1px solid #D5D9D9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.amazon-saved-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0F1111;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #E7E7E7;
+}
+
+.amazon-saved-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .amazon-saved-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}
+
+.amazon-saved-card {
+  border: 1px solid #E7E7E7;
+  border-radius: 6px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  background: #FFFFFF;
+  transition: box-shadow 150ms ease;
+}
+
+.amazon-saved-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.amazon-saved-card-top {
+  display: flex;
+  gap: 12px;
+}
+
+.amazon-saved-card-img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid #E7E7E7;
+  padding: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.amazon-btn-move-to-cart {
+  background: #FFD814;
+  border: 1px solid #FCD200;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0F1111;
+  cursor: pointer;
+  text-align: center;
+  transition: background 150ms ease;
+}
+
+.amazon-btn-move-to-cart:hover {
+  background: #F7CA00;
+}
+
+/* Recommendations Carousel / Grid */
+.amazon-cart-recommendations {
+  margin-top: 28px;
+  background: #FFFFFF;
+  border: 1px solid #D5D9D9;
+  border-radius: 8px;
+  padding: 22px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.amazon-rec-header {
+  font-size: 19px;
+  font-weight: 700;
+  color: #0F1111;
+  margin-bottom: 16px;
+}
+
+.amazon-rec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 768px) {
+  .amazon-rec-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+}
+
+.amazon-rec-card {
+  border: 1px solid #E7E7E7;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  background: #FFFFFF;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.amazon-rec-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.amazon-rec-img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.amazon-rec-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0F1111;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.amazon-rec-title:hover {
+  color: #007185;
+}
+
+.amazon-rec-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F1111;
+}
+
+.amazon-btn-quick-add {
+  background: #FFD814;
+  border: 1px solid #FCD200;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0F1111;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  transition: background 150ms ease;
+}
+
+.amazon-btn-quick-add:hover {
+  background: #F7CA00;
+}
+
+/* Amazon Footer Disclaimer */
+.amazon-cart-disclaimer {
+  margin-top: 24px;
+  font-size: 12px;
+  color: #565959;
+  line-height: 1.5;
+  border-top: 1px solid #D5D9D9;
+  padding-top: 14px;
+}
