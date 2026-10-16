@@ -189,6 +189,9 @@ export default function AdminDashboard({
       });
 
       if (!res.ok || !res.data?.success) {
+        if (res.isHtml) {
+          throw new Error('Backend route (/api/admin/login) returned an HTML page (200). The Node.js backend server is not running on this domain/host. Hostinger is currently serving only the static frontend build. Please start the Node.js application in your hosting panel (Hostinger hPanel → Node.js with entry server.js) or configure VITE_API_BASE_URL.');
+        }
         throw new Error(res.error || 'Invalid admin credentials');
       }
 
@@ -218,7 +221,7 @@ export default function AdminDashboard({
   // Orders Actions
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`/api/admin/orders/${orderId}/status`, {
+      const res = await safeFetchJson(`/api/admin/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -240,7 +243,7 @@ export default function AdminDashboard({
 
   const collectCod = async (orderId, amount) => {
     try {
-      const res = await fetch(`/api/admin/orders/${orderId}/collect-cod`, {
+      const res = await safeFetchJson(`/api/admin/orders/${orderId}/collect-cod`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -330,7 +333,7 @@ export default function AdminDashboard({
       isDestructive: !isArchived,
       onConfirm: async () => {
         try {
-          const res = await fetch(`/api/admin/products/${product.id}/status`, {
+          const res = await safeFetchJson(`/api/admin/products/${product.id}/status`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -361,7 +364,7 @@ export default function AdminDashboard({
       isDestructive: true,
       onConfirm: async () => {
         try {
-          const res = await fetch(`/api/admin/promotions/${promo.id}`, {
+          const res = await safeFetchJson(`/api/admin/promotions/${promo.id}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${authToken}` }
           });
@@ -398,7 +401,7 @@ export default function AdminDashboard({
 
   const submitReviewStatus = async (reviewId, newStatus) => {
     try {
-      const res = await fetch(`/api/admin/reviews/${reviewId}/status`, {
+      const res = await safeFetchJson(`/api/admin/reviews/${reviewId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -493,9 +496,14 @@ export default function AdminDashboard({
 
           {/* Validation & Server Error State */}
           {loginError && (
-            <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5">
-              <AlertTriangle size={18} className="shrink-0 mt-0.5 text-red-600" />
-              <span>{loginError}</span>
+            <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm space-y-1.5">
+              <div className="flex items-start gap-2">
+                <AlertTriangle size={18} className="shrink-0 mt-0.5 text-red-600" />
+                <span className="font-semibold">{loginError.includes('Backend route') ? 'Backend Server Offline' : 'Sign-In Error'}</span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-red-800 leading-relaxed pl-6">
+                {loginError}
+              </p>
             </div>
           )}
 

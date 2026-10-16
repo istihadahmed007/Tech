@@ -7,10 +7,20 @@
   
   # Allow direct access to existing files and directories
   RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # If Apache has mod_proxy and Node.js is running locally on port 3000
+  <IfModule mod_proxy.c>
+    RewriteCond %{REQUEST_URI} ^/api/
+    RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
+  </IfModule>
+
+  # Do NOT rewrite /api/ requests to index.html
+  RewriteCond %{REQUEST_URI} !^/api/
   
-  # Rewrite all other paths to index.html
+  # Rewrite all other frontend paths to index.html
   RewriteRule . /index.html [L]
 </IfModule>
 

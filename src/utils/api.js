@@ -6,9 +6,27 @@
  * "SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON"
  */
 
+export function getApiBaseUrl() {
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    return (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '').trim();
+  }
+  return '';
+}
+
+export function resolveApiUrl(pathOrUrl) {
+  if (!pathOrUrl || typeof pathOrUrl !== 'string') return '';
+  if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
+    return pathOrUrl;
+  }
+  const base = getApiBaseUrl().replace(/\/+$/, '');
+  const cleanPath = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+  return base ? `${base}${cleanPath}` : cleanPath;
+}
+
 export async function safeFetchJson(url, options = {}) {
+  const targetUrl = resolveApiUrl(url);
   try {
-    const response = await fetch(url, options);
+    const response = await fetch(targetUrl, options);
     const contentType = response.headers.get('content-type') || '';
     const text = await response.text();
 
