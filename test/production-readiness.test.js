@@ -223,3 +223,43 @@ test('6. Privacy Protection: Order lookup masks personal details for unauthentic
   assert.equal(authorizedRes.body.order.customer.phone, '01712345678');
   assert.equal(authorizedRes.body.order.customer.address, 'House 42, Road 11, Banani, Dhaka');
 });
+
+test('7. Frontend Integrity: All JSX elements and icons in src/App.jsx are imported and defined', async () => {
+  const code = fs.readFileSync(path.resolve('src/App.jsx'), 'utf8');
+  const parser = await import('@babel/parser');
+  const ast = parser.parse(code, {
+    sourceType: 'module',
+    plugins: ['jsx']
+  });
+
+  const declared = new Set(['React', 'window', 'document', 'sessionStorage', 'localStorage', 'console']);
+  ast.program.body.forEach(node => {
+    if (node.type === 'ImportDeclaration') {
+      node.specifiers.forEach(spec => declared.add(spec.local.name));
+    }
+    if (node.type === 'FunctionDeclaration' && node.id) {
+      declared.add(node.id.name);
+    }
+  });
+
+  const undeclared = [];
+  function findJSX(node) {
+    if (!node || typeof node !== 'object') return;
+    if (node.type === 'JSXOpeningElement' && node.name.type === 'JSXIdentifier') {
+      const name = node.name.name;
+      if (/^[A-Z]/.test(name) && !declared.has(name)) {
+        undeclared.push(name);
+      }
+    }
+    for (const k of Object.keys(node)) {
+      if (Array.isArray(node[k])) {
+        node[k].forEach(findJSX);
+      } else if (typeof node[k] === 'object') {
+        findJSX(node[k]);
+      }
+    }
+  }
+  findJSX(ast);
+  assert.deepEqual(undeclared, [], `Undeclared JSX elements found in App.jsx: ${undeclared.join(', ')}`);
+});
+

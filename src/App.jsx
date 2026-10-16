@@ -21,7 +21,7 @@ import Footer from './components/Footer';
 
 import { INITIAL_PRODUCTS } from './data/catalog';
 import { translations } from './i18n/translations';
-import { safeFetchJson } from './utils/api';
+import { Truck, Award, ShieldCheck, RotateCcw } from 'lucide-react';
 import { 
   initUmami, 
   trackAddToCart, 
