@@ -1485,73 +1485,85 @@ export const INITIAL_PRODUCTS = [
 
 export const FEATURED_BUNDLES = [
   {
-    id: "bundle-everyday-power-audio",
-    title: "The Everyday Power & Audio Combo",
-    titleBn: "পাওয়ার ও অডিও অল-ইন-ওয়ান বান্ডিল",
-    subtitle: "Y80 Ultra Smartwatch (8+1 Straps) + Pro-Style ANC Wireless Earbuds",
-    subtitleBn: "ওয়াই ৮০ আল্ট্রা স্মার্টওয়াচ (৮+১ স্ট্র্যাপ) + প্রো-স্টাইল এএনসি এয়ারবাডস",
+    id: "bundle-entry-audio-charge",
+    title: "Essential Audio & 65W Fast Charge Combo",
+    titleBn: "অ্যাসেনশিয়াল অডিও ও ৬৫ ওয়াট ফাস্ট চার্জ কম্বো",
+    subtitle: "Pro-Style White TWS + SM 007 Wireless Neckband + RECRSI 4-in-1 Cable",
+    subtitleBn: "প্রো-স্টাইল সাদা TWS + এসএম ০০৭ ওয়্যারলেস নেকব্যান্ড + রেকর্সি ৪-ইন-১ ক্যাবল",
     badge: "Free Delivery Unlocked",
     badgeBn: "ফ্রি ডেলিভারি আনলকড",
-    price: 2080,
-    originalPrice: 2800,
-    savings: 720,
-    freeDelivery: true,
-    image: "/assets/products/p11-y80-ultra-smartwatch.jpg",
-    itemIds: ["y80-ultra-smartwatch", "h2-anc-pro-tws"],
-    itemsSummary: "Y80 Ultra Smartwatch (৳890) + Pro 2 ANC Earbuds (৳1,190) = ৳2,080"
-  },
-  {
-    id: "bundle-commuter-complete",
-    title: "The Commuter Complete Tech Pack",
-    titleBn: "কমিউটার কমপ্লিট টেক প্যাক",
-    subtitle: "Oraimo Headset + RECRSI 4-in-1 Cable + 2-Pin Charger + REMAX Cable + In-Ear Earphones",
-    subtitleBn: "ওরাইমো হেডসেট + রেকর্সি ৪-ইন-১ ক্যাবল + ২-পিন চার্জার + রিম্যাক্স ক্যাবল + ইয়ারফোন",
-    badge: "5-in-1 Setup",
-    badgeBn: "৫-ইন-১ সেটআপ",
-    price: 2050,
-    originalPrice: 2610,
-    savings: 560,
-    freeDelivery: true,
-    image: "/assets/products/p20-recrsi-4in1-cable.jpg",
-    itemIds: [
-      "oraimo-or08-wireless-headset", 
-      "recrsi-4in1-65w-cable", 
-      "turbo-single-wall-charger", 
-      "remax-rc155a-120w-cable", 
-      "in-ear-bass-wired-earphones"
-    ],
-    itemsSummary: "Oraimo Headset (৳990) + 4-in-1 Cable (৳420) + 20W Adapter (৳250) + REMAX Cable (৳150) + In-Ear Earphones (৳150) = ৳1,960 + Top-up Bundle Deal"
-  },
-  {
-    id: "bundle-his-and-hers-wearables",
-    title: "His & Hers Smartwatch Pack",
-    titleBn: "হিজ অ্যান্ড হার্স স্মার্টওয়াচ প্যাক",
-    subtitle: "Y80 Ultra Smartwatch + KW68 Mini Pink Watch + REMAX 2-Pack Cables",
-    subtitleBn: "ওয়াই ৮০ আল্ট্রা স্মার্টওয়াচ + কেডব্লিউ৬৮ মিনি পিংক ওয়াচ + রিম্যাক্স ২-প্যাক ক্যাবল",
-    badge: "Couples Special",
-    badgeBn: "কাপল স্পেশাল",
-    price: 2030,
-    originalPrice: 2600,
+    price: 2060,
+    originalPrice: 2630,
     savings: 570,
     freeDelivery: true,
-    image: "/assets/products/p11-y80-ultra-smartwatch.jpg",
-    itemIds: ["y80-ultra-smartwatch", "pink-glam-smartwatch", "remax-rc155a-duo-bundle"],
-    itemsSummary: "Y80 Ultra (৳890) + Pink Watch (৳790) + 2x REMAX Cables (৳280) + Bonus OTG = ৳2,030"
+    image: "/assets/products/p01-pro-tws-white.jpg",
+    itemIds: [
+      "h2-anc-pro-tws",
+      "sm-neckband-007",
+      "recrsi-4in1-65w-cable"
+    ],
+    itemsSummary: "Pro-Style White TWS (৳1,190) + SM 007 Neckband (৳450) + RECRSI 4-in-1 Cable (৳420) = ৳2,060"
   },
   {
-    id: "bundle-ultrapods-audiophile-pack",
-    title: "Ultrapods & Headset Audio Pack",
-    titleBn: "আল্ট্রাপডস ও অডিওফাইল কম্বো প্যাক",
-    subtitle: "Ultrapods Pro Transparent + Oraimo OR-08 Headset + SM 007 Neckband",
-    subtitleBn: "আল্ট্রাপডস প্রো স্বচ্ছ বাডস + ওরাইমো হেডসেট + এসএম ০০৭ নেকব্যান্ড",
-    badge: "Audio Trio",
-    badgeBn: "অডিও ট্রায়ো",
-    price: 2050,
-    originalPrice: 2750,
-    savings: 700,
+    id: "bundle-smartwatch-dual-audio",
+    title: "Smartwatch & Dual Audio Master Pack",
+    titleBn: "স্মার্টওয়াচ ও ডুয়াল অডিও মাস্টার প্যাক",
+    subtitle: "Y80 Ultra Watch (8+1 Straps) + Oraimo Wireless Headset + OnePlus-Style TWS",
+    subtitleBn: "ওয়াই ৮০ আল্ট্রা ওয়াচ (৮+১ স্ট্র্যাপ) + ওরাইমো ওয়্যারলেস হেডসেট + ওয়ানপ্লাস-স্টাইল TWS",
+    badge: "Popular Value",
+    badgeBn: "জনপ্রিয় ভ্যালু ডিল",
+    price: 2530,
+    originalPrice: 3350,
+    savings: 820,
     freeDelivery: true,
-    image: "/assets/products/p04-ultrapods-pro-all.jpg",
-    itemIds: ["p04-ultrapods-pro-tws", "oraimo-or08-wireless-headset", "sm-neckband-007"],
-    itemsSummary: "Ultrapods Pro (৳350) + Oraimo Headset (৳990) + SM 007 Neckband (৳450) + RECRSI Cable (৳420) = ৳2,210"
+    image: "/assets/products/p11-y80-ultra-smartwatch.jpg",
+    itemIds: [
+      "y80-ultra-smartwatch",
+      "oraimo-or08-wireless-headset",
+      "p06-oneplus-pro-tws"
+    ],
+    itemsSummary: "Y80 Ultra Watch (৳890) + Oraimo Headset (৳990) + OnePlus-Style TWS (৳650) = ৳2,530"
+  },
+  {
+    id: "bundle-executive-wearables-charge",
+    title: "Executive Dual Wearables & Power Pack",
+    titleBn: "এক্সিকিউটিভ ডুয়াল স্মার্টওয়াচ ও পাওয়ার প্যাক",
+    subtitle: "LAXASFIT K10 Ultra SIM Watch + KW68 Mini Watch + RECRSI Cable + 20W Charger",
+    subtitleBn: "ল্যাক্সাসফিট কে১০ আল্ট্রা সিম ওয়াচ + কেডব্লিউ৬৮ মিনি ওয়াচ + রেকর্সি ক্যাবল + ২০ ওয়াট চার্জার",
+    badge: "Couples & Executive",
+    badgeBn: "কাপলস ও এক্সিকিউটিভ স্পেশাল",
+    price: 2810,
+    originalPrice: 3610,
+    savings: 800,
+    freeDelivery: true,
+    image: "/assets/products/p12-laxasfit-k10-ultra-sim-watch.jpg",
+    itemIds: [
+      "p12-laxasfit-k10-ultra",
+      "pink-glam-smartwatch",
+      "recrsi-4in1-65w-cable",
+      "turbo-single-wall-charger"
+    ],
+    itemsSummary: "K10 Ultra SIM Watch (৳1,350) + KW68 Mini Watch (৳790) + RECRSI Cable (৳420) + 20W Charger (৳250) = ৳2,810"
+  },
+  {
+    id: "bundle-audiophile-studio-suite",
+    title: "Audiophile Studio & Gaming Suite",
+    titleBn: "অডিওফাইল স্টুডিও ও গেমিং প্রিমিয়াম স্যুট",
+    subtitle: "Pro ANC TWS + Oraimo Headset + SAN-002 RGB Headphones + TUCCI A5 Fighter",
+    subtitleBn: "প্রো এএনসি TWS + ওরাইমো হেডসেট + এসএএন-০০২ আরজিবি হেডফোন + টুচি এ৫ ফাইটার",
+    badge: "Ultimate Sound",
+    badgeBn: "আল্টিমেট সাউন্ড সেটআপ",
+    price: 3520,
+    originalPrice: 4700,
+    savings: 1180,
+    freeDelivery: true,
+    image: "/assets/products/p14-oraimo-or08-headset.jpg",
+    itemIds: [
+      "h2-anc-pro-tws",
+      "oraimo-or08-wireless-headset",
+      "luminous-sa-rgb-headphones",
+      "fighter-superbass-headset"
+    ],
+    itemsSummary: "Pro White TWS (৳1,190) + Oraimo Headset (৳990) + SAN-002 RGB Headphones (৳790) + A5 Fighter (৳550) = ৳3,520"
   }
 ];

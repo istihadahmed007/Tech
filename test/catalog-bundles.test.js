@@ -8,7 +8,7 @@ test('Catalog Bundles: all bundled SKUs exist in catalog and have stock', () => 
   for (const bundle of FEATURED_BUNDLES) {
     assert.ok(bundle.itemIds.length > 0, `Bundle ${bundle.id} must have itemIds`);
     
-    // Check that bundle total is at or above free delivery threshold
+    // Check that bundle total is at or above free delivery threshold (>= 2000)
     assert.ok(bundle.price >= 2000, `Bundle ${bundle.id} price (${bundle.price}) must qualify for free shipping (>= 2000)`);
     assert.ok(bundle.savings > 0, `Bundle ${bundle.id} must offer positive savings`);
 
@@ -17,6 +17,42 @@ test('Catalog Bundles: all bundled SKUs exist in catalog and have stock', () => 
       assert.ok(product, `Bundle item SKU ${itemId} must exist in INITIAL_PRODUCTS`);
       assert.ok(product.stock > 0, `Bundle item ${itemId} must have positive inventory stock`);
     }
+  }
+});
+
+test('Catalog Bundles: authentic pricing, no fake data, and distinct price tiers', () => {
+  const prices = FEATURED_BUNDLES.map(b => b.price);
+  
+  // Verify all bundles have unique, differentiated prices
+  const uniquePrices = new Set(prices);
+  assert.equal(uniquePrices.size, prices.length, 'Every bundle must have a distinct, differentiated price point');
+  
+  // Verify span between lowest and highest price tier is substantial (> ৳1,000)
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  assert.ok(maxPrice - minPrice >= 1000, `Price tiers must span multiple customer segments (difference: ৳${maxPrice - minPrice})`);
+
+  for (const bundle of FEATURED_BUNDLES) {
+    // Calculate exact sum of product catalog prices
+    const catalogItemSum = bundle.itemIds.reduce((sum, id) => {
+      const product = INITIAL_PRODUCTS.find(p => p.id === id);
+      assert.ok(product, `Item ${id} in bundle ${bundle.id} must exist in catalog`);
+      return sum + product.price;
+    }, 0);
+
+    // Calculate exact sum of original retail prices
+    const catalogOrigSum = bundle.itemIds.reduce((sum, id) => {
+      const product = INITIAL_PRODUCTS.find(p => p.id === id);
+      return sum + (product.originalPrice || product.price);
+    }, 0);
+
+    // Bundle price must match authentic catalog item prices exactly (no fake additions or ghost items)
+    assert.equal(bundle.price, catalogItemSum, `Bundle ${bundle.id} price (৳${bundle.price}) must match sum of catalog items (৳${catalogItemSum})`);
+    assert.equal(bundle.originalPrice, catalogOrigSum, `Bundle ${bundle.id} originalPrice (৳${bundle.originalPrice}) must match sum of original prices (৳${catalogOrigSum})`);
+    assert.equal(bundle.savings, bundle.originalPrice - bundle.price, `Bundle ${bundle.id} savings must be exactly originalPrice - price`);
+
+    // Verify itemsSummary does not contain fake placeholder text
+    assert.doesNotMatch(bundle.itemsSummary, /top-up|bonus otg|placeholder/i, `Bundle ${bundle.id} itemsSummary must not contain placeholder text`);
   }
 });
 

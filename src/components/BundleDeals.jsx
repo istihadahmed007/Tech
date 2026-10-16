@@ -44,8 +44,8 @@ export default function BundleDeals({ onAddBundle, lang = 'en', t = {} }) {
         </div>
       </div>
 
-      {/* 3 Bundle Cards */}
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+      {/* 4 Bundle Cards */}
+      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
         {FEATURED_BUNDLES.map((bundle) => {
           const title = lang === 'bn' ? (bundle.titleBn || bundle.title) : bundle.title;
           const subtitle = lang === 'bn' ? (bundle.subtitleBn || bundle.subtitle) : bundle.subtitle;
