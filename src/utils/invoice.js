@@ -63,13 +63,13 @@ export function generateInvoiceHtml(order, options = {}) {
     type = 'invoice', // 'invoice' or 'packing-slip'
     origin = '',
     storeInfo = {
-      name: 'Glacial Tech Accessories',
-      nameBn: 'গ্লেসিয়াল টেক এক্সেসরিজ',
+      name: 'Tech Nest',
+      nameBn: 'টেক নেস্ট',
       tagline: 'Authentic Premium Mobile Gear & Tech Essentials',
       address: 'Suite 402, Concord Tower, Road 11, Dhanmondi, Dhaka-1209',
       phone: '+880 1712-345678',
-      email: 'care@glacialtech.com',
-      website: 'glacialtech.com',
+      email: 'care@technest.com.bd',
+      website: 'technest.com.bd',
       tradeLicense: 'TRAD/DNCC/092841/2026'
     }
   } = options;
@@ -741,7 +741,7 @@ export function generateInvoiceHtml(order, options = {}) {
       <div class="terms-box">
         <strong>Warranty &amp; Return Terms:</strong> All accessories carry our 7-Day Replacement Guarantee for manufacturing defects with original packaging intact.
         Please inspect the parcel in the presence of the delivery agent before paying COD.
-        For customer service, call <strong>+880 1712-345678</strong> or email <strong>care@glacialtech.com</strong>.
+        For customer service, call <strong>+880 1712-345678</strong> or email <strong>care@technest.com.bd</strong>.
       </div>
     </div>
   </div>

@@ -76,9 +76,17 @@ export default function Header({
                 onGoHome();
               }
             }}
-            className="font-extrabold text-xl sm:text-2xl tracking-tight text-[#10263D] hover:text-[#145CFF] transition-colors leading-none truncate shrink-0"
+            className="flex items-center gap-2.5 sm:gap-3 group shrink-0 select-none"
+            title="Tech Nest — Home"
           >
-            {storeName || "Glacial Tech"}
+            <img 
+              src="/assets/tech-nest-icon.png" 
+              alt="Tech Nest Logo" 
+              className="w-8 h-8 sm:w-9 sm:h-9 object-contain drop-shadow-sm group-hover:scale-105 transition-transform" 
+            />
+            <span className="font-extrabold text-xl sm:text-2xl tracking-tight text-[#0F2942] group-hover:text-[#0284C7] transition-colors leading-none">
+              Tech<span className="text-[#0284C7]">Nest</span>
+            </span>
           </a>
 
           {/* Desktop Navigation Links */}
@@ -258,7 +266,17 @@ export default function Header({
       {mobileMenuOpen && (
         <div className="container md:hidden pb-4 animate-fadeIn">
           <div className="rounded-2xl bg-white border border-[#DCE7F0] p-5 shadow-xl flex flex-col gap-3">
-          <nav className="flex flex-col gap-1 text-sm font-medium text-[#0F172A]">
+            <div className="flex items-center gap-2.5 pb-2.5 border-b border-slate-100">
+              <img 
+                src="/assets/tech-nest-icon.png" 
+                alt="Tech Nest Logo" 
+                className="w-7 h-7 object-contain" 
+              />
+              <span className="font-extrabold text-lg text-[#0F2942]">
+                Tech<span className="text-[#0284C7]">Nest</span>
+              </span>
+            </div>
+            <nav className="flex flex-col gap-1 text-sm font-medium text-[#0F172A]">
             <a 
               href="#products-section" 
               onClick={(e) => {

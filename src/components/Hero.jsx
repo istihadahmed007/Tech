@@ -136,8 +136,8 @@ export default function Hero({
               <span className="text-[11px] font-bold tracking-[0.14em] text-[#52677B] uppercase">
                 {currentSlide.eyebrow}
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-blue-100/70 text-[#145CFF] text-[10px] font-bold tracking-wider uppercase">
-                Glacial Tech
+              <span className="px-2 py-0.5 rounded-full bg-blue-100/70 text-[#0284C7] text-[10px] font-bold tracking-wider uppercase">
+                Tech Nest
               </span>
             </div>
 
@@ -261,8 +261,8 @@ export default function Hero({
         <div className="mt-8 pt-4 border-t border-[#DCE7F0]/60 flex flex-wrap items-center justify-between gap-5 text-xs sm:text-sm">
           {/* Subtle Live Status Indicator */}
           <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[#52677B]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#145CFF]" />
-            <span>Glacial Tech Premium Electronics Bangladesh</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0284C7]" />
+            <span>Tech Nest Premium Electronics Bangladesh</span>
           </div>
 
           <div className="flex items-center gap-2.5 sm:gap-6 ml-auto overflow-x-auto max-w-full py-1">

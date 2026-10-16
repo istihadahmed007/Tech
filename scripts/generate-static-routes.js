@@ -23,7 +23,7 @@ export function generateStaticRoutes() {
   // Generate /product/index.html redirect fallback
   const productFallbackHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Products — Glacial Tech</title>'
+    '<title>Products — Tech Nest</title>'
   );
   fs.writeFileSync(path.join(productDir, 'index.html'), productFallbackHtml, 'utf-8');
 
@@ -34,7 +34,7 @@ export function generateStaticRoutes() {
   }
   const cartHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Amazon.com Shopping Cart — Glacial Tech</title>'
+    '<title>Amazon.com Shopping Cart — Tech Nest</title>'
   );
   fs.writeFileSync(path.join(cartDir, 'index.html'), cartHtml, 'utf-8');
 
@@ -45,7 +45,7 @@ export function generateStaticRoutes() {
   }
   const checkoutHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Amazon.com Checkout — Glacial Tech</title>'
+    '<title>Amazon.com Checkout — Tech Nest</title>'
   );
   fs.writeFileSync(path.join(checkoutDir, 'index.html'), checkoutHtml, 'utf-8');
 
@@ -58,7 +58,7 @@ export function generateStaticRoutes() {
       fs.mkdirSync(destDir, { recursive: true });
     }
 
-    const title = `${prod.title} — Glacial Tech`;
+    const title = `${prod.title} — Tech Nest`;
     const desc = (prod.description || 'Premium accessories engineered for peak performance in Bangladesh.')
       .replace(/"/g, '&quot;')
       .slice(0, 160);

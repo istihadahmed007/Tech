@@ -1,8 +1,8 @@
 export const translations = {
   en: {
-    brandName: "Accessories",
-    tagline: "The right accessories. For your phone.",
-    heroTitle: "The right accessories. For your phone.",
+    brandName: "Tech Nest",
+    tagline: "Everyday Tech Upgrades. Next-day delivery in Bangladesh.",
+    heroTitle: "Everyday Tech Upgrades. Engineered for Peak Performance.",
     heroSub: "Discover cases, charging essentials and audio for everyday use.",
     findMyAccessories: "Find my accessories",
     shopAll: "Shop all",
@@ -112,16 +112,15 @@ export const translations = {
     continueShopping: "Continue Shopping",
     trackThisOrder: "Track Parcel Status",
     
-    // Footer
-    footerAbout: "Optic-grade protection, GaN power, and acoustic clarity for modern devices. Designed with ice-blue glacial glassmorphism.",
+    footerAbout: "Optic-grade protection, GaN power, and acoustic clarity for modern devices. Designed for seamless daily tech.",
     footerSupport: "Online Customer Assistance: Available via Support & Inquiry Form",
-    footerDhaka: "Dhaka, Bangladesh (Demo Storefront)",
-    copyright: "© 2025 Accessories BD. Demonstration storefront."
+    footerDhaka: "Dhaka, Bangladesh",
+    copyright: "© 2026 Tech Nest. All rights reserved."
   },
   bn: {
-    brandName: "অ্যাক্সেসরিজ",
-    tagline: "আপনার ফোনের জন্য সঠিক অ্যাক্সেসরিজ।",
-    heroTitle: "আপনার ফোনের জন্য সঠিক অ্যাক্সেসরিজ।",
+    brandName: "টেক নেস্ট",
+    tagline: "আপনার ডিভাইসের জন্য সেরা টেক গ্যাজেট ও এক্সেসরিজ।",
+    heroTitle: "আপনার ডিভাইসের জন্য সঠিক টেক আপগ্রেড।",
     heroSub: "প্রতিদিনের ব্যবহারের জন্য কেস, চার্জার এবং অডিও খুঁজুন।",
     findMyAccessories: "আমার অ্যাক্সেসরিজ খুঁজুন",
     shopAll: "সবগুলো দেখুন",

@@ -259,7 +259,7 @@ export default function App() {
         setIsCheckoutView(false);
         setSelectedProduct(null);
         setActiveModal(null);
-        document.title = 'Amazon.com Shopping Cart — Glacial Tech';
+        document.title = 'Amazon.com Shopping Cart — Tech Nest';
         return;
       }
 
@@ -269,7 +269,7 @@ export default function App() {
         setIsCartView(false);
         setSelectedProduct(null);
         setActiveModal(null);
-        document.title = 'Amazon.com Checkout — Glacial Tech';
+        document.title = 'Amazon.com Checkout — Tech Nest';
         return;
       }
 
@@ -632,7 +632,7 @@ export default function App() {
 
       {/* Frosted Glass Header */}
       <Header
-        storeName={import.meta.env.VITE_STORE_NAME || "Glacial Tech"}
+        storeName={import.meta.env.VITE_STORE_NAME || "Tech Nest"}
         t={t}
         lang={lang}
         setLang={setLang}
@@ -979,7 +979,7 @@ export default function App() {
 
       {/* Concise Footer */}
       <Footer
-        storeName={import.meta.env.VITE_STORE_NAME || "Glacial Tech"}
+        storeName={import.meta.env.VITE_STORE_NAME || "Tech Nest"}
         onOpenSupport={() => setActiveModal('support')}
         onOpenTracking={() => {
           setTrackingOrderId('');

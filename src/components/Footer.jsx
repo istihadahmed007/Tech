@@ -16,9 +16,14 @@ export default function Footer({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#DCE7F0]">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-3.5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <img 
+                src="/assets/tech-nest-icon.png" 
+                alt="Tech Nest Logo" 
+                className="w-8 h-8 object-contain" 
+              />
               <span className="font-extrabold text-2xl text-[#10263D] tracking-tight">
-                {storeName || 'Accessories'}
+                Tech<span className="text-[#0284C7]">Nest</span>
               </span>
             </div>
             <p className="text-xs text-[#52677B] leading-relaxed max-w-sm">

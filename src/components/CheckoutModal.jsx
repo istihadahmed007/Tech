@@ -369,9 +369,14 @@ export default function CheckoutModal({
     <div className="checkout-modal-card">
       {/* Amazon-style Checkout Header */}
       <header className="checkout-header">
-        <div className="checkout-header-logo" onClick={onClose}>
+        <div className="checkout-header-logo" onClick={onClose} title="Tech Nest Checkout">
+          <img 
+            src="/assets/tech-nest-icon.png" 
+            alt="Tech Nest" 
+            className="w-7 h-7 object-contain"
+          />
           <span className="checkout-header-brand">
-            Glacial<span>Tech</span>
+            Tech<span>Nest</span>
           </span>
           <span className="checkout-header-tag">
             Checkout
@@ -751,7 +756,7 @@ export default function CheckoutModal({
               </button>
 
               <p style={{ fontSize: '11px', color: '#565959', textAlign: 'center', marginTop: '10px' }}>
-                By placing your order, you agree to Glacial Tech's privacy notice and conditions of use.
+                By placing your order, you agree to Tech Nest's privacy notice and conditions of use.
               </p>
 
               {/* Price Breakdown */}

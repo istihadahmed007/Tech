@@ -236,9 +236,9 @@ export function handleServerRequest(req, res) {
   res.end(`
     <!DOCTYPE html>
     <html>
-      <head><title>Glacial Tech Accessories API</title></head>
-      <body style="font-family: sans-serif; padding: 2rem; background: #EAF5FF; color: #10263D;">
-        <h1>Glacial Tech Accessories Backend</h1>
+      <head><title>Tech Nest Accessories API</title></head>
+      <body style="font-family: sans-serif; padding: 2rem; background: #F0F9FF; color: #10263D;">
+        <h1>Tech Nest Accessories Backend</h1>
         <p>Production server is active. Build client bundle using <code>npm run build</code> to serve storefront.</p>
         <p><a href="/api/health">Check API Health</a></p>
       </body>
@@ -274,7 +274,7 @@ const isMainModule = Boolean(
 
 if (isMainModule && process.env.NODE_ENV !== 'test' && !process.env.DISABLE_SERVER_LISTEN) {
   server.listen(PORT, HOST, () => {
-    console.log(`[Production Server] Glacial Tech Storefront & API listening on http://${HOST}:${PORT}`);
+    console.log(`[Production Server] Tech Nest Storefront & API listening on http://${HOST}:${PORT}`);
   });
 }
 
