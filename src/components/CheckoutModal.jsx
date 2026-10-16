@@ -442,7 +442,7 @@ export default function CheckoutModal({
                   <div className="flex items-center gap-2">
                     <CreditCard size={18} className="text-[#145CFF]" />
                     <span className="font-bold text-xs text-[#10263D]">
-                      Online Payment (bKash / Card)
+                      Online Payment (bKash / Nagad / Cards)
                     </span>
                     {onlineAvailable && (
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -450,7 +450,9 @@ export default function CheckoutModal({
                           ? 'bg-amber-100 text-amber-800 border border-amber-300' 
                           : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                       }`}>
-                        {isSandboxMode ? 'Sandbox / Test' : 'Live Gateway'}
+                        {isSandboxMode 
+                          ? 'Sandbox / Test' 
+                          : (activeGatewayName === 'paymently' || activeGatewayName === 'uddoktapay' ? 'Paymently Gateway' : 'Live Gateway')}
                       </span>
                     )}
                   </div>
@@ -470,7 +472,9 @@ export default function CheckoutModal({
                       ? (activeGatewayName === 'sandbox'
                           ? 'Interactive test gateway active on main domain (bKash, Nagad, Visa/Mastercard)'
                           : `Test payment simulation via ${activeGatewayName} (no real card charged)`)
-                      : `Live secure gateway via ${activeGatewayName || 'SSLCommerz/bKash'}`
+                      : (activeGatewayName === 'paymently' || activeGatewayName === 'uddoktapay'
+                          ? 'Pay instantly with bKash, Nagad, or Cards via verified Paymently gateway'
+                          : `Live secure gateway via ${activeGatewayName || 'SSLCommerz/bKash'}`)
                   ) : (
                     'Currently unavailable (Merchant credentials required in .env)'
                   )}

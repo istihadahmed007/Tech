@@ -79,23 +79,34 @@ export function getPaymentConfigurationStatus() {
                          process.env.PAYMENT_GATEWAY_PROVIDER === 'sandbox';
   const configured = sslcommerz.isConfigured() || bkash.isConfigured() || uddoktapay.isConfigured() || sandboxEnabled;
 
-  const activeProvider = (process.env.PAYMENT_GATEWAY_PROVIDER === 'uddoktapay' || process.env.PAYMENT_GATEWAY_PROVIDER === 'paymently' || uddoktapay.apiKey)
-    ? 'uddoktapay'
+  const activeProvider = (process.env.PAYMENT_GATEWAY_PROVIDER === 'paymently' || process.env.PAYMENT_GATEWAY_PROVIDER === 'uddoktapay' || uddoktapay.apiKey)
+    ? (process.env.PAYMENT_GATEWAY_PROVIDER === 'paymently' ? 'paymently' : 'uddoktapay')
     : (sslcommerz.isConfigured() 
         ? 'sslcommerz' 
-        : (bkash.isConfigured() ? 'bkash' : (sandboxEnabled ? 'sandbox' : (uddoktapay.isConfigured() ? 'uddoktapay' : null))));
+        : (bkash.isConfigured() ? 'bkash' : (sandboxEnabled ? 'sandbox' : (uddoktapay.isConfigured() ? 'paymently' : null))));
+
+  const isSandbox = Boolean(
+    activeProvider === 'sandbox' ||
+    (activeProvider === 'sslcommerz' && sslcommerz.isSandbox) ||
+    (activeProvider === 'bkash' && bkash.isSandbox)
+  );
 
   return {
     isConfigured: configured,
     onlinePaymentAvailable: configured,
     activeProvider,
-    sandbox: Boolean(sandboxEnabled || sslcommerz.isSandbox || bkash.isSandbox),
+    sandbox: isSandbox,
     uddoktapay: {
       configured: uddoktapay.isConfigured(),
       hasApiKey: Boolean(uddoktapay.apiKey),
       paymentLink: uddoktapay.paymentLink,
       qrCodeUrl: uddoktapay.qrCodeUrl,
       supportedMethods: ['bKash', 'Nagad', 'Rocket', 'Upay', 'Visa / Mastercard', 'Internet Banking']
+    },
+    paymently: {
+      configured: Boolean(uddoktapay.paymentLink),
+      paymentLink: uddoktapay.paymentLink,
+      qrCodeUrl: uddoktapay.qrCodeUrl
     },
     sslcommerz: {
       configured: sslcommerz.isConfigured(),
@@ -106,11 +117,13 @@ export function getPaymentConfigurationStatus() {
       sandbox: bkash.isSandbox
     },
     message: configured
-      ? (activeProvider === 'uddoktapay'
-          ? 'UddoktaPay & Virtual Tutor Paymently gateway active on main domain.'
-          : (activeProvider === 'sandbox' 
-              ? 'Interactive Sandbox Gateway active on main domain (bKash / Nagad / Cards).' 
-              : 'Payment gateway configured and ready.'))
-      : 'Online payments currently unavailable. Live merchant credentials (UddoktaPay, SSLCommerz, or bKash) must be configured in environment variables.'
+      ? (activeProvider === 'paymently'
+          ? 'Paymently live gateway active on main domain.'
+          : (activeProvider === 'uddoktapay'
+              ? 'UddoktaPay automated gateway active on main domain.'
+              : (activeProvider === 'sandbox' 
+                  ? 'Interactive Sandbox Gateway active on main domain (bKash / Nagad / Cards).' 
+                  : 'Payment gateway configured and ready.')))
+      : 'Online payments currently unavailable. Live merchant credentials (Paymently, UddoktaPay, SSLCommerz, or bKash) must be configured in environment variables.'
   };
 }
