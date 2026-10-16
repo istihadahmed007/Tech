@@ -266,15 +266,28 @@ process.on('unhandledRejection', (reason) => {
   console.error('[Unhandled Rejection]', reason);
 });
 
+const isPassenger = Boolean(
+  process.env.PASSENGER_APP_ENV ||
+  process.env.PORT === 'passenger' ||
+  (typeof PhusionPassenger !== 'undefined') ||
+  (process.argv[1] && (process.argv[1].includes('passenger') || process.argv[1].includes('node-loader')))
+);
+
 const isMainModule = Boolean(
-  process.argv[1] && (
+  isPassenger ||
+  (process.argv[1] && (
     process.argv[1].endsWith('server.js') || 
+    process.argv[1].endsWith('server/server.js') ||
     process.argv[1].endsWith('server\\server.js')
-  )
+  ))
 );
 
 if (isMainModule && process.env.NODE_ENV !== 'test' && !process.env.DISABLE_SERVER_LISTEN) {
-  if (typeof PORT === 'number') {
+  if (typeof PhusionPassenger !== 'undefined' || process.env.PORT === 'passenger') {
+    server.listen('passenger', () => {
+      console.log('[Production Server] Tech Nest listening on Passenger');
+    });
+  } else if (typeof PORT === 'number') {
     server.listen(PORT, HOST, () => {
       console.log(`[Production Server] Tech Nest Storefront & API listening on http://${HOST}:${PORT}`);
     });
