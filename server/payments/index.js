@@ -19,13 +19,43 @@ export function getPublicOrigin(req = null) {
   return 'http://localhost:3000';
 }
 
-export function getPaymentProvider(requestedProvider) {
-  const chosen = (requestedProvider || process.env.PAYMENT_GATEWAY_PROVIDER || '').toLowerCase();
+/**
+ * Resolves active payment provider strictly from trusted server configuration.
+ * In production mode, sandbox provider is strictly prohibited and returns null.
+ */
+export function getPaymentProvider(trustedProviderName = null) {
+  const isProd = process.env.NODE_ENV === 'production';
+  const serverConfiguredProvider = (process.env.PAYMENT_GATEWAY_PROVIDER || '').toLowerCase();
+  const chosen = (trustedProviderName || serverConfiguredProvider).toLowerCase();
 
   const sslcommerz = new SSLCommerzProvider();
   const bkash = new BkashProvider();
   const uddoktapay = new UddoktaPayProvider();
 
+  // 1. Production Mode: Strictly forbid sandbox provider under all circumstances
+  if (isProd) {
+    if (chosen === 'sandbox') {
+      return null;
+    }
+    if (chosen === PAYMENT_PROVIDERS.UDDOKTAPAY || chosen === PAYMENT_PROVIDERS.PAYMENTLY) {
+      return uddoktapay.isConfigured() ? uddoktapay : null;
+    }
+    if (chosen === PAYMENT_PROVIDERS.SSLCOMMERZ && sslcommerz.isConfigured()) {
+      return sslcommerz;
+    }
+    if (chosen === PAYMENT_PROVIDERS.BKASH && bkash.isConfigured()) {
+      return bkash;
+    }
+
+    // Auto-detect live configured provider in production
+    if (uddoktapay.apiKey || uddoktapay.isConfigured()) return uddoktapay;
+    if (sslcommerz.isConfigured()) return sslcommerz;
+    if (bkash.isConfigured()) return bkash;
+
+    return null;
+  }
+
+  // 2. Development / Test Mode
   if (chosen === PAYMENT_PROVIDERS.UDDOKTAPAY || chosen === PAYMENT_PROVIDERS.PAYMENTLY) {
     return uddoktapay;
   }
@@ -38,45 +68,56 @@ export function getPaymentProvider(requestedProvider) {
     return bkash;
   }
 
-  // Explicit sandbox request
+  // Explicit sandbox request (permitted ONLY outside production)
   if (chosen === 'sandbox') {
     return new SandboxPaymentProvider();
   }
 
-  // Auto-detect based on env credentials or configured gateway
+  // Auto-detect real gateways
   if (uddoktapay.apiKey) return uddoktapay;
   if (sslcommerz.isConfigured()) return sslcommerz;
   if (bkash.isConfigured()) return bkash;
-  if (uddoktapay.isConfigured() && (process.env.PAYMENT_GATEWAY_PROVIDER === 'uddoktapay' || process.env.PAYMENT_GATEWAY_PROVIDER === 'paymently')) {
+  if (uddoktapay.isConfigured() && (serverConfiguredProvider === 'uddoktapay' || serverConfiguredProvider === 'paymently')) {
     return uddoktapay;
   }
 
-  // Check if sandbox provider is enabled via environment
+  // Check if sandbox provider is enabled via environment in dev/test
   const sandboxEnabled = process.env.ENABLE_SANDBOX_PAYMENT === 'true' || 
-                         process.env.PAYMENT_GATEWAY_PROVIDER === 'sandbox';
+                         serverConfiguredProvider === 'sandbox';
   if (sandboxEnabled) {
     return new SandboxPaymentProvider();
   }
 
-  // No real provider is configured
   return null;
 }
 
 export function isPaymentConfigured() {
+  const isProd = process.env.NODE_ENV === 'production';
   const sslcommerz = new SSLCommerzProvider();
   const bkash = new BkashProvider();
   const uddoktapay = new UddoktaPayProvider();
+
+  const realGatewaysConfigured = sslcommerz.isConfigured() || bkash.isConfigured() || uddoktapay.isConfigured();
+  if (isProd) {
+    return realGatewaysConfigured;
+  }
+
   const sandboxEnabled = process.env.ENABLE_SANDBOX_PAYMENT === 'true' || 
                          process.env.PAYMENT_GATEWAY_PROVIDER === 'sandbox';
-  return sslcommerz.isConfigured() || bkash.isConfigured() || uddoktapay.isConfigured() || sandboxEnabled;
+  return realGatewaysConfigured || sandboxEnabled;
 }
 
 export function getPaymentConfigurationStatus() {
+  const isProd = process.env.NODE_ENV === 'production';
   const sslcommerz = new SSLCommerzProvider();
   const bkash = new BkashProvider();
   const uddoktapay = new UddoktaPayProvider();
-  const sandboxEnabled = process.env.ENABLE_SANDBOX_PAYMENT === 'true' || 
-                         process.env.PAYMENT_GATEWAY_PROVIDER === 'sandbox';
+
+  const sandboxEnabled = !isProd && (
+    process.env.ENABLE_SANDBOX_PAYMENT === 'true' || 
+    process.env.PAYMENT_GATEWAY_PROVIDER === 'sandbox'
+  );
+
   const configured = sslcommerz.isConfigured() || bkash.isConfigured() || uddoktapay.isConfigured() || sandboxEnabled;
 
   const activeProvider = (process.env.PAYMENT_GATEWAY_PROVIDER === 'paymently' || process.env.PAYMENT_GATEWAY_PROVIDER === 'uddoktapay' || uddoktapay.apiKey)
@@ -86,9 +127,11 @@ export function getPaymentConfigurationStatus() {
         : (bkash.isConfigured() ? 'bkash' : (sandboxEnabled ? 'sandbox' : (uddoktapay.isConfigured() ? 'paymently' : null))));
 
   const isSandbox = Boolean(
-    activeProvider === 'sandbox' ||
-    (activeProvider === 'sslcommerz' && sslcommerz.isSandbox) ||
-    (activeProvider === 'bkash' && bkash.isSandbox)
+    !isProd && (
+      activeProvider === 'sandbox' ||
+      (activeProvider === 'sslcommerz' && sslcommerz.isSandbox) ||
+      (activeProvider === 'bkash' && bkash.isSandbox)
+    )
   );
 
   return {
@@ -110,11 +153,11 @@ export function getPaymentConfigurationStatus() {
     },
     sslcommerz: {
       configured: sslcommerz.isConfigured(),
-      sandbox: sslcommerz.isSandbox
+      sandbox: !isProd && sslcommerz.isSandbox
     },
     bkash: {
       configured: bkash.isConfigured(),
-      sandbox: bkash.isSandbox
+      sandbox: !isProd && bkash.isSandbox
     },
     message: configured
       ? (activeProvider === 'paymently'

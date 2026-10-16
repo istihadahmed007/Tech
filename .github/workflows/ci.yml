@@ -1,0 +1,48 @@
+name: CI & Security Release Checks
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    name: Test & Build Release Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Secret Leak Prevention Check
+        run: |
+          # Verify .env and database files are never committed to repository
+          if git ls-files --error-unmatch .env 2>/dev/null; then
+            echo "SECURITY ERROR: .env file is tracked in git!"
+            exit 1
+          fi
+          if git ls-files 'data/*.db' 2>/dev/null | grep -q .; then
+            echo "SECURITY ERROR: Production database file is tracked in git!"
+            exit 1
+          fi
+          echo "Secret check passed: No environment or database files in version control."
+
+      - name: Run Automated Test Suite (Functional, Integration & Security)
+        run: npm test
+        env:
+          NODE_ENV: test
+          ADMIN_PASSWORD: dev_secret_for_ci_testing_only
+          ADMIN_SESSION_SECRET: dev_secret_session_key_ci_testing_32chars_minimum
+
+      - name: Run Production Frontend Build & Static Route Generator
+        run: npm run build

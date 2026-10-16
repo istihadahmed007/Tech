@@ -62,7 +62,9 @@ import {
   logoutSession,
   checkRateLimit,
   recordFailedAttempt,
-  clearFailedAttempts
+  clearFailedAttempts,
+  createPhoneOtp,
+  verifyPhoneOtp
 } from './auth.js';
 
 import {
@@ -80,6 +82,19 @@ import { generateInvoiceHtml, numberToWordsBDT } from '../src/utils/invoice.js';
 const UPLOADS_DIR = path.resolve(process.cwd(), 'public', 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+export function safeTokenEqual(provided, expected) {
+  if (!provided || !expected || typeof provided !== 'string' || typeof expected !== 'string') {
+    return false;
+  }
+  const pBuf = Buffer.from(String(provided).trim());
+  const eBuf = Buffer.from(String(expected).trim());
+  if (pBuf.length !== eBuf.length) {
+    crypto.timingSafeEqual(eBuf, eBuf);
+    return false;
+  }
+  return crypto.timingSafeEqual(pBuf, eBuf);
 }
 
 export async function handleApiRequest(req, res) {
@@ -179,7 +194,7 @@ export async function handleApiRequest(req, res) {
     }
 
     // ---------------------------------------------------------------------------
-    // 2. Public Catalog & Inventory
+    // 2. Public Catalog & Inventory (Strictly Published Products Only)
     // ---------------------------------------------------------------------------
     if (pathname === '/api/products' && method === 'GET') {
       const category = url.searchParams.get('category');
@@ -187,15 +202,15 @@ export async function handleApiRequest(req, res) {
       const query = url.searchParams.get('query') || url.searchParams.get('q') || '';
       const inStockOnly = url.searchParams.get('inStockOnly') === 'true';
       const lowStock = url.searchParams.get('lowStock') === 'true';
-      const includeArchived = url.searchParams.get('includeArchived') === 'true';
 
+      // Security: Public catalog route strictly excludes unpublished & archived products
       const products = getAllProducts({
         category,
         phone,
         query,
         inStockOnly,
         lowStockOnly: lowStock,
-        includeArchived
+        includeArchived: false
       });
 
       return sendJson(200, { products });
@@ -204,7 +219,8 @@ export async function handleApiRequest(req, res) {
     if (pathname.startsWith('/api/products/') && !pathname.includes('/reviews') && method === 'GET') {
       const id = pathname.replace('/api/products/', '').trim();
       const product = getProductById(id);
-      if (!product) {
+      // Security: Non-published / archived items are never exposed on public product endpoints
+      if (!product || product.status !== 'published') {
         return sendJson(404, { error: 'Product not found' });
       }
       return sendJson(200, { product });
@@ -309,16 +325,6 @@ export async function handleApiRequest(req, res) {
       const body = await parseBody();
       const db = getDatabase();
 
-      // Idempotency check
-      if (body.idempotencyKey) {
-        const existingIdemp = db.prepare('SELECT response_json FROM idempotency_keys WHERE key = ?').get(body.idempotencyKey);
-        if (existingIdemp) {
-          try {
-            return sendJson(200, JSON.parse(existingIdemp.response_json));
-          } catch (e) {}
-        }
-      }
-
       // Customer validation
       const cust = body.customer || {};
       if (!cust.name || !cust.name.trim()) {
@@ -334,6 +340,57 @@ export async function handleApiRequest(req, res) {
 
       if (!body.items || !Array.isArray(body.items) || body.items.length === 0) {
         return sendJson(400, { success: false, error: 'Order must contain at least one item' });
+      }
+
+      // Check authenticated user & bind requester identity
+      const user = authenticateRequest(req);
+      const userId = user ? user.id : null;
+      const requesterId = user ? `user:${user.id}` : `phone:${cleanPhone}`;
+
+      // Canonicalize request payload for idempotency verification
+      const sortedItemsSummary = (body.items || []).map(i => ({
+        id: String(i.id),
+        qty: parseInt(i.quantity, 10) || 1,
+        v: String(i.variant?.name || i.variant || 'Standard')
+      })).sort((a, b) => a.id.localeCompare(b.id) || a.v.localeCompare(b.v));
+
+      const canonicalData = {
+        customer: {
+          name: cust.name.trim(),
+          phone: cleanPhone,
+          division: cust.division || 'Dhaka',
+          address: cust.address.trim()
+        },
+        items: sortedItemsSummary,
+        paymentMethod: body.paymentMethod === 'online' ? 'online' : 'cod',
+        promoCode: (body.promoCode || '').trim().toLowerCase()
+      };
+      const requestHash = crypto.createHash('sha256').update(JSON.stringify(canonicalData)).digest('hex');
+
+      // Idempotency check with strict requester and request-content binding
+      if (body.idempotencyKey) {
+        const existingIdemp = db.prepare('SELECT requester_id, request_hash, response_json FROM idempotency_keys WHERE key = ?').get(body.idempotencyKey);
+        if (existingIdemp) {
+          // Security: Never replay an order response or guest token to a different requester
+          if (existingIdemp.requester_id && existingIdemp.requester_id !== requesterId) {
+            return sendJson(409, {
+              success: false,
+              error: 'Idempotency conflict: Key was already claimed by another requester or session'
+            });
+          }
+
+          // Security: Reject if the key is reused with a different request payload
+          if (existingIdemp.request_hash && existingIdemp.request_hash !== requestHash) {
+            return sendJson(422, {
+              success: false,
+              error: 'Idempotency violation: Key reused with different request payload'
+            });
+          }
+
+          try {
+            return sendJson(200, JSON.parse(existingIdemp.response_json));
+          } catch (e) {}
+        }
       }
 
       // Canonical price calculation & aggregation
@@ -402,10 +459,6 @@ export async function handleApiRequest(req, res) {
         });
       }
 
-      // Check authenticated user
-      const user = authenticateRequest(req);
-      const userId = user ? user.id : null;
-
       try {
         const result = createOrderWithReservation({
           userId,
@@ -433,8 +486,8 @@ export async function handleApiRequest(req, res) {
         };
 
         if (body.idempotencyKey) {
-          db.prepare('INSERT OR REPLACE INTO idempotency_keys (key, response_json, created_at) VALUES (?, ?, ?)')
-            .run(body.idempotencyKey, JSON.stringify(responsePayload), new Date().toISOString());
+          db.prepare('INSERT OR REPLACE INTO idempotency_keys (key, requester_id, request_hash, response_json, created_at) VALUES (?, ?, ?, ?, ?)')
+            .run(body.idempotencyKey, requesterId, requestHash, JSON.stringify(responsePayload), new Date().toISOString());
         }
 
         return sendJson(201, responsePayload);
@@ -463,7 +516,7 @@ export async function handleApiRequest(req, res) {
 
       const authUser = authenticateRequest(req);
       const isAuthorizedUser = authUser && (authUser.role === 'admin' || authUser.id === order.userId);
-      const isAuthorizedGuest = tokenParam && order.guestToken && tokenParam === order.guestToken;
+      const isAuthorizedGuest = safeTokenEqual(tokenParam, order.guestToken);
 
       if (!isAdmin && !isAuthorizedUser && !isAuthorizedGuest) {
         return sendJson(403, {
@@ -502,7 +555,7 @@ export async function handleApiRequest(req, res) {
       const authUser = authenticateRequest(req);
 
       const isAuthorizedUser = authUser && (authUser.role === 'admin' || authUser.id === order.userId);
-      const isAuthorizedGuest = tokenParam && order.guestToken && tokenParam === order.guestToken;
+      const isAuthorizedGuest = safeTokenEqual(tokenParam, order.guestToken);
 
       // Full access if authorized
       if (isAuthorizedUser || isAuthorizedGuest) {
@@ -555,19 +608,32 @@ export async function handleApiRequest(req, res) {
       }
 
       const body = await parseBody();
-      const { orderId, preferredProvider } = body;
+      const { orderId } = body;
       const order = findOrderById(orderId);
       if (!order) {
         return sendJson(404, { success: false, error: 'Order not found' });
+      }
+
+      // Security: Check order ownership before initiating payment
+      const authUser = authenticateRequest(req);
+      const guestToken = body.guestToken || req.headers['x-guest-token'] || url.searchParams.get('token');
+      const isAuthorized = (authUser && (authUser.role === 'admin' || authUser.id === order.userId)) ||
+                           safeTokenEqual(guestToken, order.guestToken);
+      if (!isAuthorized) {
+        return sendJson(403, {
+          success: false,
+          error: 'Access denied: Valid guest tracking token or account authorization required to initiate payment'
+        });
       }
 
       if (order.paymentStatus === PAYMENT_STATUS.PAID) {
         return sendJson(400, { success: false, error: 'Order is already paid' });
       }
 
-      const provider = getPaymentProvider(preferredProvider);
+      // Security: Select provider strictly from trusted server configuration, ignoring client override
+      const provider = getPaymentProvider();
       if (!provider) {
-        return sendJson(400, { success: false, error: 'Payment provider not available' });
+        return sendJson(400, { success: false, error: 'Payment provider not available on server' });
       }
 
       const publicOrigin = getPublicOrigin(req);
@@ -590,22 +656,41 @@ export async function handleApiRequest(req, res) {
         return sendJson(404, { success: false, error: 'Order not found' });
       }
 
-      // Idempotency: If already paid, return clean success immediately
+      // Security: Ownership verification guard for sensitive order details
+      const authUser = authenticateRequest(req);
+      const guestToken = body.guestToken || req.headers['x-guest-token'] || url.searchParams.get('token');
+      const isAuthorized = (authUser && (authUser.role === 'admin' || authUser.id === order.userId)) ||
+                           safeTokenEqual(guestToken, order.guestToken);
+
+      // Idempotency: If already paid, return clean success immediately without leaking full details to unauthorized callers
       if (order.paymentStatus === PAYMENT_STATUS.PAID) {
         return sendJson(200, {
           success: true,
           verified: true,
+          orderId: order.id,
+          paymentStatus: order.paymentStatus,
+          transactionId: order.paymentDetails?.transactionId || null,
           message: 'Order was already verified and marked as paid',
-          order
+          ...(isAuthorized ? { order } : {})
         });
       }
 
-      const provider = getPaymentProvider(body.provider);
+      // Security: Select provider strictly from server configuration. Never let the client choose the payment provider!
+      const provider = getPaymentProvider();
       if (!provider) {
         return sendJson(400, {
           success: false,
           verified: false,
-          error: 'Payment verification refused: No active payment provider found'
+          error: 'Payment verification refused: No active payment provider configured on server'
+        });
+      }
+
+      // Strict production protection: Reject sandbox provider in production
+      if (process.env.NODE_ENV === 'production' && provider.name === 'sandbox') {
+        return sendJson(400, {
+          success: false,
+          verified: false,
+          error: 'Sandbox payments are strictly disabled in production'
         });
       }
 
@@ -621,7 +706,7 @@ export async function handleApiRequest(req, res) {
         signature
       });
 
-      if (verificationResult.verified) {
+      if (verificationResult.verified && verificationResult.transactionId) {
         const finalizedOrder = finalizeOrderPayment({
           orderId: order.id,
           provider: provider.name || 'online_gateway',
@@ -629,10 +714,14 @@ export async function handleApiRequest(req, res) {
           paymentDetails: verificationResult.meta || {}
         });
 
+        // Security: Never return full customer personal details (address, phone, notes) to unauthenticated callers
         return sendJson(200, {
           success: true,
           verified: true,
-          order: finalizedOrder
+          orderId: finalizedOrder.id,
+          paymentStatus: finalizedOrder.paymentStatus,
+          transactionId: verificationResult.transactionId,
+          ...(isAuthorized ? { order: finalizedOrder } : {})
         });
       } else {
         cancelOrderAndReleaseReservation(order.id, verificationResult.reason || 'Payment verification failed');
@@ -865,22 +954,74 @@ export async function handleApiRequest(req, res) {
       return sendJson(200, { success: true, orders });
     }
 
-    // Link guest order to customer account
+    // Phone OTP Verification for Guest Order Claiming & Account Security
+    if (pathname === '/api/auth/otp/request' && method === 'POST') {
+      const body = await parseBody();
+      const rawPhone = body.phone || '';
+      const cleanPhone = rawPhone.replace(/[\s-]/g, '');
+      if (!cleanPhone.match(/^(?:\+88|88)?01[3-9]\d{8}$/)) {
+        return sendJson(400, { success: false, error: 'Valid Bangladeshi phone number required' });
+      }
+
+      const code = createPhoneOtp(cleanPhone);
+      return sendJson(200, {
+        success: true,
+        message: 'OTP sent to mobile number',
+        ...(process.env.NODE_ENV !== 'production' ? { devOtp: code } : {})
+      });
+    }
+
+    if (pathname === '/api/auth/otp/verify' && method === 'POST') {
+      const body = await parseBody();
+      const rawPhone = body.phone || '';
+      const cleanPhone = rawPhone.replace(/[\s-]/g, '');
+      const code = body.code || body.otp || '';
+
+      const isValid = verifyPhoneOtp(cleanPhone, code);
+      if (!isValid) {
+        return sendJson(400, { success: false, error: 'Invalid or expired OTP' });
+      }
+
+      return sendJson(200, { success: true, message: 'Phone ownership verified successfully' });
+    }
+
+    // Link guest order to customer account (Strict Ownership Enforcement)
     if (pathname === '/api/customer/orders/link-guest' && method === 'POST') {
       const user = authenticateRequest(req);
       if (!user) {
         return sendJson(401, { error: 'Unauthorized' });
       }
       const body = await parseBody();
-      const { orderId, guestToken } = body;
+      const { orderId, guestToken, otp } = body;
       const order = findOrderById(orderId);
 
       if (!order) {
         return sendJson(404, { error: 'Order not found' });
       }
 
-      if (order.guestToken !== guestToken && order.customer.phone !== user.phone) {
-        return sendJson(403, { error: 'Ownership verification failed: Token or phone mismatch' });
+      // Security: Require valid guestToken OR verified phone OTP
+      let verifiedOwnership = false;
+
+      // Method A: Valid Guest Tracking Token
+      if (guestToken && safeTokenEqual(guestToken, order.guestToken)) {
+        verifiedOwnership = true;
+      }
+
+      // Method B: Phone ownership verified with OTP
+      if (!verifiedOwnership && otp) {
+        const cleanUserPhone = (user.phone || '').replace(/[\s-]/g, '');
+        const cleanOrderPhone = (order.customer?.phone || '').replace(/[\s-]/g, '');
+        if (cleanUserPhone && cleanUserPhone === cleanOrderPhone) {
+          if (verifyPhoneOtp(cleanUserPhone, otp)) {
+            verifiedOwnership = true;
+          }
+        }
+      }
+
+      if (!verifiedOwnership) {
+        return sendJson(403, { 
+          error: 'Ownership verification failed: Valid guest tracking token or verified phone OTP is required to link order.' 
+        });
       }
 
       const db = getDatabase();

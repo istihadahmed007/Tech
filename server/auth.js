@@ -209,4 +209,52 @@ export function logoutSession(authHeader) {
   deleteSession(token);
 }
 
+// -----------------------------------------------------------------------------
+// Phone Ownership OTP Verification
+// -----------------------------------------------------------------------------
+const phoneOtpStore = new Map();
+
+export function createPhoneOtp(phone) {
+  if (!phone || typeof phone !== 'string') {
+    throw new Error('Valid phone number is required to request OTP');
+  }
+  const clean = phone.replace(/[\s-]/g, '');
+  const code = crypto.randomInt(100000, 999999).toString();
+  phoneOtpStore.set(clean, {
+    code,
+    expiresAt: Date.now() + 5 * 60 * 1000,
+    attempts: 0
+  });
+  return code;
+}
+
+export function verifyPhoneOtp(phone, code) {
+  if (!phone || !code || typeof code !== 'string') return false;
+  const clean = phone.replace(/[\s-]/g, '');
+  const record = phoneOtpStore.get(clean);
+  if (!record) return false;
+
+  if (Date.now() > record.expiresAt) {
+    phoneOtpStore.delete(clean);
+    return false;
+  }
+
+  record.attempts++;
+  if (record.attempts > 5) {
+    phoneOtpStore.delete(clean);
+    return false;
+  }
+
+  const codeBuf = Buffer.from(code.trim());
+  const expectedBuf = Buffer.from(record.code);
+  if (codeBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(codeBuf, expectedBuf)) {
+    return false;
+  }
+
+  // Once verified, invalidate OTP immediately (single-use)
+  phoneOtpStore.delete(clean);
+  return true;
+}
+
 export { checkRateLimit, recordFailedAttempt, clearFailedAttempts };
+

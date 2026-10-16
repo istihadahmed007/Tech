@@ -273,6 +273,8 @@ function initSchema(db) {
 
     CREATE TABLE IF NOT EXISTS idempotency_keys (
       key TEXT PRIMARY KEY,
+      requester_id TEXT,
+      request_hash TEXT,
       response_json TEXT NOT NULL,
       created_at TEXT NOT NULL
     );
@@ -283,6 +285,10 @@ function initSchema(db) {
       attempt_time INTEGER NOT NULL
     );
   `);
+
+  // Ensure migrations for existing idempotency_keys tables
+  try { db.exec('ALTER TABLE idempotency_keys ADD COLUMN requester_id TEXT;'); } catch (e) {}
+  try { db.exec('ALTER TABLE idempotency_keys ADD COLUMN request_hash TEXT;'); } catch (e) {}
 }
 
 function migrateLegacyJson(db) {
@@ -1584,7 +1590,7 @@ export function createUser({ email, phone, name, passwordHash, role = 'customer'
   db.prepare(`
     INSERT INTO users (id, email, phone, name, password_hash, role, addresses_json, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, ?, '[]', ?, ?)
-  `).run(id, email.toLowerCase().trim(), phone || '', name.trim(), passwordHash, role, now, now);
+  `).run(id, email.toLowerCase().trim(), phone || '', name.trim(), passwordHash || '', role, now, now);
 
   return findUserById(id);
 }

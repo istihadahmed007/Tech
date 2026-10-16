@@ -68,23 +68,119 @@ function serveStaticFile(req, res, filePath, contentType) {
   }
 }
 
-const server = http.createServer((req, res) => {
-  const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-  const pathname = decodeURIComponent(parsedUrl.pathname);
+/**
+ * Decodes URL path repeatedly to uncover multi-layer percent-encoded traversal attempts
+ * e.g., %252e%252e -> %2e%2e -> ..
+ */
+export function decodePathRecursively(rawPath) {
+  if (!rawPath || typeof rawPath !== 'string') return '';
+  let current = rawPath;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const decoded = decodeURIComponent(current);
+      if (decoded === current) break;
+      current = decoded;
+    } catch (e) {
+      return null; // Malformed percent-encoding
+    }
+  }
+  return current;
+}
+
+/**
+ * Resolves a requested relative path against a base directory with strict containment validation.
+ * Returns the absolute resolved file path if safely within baseDir, or null if traversal is attempted.
+ */
+export function resolveSecureStaticPath(baseDir, requestedPath) {
+  if (!requestedPath || typeof requestedPath !== 'string') {
+    return null;
+  }
+
+  // 1. Detect null byte injection
+  if (requestedPath.includes('\0') || requestedPath.includes('%00')) {
+    return null;
+  }
+
+  // 2. Decode percent-encoded and multi-encoded sequences
+  const decoded = decodePathRecursively(requestedPath);
+  if (decoded === null || decoded.includes('\0')) {
+    return null;
+  }
+
+  // 3. Detect traversal tokens in posix and win32 path formats
+  const normalizedPosix = path.posix.normalize(decoded.replace(/\\/g, '/'));
+  if (
+    normalizedPosix.startsWith('../') || 
+    normalizedPosix === '..' || 
+    normalizedPosix.includes('/../') ||
+    normalizedPosix.includes('/..')
+  ) {
+    return null;
+  }
+
+  // 4. Strip leading directory separators
+  const cleanRelative = decoded.replace(/^[/\\]+/, '');
+  const resolvedBase = path.resolve(baseDir);
+  const resolvedPath = path.resolve(resolvedBase, cleanRelative);
+
+  // 5. Strict filesystem root containment check
+  if (!resolvedPath.startsWith(resolvedBase + path.sep) && resolvedPath !== resolvedBase) {
+    return null;
+  }
+
+  return resolvedPath;
+}
+
+export function handleServerRequest(req, res) {
+  const rawUrl = req.url || '/';
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(rawUrl, `http://${req.headers.host || 'localhost'}`);
+  } catch (e) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    return res.end('Bad Request: Malformed URL');
+  }
+
+  const rawPathname = parsedUrl.pathname;
+  const decodedPathname = decodePathRecursively(rawPathname);
+
+  // Detect malformed encoding or null byte injection
+  if (decodedPathname === null || decodedPathname.includes('\0')) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    return res.end('Bad Request: Invalid path encoding');
+  }
 
   // 1. API Route Delegation
-  if (pathname.startsWith('/api/')) {
+  if (decodedPathname.startsWith('/api/')) {
     return handleApiRequest(req, res);
   }
 
-  // 2. Uploaded Images (/uploads/*)
-  if (pathname.startsWith('/uploads/')) {
-    const safeFilename = path.basename(pathname);
-    const targetFile = path.join(UPLOADS_DIR, safeFilename);
-    const ext = path.extname(safeFilename).toLowerCase();
-    const mime = MIME_TYPES[ext] || 'application/octet-stream';
+  // Strict traversal safeguard: Reject any unencoded or encoded directory traversal immediately
+  const rawPath = (rawUrl || '/').split('?')[0];
+  const decodedRaw = decodePathRecursively(rawPath);
+  if (
+    rawPath.includes('..') || 
+    rawPath.toLowerCase().includes('%2e') || 
+    rawPath.toLowerCase().includes('%252e') || 
+    (decodedRaw && (decodedRaw.includes('..') || decodedRaw.includes('\0')))
+  ) {
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+    return res.end('Access denied: Path traversal rejected');
+  }
 
-    if (fs.existsSync(targetFile)) {
+  // 2. Uploaded Images (/uploads/*)
+  if (decodedPathname.startsWith('/uploads/')) {
+    const relativePart = decodedPathname.slice('/uploads/'.length);
+    const targetFile = resolveSecureStaticPath(UPLOADS_DIR, relativePart);
+
+    if (!targetFile) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      return res.end('Access denied: Path traversal rejected');
+    }
+
+    if (fs.existsSync(targetFile) && fs.statSync(targetFile).isFile()) {
+      const ext = path.extname(targetFile).toLowerCase();
+      const mime = MIME_TYPES[ext] || 'application/octet-stream';
       return serveStaticFile(req, res, targetFile, mime);
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -93,7 +189,12 @@ const server = http.createServer((req, res) => {
   }
 
   // 3. Static Assets from public/ directory
-  const publicPath = path.join(PUBLIC_DIR, pathname);
+  const publicPath = resolveSecureStaticPath(PUBLIC_DIR, decodedPathname);
+  if (!publicPath) {
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+    return res.end('Access denied: Path traversal rejected');
+  }
+
   if (fs.existsSync(publicPath) && fs.statSync(publicPath).isFile()) {
     const ext = path.extname(publicPath).toLowerCase();
     const mime = MIME_TYPES[ext] || 'application/octet-stream';
@@ -102,17 +203,25 @@ const server = http.createServer((req, res) => {
 
   // 4. Built Frontend Assets from dist/
   if (fs.existsSync(DIST_DIR)) {
-    let filePath = path.join(DIST_DIR, pathname === '/' ? 'index.html' : pathname);
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-      const nestedIndex = path.join(filePath, 'index.html');
-      if (fs.existsSync(nestedIndex)) {
-        filePath = nestedIndex;
+    const distRelative = decodedPathname === '/' ? 'index.html' : decodedPathname;
+    let distPath = resolveSecureStaticPath(DIST_DIR, distRelative);
+
+    if (!distPath) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      return res.end('Access denied: Path traversal rejected');
+    }
+
+    if (fs.existsSync(distPath) && fs.statSync(distPath).isDirectory()) {
+      const nestedIndex = path.join(distPath, 'index.html');
+      if (fs.existsSync(nestedIndex) && fs.statSync(nestedIndex).isFile()) {
+        distPath = nestedIndex;
       }
     }
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-      const ext = path.extname(filePath).toLowerCase();
+
+    if (fs.existsSync(distPath) && fs.statSync(distPath).isFile()) {
+      const ext = path.extname(distPath).toLowerCase();
       const mime = MIME_TYPES[ext] || 'application/octet-stream';
-      return serveStaticFile(req, res, filePath, mime);
+      return serveStaticFile(req, res, distPath, mime);
     }
 
     // SPA Fallback: serve dist/index.html for client routes
@@ -135,7 +244,9 @@ const server = http.createServer((req, res) => {
       </body>
     </html>
   `);
-});
+}
+
+export const server = http.createServer(handleServerRequest);
 
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
@@ -154,9 +265,18 @@ process.on('unhandledRejection', (reason) => {
   console.error('[Unhandled Rejection]', reason);
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`[Production Server] Glacial Tech Storefront & API listening on http://${HOST}:${PORT}`);
-});
+const isMainModule = Boolean(
+  process.argv[1] && (
+    process.argv[1].endsWith('server.js') || 
+    process.argv[1].endsWith('server\\server.js')
+  )
+);
+
+if (isMainModule && process.env.NODE_ENV !== 'test' && !process.env.DISABLE_SERVER_LISTEN) {
+  server.listen(PORT, HOST, () => {
+    console.log(`[Production Server] Glacial Tech Storefront & API listening on http://${HOST}:${PORT}`);
+  });
+}
 
 process.on('SIGINT', () => {
   server.close(() => process.exit(0));

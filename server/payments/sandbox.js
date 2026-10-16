@@ -10,10 +10,18 @@ export class SandboxPaymentProvider {
   }
 
   isConfigured() {
-    return true; // Always available as local development / testing fallback
+    // Sandbox is strictly disabled in production mode
+    if (process.env.NODE_ENV === 'production') {
+      return false;
+    }
+    return true; // Available in development/test fallback
   }
 
   async initiatePayment(order, reqOrigin) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Sandbox payment provider is strictly disabled in production mode');
+    }
+
     const sessionId = `sbx_${crypto.randomBytes(12).toString('hex')}`;
     const host = reqOrigin || 'http://localhost:3000';
 
@@ -49,6 +57,12 @@ export class SandboxPaymentProvider {
   }
 
   async verifyPayment({ sessionId, orderId, status = 'success', signature }) {
+    // 1. Strict production safeguard
+    if (process.env.NODE_ENV === 'production') {
+      return { verified: false, reason: 'Sandbox payments are strictly disabled in production mode' };
+    }
+
+    // 2. Gateway session lookup
     const session = getPaymentSession(sessionId);
     if (!session) {
       return { verified: false, reason: 'Payment session not found or expired' };
@@ -58,14 +72,16 @@ export class SandboxPaymentProvider {
       return { verified: false, reason: 'Order ID does not match payment session' };
     }
 
-    // Verify signature if provided, or verify against stored session
-    if (signature) {
-      const expectedSignature = this.createSignature(sessionId, orderId, session.amount, status);
-      const sigBuf = Buffer.from(signature);
-      const expBuf = Buffer.from(expectedSignature);
-      if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
-        return { verified: false, reason: 'Invalid payment signature' };
-      }
+    // 3. Cryptographic signature is strictly required (prevents bypass spoofing)
+    if (!signature || typeof signature !== 'string') {
+      return { verified: false, reason: 'Cryptographic gateway signature is strictly required for payment verification' };
+    }
+
+    const expectedSignature = this.createSignature(sessionId, orderId, session.amount, status);
+    const sigBuf = Buffer.from(signature);
+    const expBuf = Buffer.from(expectedSignature);
+    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+      return { verified: false, reason: 'Invalid payment signature' };
     }
 
     if (status === 'success') {
@@ -79,7 +95,8 @@ export class SandboxPaymentProvider {
         meta: {
           gateway: 'SANDBOX_DEVELOPER_MODE',
           sessionId,
-          verifiedAt: new Date().toISOString()
+          verifiedAt: new Date().toISOString(),
+          signatureVerified: true
         }
       };
     } else if (status === 'cancel') {
