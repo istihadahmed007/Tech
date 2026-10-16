@@ -93,26 +93,26 @@ export default function Header({
               }}
               className="nav-link-btn"
             >
-              Shop
+              {t.navShop || 'Shop'}
             </a>
             <button 
               onClick={onScrollToFinder}
               className="nav-link-btn"
             >
-              Find my fit
+              {t.navFindFit || 'Find my fit'}
             </button>
             <button 
               onClick={() => onOpenTracking('')}
               className="nav-link-btn text-[#145CFF] font-semibold flex items-center gap-1"
             >
               <Package size={15} />
-              <span>Track Order</span>
+              <span>{t.navTrackOrder || 'Track Order'}</span>
             </button>
             <button 
               onClick={onOpenSupport}
               className="nav-link-btn"
             >
-              Support
+              {t.navSupport || 'Support'}
             </button>
           </nav>
         </div>
@@ -125,7 +125,7 @@ export default function Header({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for cases, earbuds, chargers and more..."
+              placeholder={t.searchPlaceholder || "Search for cases, earbuds, chargers and more..."}
               className="w-full text-xs font-normal pl-9 pr-8 py-2 rounded-full bg-white/85 border border-slate-200/90 focus:bg-white focus:border-[#145CFF] focus:ring-2 focus:ring-blue-100 outline-none text-[#0F172A] placeholder-[#94A3B8] transition-all shadow-2xs"
             />
             {searchQuery && (
@@ -238,7 +238,7 @@ export default function Header({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for cases, earbuds, chargers and more..."
+              placeholder={t.searchPlaceholder || "Search for cases, earbuds, chargers and more..."}
               autoFocus
               className="w-full pl-9 pr-9 py-2.5 rounded-full bg-white border border-slate-300 shadow-sm outline-none text-xs text-[#0F172A]"
             />
@@ -269,39 +269,39 @@ export default function Header({
               }}
               className="p-2.5 rounded-xl hover:bg-slate-50 font-semibold"
             >
-              Shop
+              {t.navShop || 'Shop'}
             </a>
             <button 
               onClick={() => { setMobileMenuOpen(false); onScrollToFinder(); }}
               className="p-2.5 rounded-xl hover:bg-slate-50 text-left"
             >
-              Find my fit
+              {t.navFindFit || 'Find my fit'}
             </button>
             <button 
               onClick={() => { setMobileMenuOpen(false); onOpenTracking(''); }}
               className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-[#145CFF] font-semibold flex items-center justify-between"
             >
-              <span>Track Order</span>
+              <span>{t.navTrackOrder || 'Track Order'}</span>
               <ShieldCheck size={16} />
             </button>
             <button 
               onClick={() => { setMobileMenuOpen(false); onOpenAccount(); }}
               className="p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-center justify-between"
             >
-              <span>{currentUser ? `Account: ${currentUser.name}` : 'Sign In / Register'}</span>
+              <span>{currentUser ? `Account: ${currentUser.name}` : (lang === 'bn' ? 'সাইন ইন / রেজিস্টার' : 'Sign In / Register')}</span>
               <User size={16} />
             </button>
             <button 
               onClick={() => { setMobileMenuOpen(false); onOpenSupport(); }}
               className="p-2.5 rounded-xl hover:bg-slate-50 text-left"
             >
-              Support
+              {t.navSupport || 'Support'}
             </button>
             <button 
               onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
               className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-slate-500 flex items-center justify-between text-xs"
             >
-              <span>Store Admin Operations</span>
+              <span>{lang === 'bn' ? 'স্টোর অ্যাডমিন অপারেশন' : 'Store Admin Operations'}</span>
               <Lock size={15} />
             </button>
           </nav>

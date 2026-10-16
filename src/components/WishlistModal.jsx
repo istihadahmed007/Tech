@@ -4,14 +4,16 @@ import { X, Heart, Plus, Trash2 } from 'lucide-react';
 export default function WishlistModal({ 
   isOpen, 
   onClose, 
-  wishlistProducts, 
+  wishlistProducts = [], 
   onRemoveFromWishlist, 
   onAddToCart, 
   onSelectProduct,
   currencySymbol = "৳",
-  t 
+  t = {},
+  lang = 'en'
 }) {
   const closeButtonRef = useRef(null);
+  const items = Array.isArray(wishlistProducts) ? wishlistProducts : [];
 
   useEffect(() => {
     if (!isOpen) return;
@@ -56,10 +58,10 @@ export default function WishlistModal({
             </div>
             <div>
               <h2 id="wishlist-modal-title" className="text-xl font-bold text-[#10263D]">
-                Saved Favorites ({wishlistProducts.length})
+                {lang === 'bn' ? `সংরক্ষিত পছন্দসমূহ (${items.length})` : `Saved Favorites (${items.length})`}
               </h2>
               <p className="text-xs text-[#52677B]">
-                Your personal curated shortlist
+                {lang === 'bn' ? 'আপনার ব্যক্তিগত পছন্দের তালিকা' : 'Your personal curated shortlist'}
               </p>
             </div>
           </div>
@@ -73,51 +75,56 @@ export default function WishlistModal({
           </button>
         </div>
 
-        {wishlistProducts.length > 0 ? (
+        {items.length > 0 ? (
           <div className="divide-y divide-slate-100">
-            {wishlistProducts.map((product) => (
-              <div key={product.id} className="py-3.5 flex items-center justify-between gap-3">
-                <div 
-                  className={`flex items-center gap-3 ${onSelectProduct ? 'cursor-pointer group' : ''}`}
-                  onClick={() => onSelectProduct && onSelectProduct(product)}
-                >
-                  <div className="w-14 h-14 rounded-xl bg-[#EAF4FC] p-2 shrink-0 border border-[#DCE7F0] flex items-center justify-center group-hover:border-[#145CFF] transition-colors">
-                    <img src={product.image} alt={product.title} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xs sm:text-sm text-[#10263D] group-hover:text-[#145CFF] transition-colors line-clamp-1">
-                      {product.title}
-                    </h3>
-                    <span className="font-bold text-xs text-[#145CFF] block mt-0.5">
-                      {currencySymbol}{product.price.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
+            {items.map((product) => {
+              const displayTitle = lang === 'bn' ? (product.titleBn || product.title) : product.title;
+              const formattedPrice = (product.price || 0).toLocaleString();
 
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      onAddToCart(product);
-                      onRemoveFromWishlist(product.id);
-                    }}
-                    className="p-2 sm:px-3 sm:py-1.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white text-xs font-semibold flex items-center gap-1 shadow-xs focus-visible:ring-2 focus-visible:ring-[#145CFF]"
-                    title="Move to bag"
-                    aria-label={`Move ${product.title} to bag`}
+              return (
+                <div key={product.id} className="py-3.5 flex items-center justify-between gap-3">
+                  <div 
+                    className={`flex items-center gap-3 ${onSelectProduct ? 'cursor-pointer group' : ''}`}
+                    onClick={() => onSelectProduct && onSelectProduct(product)}
                   >
-                    <Plus size={14} />
-                    <span className="hidden sm:inline">Add</span>
-                  </button>
-                  <button
-                    onClick={() => onRemoveFromWishlist(product.id)}
-                    className="p-2 rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 focus-visible:ring-2 focus-visible:ring-red-500"
-                    title="Remove from wishlist"
-                    aria-label={`Remove ${product.title} from wishlist`}
-                  >
-                    <Trash2 size={15} />
-                  </button>
+                    <div className="w-14 h-14 rounded-xl bg-[#EAF4FC] p-2 shrink-0 border border-[#DCE7F0] flex items-center justify-center group-hover:border-[#145CFF] transition-colors">
+                      <img src={product.image} alt={displayTitle} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xs sm:text-sm text-[#10263D] group-hover:text-[#145CFF] transition-colors line-clamp-1">
+                        {displayTitle}
+                      </h3>
+                      <span className="font-bold text-xs text-[#145CFF] block mt-0.5">
+                        {currencySymbol}{formattedPrice}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        onAddToCart(product);
+                        onRemoveFromWishlist(product.id);
+                      }}
+                      className="p-2 sm:px-3 sm:py-1.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white text-xs font-semibold flex items-center gap-1 shadow-xs focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+                      title="Move to bag"
+                      aria-label={`Move ${displayTitle} to bag`}
+                    >
+                      <Plus size={14} />
+                      <span className="hidden sm:inline">{lang === 'bn' ? 'যোগ করুন' : 'Add'}</span>
+                    </button>
+                    <button
+                      onClick={() => onRemoveFromWishlist(product.id)}
+                      className="p-2 rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 focus-visible:ring-2 focus-visible:ring-red-500"
+                      title="Remove from wishlist"
+                      aria-label={`Remove ${displayTitle} from wishlist`}
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-12">
@@ -125,16 +132,18 @@ export default function WishlistModal({
               <Heart size={26} />
             </div>
             <h3 className="font-bold text-sm text-[#10263D] mb-1">
-              Your wishlist is empty
+              {lang === 'bn' ? 'আপনার উইশলিস্ট খালি' : 'Your wishlist is empty'}
             </h3>
             <p className="text-xs text-[#8FA6BE] max-w-xs mx-auto mb-5">
-              Click the heart icon on any accessory to save it here for later.
+              {lang === 'bn' 
+                ? 'পছন্দের যেকোনো এক্সেসরিজের হার্ট আইকনে ক্লিক করে সংরক্ষণ করুন।' 
+                : 'Click the heart icon on any accessory to save it here for later.'}
             </p>
             <button
               onClick={onClose}
               className="px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs shadow-xs"
             >
-              Discover Accessories
+              {lang === 'bn' ? 'এক্সেসরিজ কালেকশন দেখুন' : 'Discover Accessories'}
             </button>
           </div>
         )}

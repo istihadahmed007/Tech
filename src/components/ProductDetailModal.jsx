@@ -267,16 +267,16 @@ export default function ProductDetailModal({
               {/* Price */}
               <div className="flex items-baseline gap-3 mb-4">
                 <span className="text-2xl sm:text-3xl font-extrabold text-[#10263D]">
-                  {currencySymbol}{product.price.toLocaleString()}
+                  {currencySymbol}{(product.price || 0).toLocaleString()}
                 </span>
                 {product.originalPrice && product.originalPrice > product.price && (
                   <span className="text-sm sm:text-base text-slate-400 line-through">
-                    {currencySymbol}{product.originalPrice.toLocaleString()}
+                    {currencySymbol}{(product.originalPrice || 0).toLocaleString()}
                   </span>
                 )}
                 {product.originalPrice && product.originalPrice > product.price && (
                   <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Save {currencySymbol}{(product.originalPrice - product.price).toLocaleString()}
+                    Save {currencySymbol}{((product.originalPrice || 0) - (product.price || 0)).toLocaleString()}
                   </span>
                 )}
               </div>
@@ -389,7 +389,7 @@ export default function ProductDetailModal({
                 </span>
                 <button
                   type="button"
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  onClick={() => setQuantity(Math.min(product.stock || 99, quantity + 1))}
                   className="p-1.5 text-[#52677B] hover:text-[#145CFF] rounded-lg hover:bg-[#EAF4FC]"
                   aria-label="Increase quantity"
                 >
@@ -401,7 +401,7 @@ export default function ProductDetailModal({
               <button
                 type="button"
                 onClick={handleAdd}
-                disabled={product.stock === 0}
+                disabled={!product.stock || product.stock === 0}
                 className="w-full sm:flex-1 py-3 px-5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.99] text-white font-semibold text-sm shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
               >
                 {addedAnimation ? (
@@ -421,7 +421,7 @@ export default function ProductDetailModal({
               <button
                 type="button"
                 onClick={handleBuy}
-                disabled={product.stock === 0}
+                disabled={!product.stock || product.stock === 0}
                 className="w-full sm:w-auto py-3 px-6 rounded-full bg-[#10263D] hover:bg-[#1a3857] active:scale-[0.99] text-white font-semibold text-sm shadow-xs transition-all disabled:opacity-50"
               >
                 Buy Now

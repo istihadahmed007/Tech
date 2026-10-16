@@ -66,7 +66,7 @@ export default function AdminModal({
     sku: '',
     title: '',
     titleBn: '',
-    category: 'cases',
+    category: 'audio',
     brand: 'Apple',
     price: '',
     originalPrice: '',
@@ -831,7 +831,7 @@ export default function AdminModal({
                         sku: '',
                         title: '',
                         titleBn: '',
-                        category: 'cases',
+                        category: 'audio',
                         brand: 'Apple',
                         price: '',
                         originalPrice: '',
@@ -954,9 +954,10 @@ export default function AdminModal({
                               onChange={(e) => setProductFormData({ ...productFormData, category: e.target.value })}
                               className="input-field text-xs py-1.5"
                             >
-                              <option value="cases">Cases</option>
                               <option value="audio">Audio</option>
                               <option value="charging">Charging</option>
+                              <option value="wearables">Smartwatches / Wearables</option>
+                              <option value="cases">Cases</option>
                               <option value="powerbanks">Power Banks</option>
                             </select>
                           </div>

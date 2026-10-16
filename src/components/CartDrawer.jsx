@@ -140,7 +140,7 @@ export default function CartDrawer({
             <div className="px-5 py-3 bg-amber-50 border-b border-amber-200 text-xs text-amber-800 space-y-1">
               <div className="flex items-center gap-1.5 font-bold">
                 <AlertCircle size={14} className="shrink-0" />
-                <span>Inventory & Price Update Notice</span>
+                <span>{lang === 'bn' ? 'স্টক ও মূল্যের আপডেট সংক্রান্ত তথ্য' : 'Inventory & Price Update Notice'}</span>
               </div>
               {revalidationWarnings.map((warn, i) => (
                 <p key={i} className="text-[11px] pl-5">{warn}</p>
@@ -263,7 +263,7 @@ export default function CartDrawer({
                   onClick={onClose}
                   className="px-6 py-2.5 rounded-full bg-[#145CFF] text-white text-xs font-semibold hover:bg-[#0D4BD9] transition-colors shadow-xs"
                 >
-                  Start Shopping
+                  {lang === 'bn' ? 'কেনাকাটা শুরু করুন' : 'Start Shopping'}
                 </button>
               </div>
             )}
@@ -279,7 +279,7 @@ export default function CartDrawer({
                 </div>
                 <div className="flex justify-between">
                   <span>{t?.deliveryFee || 'Delivery Fee'}</span>
-                  <span>{isFreeDelivery ? <strong className="text-emerald-600">FREE</strong> : 'Calculated at checkout'}</span>
+                  <span>{isFreeDelivery ? <strong className="text-emerald-600">{lang === 'bn' ? 'ফ্রি' : 'FREE'}</strong> : (lang === 'bn' ? 'চেকআউটে নির্ধারিত হবে' : 'Calculated at checkout')}</span>
                 </div>
               </div>
 

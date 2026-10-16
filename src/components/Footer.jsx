@@ -49,18 +49,10 @@ export default function Footer({
             <ul className="footer-nav-list">
               <li>
                 <button 
-                  onClick={() => onSelectCategory('cases')} 
-                  className="footer-link-btn"
-                >
-                  {t.catCases}
-                </button>
-              </li>
-              <li>
-                <button 
                   onClick={() => onSelectCategory('audio')} 
                   className="footer-link-btn"
                 >
-                  {t.catAudio}
+                  {t.catAudio || 'Audio'}
                 </button>
               </li>
               <li>
@@ -68,15 +60,23 @@ export default function Footer({
                   onClick={() => onSelectCategory('charging')} 
                   className="footer-link-btn"
                 >
-                  {t.catCharging}
+                  {t.catCharging || 'Charging'}
                 </button>
               </li>
               <li>
                 <button 
-                  onClick={() => onSelectCategory('powerbanks')} 
+                  onClick={() => onSelectCategory('wearables')} 
                   className="footer-link-btn"
                 >
-                  {t.catPowerBanks}
+                  {t.catWearables || 'Smartwatches'}
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => onSelectCategory(null)} 
+                  className="footer-link-btn"
+                >
+                  {t.allProducts || 'All Products'}
                 </button>
               </li>
             </ul>

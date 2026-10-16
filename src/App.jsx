@@ -652,6 +652,7 @@ export default function App() {
               }}
               onClearFilter={() => setSelectedPhone(null)}
               t={t}
+              lang={lang}
             />
 
             {/* Category Collections Strip: The Everyday Edit */}
@@ -838,6 +839,7 @@ export default function App() {
         }}
         currencySymbol="৳"
         t={t}
+        lang={lang}
       />
 
       {/* 8. Customer Account Modal */}
@@ -870,6 +872,7 @@ export default function App() {
         isOpen={activeModal === 'support'}
         onClose={() => setActiveModal(null)}
         t={t}
+        lang={lang}
       />
 
       {/* Concise Footer */}

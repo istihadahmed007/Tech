@@ -5,7 +5,9 @@ import { BRANDS_AND_MODELS } from '../data/catalog';
 export default function CompatibilityFinder({ 
   selectedPhone, 
   onSelectPhone, 
-  onClearFilter 
+  onClearFilter,
+  t = {},
+  lang = 'en'
 }) {
   const [activeBrand, setActiveBrand] = useState('Apple');
   const [activeModel, setActiveModel] = useState('iPhone 15 Pro');
@@ -36,7 +38,7 @@ export default function CompatibilityFinder({
         {/* Left: Section Title */}
         <div className="w-full md:w-auto shrink-0 pl-1 sm:pl-2">
           <h2 className="text-base sm:text-lg font-bold text-[#10263D] tracking-tight">
-            Find the right fit
+            {t.finderTitle || (lang === 'bn' ? 'ডিভাইস ফিট ফাইন্ডার' : 'Find the right fit')}
           </h2>
         </div>
 
@@ -45,6 +47,7 @@ export default function CompatibilityFinder({
           <div className="relative flex items-center bg-white rounded-xl border border-[#DCE7F0] px-3.5 py-2.5 shadow-2xs hover:border-[#145CFF] transition-colors">
             <Smartphone size={16} className="text-slate-400 mr-2 shrink-0" />
             <select
+              aria-label={t.selectBrand || "Select Phone Brand"}
               value={activeBrand}
               onChange={(e) => {
                 setActiveBrand(e.target.value);
@@ -68,6 +71,7 @@ export default function CompatibilityFinder({
           <div className="relative flex items-center bg-white rounded-xl border border-[#DCE7F0] px-3.5 py-2.5 shadow-2xs hover:border-[#145CFF] transition-colors">
             <Smartphone size={16} className="text-slate-400 mr-2 shrink-0" />
             <select
+              aria-label={t.selectModel || "Select Phone Model"}
               value={activeModel}
               onChange={(e) => setActiveModel(e.target.value)}
               className="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-700 outline-none cursor-pointer appearance-none pr-6"
@@ -87,7 +91,7 @@ export default function CompatibilityFinder({
           type="submit"
           className="w-full md:w-auto px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.98] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition-all whitespace-nowrap shrink-0"
         >
-          <span>Find accessories</span>
+          <span>{t.findAccessories || (lang === 'bn' ? 'এক্সেসরিজ খুঁজুন' : 'Find accessories')}</span>
           <ChevronRight size={16} className="stroke-[2.5]" />
         </button>
       </form>
@@ -96,14 +100,14 @@ export default function CompatibilityFinder({
       {selectedPhone && (
         <div className="mt-2.5 pt-2 border-t border-[#DCE7F0] flex items-center justify-between text-xs px-2">
           <span className="text-[#52677B]">
-            Showing accessories tailored for: <strong className="text-[#145CFF]">{selectedPhone}</strong>
+            {(t.showingCompatibleFor || (lang === 'bn' ? 'উপযুক্ত পণ্য দেখাচ্ছে:' : 'Showing accessories tailored for:'))} <strong className="text-[#145CFF]">{selectedPhone}</strong>
           </span>
           <button
             onClick={onClearFilter}
             className="text-slate-500 hover:text-red-600 flex items-center gap-1 font-medium transition-colors"
           >
             <X size={13} />
-            <span>Clear filter</span>
+            <span>{t.clearFilter || (lang === 'bn' ? 'ফিল্টার মুছুন' : 'Clear filter')}</span>
           </button>
         </div>
       )}
