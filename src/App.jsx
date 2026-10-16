@@ -462,11 +462,14 @@ export default function App() {
 
   // Online Payment Initiated
   const handleInitiateOnlinePayment = (order, sessionData) => {
-    if (sessionData.provider === 'sandbox') {
+    if (sessionData.provider === 'sandbox' || sessionData.provider === 'uddoktapay' || sessionData.isPaymently) {
       setPaymentSessionInfo({
         orderId: order.id,
-        sessionId: sessionData.sessionId,
-        amount: order.total
+        sessionId: sessionData.sessionId || sessionData.invoiceId,
+        amount: order.total,
+        paymentLink: sessionData.paymentLink,
+        redirectUrl: sessionData.redirectUrl,
+        qrCodeUrl: sessionData.qrCodeUrl
       });
       setActiveModal('payment_gateway');
     } else if (sessionData.redirectUrl) {

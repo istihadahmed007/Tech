@@ -20,6 +20,8 @@ export const ORDER_STATUS = {
 export const PAYMENT_PROVIDERS = {
   SSLCOMMERZ: 'sslcommerz',
   BKASH: 'bkash',
+  UDDOKTAPAY: 'uddoktapay',
+  PAYMENTLY: 'paymently',
   SANDBOX: 'sandbox',
   COD: 'cod'
 };

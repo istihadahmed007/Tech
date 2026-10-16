@@ -42,6 +42,34 @@ test('Sandbox Payment Activation: correctly configures and returns SandboxPaymen
   delete process.env.ENABLE_SANDBOX_PAYMENT;
 });
 
+test('UddoktaPay & Paymently Integration: resolves provider and initiates payment session with QR and link', async () => {
+  const provider = getPaymentProvider('uddoktapay');
+  assert.ok(provider);
+  assert.ok(provider.paymentLink.includes('paymently.io'));
+  process.env.PAYMENT_GATEWAY_PROVIDER = 'uddoktapay';
+  assert.equal(provider.isConfigured(), true);
+  delete process.env.PAYMENT_GATEWAY_PROVIDER;
+
+  const mockOrder = {
+    id: 'ORD-VT-101',
+    total: 1850,
+    customer: { name: 'Rahim Khan', phone: '01712345678' }
+  };
+  const session = await provider.initiatePayment(mockOrder, 'http://localhost:3000');
+  assert.equal(session.success, true);
+  assert.equal(session.provider, 'uddoktapay');
+  assert.ok(session.paymentLink.includes('paymently.io'));
+  assert.equal(session.qrCodeUrl, '/payment-link-BDT-2026-09-11.svg');
+
+  // Verify with valid manual TrxID
+  const verifyResult = await provider.verifyPayment({
+    order: mockOrder,
+    trxId: 'BK728192019'
+  });
+  assert.equal(verifyResult.verified, true);
+  assert.equal(verifyResult.transactionId, 'BK728192019');
+});
+
 test('Order Status Model: accurately distinguishes demo_received, unpaid, and paid states', () => {
   // Demo COD order
   const demoOrder = {

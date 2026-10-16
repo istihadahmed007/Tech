@@ -6,7 +6,7 @@ import { generateCode128Svg } from '../src/utils/barcode.js';
 import { generateInvoiceHtml, generateBatchPrintHtml, numberToWordsBDT } from '../src/utils/invoice.js';
 import { handleApiRequest } from '../server/api.js';
 import { generateAdminToken } from '../server/auth.js';
-import { createOrderWithReservation, findOrderById } from '../server/db.js';
+import { createOrderWithReservation, findOrderById, updateProduct } from '../server/db.js';
 
 test('1. QR Code Generator: generates valid Model 2 SVG matrix and vectors', (t) => {
   const url = 'http://localhost:3000/#track=AGY-602807&token=e26cc1c006a66ef5b4c9902deed42567a2a903eb63dd0ebc';
@@ -143,6 +143,9 @@ test('6. Batch Print Generator: combines multiple orders with clean page breaks'
 });
 
 test('7. API Route: GET /api/orders/:id/invoice serves authorized HTML & JSON with privacy guards', async (t) => {
+  // Ensure stock is available for the test item
+  updateProduct('remax-rc155a-120w-cable', { stock: 50 });
+
   // Create a real order in the db
   const orderRes = createOrderWithReservation({
     customer: {

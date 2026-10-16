@@ -571,7 +571,7 @@ export async function handleApiRequest(req, res) {
     // Centralized server payment verification
     if (pathname === '/api/payment/verify' && method === 'POST') {
       const body = await parseBody();
-      const { orderId, sessionId, val_id, paymentId, status, signature } = body;
+      const { orderId, sessionId, val_id, paymentId, status, signature, invoiceId, invoice_id, trxId, transaction_id, senderPhone } = body;
 
       const order = findOrderById(orderId);
       if (!order) {
@@ -602,6 +602,9 @@ export async function handleApiRequest(req, res) {
         sessionId,
         val_id,
         paymentId,
+        invoiceId: invoiceId || invoice_id,
+        trxId: trxId || transaction_id,
+        senderPhone,
         status: status || 'success',
         signature
       });
@@ -682,11 +685,33 @@ export async function handleApiRequest(req, res) {
     }
 
     // Payment IPN / Webhook Handler (Idempotent background notification)
-    if (pathname.startsWith('/api/payment/ipn/')) {
-      const providerName = pathname.replace('/api/payment/ipn/', '').trim();
-      const body = await parseBody();
-      const orderId = body.tran_id || body.merchantInvoiceNumber || body.orderId;
+    if (pathname.startsWith('/api/payment/ipn/') || pathname === '/api/uddoktapay/ipn') {
+      const providerName = pathname === '/api/uddoktapay/ipn' 
+        ? 'uddoktapay' 
+        : pathname.replace('/api/payment/ipn/', '').trim();
 
+      // For GET request: health/ping check
+      if (method === 'GET') {
+        return sendJson(200, {
+          status: 'active',
+          service: 'Payment IPN Webhook Listener',
+          provider: providerName,
+          ready: true,
+          timestamp: Date.now()
+        });
+      }
+
+      const body = await parseBody();
+      let metadata = {};
+      if (body.metadata) {
+        try {
+          metadata = typeof body.metadata === 'string' ? JSON.parse(body.metadata) : body.metadata;
+        } catch (e) {
+          metadata = {};
+        }
+      }
+
+      const orderId = body.tran_id || body.merchantInvoiceNumber || body.orderId || metadata.orderId || body.invoice_id;
       if (!orderId) {
         return sendJson(400, { error: 'Missing order reference' });
       }
@@ -709,7 +734,9 @@ export async function handleApiRequest(req, res) {
         order,
         val_id: body.val_id,
         paymentId: body.paymentID,
-        status: body.status || 'success'
+        invoiceId: body.invoice_id || body.invoiceId,
+        trxId: body.transaction_id,
+        status: (body.status || 'success').toUpperCase() === 'COMPLETED' ? 'success' : body.status
       });
 
       if (result.verified) {
