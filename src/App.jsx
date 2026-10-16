@@ -14,7 +14,7 @@ import OrderConfirmationModal from './components/OrderConfirmationModal';
 import OrderTrackingModal from './components/OrderTrackingModal';
 import WishlistModal from './components/WishlistModal';
 import AccountModal from './components/AccountModal';
-import AdminModal from './components/AdminModal';
+import AdminDashboard from './components/AdminDashboard';
 import SupportModal from './components/SupportModal';
 import BundleDeals from './components/BundleDeals';
 import Footer from './components/Footer';
@@ -66,6 +66,7 @@ export default function App() {
   // Modals & Navigation Flows
   const [activeModal, setActiveModal] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isAdminView, setIsAdminView] = useState(false);
   const [isCartView, setIsCartView] = useState(false);
   const [isCheckoutView, setIsCheckoutView] = useState(false);
   const [checkoutItems, setCheckoutItems] = useState(null);
@@ -202,6 +203,7 @@ export default function App() {
   const navigateToCart = useCallback((pushHistory = true) => {
     setIsCartView(true);
     setIsCheckoutView(false);
+    setIsAdminView(false);
     setSelectedProduct(null);
     setActiveModal(null);
     if (pushHistory) {
@@ -219,6 +221,7 @@ export default function App() {
     }
     setIsCheckoutView(true);
     setIsCartView(false);
+    setIsAdminView(false);
     setSelectedProduct(null);
     setActiveModal(null);
     if (pushHistory) {
@@ -233,6 +236,7 @@ export default function App() {
     setSelectedProduct(null);
     setIsCartView(false);
     setIsCheckoutView(false);
+    setIsAdminView(false);
     setCheckoutItems(null);
     if (pushHistory) {
       window.history.pushState(null, '', '/');
@@ -245,6 +249,7 @@ export default function App() {
     setSelectedProduct(null);
     setIsCartView(false);
     setIsCheckoutView(false);
+    setIsAdminView(false);
     setCheckoutItems(null);
     setSelectedCategory(catId);
     window.history.pushState(null, '', '/');
@@ -260,10 +265,22 @@ export default function App() {
       const hash = window.location.hash;
       const search = window.location.search;
 
+      // 0. Dedicated Private Staff Admin Routing (/admin, #admin, or ?view=admin)
+      if (pathname === '/admin' || pathname === '/admin/' || hash === '#admin' || hash.startsWith('#admin?') || search.includes('view=admin')) {
+        setIsAdminView(true);
+        setIsCartView(false);
+        setIsCheckoutView(false);
+        setSelectedProduct(null);
+        setActiveModal(null);
+        document.title = 'Staff Console — Tech Nest';
+        return;
+      }
+
       // 1. Dedicated Amazon Cart Page routing (/cart, #cart, or ?view=cart)
       if (pathname === '/cart' || pathname === '/cart/' || hash === '#cart' || hash.startsWith('#cart?') || search.includes('view=cart')) {
         setIsCartView(true);
         setIsCheckoutView(false);
+        setIsAdminView(false);
         setSelectedProduct(null);
         setActiveModal(null);
         document.title = 'Amazon.com Shopping Cart — Tech Nest';
@@ -274,6 +291,7 @@ export default function App() {
       if (pathname === '/checkout' || pathname === '/checkout/' || hash === '#checkout' || hash.startsWith('#checkout?') || search.includes('view=checkout')) {
         setIsCheckoutView(true);
         setIsCartView(false);
+        setIsAdminView(false);
         setSelectedProduct(null);
         setActiveModal(null);
         document.title = 'Amazon.com Checkout — Tech Nest';
@@ -633,6 +651,17 @@ export default function App() {
     showToast('Signed out of customer account');
   };
 
+  // Full-Page Private Staff Console (Completely Isolated from Storefront)
+  if (isAdminView) {
+    return (
+      <AdminDashboard
+        currencySymbol="৳"
+        onProductsUpdated={loadDatabaseProducts}
+        onExitToStorefront={() => navigateToHome(true)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-600 selection:text-white">
       {/* Toast Notification */}
@@ -656,7 +685,6 @@ export default function App() {
         onOpenWishlist={() => setActiveModal('wishlist')}
         onOpenSupport={() => setActiveModal('support')}
         onOpenAccount={() => setActiveModal('account')}
-        onOpenAdmin={() => setActiveModal('admin')}
         onOpenTracking={(id) => {
           setTrackingOrderId(id || '');
           setTrackingToken('');
@@ -974,15 +1002,7 @@ export default function App() {
         lang={lang}
       />
 
-      {/* 9. Admin Operations Console */}
-      <AdminModal
-        isOpen={activeModal === 'admin'}
-        onClose={() => setActiveModal(null)}
-        currencySymbol="৳"
-        onProductsUpdated={loadDatabaseProducts}
-      />
-
-      {/* 10. Customer Support Modal */}
+      {/* 9. Customer Support Modal */}
       <SupportModal
         isOpen={activeModal === 'support'}
         onClose={() => setActiveModal(null)}
@@ -990,7 +1010,7 @@ export default function App() {
         lang={lang}
       />
 
-      {/* Concise Footer */}
+      {/* Concise Customer Footer */}
       <Footer
         storeName={import.meta.env.VITE_STORE_NAME || "Tech Nest"}
         onOpenSupport={() => setActiveModal('support')}
@@ -1002,7 +1022,6 @@ export default function App() {
         onSelectCategory={(catId) => {
           navigateToCategory(catId);
         }}
-        onOpenAdmin={() => setActiveModal('admin')}
         t={t}
         lang={lang}
       />

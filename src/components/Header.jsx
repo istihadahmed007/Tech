@@ -27,7 +27,6 @@ export default function Header({
   onOpenWishlist, 
   onOpenSupport,
   onOpenAccount,
-  onOpenAdmin,
   onOpenTracking,
   searchQuery, 
   setSearchQuery,
@@ -197,15 +196,6 @@ export default function Header({
             )}
           </button>
 
-          {/* Admin Operations Button */}
-          <button
-            onClick={onOpenAdmin}
-            className="hidden sm:flex p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[#10263D] transition-colors"
-            aria-label="Store Admin Console"
-            title="Admin Console"
-          >
-            <Lock size={18} />
-          </button>
 
           {/* Shopping Bag Trigger Icon */}
           <button
@@ -317,14 +307,7 @@ export default function Header({
             >
               {t.navSupport || 'Support'}
             </button>
-            <button 
-              onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-slate-500 flex items-center justify-between text-xs"
-            >
-              <span>{lang === 'bn' ? 'স্টোর অ্যাডমিন অপারেশন' : 'Store Admin Operations'}</span>
-              <Lock size={15} />
-            </button>
-          </nav>
+            </nav>
 
           <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
             <span>Currency: <strong>BDT (৳)</strong></span>

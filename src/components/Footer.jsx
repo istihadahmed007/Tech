@@ -6,7 +6,6 @@ export default function Footer({
   onOpenSupport, 
   onOpenTracking, 
   onSelectCategory, 
-  onOpenAdmin,
   t, 
   lang 
 }) {
@@ -125,23 +124,23 @@ export default function Footer({
             </ul>
           </div>
 
-          {/* Business & Operations */}
+          {/* Customer Trust & Logistics */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">
-              Operations
+              {lang === 'bn' ? 'নিরাপত্তা ও ডেলিভারি' : 'Trust & Delivery'}
             </h4>
-            <ul className="footer-nav-list">
-              <li>
-                <button 
-                  onClick={onOpenAdmin} 
-                  className="footer-link-btn font-medium"
-                >
-                  Store Admin Portal
-                </button>
+            <ul className="footer-nav-list text-xs text-[#52677B] space-y-1.5">
+              <li className="flex items-center gap-1.5">
+                <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
+                <span>{lang === 'bn' ? '১০০% অরিজিনাল গ্যাজেট' : '100% Genuine BD Imports'}</span>
+              </li>
+              <li className="flex items-center gap-1.5">
+                <Sparkles size={14} className="text-[#145CFF] shrink-0" />
+                <span>{lang === 'bn' ? '৭ দিনের রিপ্লেসমেন্ট পলিসি' : '7-Day Replacement Policy'}</span>
               </li>
               <li>
                 <span className="text-slate-500 text-[11px]">
-                  Storefront preview mode
+                  {lang === 'bn' ? 'সারা বাংলাদেশে ক্যাশ অন ডেলিভারি' : 'Cash on Delivery Across Bangladesh'}
                 </span>
               </li>
             </ul>

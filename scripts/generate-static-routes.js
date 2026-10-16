@@ -49,6 +49,17 @@ export function generateStaticRoutes() {
   );
   fs.writeFileSync(path.join(checkoutDir, 'index.html'), checkoutHtml, 'utf-8');
 
+  // Generate /admin/index.html (Private Staff Dashboard SPA Fallback)
+  const adminDir = path.join(DIST_DIR, 'admin');
+  if (!fs.existsSync(adminDir)) {
+    fs.mkdirSync(adminDir, { recursive: true });
+  }
+  const adminHtml = baseHtml.replace(
+    /<title>.*?<\/title>/i,
+    '<title>Staff Console — Tech Nest</title>'
+  );
+  fs.writeFileSync(path.join(adminDir, 'index.html'), adminHtml, 'utf-8');
+
   // Generate /product/:id/index.html for every authentic product in catalog
   let count = 0;
   for (const prod of INITIAL_PRODUCTS) {
