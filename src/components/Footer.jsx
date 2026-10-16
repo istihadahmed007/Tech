@@ -152,12 +152,22 @@ export default function Footer({
 
           {/* Payment Badges */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-semibold text-[#10263D] mr-1">Payment Status:</span>
+            <span className="text-[11px] font-semibold text-[#10263D] mr-1">Accepted Payments:</span>
             <span className="px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-[11px] shadow-2xs">
-              Cash on Delivery (Demo Mode)
+              Cash on Delivery
             </span>
-            <span className="px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-500 font-medium text-[11px]">
-              Online Gateways (Pending Configuration)
+            <span className="px-2.5 py-1 rounded-md bg-pink-50 border border-pink-200 text-pink-700 font-bold text-[11px] shadow-2xs">
+              bKash
+            </span>
+            <span className="px-2.5 py-1 rounded-md bg-orange-50 border border-orange-200 text-orange-700 font-bold text-[11px] shadow-2xs">
+              Nagad
+            </span>
+            <span className="px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200 text-[#145CFF] font-bold text-[11px] shadow-2xs">
+              Visa / Mastercard
+            </span>
+            <span className="px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-600 font-medium text-[11px] flex items-center gap-1">
+              <ShieldCheck size={12} className="text-emerald-600" />
+              <span>256-bit Secure Gateway</span>
             </span>
           </div>
         </div>

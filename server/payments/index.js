@@ -31,9 +31,21 @@ export function getPaymentProvider(requestedProvider) {
     return bkash;
   }
 
+  // Explicit sandbox request
+  if (chosen === 'sandbox') {
+    return new SandboxPaymentProvider();
+  }
+
   // Auto-detect based on env credentials
   if (sslcommerz.isConfigured()) return sslcommerz;
   if (bkash.isConfigured()) return bkash;
+
+  // Check if sandbox provider is enabled via environment
+  const sandboxEnabled = process.env.ENABLE_SANDBOX_PAYMENT === 'true' || 
+                         process.env.PAYMENT_GATEWAY_PROVIDER === 'sandbox';
+  if (sandboxEnabled) {
+    return new SandboxPaymentProvider();
+  }
 
   // No real provider is configured
   return null;
@@ -42,20 +54,27 @@ export function getPaymentProvider(requestedProvider) {
 export function isPaymentConfigured() {
   const sslcommerz = new SSLCommerzProvider();
   const bkash = new BkashProvider();
-  return sslcommerz.isConfigured() || bkash.isConfigured();
+  const sandboxEnabled = process.env.ENABLE_SANDBOX_PAYMENT === 'true' || 
+                         process.env.PAYMENT_GATEWAY_PROVIDER === 'sandbox';
+  return sslcommerz.isConfigured() || bkash.isConfigured() || sandboxEnabled;
 }
 
 export function getPaymentConfigurationStatus() {
   const sslcommerz = new SSLCommerzProvider();
   const bkash = new BkashProvider();
-  const configured = sslcommerz.isConfigured() || bkash.isConfigured();
+  const sandboxEnabled = process.env.ENABLE_SANDBOX_PAYMENT === 'true' || 
+                         process.env.PAYMENT_GATEWAY_PROVIDER === 'sandbox';
+  const configured = sslcommerz.isConfigured() || bkash.isConfigured() || sandboxEnabled;
+
+  const activeProvider = sslcommerz.isConfigured() 
+    ? 'sslcommerz' 
+    : (bkash.isConfigured() ? 'bkash' : (sandboxEnabled ? 'sandbox' : null));
 
   return {
     isConfigured: configured,
     onlinePaymentAvailable: configured,
-    activeProvider: sslcommerz.isConfigured() 
-      ? 'sslcommerz' 
-      : (bkash.isConfigured() ? 'bkash' : null),
+    activeProvider,
+    sandbox: Boolean(sandboxEnabled || sslcommerz.isSandbox || bkash.isSandbox),
     sslcommerz: {
       configured: sslcommerz.isConfigured(),
       sandbox: sslcommerz.isSandbox
@@ -65,7 +84,9 @@ export function getPaymentConfigurationStatus() {
       sandbox: bkash.isSandbox
     },
     message: configured
-      ? 'Payment gateway configured and ready.'
+      ? (activeProvider === 'sandbox' 
+          ? 'Interactive Sandbox Gateway active on main domain (bKash / Nagad / Cards).' 
+          : 'Payment gateway configured and ready.')
       : 'Online payments currently unavailable. Live merchant credentials (SSLCommerz or bKash) must be configured in environment variables.'
   };
 }

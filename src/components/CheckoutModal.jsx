@@ -70,7 +70,7 @@ export default function CheckoutModal({
           setOnlineAvailable(true);
           setActiveGatewayName(data.activeProvider);
           const activeObj = data.activeProvider === 'sslcommerz' ? data.sslcommerz : data.bkash;
-          setIsSandboxMode(Boolean(activeObj?.sandbox));
+          setIsSandboxMode(Boolean(data.sandbox || activeObj?.sandbox || data.activeProvider === 'sandbox'));
         } else {
           setOnlineAvailable(false);
           setActiveGatewayName(null);
@@ -467,7 +467,9 @@ export default function CheckoutModal({
                 <p className="text-[11px] text-[#52677B]">
                   {onlineAvailable ? (
                     isSandboxMode 
-                      ? `Test payment simulation via ${activeGatewayName || 'SSLCommerz/bKash'} (no real card charged)`
+                      ? (activeGatewayName === 'sandbox'
+                          ? 'Interactive test gateway active on main domain (bKash, Nagad, Visa/Mastercard)'
+                          : `Test payment simulation via ${activeGatewayName} (no real card charged)`)
                       : `Live secure gateway via ${activeGatewayName || 'SSLCommerz/bKash'}`
                   ) : (
                     'Currently unavailable (Merchant credentials required in .env)'

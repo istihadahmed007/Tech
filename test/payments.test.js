@@ -25,6 +25,23 @@ test('Payment Verification Safety: refuses verification if no live payment provi
   assert.equal(provider, null);
 });
 
+test('Sandbox Payment Activation: correctly configures and returns SandboxPaymentProvider when requested', () => {
+  const sandboxProvider = getPaymentProvider('sandbox');
+  assert.ok(sandboxProvider);
+  assert.equal(sandboxProvider.name, 'sandbox');
+  assert.equal(sandboxProvider.isConfigured(), true);
+
+  process.env.ENABLE_SANDBOX_PAYMENT = 'true';
+  const autoProvider = getPaymentProvider();
+  assert.ok(autoProvider);
+  assert.equal(autoProvider.name, 'sandbox');
+  assert.equal(isPaymentConfigured(), true);
+  const status = getPaymentConfigurationStatus();
+  assert.equal(status.onlinePaymentAvailable, true);
+  assert.equal(status.activeProvider, 'sandbox');
+  delete process.env.ENABLE_SANDBOX_PAYMENT;
+});
+
 test('Order Status Model: accurately distinguishes demo_received, unpaid, and paid states', () => {
   // Demo COD order
   const demoOrder = {
