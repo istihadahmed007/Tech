@@ -21,6 +21,7 @@ import Footer from './components/Footer';
 import { INITIAL_PRODUCTS } from './data/catalog';
 import { translations } from './i18n/translations';
 import { ShieldCheck, Truck, RotateCcw, Award } from 'lucide-react';
+import { safeFetchJson } from './utils/api';
 
 export default function App() {
   const [lang, setLang] = useState('en');
@@ -92,10 +93,9 @@ export default function App() {
   const loadDatabaseProducts = useCallback(async () => {
     setLoadingProducts(true);
     try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
-      if (res.ok && Array.isArray(data.products) && data.products.length > 0) {
-        setProducts(data.products);
+      const res = await safeFetchJson('/api/products');
+      if (res.ok && Array.isArray(res.data?.products) && res.data.products.length > 0) {
+        setProducts(res.data.products);
       }
     } catch (err) {
       console.warn('Using local fallback catalog:', err.message);
@@ -110,13 +110,12 @@ export default function App() {
     if (!token) return;
 
     try {
-      const res = await fetch('/api/auth/me', {
+      const res = await safeFetchJson('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
-      if (res.ok && data.user) {
-        setCurrentUser(data.user);
-      } else {
+      if (res.ok && res.data?.user) {
+        setCurrentUser(res.data.user);
+      } else if (!res.isHtml && !res.isNetworkError) {
         localStorage.removeItem('accessories_customer_token');
         setCurrentUser(null);
       }
@@ -291,7 +290,7 @@ export default function App() {
 
       if (paymentResult === 'success') {
         // Verify server-side
-        fetch('/api/payment/verify', {
+        safeFetchJson('/api/payment/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -301,14 +300,13 @@ export default function App() {
             status: 'success'
           })
         })
-          .then(res => res.json())
-          .then(data => {
-            if (data.verified && data.order) {
-              setConfirmedOrder({ ...data.order, guestToken: token || data.order.guestToken });
+          .then(res => {
+            if (res.ok && res.data?.verified && res.data?.order) {
+              setConfirmedOrder({ ...res.data.order, guestToken: token || res.data.order.guestToken });
               setCart([]);
               setActiveModal('order_success');
             } else {
-              showToast(data.error || 'Payment verification failed');
+              showToast(res.error || 'Payment verification failed');
             }
           })
           .catch(() => showToast('Failed to verify payment with server'));
@@ -498,7 +496,7 @@ export default function App() {
     }
 
     try {
-      const res = await fetch('/api/admin/inventory/restock', {
+      const res = await safeFetchJson('/api/admin/inventory/restock', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -506,15 +504,14 @@ export default function App() {
         },
         body: JSON.stringify({ productId, count, reason: `Quick restock (+${count})` })
       });
-      const data = await res.json();
 
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Server rejected restock request');
+      if (!res.ok || !res.data?.success) {
+        throw new Error(res.error || 'Server rejected restock request');
       }
 
       // Update stock ONLY from the successful server response
       setProducts((prev) =>
-        prev.map((p) => (p.id === productId ? { ...p, stock: data.newStock } : p))
+        prev.map((p) => (p.id === productId ? { ...p, stock: res.data.newStock } : p))
       );
       showToast(`Restocked +${count} units (Server Stock: ${data.newStock})`);
     } catch (err) {

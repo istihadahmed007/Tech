@@ -33,6 +33,7 @@ import {
   Square
 } from 'lucide-react';
 import './ProductDetailPage.css';
+import { safeFetchJson } from '../utils/api';
 
 export default function ProductDetailPage({
   product,
@@ -157,10 +158,9 @@ export default function ProductDetailPage({
   const loadReviews = async (productId) => {
     setLoadingReviews(true);
     try {
-      const res = await fetch(`/api/products/${productId}/reviews`);
-      const data = await res.json();
-      if (res.ok && Array.isArray(data.reviews)) {
-        setReviews(data.reviews);
+      const res = await safeFetchJson(`/api/products/${productId}/reviews`);
+      if (res.ok && Array.isArray(res.data?.reviews)) {
+        setReviews(res.data.reviews);
       }
     } catch (e) {
       console.warn('Could not load reviews:', e.message);
@@ -183,7 +183,7 @@ export default function ProductDetailPage({
 
     const token = localStorage.getItem('accessories_customer_token');
     try {
-      const res = await fetch(`/api/products/${product.id}/reviews`, {
+      const res = await safeFetchJson(`/api/products/${product.id}/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -194,9 +194,9 @@ export default function ProductDetailPage({
           comment: reviewComment
         })
       });
-      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to submit review');
+        throw new Error(res.error || 'Failed to submit review');
       }
 
       setReviewSuccess(lang === 'bn' ? 'ধন্যবাদ! আপনার যাচাইকৃত রিভিউ জমা হয়েছে।' : 'Thank you! Your verified review has been submitted.');

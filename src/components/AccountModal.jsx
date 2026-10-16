@@ -19,6 +19,7 @@ import {
   Printer
 } from 'lucide-react';
 import { openPrintWindow } from '../utils/invoice.js';
+import { safeFetchJson } from '../utils/api.js';
 
 export default function AccountModal({
   isOpen,
@@ -96,15 +97,14 @@ export default function AccountModal({
 
     setLoadingOrders(true);
     try {
-      const res = await fetch('/api/customer/orders', {
+      const res = await safeFetchJson('/api/customer/orders', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
-      if (res.ok && data.orders) {
-        setOrders(data.orders);
+      if (res.ok && res.data?.orders) {
+        setOrders(res.data.orders);
       }
     } catch (e) {
-      console.error('Failed to load orders', e);
+      console.warn('Failed to load orders', e);
     } finally {
       setLoadingOrders(false);
     }
@@ -116,21 +116,19 @@ export default function AccountModal({
 
     setLoadingWishlist(true);
     try {
-      const res = await fetch('/api/customer/wishlist', {
+      const res = await safeFetchJson('/api/customer/wishlist', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
-      if (res.ok && data.productIds) {
+      if (res.ok && res.data?.productIds) {
         // Fetch product details
-        const prodRes = await fetch('/api/products');
-        const prodData = await prodRes.json();
-        if (prodRes.ok && prodData.products) {
-          const matched = prodData.products.filter(p => data.productIds.includes(p.id));
+        const prodRes = await safeFetchJson('/api/products');
+        if (prodRes.ok && prodRes.data?.products) {
+          const matched = prodRes.data.products.filter(p => res.data.productIds.includes(p.id));
           setWishlistProducts(matched);
         }
       }
     } catch (e) {
-      console.error('Failed to load wishlist', e);
+      console.warn('Failed to load wishlist', e);
     } finally {
       setLoadingWishlist(false);
     }
@@ -147,19 +145,18 @@ export default function AccountModal({
       : { email, password, name, phone };
 
     try {
-      const res = await fetch(endpoint, {
+      const res = await safeFetchJson(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      const data = await res.json();
 
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Authentication failed');
+      if (!res.ok || !res.data?.success) {
+        throw new Error(res.error || 'Authentication failed');
       }
 
-      localStorage.setItem('accessories_customer_token', data.token);
-      onLoginSuccess(data.user, data.token);
+      localStorage.setItem('accessories_customer_token', res.data.token);
+      onLoginSuccess(res.data.user, res.data.token);
       setActiveTab('orders');
     } catch (err) {
       setAuthError(err.message);
@@ -176,7 +173,7 @@ export default function AccountModal({
     const updatedAddresses = [...(currentUser.addresses || []), { ...newAddress, id: Date.now().toString() }];
 
     try {
-      const res = await fetch('/api/auth/profile', {
+      const res = await safeFetchJson('/api/auth/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -184,9 +181,8 @@ export default function AccountModal({
         },
         body: JSON.stringify({ addresses: updatedAddresses })
       });
-      const data = await res.json();
-      if (res.ok && data.user) {
-        onLoginSuccess(data.user, token);
+      if (res.ok && res.data?.user) {
+        onLoginSuccess(res.data.user, token);
         setShowAddAddress(false);
         setNewAddress({ label: 'Home', division: 'Dhaka', outsideCity: false, address: '', phone: '' });
       }
@@ -200,7 +196,7 @@ export default function AccountModal({
     const updatedAddresses = (currentUser.addresses || []).filter(a => a.id !== addressId);
 
     try {
-      const res = await fetch('/api/auth/profile', {
+      const res = await safeFetchJson('/api/auth/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -208,9 +204,8 @@ export default function AccountModal({
         },
         body: JSON.stringify({ addresses: updatedAddresses })
       });
-      const data = await res.json();
-      if (res.ok && data.user) {
-        onLoginSuccess(data.user, token);
+      if (res.ok && res.data?.user) {
+        onLoginSuccess(res.data.user, token);
       }
     } catch (e) {
       alert('Failed to delete address');
@@ -223,7 +218,7 @@ export default function AccountModal({
 
     const token = localStorage.getItem('accessories_customer_token');
     try {
-      const res = await fetch('/api/customer/orders/link-guest', {
+      const res = await safeFetchJson('/api/customer/orders/link-guest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -234,9 +229,8 @@ export default function AccountModal({
           guestToken: linkGuestToken.trim()
         })
       });
-      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to link order');
+        throw new Error(res.error || 'Failed to link order');
       }
       setLinkMessage({ text: 'Order linked successfully to your account!', isError: false });
       setLinkOrderId('');

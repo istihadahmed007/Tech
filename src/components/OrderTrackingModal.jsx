@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Search, Package, CheckCircle2, ShieldAlert, Key, Lock, ShieldCheck, Printer } from 'lucide-react';
 import { openPrintWindow } from '../utils/invoice.js';
+import { safeFetchJson } from '../utils/api.js';
 
 export default function OrderTrackingModal({ 
   isOpen, 
@@ -59,13 +60,29 @@ export default function OrderTrackingModal({
         url += `?token=${encodeURIComponent(token.trim())}`;
       }
 
-      const res = await fetch(url, { headers });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'No matching order found');
+      const res = await safeFetchJson(url, { headers });
+      if (res.ok && res.data?.success) {
+        setSearchedOrder(res.data.order);
+        setIsAuthorized(Boolean(res.data.authorized));
+      } else if (res.isHtml || res.isNetworkError) {
+        // Fallback for static host / offline
+        let found = null;
+        try {
+          const localOrders = JSON.parse(localStorage.getItem('accessories_orders') || '[]');
+          found = localOrders.find(o => o.id === id.trim());
+        } catch (e) {}
+
+        if (found) {
+          setSearchedOrder(found);
+          setIsAuthorized(true);
+        } else {
+          setError('No matching order found');
+          setSearchedOrder(null);
+          setIsAuthorized(false);
+        }
+      } else {
+        throw new Error(res.error || 'No matching order found');
       }
-      setSearchedOrder(data.order);
-      setIsAuthorized(Boolean(data.authorized));
     } catch (err) {
       setError(err.message || 'Order lookup failed.');
       setSearchedOrder(null);

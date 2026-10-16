@@ -30,6 +30,7 @@ import {
   Square
 } from 'lucide-react';
 import { openPrintWindow, openBatchPrintWindow } from '../utils/invoice.js';
+import { safeFetchJson } from '../utils/api.js';
 
 export default function AdminModal({ 
   isOpen, 
@@ -123,43 +124,35 @@ export default function AdminModal({
 
     try {
       if (tab === 'overview') {
-        const res = await fetch('/api/admin/dashboard', { headers });
-        const data = await res.json();
-        if (res.ok) setMetrics(data.metrics);
+        const res = await safeFetchJson('/api/admin/dashboard', { headers });
+        if (res.ok && res.data?.metrics) setMetrics(res.data.metrics);
       } else if (tab === 'orders') {
         let url = '/api/admin/orders?limit=100';
         if (orderStatusFilter) url += `&status=${orderStatusFilter}`;
         if (orderSearch) url += `&search=${encodeURIComponent(orderSearch)}`;
-        const res = await fetch(url, { headers });
-        const data = await res.json();
-        if (res.ok) setOrders(data.orders || []);
+        const res = await safeFetchJson(url, { headers });
+        if (res.ok && res.data?.orders) setOrders(res.data.orders);
       } else if (tab === 'products') {
-        const res = await fetch('/api/admin/products', { headers });
-        const data = await res.json();
-        if (res.ok) setProducts(data.products || []);
+        const res = await safeFetchJson('/api/admin/products', { headers });
+        if (res.ok && res.data?.products) setProducts(res.data.products);
       } else if (tab === 'inventory') {
-        const resProd = await fetch('/api/admin/products', { headers });
-        const dataProd = await resProd.json();
-        if (resProd.ok) setProducts(dataProd.products || []);
+        const resProd = await safeFetchJson('/api/admin/products', { headers });
+        if (resProd.ok && resProd.data?.products) setProducts(resProd.data.products);
 
-        const resAdj = await fetch('/api/admin/inventory/adjustments', { headers });
-        const dataAdj = await resAdj.json();
-        if (resAdj.ok) setAdjustments(dataAdj.adjustments || []);
+        const resAdj = await safeFetchJson('/api/admin/inventory/adjustments', { headers });
+        if (resAdj.ok && resAdj.data?.adjustments) setAdjustments(resAdj.data.adjustments);
       } else if (tab === 'promotions') {
-        const res = await fetch('/api/admin/promotions', { headers });
-        const data = await res.json();
-        if (res.ok) setPromotions(data.promotions || []);
+        const res = await safeFetchJson('/api/admin/promotions', { headers });
+        if (res.ok && res.data?.promotions) setPromotions(res.data.promotions);
       } else if (tab === 'reviews') {
-        const res = await fetch('/api/admin/reviews', { headers });
-        const data = await res.json();
-        if (res.ok) setReviews(data.reviews || []);
+        const res = await safeFetchJson('/api/admin/reviews', { headers });
+        if (res.ok && res.data?.reviews) setReviews(res.data.reviews);
       } else if (tab === 'services') {
-        const res = await fetch('/api/admin/services/requests', { headers });
-        const data = await res.json();
-        if (res.ok) setServiceRequests(data.requests || []);
+        const res = await safeFetchJson('/api/admin/services/requests', { headers });
+        if (res.ok && res.data?.requests) setServiceRequests(res.data.requests);
       }
     } catch (err) {
-      console.error('Failed to load admin tab', err);
+      console.warn('Failed to load admin tab', err);
     } finally {
       setLoading(false);
     }
@@ -169,17 +162,16 @@ export default function AdminModal({
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await safeFetchJson('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password })
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Invalid credentials');
+      if (!res.ok || !res.data?.success) {
+        throw new Error(res.error || 'Invalid credentials');
       }
-      setAuthToken(data.token);
-      localStorage.setItem('accessories_admin_token', data.token);
+      setAuthToken(res.data.token);
+      localStorage.setItem('accessories_admin_token', res.data.token);
       setPassword('');
       setActiveTab('overview');
     } catch (err) {
@@ -253,7 +245,7 @@ export default function AdminModal({
     if (!stockAdjustmentTarget) return;
 
     try {
-      const res = await fetch(`/api/admin/products/${stockAdjustmentTarget.id}/adjust-stock`, {
+      const res = await safeFetchJson(`/api/admin/products/${stockAdjustmentTarget.id}/adjust-stock`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -264,8 +256,7 @@ export default function AdminModal({
           reason: stockReason
         })
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Stock adjustment failed');
+      if (!res.ok) throw new Error(res.error || 'Stock adjustment failed');
 
       setStockAdjustmentTarget(null);
       loadTabData('inventory');
@@ -279,10 +270,9 @@ export default function AdminModal({
     e.preventDefault();
     const isEdit = Boolean(editingProduct);
     const url = isEdit ? `/api/admin/products/${editingProduct.id}` : '/api/admin/products';
-    const method = isEdit ? 'PUT' : 'POST';
 
     try {
-      const res = await fetch(url, {
+      const res = await safeFetchJson(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -290,8 +280,7 @@ export default function AdminModal({
         },
         body: JSON.stringify(productFormData)
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to save product');
+      if (!res.ok) throw new Error(res.error || 'Failed to save product');
 
       setShowProductForm(false);
       setEditingProduct(null);
@@ -310,7 +299,7 @@ export default function AdminModal({
     reader.onload = async () => {
       const base64 = reader.result.split(',')[1];
       try {
-        const res = await fetch('/api/admin/upload', {
+        const res = await safeFetchJson('/api/admin/upload', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -322,11 +311,10 @@ export default function AdminModal({
             dataBase64: base64
           })
         });
-        const data = await res.json();
-        if (res.ok && data.url) {
-          setProductFormData(prev => ({ ...prev, image: data.url }));
+        if (res.ok && res.data?.url) {
+          setProductFormData(prev => ({ ...prev, image: res.data.url }));
         } else {
-          alert(data.error || 'Upload failed');
+          alert(res.error || 'Upload failed');
         }
       } catch (err) {
         alert('Upload failed');

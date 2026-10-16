@@ -1,6 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+
+// Load environment variables if .env exists
+try {
+  if (typeof process.loadEnvFile === 'function') {
+    const envPath = path.resolve(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+      process.loadEnvFile(envPath);
+    }
+  }
+} catch (e) {
+  // Ignored if already loaded
+}
 import {
   getAllProducts,
   getProductById,

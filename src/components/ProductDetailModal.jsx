@@ -14,6 +14,7 @@ import {
   MessageSquare,
   AlertCircle
 } from 'lucide-react';
+import { safeFetchJson } from '../utils/api';
 
 export default function ProductDetailModal({ 
   product, 
@@ -59,13 +60,12 @@ export default function ProductDetailModal({
   const loadReviews = async (productId) => {
     setLoadingReviews(true);
     try {
-      const res = await fetch(`/api/products/${productId}/reviews`);
-      const data = await res.json();
-      if (res.ok && data.reviews) {
-        setReviews(data.reviews);
+      const res = await safeFetchJson(`/api/products/${productId}/reviews`);
+      if (res.ok && res.data?.reviews) {
+        setReviews(res.data.reviews);
       }
     } catch (e) {
-      console.error('Failed to load reviews', e);
+      console.warn('Failed to load reviews', e);
     } finally {
       setLoadingReviews(false);
     }
@@ -84,7 +84,7 @@ export default function ProductDetailModal({
 
     const token = localStorage.getItem('accessories_customer_token');
     try {
-      const res = await fetch(`/api/products/${product.id}/reviews`, {
+      const res = await safeFetchJson(`/api/products/${product.id}/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,9 +95,9 @@ export default function ProductDetailModal({
           comment: reviewComment
         })
       });
-      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error(data.error || 'Review submission failed');
+        throw new Error(res.error || 'Review submission failed');
       }
 
       setReviewSuccess('Thank you! Your verified review has been submitted.');

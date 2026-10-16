@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, Sparkles, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { calculateOrderTotals, FREE_SHIPPING_THRESHOLD } from '../utils/pricing';
+import { safeFetchJson } from '../utils/api';
 
 export default function CartDrawer({ 
   isOpen, 
@@ -52,7 +53,7 @@ export default function CartDrawer({
   const revalidateWithServer = async () => {
     setIsValidating(true);
     try {
-      const res = await fetch('/api/cart/validate', {
+      const res = await safeFetchJson('/api/cart/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -65,21 +66,21 @@ export default function CartDrawer({
           }))
         })
       });
-      const data = await res.json();
-      if (res.ok && data.valid) {
-        if (data.warnings && data.warnings.length > 0) {
-          setRevalidationWarnings(data.warnings);
+
+      if (res.ok && res.data?.valid) {
+        if (res.data.warnings && res.data.warnings.length > 0) {
+          setRevalidationWarnings(res.data.warnings);
         } else {
           setRevalidationWarnings([]);
         }
 
         // If items were updated, notify parent
-        if (onRevalidateCart && data.items) {
-          onRevalidateCart(data.items);
+        if (onRevalidateCart && res.data.items) {
+          onRevalidateCart(res.data.items);
         }
       }
     } catch (e) {
-      console.error('Cart revalidation failed', e);
+      console.warn('Cart revalidation skipped:', e?.message);
     } finally {
       setIsValidating(false);
     }
