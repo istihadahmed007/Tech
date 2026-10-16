@@ -460,7 +460,7 @@ export default function App() {
 
   // Online Payment Initiated
   const handleInitiateOnlinePayment = (order, sessionData) => {
-    if (sessionData.provider === 'sandbox' || sessionData.provider === 'uddoktapay' || sessionData.isPaymently) {
+    if (sessionData.provider === 'sandbox' || sessionData.provider === 'uddoktapay' || sessionData.provider === 'paymently' || sessionData.isPaymently) {
       setPaymentSessionInfo({
         orderId: order.id,
         sessionId: sessionData.sessionId || sessionData.invoiceId,
