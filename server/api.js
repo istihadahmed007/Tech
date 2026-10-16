@@ -1119,7 +1119,11 @@ export async function handleApiRequest(req, res) {
       }
 
       const body = await parseBody();
-      if (verifyPassword(body.password)) {
+      const expectedEmail = process.env.ADMIN_EMAIL ? process.env.ADMIN_EMAIL.trim().toLowerCase() : null;
+      const providedEmail = body.username ? String(body.username).trim().toLowerCase() : '';
+      const emailMatches = !expectedEmail || providedEmail === expectedEmail;
+
+      if (emailMatches && verifyPassword(body.password)) {
         clearFailedAttempts(ip, 'admin_console');
         const token = generateAdminToken();
         return sendJson(200, { success: true, token });
