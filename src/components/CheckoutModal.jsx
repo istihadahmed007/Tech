@@ -21,14 +21,16 @@ import {
 } from 'lucide-react';
 import { calculateOrderTotals, FREE_SHIPPING_THRESHOLD } from '../utils/pricing';
 import { safeFetchJson } from '../utils/api';
+import './CheckoutModal.css';
 
 export const OFFICIAL_PAYMENTLY_URL = "https://vartualtutor.paymently.io/paymentlink/default/BDT";
 export const OFFICIAL_QR_CODE_URL = "/payment-link-BDT-2026-09-11.svg";
 
 export default function CheckoutModal({ 
-  isOpen, 
+  isOpen = true, 
+  isPage = false,
   onClose, 
-  cart, 
+  cart = [], 
   currentUser,
   onOrderSuccess,
   onInitiateOnlinePayment,
@@ -96,7 +98,6 @@ export default function CheckoutModal({
         }
       })
       .catch(() => {
-        // Fallback: Paymently verified portal is active
         setOnlineAvailable(true);
         setActiveGatewayName('paymently');
         setIsSandboxMode(false);
@@ -105,10 +106,10 @@ export default function CheckoutModal({
 
   // Escape-to-close
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen && !isPage) return;
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && !isSubmitting) {
+      if (e.key === 'Escape' && !isSubmitting && onClose) {
         e.preventDefault();
         onClose();
       }
@@ -123,9 +124,9 @@ export default function CheckoutModal({
       document.removeEventListener('keydown', handleKeyDown);
       clearTimeout(timer);
     };
-  }, [isOpen, isSubmitting, onClose]);
+  }, [isOpen, isPage, isSubmitting, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isPage) return null;
 
   // Pricing calculation
   const rawTotals = calculateOrderTotals(cart, {
@@ -178,69 +179,78 @@ export default function CheckoutModal({
           setPromoDiscount(0);
         }
       } else {
-        setErrorMessage(res.error || 'Invalid or expired promotion code');
+        setErrorMessage(res.error || 'Invalid promotion code');
         setAppliedPromo(null);
         setPromoDiscount(0);
       }
-    } catch (e) {
-      setErrorMessage('Failed to validate promotion code');
+    } catch (err) {
+      setErrorMessage('Failed to validate promotional code');
     }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoDiscount(0);
+    setPromoSuccessMsg('');
+    setPromoCodeInput('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (cart.length === 0) {
+      setErrorMessage('Your shopping cart is empty');
+      return;
+    }
+
     setErrorMessage('');
-
-    // Input validation
-    if (!customer.name.trim()) {
-      setErrorMessage('Please enter your full name for courier delivery.');
-      return;
-    }
-    const cleanPhone = customer.phone.replace(/[\s-]/g, '');
-    if (!cleanPhone.match(/^(?:\+88|88)?01[3-9]\d{8}$/)) {
-      setErrorMessage('Please enter a valid Bangladeshi mobile number (e.g. 01712345678 or +8801338652463).');
-      return;
-    }
-    if (!customer.address.trim()) {
-      setErrorMessage('Please enter your complete street delivery address.');
-      return;
-    }
-
     setIsSubmitting(true);
 
-    const token = localStorage.getItem('accessories_customer_token');
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const cleanPhone = customer.phone.replace(/[\s\-()]/g, '');
 
     try {
-      // 1. Attempt authoritative server order creation
+      const token = localStorage.getItem('accessories_customer_token');
+      const orderPayload = {
+        customer: {
+          ...customer,
+          phone: cleanPhone
+        },
+        items: cart.map(i => ({
+          id: i.id,
+          variantId: i.variant?.id,
+          quantity: i.quantity,
+          title: i.title,
+          price: i.price,
+          variant: i.variant
+        })),
+        deliveryAddress: {
+          division: customer.division,
+          outsideCity: customer.outsideCity,
+          address: customer.address,
+          instructions: customer.instructions
+        },
+        paymentMethod,
+        appliedPromoCode: appliedPromo?.code || null,
+        idempotencyKey
+      };
+
+      // 1. Submit order to backend API
       const response = await safeFetchJson('/api/orders', {
         method: 'POST',
-        headers,
-        body: JSON.stringify({
-          idempotencyKey,
-          customer: {
-            ...customer,
-            phone: cleanPhone
-          },
-          items: cart.map(i => ({
-            id: i.id,
-            quantity: i.quantity,
-            variant: i.variant?.name || 'Default'
-          })),
-          promoCode: appliedPromo?.code || null,
-          paymentMethod
-        })
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(orderPayload)
       });
 
       let createdOrder = null;
       let guestToken = null;
 
-      if (response.ok && response.data?.success) {
+      if (response.ok && response.data?.success && response.data.order) {
         createdOrder = response.data.order;
         guestToken = response.data.guestToken;
       } else {
-        // 2. Seamless client-side fallback for static deployments (Vercel, GitHub Pages, Netlify) or offline
+        // 2. Seamless client-side fallback for static deployments or offline
         const clientOrderId = 'AGY-' + Math.floor(100000 + Math.random() * 900000);
         guestToken = 'gt_' + Date.now().toString(36) + Math.random().toString(36).slice(2);
         createdOrder = {
@@ -273,8 +283,8 @@ export default function CheckoutModal({
 
       // 3. Routing based on selected payment method
       if (paymentMethod === 'cod') {
+        if (onClose) onClose();
         onOrderSuccess(createdOrder, guestToken);
-        onClose();
       } else {
         // Online payment: initiate gateway session with Paymently
         let initData = null;
@@ -307,11 +317,10 @@ export default function CheckoutModal({
           };
         }
 
-        onClose();
+        if (onClose) onClose();
         onInitiateOnlinePayment(createdOrder, initData);
       }
     } catch (err) {
-      // Guaranteed safety: If any unexpected error occurs, complete the order locally so customer never gets blocked!
       console.warn('[Checkout Fallback]', err);
       const clientOrderId = 'AGY-' + Math.floor(100000 + Math.random() * 900000);
       const fallbackOrder = {
@@ -335,10 +344,10 @@ export default function CheckoutModal({
       };
 
       if (paymentMethod === 'cod') {
+        if (onClose) onClose();
         onOrderSuccess(fallbackOrder, fallbackOrder.guestToken);
-        onClose();
       } else {
-        onClose();
+        if (onClose) onClose();
         onInitiateOnlinePayment(fallbackOrder, {
           success: true,
           provider: 'paymently',
@@ -355,545 +364,467 @@ export default function CheckoutModal({
     }
   };
 
-  return (
-    <div 
-      className="modal-overlay" 
-      onClick={!isSubmitting ? onClose : undefined}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="amazon-checkout-header"
-      style={{ zIndex: 9999 }}
-    >
-      <div 
-        className="relative w-full max-w-5xl max-h-[94vh] overflow-y-auto rounded-2xl bg-[#EAEDED] border border-[#D5D9D9] shadow-2xl animate-fadeIn text-[#0F1111]"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          boxShadow: '0 25px 65px -15px rgba(15, 17, 17, 0.40)'
-        }}
-      >
-        {/* Amazon-style Checkout Header */}
-        <header className="sticky top-0 z-30 bg-[#FFFFFF] border-b border-[#D5D9D9] px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-xs">
-          {/* Brand Logo & Amazon-style Identity */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 cursor-pointer" onClick={onClose}>
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-[#0F1111]">
-                Glacial<span className="text-[#FF9900]">Tech</span>
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-[#F0F2F2] font-semibold text-[#565959] border border-[#D5D9D9]">
-                Checkout
-              </span>
-            </div>
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#565959] pl-3 border-l border-[#D5D9D9]">
-              <Lock size={13} className="text-[#007600]" />
-              <span className="font-semibold text-[#007600]">100% Secure 256-Bit SSL Checkout</span>
-            </div>
+  // The Inner Checkout Content Card
+  const checkoutCardContent = (
+    <div className="checkout-modal-card">
+      {/* Amazon-style Checkout Header */}
+      <header className="checkout-header">
+        <div className="checkout-header-logo" onClick={onClose}>
+          <span className="checkout-header-brand">
+            Glacial<span>Tech</span>
+          </span>
+          <span className="checkout-header-tag">
+            Checkout
+          </span>
+          <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#565959] pl-3 border-l border-[#D5D9D9]">
+            <Lock size={13} className="text-[#007600]" />
+            <span className="font-semibold text-[#007600]">100% Secure 256-Bit SSL Checkout</span>
           </div>
+        </div>
 
-          {/* Stepper Progress */}
-          <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-[#565959]">
-            <span className="text-[#C45500] font-bold">1. Delivery</span>
-            <ChevronRight size={14} className="text-[#888C8C]" />
-            <span className="text-[#C45500] font-bold">2. Payment</span>
-            <ChevronRight size={14} className="text-[#888C8C]" />
-            <span className="text-[#565959]">3. Confirmation</span>
-          </div>
+        {/* Stepper Progress */}
+        <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-[#565959]">
+          <span className="text-[#C45500] font-bold">1. Delivery</span>
+          <ChevronRight size={14} className="text-[#888C8C]" />
+          <span className="text-[#C45500] font-bold">2. Payment</span>
+          <ChevronRight size={14} className="text-[#888C8C]" />
+          <span className="text-[#565959]">3. Confirmation</span>
+        </div>
 
-          {/* Close / Return Button */}
+        {/* Return Button */}
+        {onClose && (
           <button
             ref={closeButtonRef}
             onClick={onClose}
             disabled={isSubmitting}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#007185] hover:text-[#C45500] hover:bg-[#F7FAFA] transition-colors cursor-pointer"
+            className="checkout-close-btn"
             aria-label="Return to Store"
           >
             <span>Return to Store</span>
             <X size={16} />
           </button>
-        </header>
-
-        {/* Free Delivery Qualification Banner */}
-        {isFreeDelivery ? (
-          <div className="bg-[#007600] text-white px-4 sm:px-8 py-2 text-xs font-bold flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} />
-              <span>Your order qualifies for <strong>FREE Fast-Track Delivery</strong> across Bangladesh!</span>
-            </div>
-            <span className="hidden sm:inline-block bg-white/20 px-2 py-0.5 rounded text-[11px]">Save ৳60 - ৳120</span>
-          </div>
-        ) : (
-          <div className="bg-[#FFF4E5] text-[#C45500] border-b border-[#F5D8A0] px-4 sm:px-8 py-2 text-xs font-medium flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Truck size={15} />
-              <span>Add <strong>{currencySymbol}{neededForFree}</strong> more to your cart for <strong>FREE Delivery</strong>!</span>
-            </div>
-            <span className="font-bold">Threshold: {currencySymbol}{FREE_SHIPPING_THRESHOLD}</span>
-          </div>
         )}
+      </header>
 
-        {/* Error Alert Banner */}
-        {errorMessage && (
-          <div 
-            className="mx-4 sm:mx-8 mt-4 p-3.5 rounded-xl bg-[#FFF4F4] border border-[#DE3618] text-[#C40000] text-xs font-medium flex items-start gap-2.5 animate-fadeIn"
-            role="alert"
-          >
-            <AlertCircle size={16} className="shrink-0 mt-0.5 text-[#DE3618]" />
-            <div>
-              <p className="font-bold text-[#DE3618]">There was a problem with your order</p>
-              <p>{errorMessage}</p>
-            </div>
+      {/* Free Delivery Qualification Banner */}
+      {isFreeDelivery ? (
+        <div className="checkout-free-ship-banner">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={16} />
+            <span>Your order qualifies for <strong>FREE Fast-Track Delivery</strong> across Bangladesh!</span>
           </div>
-        )}
+          <span className="hidden sm:inline-block bg-white/20 px-2 py-0.5 rounded text-[11px]">Save ৳60 - ৳120</span>
+        </div>
+      ) : (
+        <div className="checkout-free-ship-banner is-under">
+          <div className="flex items-center gap-2">
+            <Truck size={15} />
+            <span>Add <strong>{currencySymbol}{neededForFree}</strong> more to your cart for <strong>FREE Delivery</strong>!</span>
+          </div>
+          <span className="font-bold">Threshold: {currencySymbol}{FREE_SHIPPING_THRESHOLD}</span>
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit} className="p-4 sm:p-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* Error Alert Banner */}
+      {errorMessage && (
+        <div className="checkout-error-alert" role="alert">
+          <AlertCircle size={16} className="shrink-0 mt-0.5 text-[#DE3618]" />
+          <div>
+            <p className="font-bold">There was a problem with your order</p>
+            <p>{errorMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Main Checkout Form */}
+      <form onSubmit={handleSubmit} className="checkout-body">
+        <div className="checkout-grid">
+          
+          {/* Left Column: Form Steps */}
+          <div className="checkout-steps-col">
             
-            {/* Left Column: Amazon-style Checkout Accordion / Steps (8 Cols) */}
-            <div className="lg:col-span-8 space-y-5">
-              
-              {/* STEP 1: Delivery Information */}
-              <div className="bg-[#FFFFFF] rounded-2xl border border-[#D5D9D9] p-5 sm:p-6 shadow-xs">
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E7E7E7]">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-full bg-[#0F1111] text-white text-xs font-bold flex items-center justify-center">
-                      1
-                    </span>
-                    <h2 className="text-base sm:text-lg font-bold text-[#0F1111]">
-                      Delivery Address & Contact
-                    </h2>
-                  </div>
-                  <span className="text-xs text-[#565959]">
-                    {currentUser ? `Saved for ${currentUser.name}` : 'Instant Guest Checkout'}
-                  </span>
+            {/* STEP 1: Delivery Information */}
+            <div className="checkout-card">
+              <div className="checkout-step-header">
+                <div className="checkout-step-badge-wrap">
+                  <span className="checkout-step-badge">1</span>
+                  <h2 className="checkout-step-title">Delivery Address & Contact</h2>
                 </div>
+                <span className="text-xs text-[#565959]">
+                  {currentUser ? `Saved for ${currentUser.name}` : 'Instant Guest Checkout'}
+                </span>
+              </div>
 
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Full Name */}
-                    <div>
-                      <label className="block text-xs font-bold text-[#0F1111] mb-1.5">
-                        Full Name <span className="text-[#DE3618]">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        autoComplete="name"
-                        placeholder="e.g. Istihad Ahmed"
-                        value={customer.name}
-                        onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-[#888C8C] focus:border-[#E77600] focus:ring-2 focus:ring-[#E77600]/25 outline-hidden text-xs text-[#0F1111] bg-white transition-all"
-                      />
-                    </div>
-
-                    {/* Phone Number */}
-                    <div>
-                      <label className="block text-xs font-bold text-[#0F1111] mb-1.5">
-                        Phone Number (Bangladesh) <span className="text-[#DE3618]">*</span>
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-[#565959]">
-                          🇧🇩 +88
-                        </span>
-                        <input
-                          type="tel"
-                          required
-                          autoComplete="tel"
-                          placeholder="01XXXXXXXXX"
-                          value={customer.phone}
-                          onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
-                          className="w-full pl-16 pr-3.5 py-2.5 rounded-lg border border-[#888C8C] focus:border-[#E77600] focus:ring-2 focus:ring-[#E77600]/25 outline-hidden text-xs font-mono text-[#0F1111] bg-white transition-all"
-                        />
-                      </div>
-                      <p className="text-[11px] text-[#565959] mt-1">
-                        Used by courier for delivery arrival updates and SMS receipt.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Division / City Region */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-[#0F1111] mb-1.5">
-                        Division / Delivery Region <span className="text-[#DE3618]">*</span>
-                      </label>
-                      <select
-                        value={customer.division}
-                        onChange={(e) => setCustomer({ ...customer, division: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-[#888C8C] focus:border-[#E77600] focus:ring-2 focus:ring-[#E77600]/25 outline-hidden text-xs text-[#0F1111] bg-white transition-all cursor-pointer font-medium"
-                      >
-                        <option value="Dhaka">Dhaka Division (৳60 delivery)</option>
-                        <option value="Chittagong">Chittagong Division (৳120 delivery)</option>
-                        <option value="Sylhet">Sylhet Division (৳120 delivery)</option>
-                        <option value="Rajshahi">Rajshahi Division (৳120 delivery)</option>
-                        <option value="Khulna">Khulna Division (৳120 delivery)</option>
-                        <option value="Barisal">Barisal Division (৳120 delivery)</option>
-                        <option value="Rangpur">Rangpur Division (৳120 delivery)</option>
-                        <option value="Mymensingh">Mymensingh Division (৳120 delivery)</option>
-                      </select>
-                    </div>
-
-                    {/* Suburban Checkbox */}
-                    <div className="flex items-center sm:pt-6">
-                      <label className="flex items-center gap-2.5 cursor-pointer text-xs font-medium text-[#0F1111] bg-[#F7FAFA] border border-[#D5D9D9] p-2.5 rounded-lg w-full hover:bg-[#F0F2F2]">
-                        <input
-                          type="checkbox"
-                          checked={customer.outsideCity}
-                          onChange={(e) => setCustomer({ ...customer, outsideCity: e.target.checked })}
-                          className="w-4 h-4 rounded text-[#E77600] focus:ring-[#E77600] border-[#888C8C]"
-                        />
-                        <span>Suburban / Remote Upazila (+৳60)</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Street Address */}
-                  <div>
-                    <label className="block text-xs font-bold text-[#0F1111] mb-1.5">
-                      Detailed Street Address <span className="text-[#DE3618]">*</span>
-                    </label>
-                    <textarea
-                      required
-                      rows={2}
-                      placeholder="e.g. Hold No 180, Dingadoba Bank Colony, Rajpara Thana, Near Central Mosque"
-                      value={customer.address}
-                      onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-[#888C8C] focus:border-[#E77600] focus:ring-2 focus:ring-[#E77600]/25 outline-hidden text-xs text-[#0F1111] bg-white transition-all"
-                    />
-                  </div>
-
-                  {/* Optional Delivery Instructions */}
-                  <div>
-                    <label className="block text-xs font-semibold text-[#565959] mb-1">
-                      Delivery Instructions (Optional)
+              <div>
+                <div className="checkout-input-row">
+                  {/* Full Name */}
+                  <div className="checkout-field">
+                    <label className="checkout-label">
+                      Full Name <span className="checkout-label-req">*</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Call before coming, leave at reception"
-                      value={customer.instructions}
-                      onChange={(e) => setCustomer({ ...customer, instructions: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-lg border border-[#D5D9D9] focus:border-[#E77600] outline-hidden text-xs text-[#0F1111] bg-white"
+                      required
+                      autoComplete="name"
+                      placeholder="e.g. Istihad Ahmed"
+                      value={customer.name}
+                      onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                      className="checkout-input"
                     />
                   </div>
-                </div>
-              </div>
 
-              {/* STEP 2: Payment Method (Amazon-style clean cards) */}
-              <div className="bg-[#FFFFFF] rounded-2xl border border-[#D5D9D9] p-5 sm:p-6 shadow-xs">
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E7E7E7]">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-full bg-[#0F1111] text-white text-xs font-bold flex items-center justify-center">
-                      2
-                    </span>
-                    <h2 className="text-base sm:text-lg font-bold text-[#0F1111]">
-                      Select Payment Method
-                    </h2>
-                  </div>
-                  <span className="text-xs font-bold text-[#007600] flex items-center gap-1">
-                    <ShieldCheck size={14} />
-                    Verified & Encrypted
-                  </span>
-                </div>
-
-                <div className="space-y-3.5">
-                  {/* OPTION 1: Paymently Live Gateway (bKash / Nagad / Cards) - RECOMMENDED */}
-                  <label 
-                    className={`block p-4 sm:p-5 rounded-xl border-2 transition-all cursor-pointer ${
-                      paymentMethod === 'online' 
-                        ? 'border-[#E77600] bg-[#FDF8F3] shadow-xs' 
-                        : 'border-[#D5D9D9] bg-white hover:border-[#888C8C]'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
-                        <input
-                          type="radio"
-                          name="amazonPaymentMethod"
-                          value="online"
-                          checked={paymentMethod === 'online'}
-                          onChange={() => setPaymentMethod('online')}
-                          className="w-4 h-4 mt-0.5 text-[#E77600] focus:ring-[#E77600] border-[#888C8C]"
-                        />
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                            <span className="font-bold text-sm text-[#0F1111]">
-                              Online Payment via Paymently Portal
-                            </span>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-[#FFF4E5] text-[#C45500] border border-[#F5D8A0]">
-                              Recommended &bull; Fast Track
-                            </span>
-                          </div>
-
-                          <p className="text-xs text-[#565959] leading-relaxed mb-3">
-                            Instant automated verification via verified Paymently gateway (<code className="text-[#007185] font-mono">vartualtutor.paymently.io</code>).
-                            Pay securely with your mobile banking or credit/debit card.
-                          </p>
-
-                          {/* Brand Chips: bKash, Nagad, Rocket, Upay, Visa, Mastercard */}
-                          <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                            <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#E2136E] text-white">
-                              bKash
-                            </span>
-                            <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#F7941D] text-white">
-                              Nagad
-                            </span>
-                            <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#8C3494] text-white">
-                              Rocket
-                            </span>
-                            <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#005BAA] text-white">
-                              Upay
-                            </span>
-                            <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#1A1F71] text-white">
-                              Visa / Mastercard
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="hidden sm:flex flex-col items-end shrink-0">
-                        <span className="text-xs font-bold text-[#007600]">Zero Surcharge</span>
-                        <span className="text-[11px] text-[#565959]">Instant Receipt</span>
-                      </div>
-                    </div>
-                  </label>
-
-                  {/* OPTION 2: Cash on Delivery (COD) */}
-                  <label 
-                    className={`block p-4 sm:p-5 rounded-xl border-2 transition-all cursor-pointer ${
-                      paymentMethod === 'cod' 
-                        ? 'border-[#E77600] bg-[#FDF8F3] shadow-xs' 
-                        : 'border-[#D5D9D9] bg-white hover:border-[#888C8C]'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-3">
-                        <input
-                          type="radio"
-                          name="amazonPaymentMethod"
-                          value="cod"
-                          checked={paymentMethod === 'cod'}
-                          onChange={() => setPaymentMethod('cod')}
-                          className="w-4 h-4 mt-0.5 text-[#E77600] focus:ring-[#E77600] border-[#888C8C]"
-                        />
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-sm text-[#0F1111]">
-                              Cash on Delivery (COD)
-                            </span>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F0F2F2] text-[#565959] border border-[#D5D9D9]">
-                              Doorstep Collection
-                            </span>
-                          </div>
-                          <p className="text-xs text-[#565959] leading-relaxed">
-                            Pay in Bangladeshi Taka ({currencySymbol}) directly to the courier rider upon physical inspection and handover.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="hidden sm:flex flex-col items-end shrink-0">
-                        <Truck size={18} className="text-[#565959]" />
-                      </div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              {/* STEP 3: Review Items & Delivery Details (Amazon-style Item Preview) */}
-              <div className="bg-[#FFFFFF] rounded-2xl border border-[#D5D9D9] p-5 sm:p-6 shadow-xs">
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#E7E7E7]">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-6 h-6 rounded-full bg-[#0F1111] text-white text-xs font-bold flex items-center justify-center">
-                      3
-                    </span>
-                    <h2 className="text-base sm:text-lg font-bold text-[#0F1111]">
-                      Review Items and Delivery
-                    </h2>
-                  </div>
-                  <span className="text-xs font-bold text-[#007600]">
-                    Guaranteed Dispatch in 24 Hrs
-                  </span>
-                </div>
-
-                {/* Items List */}
-                <div className="divide-y divide-[#E7E7E7]">
-                  {cart.map((item, idx) => (
-                    <div key={`${item.id}-${item.variant?.id || idx}`} className="py-3.5 first:pt-0 last:pb-0 flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-xl bg-[#F8FAFC] border border-[#D5D9D9] overflow-hidden shrink-0 flex items-center justify-center p-1">
-                        <img 
-                          src={item.image || '/placeholder.png'} 
-                          alt={item.title} 
-                          className="w-full h-full object-contain"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-xs font-bold text-[#0F1111] truncate">
-                          {item.title}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[#565959]">
-                          <span>Variant: <strong>{item.variant?.name || 'Standard'}</strong></span>
-                          <span>&bull;</span>
-                          <span>Qty: <strong>{item.quantity}</strong></span>
-                        </div>
-                        <span className="text-xs font-bold text-[#007600] mt-1 inline-block">
-                          In Stock & Ready for Shipping
-                        </span>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className="text-sm font-extrabold text-[#0F1111]">
-                          {currencySymbol}{(item.price * item.quantity).toLocaleString()}
-                        </span>
-                        <div className="text-[11px] text-[#565959]">
-                          {currencySymbol}{item.price.toLocaleString()} each
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Promotional Code / Voucher Accordion */}
-              <div className="bg-[#FFFFFF] rounded-2xl border border-[#D5D9D9] p-4 sm:p-5 shadow-xs">
-                <div 
-                  className="flex items-center justify-between cursor-pointer select-none"
-                  onClick={() => setShowPromoBox(!showPromoBox)}
-                >
-                  <div className="flex items-center gap-2">
-                    <Tag size={16} className="text-[#C45500]" />
-                    <span className="text-xs font-bold text-[#007185] hover:text-[#C45500]">
-                      {appliedPromo ? `Coupon Applied: ${appliedPromo.code}` : 'Add a gift card, promotion code or voucher'}
-                    </span>
-                  </div>
-                  <span className="text-xs font-bold text-[#007185]">
-                    {showPromoBox ? 'Hide' : 'Enter Code'}
-                  </span>
-                </div>
-
-                {showPromoBox && (
-                  <div className="mt-3 pt-3 border-t border-[#E7E7E7] animate-fadeIn">
-                    <div className="flex gap-2">
+                  {/* Phone Number */}
+                  <div className="checkout-field">
+                    <label className="checkout-label">
+                      Phone Number (Bangladesh) <span className="checkout-label-req">*</span>
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', fontWeight: 'bold', color: '#565959' }}>
+                        🇧🇩 +88
+                      </span>
                       <input
-                        type="text"
-                        placeholder="e.g. TECH10, WINTER10, TUTOR100"
-                        value={promoCodeInput}
-                        onChange={(e) => setPromoCodeInput(e.target.value)}
-                        className="flex-1 px-3 py-2 rounded-lg border border-[#888C8C] focus:border-[#E77600] outline-hidden text-xs font-mono uppercase bg-white"
+                        type="tel"
+                        required
+                        autoComplete="tel"
+                        placeholder="01XXXXXXXXX"
+                        value={customer.phone}
+                        onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                        className="checkout-input"
+                        style={{ paddingLeft: '64px', fontFamily: 'monospace' }}
                       />
-                      <button
-                        type="button"
-                        onClick={handleApplyPromo}
-                        className="px-4 py-2 rounded-lg bg-[#F0F2F2] hover:bg-[#E3E6E6] border border-[#D5D9D9] text-xs font-bold text-[#0F1111] transition-colors cursor-pointer"
-                      >
-                        Apply
-                      </button>
                     </div>
-
-                    {promoSuccessMsg && (
-                      <p className="text-xs font-bold text-[#007600] mt-2 flex items-center gap-1.5">
-                        <Check size={14} />
-                        {promoSuccessMsg}
-                      </p>
-                    )}
                   </div>
-                )}
-              </div>
+                </div>
 
+                {/* Division & Outside City Checkbox */}
+                <div className="checkout-input-row">
+                  <div className="checkout-field">
+                    <label className="checkout-label">
+                      Division / Delivery Region <span className="checkout-label-req">*</span>
+                    </label>
+                    <select
+                      value={customer.division}
+                      onChange={(e) => setCustomer({ ...customer, division: e.target.value })}
+                      className="checkout-input"
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <option value="Dhaka">Dhaka Division (৳60 delivery)</option>
+                      <option value="Chittagong">Chittagong Division (৳120 delivery)</option>
+                      <option value="Sylhet">Sylhet Division (৳120 delivery)</option>
+                      <option value="Rajshahi">Rajshahi Division (৳120 delivery)</option>
+                      <option value="Khulna">Khulna Division (৳120 delivery)</option>
+                      <option value="Barisal">Barisal Division (৳120 delivery)</option>
+                      <option value="Rangpur">Rangpur Division (৳120 delivery)</option>
+                      <option value="Mymensingh">Mymensingh Division (৳120 delivery)</option>
+                    </select>
+                  </div>
+
+                  <div className="checkout-field" style={{ justifyContent: 'center', paddingTop: '18px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#0F1111' }}>
+                      <input
+                        type="checkbox"
+                        checked={customer.outsideCity}
+                        onChange={(e) => setCustomer({ ...customer, outsideCity: e.target.checked })}
+                        style={{ width: '16px', height: '16px', accentColor: '#E77600' }}
+                      />
+                      <span>Suburban / Remote Upazila (+৳60)</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Street Address */}
+                <div className="checkout-field" style={{ marginBottom: '14px' }}>
+                  <label className="checkout-label">
+                    Detailed Street Address <span className="checkout-label-req">*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={2}
+                    placeholder="e.g. Hold No 180, Dingadoba Bank Colony, Rajpara Thana, Near Central Mosque"
+                    value={customer.address}
+                    onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
+                    className="checkout-input checkout-textarea"
+                  />
+                </div>
+
+                {/* Optional Instructions */}
+                <div className="checkout-field">
+                  <label className="checkout-label" style={{ color: '#565959' }}>
+                    Delivery Instructions (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Call before coming, leave at reception"
+                    value={customer.instructions}
+                    onChange={(e) => setCustomer({ ...customer, instructions: e.target.value })}
+                    className="checkout-input"
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Right Column: Amazon-style Sticky Order Summary (4 Cols) */}
-            <div className="lg:col-span-4 lg:sticky lg:top-20 space-y-4">
-              <div className="bg-[#FFFFFF] rounded-2xl border border-[#D5D9D9] p-5 sm:p-6 shadow-sm">
-                
-                {/* Main Amazon Place Order Button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3.5 px-4 rounded-full bg-[#FFD814] hover:bg-[#F7CA00] active:bg-[#F0B800] border border-[#FCD200] text-[#0F1111] font-bold text-sm shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            {/* STEP 2: Select Payment Method */}
+            <div className="checkout-card">
+              <div className="checkout-step-header">
+                <div className="checkout-step-badge-wrap">
+                  <span className="checkout-step-badge">2</span>
+                  <h2 className="checkout-step-title">Select Payment Method</h2>
+                </div>
+                <span className="text-xs font-bold text-[#007600] flex items-center gap-1">
+                  <ShieldCheck size={14} />
+                  Verified & Encrypted
+                </span>
+              </div>
+
+              <div>
+                {/* OPTION 1: Paymently Live Gateway (bKash / Nagad / Cards) - RECOMMENDED */}
+                <label 
+                  className={`checkout-payment-option ${paymentMethod === 'online' ? 'is-active' : ''}`}
                 >
-                  {isSubmitting ? (
-                    <span className="w-5 h-5 border-2 border-[#0F1111] border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      <span>
-                        {paymentMethod === 'online' ? 'Proceed to Pay with Paymently' : 'Place Your Order'}
-                      </span>
-                      <ArrowRight size={16} />
-                    </>
-                  )}
-                </button>
+                  <div className="checkout-radio-flex">
+                    <input
+                      type="radio"
+                      name="amazonPaymentMethod"
+                      value="online"
+                      checked={paymentMethod === 'online'}
+                      onChange={() => setPaymentMethod('online')}
+                      className="checkout-radio-input"
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <span className="checkout-method-name">Online Payment via Paymently Portal</span>
+                        <span className="checkout-method-badge">Recommended &bull; Fast Track</span>
+                      </div>
 
-                <p className="text-[11px] text-[#565959] text-center mt-2.5 leading-tight">
-                  By placing your order, you agree to Glacial Tech's <span className="text-[#007185] underline cursor-pointer">Privacy Notice</span> and <span className="text-[#007185] underline cursor-pointer">Conditions of Use</span>.
-                </p>
+                      <p className="checkout-method-desc">
+                        Instant automated verification via verified Paymently gateway (<code style={{ color: '#007185', fontFamily: 'monospace' }}>vartualtutor.paymently.io</code>). Pay securely with your mobile banking or credit/debit card.
+                      </p>
 
-                <div className="my-4 border-t border-[#E7E7E7]" />
-
-                {/* Order Summary Breakdown */}
-                <h3 className="text-sm font-bold text-[#0F1111] mb-3">
-                  Order Summary
-                </h3>
-
-                <div className="space-y-2 text-xs text-[#0F1111]">
-                  <div className="flex justify-between">
-                    <span className="text-[#565959]">Items ({cart.reduce((s, i) => s + i.quantity, 0)}):</span>
-                    <span className="font-semibold">{currencySymbol}{rawTotals.subtotal.toLocaleString()}</span>
+                      {/* Brand Chips */}
+                      <div className="checkout-brand-chips">
+                        <span className="checkout-brand-chip" style={{ backgroundColor: '#E2136E' }}>bKash</span>
+                        <span className="checkout-brand-chip" style={{ backgroundColor: '#F7941D' }}>Nagad</span>
+                        <span className="checkout-brand-chip" style={{ backgroundColor: '#8C3494' }}>Rocket</span>
+                        <span className="checkout-brand-chip" style={{ backgroundColor: '#005BAA' }}>Upay</span>
+                        <span className="checkout-brand-chip" style={{ backgroundColor: '#1A1F71' }}>Visa / Mastercard</span>
+                      </div>
+                    </div>
                   </div>
+                </label>
 
-                  <div className="flex justify-between">
-                    <span className="text-[#565959]">Shipping & handling:</span>
-                    <span>
-                      {isFreeDelivery ? (
-                        <span className="text-[#007600] font-bold">FREE</span>
-                      ) : (
-                        <span className="font-semibold">{currencySymbol}{deliveryFee}</span>
-                      )}
-                    </span>
+                {/* OPTION 2: Cash on Delivery (COD) */}
+                <label 
+                  className={`checkout-payment-option ${paymentMethod === 'cod' ? 'is-active' : ''}`}
+                >
+                  <div className="checkout-radio-flex">
+                    <input
+                      type="radio"
+                      name="amazonPaymentMethod"
+                      value="cod"
+                      checked={paymentMethod === 'cod'}
+                      onChange={() => setPaymentMethod('cod')}
+                      className="checkout-radio-input"
+                    />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span className="checkout-method-name">Cash on Delivery (COD)</span>
+                        <span className="checkout-method-badge" style={{ background: '#F0F2F2', color: '#565959', borderColor: '#D5D9D9' }}>Doorstep Collection</span>
+                      </div>
+                      <p className="checkout-method-desc">
+                        Pay in Bangladeshi Taka ({currencySymbol}) directly to the courier rider upon physical inspection and handover.
+                      </p>
+                    </div>
                   </div>
+                </label>
+              </div>
+            </div>
 
-                  {promoDiscount > 0 && (
-                    <div className="flex justify-between text-[#007600] font-bold">
-                      <span>Promotion Discount:</span>
-                      <span>-{currencySymbol}{promoDiscount.toLocaleString()}</span>
+            {/* STEP 3: Review Items & Delivery */}
+            <div className="checkout-card">
+              <div className="checkout-step-header">
+                <div className="checkout-step-badge-wrap">
+                  <span className="checkout-step-badge">3</span>
+                  <h2 className="checkout-step-title">Review Items and Delivery</h2>
+                </div>
+                <span className="text-xs font-bold text-[#007600]">
+                  Guaranteed Dispatch in 24 Hrs
+                </span>
+              </div>
+
+              <div>
+                {cart.map((item, idx) => (
+                  <div key={`${item.id}-${item.variant?.id || idx}`} className="checkout-item-preview-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+                      <img 
+                        src={item.image || '/placeholder.png'} 
+                        alt={item.title} 
+                        className="checkout-item-preview-thumb"
+                        loading="lazy"
+                      />
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#0F1111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {item.title}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#565959', marginTop: '2px' }}>
+                          Qty: <strong>{item.quantity}</strong> &bull; Variant: <strong>{item.variant?.name || 'Standard'}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontSize: '14px', fontWeight: '800', color: '#0F1111' }}>
+                        {currencySymbol}{(item.price * item.quantity).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Promotion Voucher Box */}
+            <div className="checkout-card">
+              <div 
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+                onClick={() => setShowPromoBox(!showPromoBox)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Tag size={16} className="text-[#C45500]" />
+                  <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#0F1111' }}>
+                    {appliedPromo ? `Promo Code Applied: ${appliedPromo.code}` : 'Apply Gift Card or Promotional Voucher'}
+                  </span>
+                </div>
+                <span style={{ fontSize: '12px', color: '#007185' }}>
+                  {showPromoBox ? 'Hide' : 'Enter Code'}
+                </span>
+              </div>
+
+              {showPromoBox && (
+                <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #E7E7E7' }}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="text"
+                      placeholder="Enter promo code (e.g. TECH10)"
+                      value={promoCodeInput}
+                      onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                      className="checkout-input"
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyPromo}
+                      style={{ padding: '8px 16px', background: '#F0F2F2', border: '1px solid #D5D9D9', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {promoSuccessMsg && (
+                    <div style={{ color: '#007600', fontSize: '12px', fontWeight: 'bold', marginTop: '8px' }}>
+                      {promoSuccessMsg}
                     </div>
                   )}
-
-                  <div className="flex justify-between text-[#565959]">
-                    <span>Estimated Tax (VAT):</span>
-                    <span>Included (৳0)</span>
-                  </div>
-
-                  <div className="pt-3 border-t border-[#E7E7E7] flex justify-between items-baseline">
-                    <span className="text-base font-bold text-[#B12704]">Order Total:</span>
-                    <span className="text-xl font-extrabold text-[#B12704]">
-                      {currencySymbol}{grandTotal.toLocaleString()}
-                    </span>
-                  </div>
                 </div>
-
-                {/* Promotion Savings Callout */}
-                {promoDiscount > 0 && (
-                  <div className="mt-3.5 p-2 rounded-lg bg-[#E6F4EA] border border-[#CEEAD6] text-center text-xs font-bold text-[#137333]">
-                    You are saving {currencySymbol}{promoDiscount.toLocaleString()} on this order!
-                  </div>
-                )}
-              </div>
-
-              {/* Amazon Trust Guarantee Box */}
-              <div className="bg-[#FFFFFF] rounded-2xl border border-[#D5D9D9] p-4 text-xs text-[#565959] space-y-2.5">
-                <div className="flex items-center gap-2 font-bold text-[#0F1111]">
-                  <ShieldCheck size={16} className="text-[#007600]" />
-                  <span>Amazon-Standard Buying Protection</span>
-                </div>
-                <ul className="space-y-1.5 text-[11px] list-disc list-inside text-[#565959]">
-                  <li>100% Original & Verified Products</li>
-                  <li>Fast Courier Handover in Dhaka & All Districts</li>
-                  <li>7-Day Replacement Guarantee</li>
-                  <li>Dedicated Helpline: <strong>+880 1700-000000</strong></li>
-                </ul>
-              </div>
-
+              )}
             </div>
 
           </div>
-        </form>
+
+          {/* Right Column: Order Summary & Place Order Button */}
+          <div className="checkout-summary-col">
+            <div className="checkout-card">
+              {/* Main Submit Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="checkout-btn-order"
+                aria-label="Submit Order"
+              >
+                {isSubmitting ? (
+                  <span style={{ width: '20px', height: '20px', border: '2px solid #0F1111', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                ) : (
+                  <>
+                    <span>
+                      {paymentMethod === 'online' ? 'Proceed to Pay with Paymently' : 'Place Your Order'}
+                    </span>
+                    <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+
+              <p style={{ fontSize: '11px', color: '#565959', textAlign: 'center', marginTop: '10px' }}>
+                By placing your order, you agree to Glacial Tech's privacy notice and conditions of use.
+              </p>
+
+              {/* Price Breakdown */}
+              <div className="checkout-price-breakdown">
+                <div className="checkout-price-row">
+                  <span>Items Subtotal:</span>
+                  <span>{currencySymbol}{rawTotals.subtotal.toLocaleString()}</span>
+                </div>
+
+                <div className="checkout-price-row">
+                  <span>Delivery & Handling:</span>
+                  <span>
+                    {deliveryFee === 0 ? (
+                      <strong style={{ color: '#007600' }}>FREE</strong>
+                    ) : (
+                      `${currencySymbol}${deliveryFee.toLocaleString()}`
+                    )}
+                  </span>
+                </div>
+
+                {promoDiscount > 0 && (
+                  <div className="checkout-price-row" style={{ color: '#007600', fontWeight: 'bold' }}>
+                    <span>Promotion Discount:</span>
+                    <span>-{currencySymbol}{promoDiscount.toLocaleString()}</span>
+                  </div>
+                )}
+
+                <div className="checkout-price-row total-row">
+                  <span>Order Total:</span>
+                  <span>{currencySymbol}{grandTotal.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Trust Box */}
+            <div className="checkout-trust-card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: '#0F1111', fontSize: '13px' }}>
+                <ShieldCheck size={16} className="text-[#007600]" />
+                <span>Standard Buying Protection</span>
+              </div>
+              <ul>
+                <li>100% Original & Verified Products</li>
+                <li>Fast Courier Handover in Dhaka & All Districts</li>
+                <li>7-Day Replacement Guarantee</li>
+                <li>Verified Paymently Gateway</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  );
+
+  // Return either full-page container or modal dialog
+  if (isPage) {
+    return (
+      <div className="checkout-page-container" role="main" aria-label="Amazon Checkout">
+        {checkoutCardContent}
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="checkout-modal-overlay" 
+      onClick={!isSubmitting ? onClose : undefined}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="amazon-checkout-header"
+    >
+      <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '1180px' }}>
+        {checkoutCardContent}
       </div>
     </div>
   );

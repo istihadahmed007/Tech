@@ -62,6 +62,7 @@ export default function App() {
   const [activeModal, setActiveModal] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isCartView, setIsCartView] = useState(false);
+  const [isCheckoutView, setIsCheckoutView] = useState(false);
   const [checkoutItems, setCheckoutItems] = useState(null);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
   const [paymentSessionInfo, setPaymentSessionInfo] = useState(null);
@@ -194,6 +195,7 @@ export default function App() {
   // Dedicated Amazon-Style Cart Page Navigation (Full page, zero overlapping)
   const navigateToCart = useCallback((pushHistory = true) => {
     setIsCartView(true);
+    setIsCheckoutView(false);
     setSelectedProduct(null);
     setActiveModal(null);
     if (pushHistory) {
@@ -202,23 +204,28 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  // Dedicated Amazon Checkout Navigation (Supports selected items subset)
+  // Dedicated Amazon Checkout Navigation (Full page, zero overlapping)
   const navigateToCheckout = useCallback((itemsToCheckout = null, pushHistory = true) => {
     if (itemsToCheckout && Array.isArray(itemsToCheckout) && itemsToCheckout.length > 0) {
       setCheckoutItems(itemsToCheckout);
     } else {
       setCheckoutItems(null);
     }
-    setActiveModal('checkout');
+    setIsCheckoutView(true);
+    setIsCartView(false);
+    setSelectedProduct(null);
+    setActiveModal(null);
     if (pushHistory) {
       window.history.pushState({ view: 'checkout' }, '', '/checkout');
     }
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
   // Navigate back to Home / Catalog
   const navigateToHome = useCallback((pushHistory = true) => {
     setSelectedProduct(null);
     setIsCartView(false);
+    setIsCheckoutView(false);
     setCheckoutItems(null);
     if (pushHistory) {
       window.history.pushState(null, '', '/');
@@ -230,6 +237,7 @@ export default function App() {
   const navigateToCategory = useCallback((catId) => {
     setSelectedProduct(null);
     setIsCartView(false);
+    setIsCheckoutView(false);
     setCheckoutItems(null);
     setSelectedCategory(catId);
     window.history.pushState(null, '', '/');
@@ -248,6 +256,7 @@ export default function App() {
       // 1. Dedicated Amazon Cart Page routing (/cart, #cart, or ?view=cart)
       if (pathname === '/cart' || pathname === '/cart/' || hash === '#cart' || hash.startsWith('#cart?') || search.includes('view=cart')) {
         setIsCartView(true);
+        setIsCheckoutView(false);
         setSelectedProduct(null);
         setActiveModal(null);
         document.title = 'Amazon.com Shopping Cart — Glacial Tech';
@@ -256,7 +265,10 @@ export default function App() {
 
       // 2. Dedicated Checkout routing (/checkout, #checkout, or ?view=checkout)
       if (pathname === '/checkout' || pathname === '/checkout/' || hash === '#checkout' || hash.startsWith('#checkout?') || search.includes('view=checkout')) {
-        setActiveModal('checkout');
+        setIsCheckoutView(true);
+        setIsCartView(false);
+        setSelectedProduct(null);
+        setActiveModal(null);
         document.title = 'Amazon.com Checkout — Glacial Tech';
         return;
       }
@@ -664,7 +676,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className={selectedProduct || isCartView ? "flex-grow w-full" : "container flex-grow pt-4"}>
+      <main className={selectedProduct || isCartView || isCheckoutView ? "flex-grow w-full" : "container flex-grow pt-4"}>
         {selectedProduct ? (
           <ProductDetailPage
             product={selectedProduct}
@@ -692,6 +704,18 @@ export default function App() {
             onSelectProduct={(p) => navigateToProduct(p, true)}
             allProducts={products}
             onAddToCart={handleAddToCart}
+            currencySymbol="৳"
+            t={t}
+            lang={lang}
+          />
+        ) : isCheckoutView ? (
+          <CheckoutModal
+            isPage={true}
+            onClose={() => navigateToCart(true)}
+            cart={checkoutItems && checkoutItems.length > 0 ? checkoutItems : cart}
+            currentUser={currentUser}
+            onOrderSuccess={handleOrderSuccess}
+            onInitiateOnlinePayment={handleInitiateOnlinePayment}
             currencySymbol="৳"
             t={t}
             lang={lang}
@@ -845,24 +869,24 @@ export default function App() {
         lang={lang}
       />
 
-      {/* 3. Checkout Modal */}
-      <CheckoutModal
-        isOpen={activeModal === 'checkout'}
-        onClose={() => {
-          setActiveModal(null);
-          setCheckoutItems(null);
-          if (window.location.pathname === '/checkout') {
-            window.history.replaceState(null, '', isCartView ? '/cart' : '/');
-          }
-        }}
-        cart={checkoutItems && checkoutItems.length > 0 ? checkoutItems : cart}
-        currentUser={currentUser}
-        onOrderSuccess={handleOrderSuccess}
-        onInitiateOnlinePayment={handleInitiateOnlinePayment}
-        currencySymbol="৳"
-        t={t}
-        lang={lang}
-      />
+      {/* 3. Checkout Modal (when triggered via modal flow) */}
+      {!isCheckoutView && (
+        <CheckoutModal
+          isOpen={activeModal === 'checkout'}
+          isPage={false}
+          onClose={() => {
+            setActiveModal(null);
+            setCheckoutItems(null);
+          }}
+          cart={checkoutItems && checkoutItems.length > 0 ? checkoutItems : cart}
+          currentUser={currentUser}
+          onOrderSuccess={handleOrderSuccess}
+          onInitiateOnlinePayment={handleInitiateOnlinePayment}
+          currencySymbol="৳"
+          t={t}
+          lang={lang}
+        />
+      )}
 
       {/* 4. Payment Gateway Modal */}
       {activeModal === 'payment_gateway' && paymentSessionInfo && (
