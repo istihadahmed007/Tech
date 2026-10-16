@@ -112,7 +112,7 @@ export default function Hero({
 
   return (
     <section 
-      className="relative w-full max-w-[1320px] mx-auto mb-8 sm:mb-12 overflow-hidden rounded-3xl border border-[#DCE7F0] shadow-sm"
+      className="relative w-full mb-8 sm:mb-12 overflow-hidden rounded-3xl border border-[#DCE7F0] shadow-sm"
       style={{
         background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(234, 245, 255, 0.90) 50%, rgba(255, 255, 255, 0.95) 100%)',
         backdropFilter: 'blur(16px)',

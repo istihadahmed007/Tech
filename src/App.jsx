@@ -695,44 +695,44 @@ export default function App() {
             />
 
             {/* Value Proposition Highlights: Delivery, Warranty & Support */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 my-8">
-              <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 my-8 sm:my-10">
+              <div className="p-3.5 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs hover:shadow-xs transition-shadow flex items-center gap-3 sm:gap-4">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
                   <Truck size={20} />
                 </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop1Title}</h4>
-                  <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop1Sub}</p>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D] truncate">{t.prop1Title}</h4>
+                  <p className="text-[11px] text-[#52677B] line-clamp-1 mt-0.5">{t.prop1Sub}</p>
                 </div>
               </div>
 
-              <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+              <div className="p-3.5 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs hover:shadow-xs transition-shadow flex items-center gap-3 sm:gap-4">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                   <Award size={20} />
                 </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop2Title}</h4>
-                  <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop2Sub}</p>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D] truncate">{t.prop2Title}</h4>
+                  <p className="text-[11px] text-[#52677B] line-clamp-1 mt-0.5">{t.prop2Sub}</p>
                 </div>
               </div>
 
-              <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+              <div className="p-3.5 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs hover:shadow-xs transition-shadow flex items-center gap-3 sm:gap-4">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
                   <ShieldCheck size={20} />
                 </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop3Title}</h4>
-                  <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop3Sub}</p>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D] truncate">{t.prop3Title}</h4>
+                  <p className="text-[11px] text-[#52677B] line-clamp-1 mt-0.5">{t.prop3Sub}</p>
                 </div>
               </div>
 
-              <div className="p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-[#DCE7F0] shadow-xs flex items-center gap-3.5">
+              <div className="p-3.5 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs hover:shadow-xs transition-shadow flex items-center gap-3 sm:gap-4">
                 <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                   <RotateCcw size={20} />
                 </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D]">{t.prop4Title}</h4>
-                  <p className="text-[11px] text-[#52677B] hidden sm:block">{t.prop4Sub}</p>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D] truncate">{t.prop4Title}</h4>
+                  <p className="text-[11px] text-[#52677B] line-clamp-1 mt-0.5">{t.prop4Sub}</p>
                 </div>
               </div>
             </div>

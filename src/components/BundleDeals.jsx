@@ -84,15 +84,15 @@ export default function BundleDeals({ onAddBundle, lang = 'en', t = {} }) {
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#145CFF]">
                     {badgeText}
                   </span>
-                  <h3 className="text-base sm:text-lg font-bold text-[#10263D] mt-1 line-clamp-1 group-hover:text-[#145CFF] transition-colors">
+                  <h3 className="text-base sm:text-lg font-bold text-[#10263D] mt-1 line-clamp-1 min-h-[1.75rem] group-hover:text-[#145CFF] transition-colors">
                     {title}
                   </h3>
-                  <p className="text-xs text-[#52677B] mt-1.5 leading-relaxed line-clamp-2">
+                  <p className="text-xs text-[#52677B] mt-1.5 leading-relaxed line-clamp-2 min-h-[2.5rem]">
                     {subtitle}
                   </p>
 
                   {/* Included Summary */}
-                  <div className="mt-4 p-3 rounded-xl bg-[#F7FAFD] border border-[#E4EEF7]">
+                  <div className="mt-4 p-3 rounded-xl bg-[#F7FAFD] border border-[#E4EEF7] min-h-[4.25rem]">
                     <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#3B5266] mb-1">
                       <Check size={13} className="text-emerald-600 stroke-[3]" />
                       <span>{t.bundleIncludes || (lang === 'bn' ? 'অন্তর্ভুক্ত রয়েছে:' : 'Includes:')}</span>

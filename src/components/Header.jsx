@@ -64,8 +64,8 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full px-3.5 sm:px-8 lg:px-12 py-3 transition-all bg-white/95 backdrop-blur-md border-b border-[#DCE7F0] shadow-2xs">
-      <div className="max-w-[1320px] mx-auto flex items-center justify-between gap-3">
+    <header className="sticky top-0 z-50 w-full transition-all bg-white/92 backdrop-blur-md border-b border-[#DCE7F0]/80 shadow-2xs">
+      <div className="container flex items-center justify-between gap-3 py-3 sm:py-3.5">
         {/* Left: Brand Name & Main Nav Links */}
         <div className="flex items-center gap-4 sm:gap-8 lg:gap-10 min-w-0">
           <a 
@@ -231,7 +231,7 @@ export default function Header({
 
       {/* Mobile Search Bar Dropdown */}
       {searchOpen && (
-        <div className="lg:hidden mt-3 px-2 max-w-[1280px] mx-auto animate-fadeIn">
+        <div className="container lg:hidden pt-1 pb-3 animate-fadeIn">
           <div className="relative">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
@@ -256,7 +256,8 @@ export default function Header({
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-3 max-w-[1280px] mx-auto rounded-2xl bg-white border border-slate-200 p-5 shadow-xl flex flex-col gap-3 animate-fadeIn">
+        <div className="container md:hidden pb-4 animate-fadeIn">
+          <div className="rounded-2xl bg-white border border-[#DCE7F0] p-5 shadow-xl flex flex-col gap-3">
           <nav className="flex flex-col gap-1 text-sm font-medium text-[#0F172A]">
             <a 
               href="#products-section" 
@@ -314,6 +315,7 @@ export default function Header({
             >
               Switch to {lang === 'en' ? 'বাংলা' : 'English'}
             </button>
+          </div>
           </div>
         </div>
       )}

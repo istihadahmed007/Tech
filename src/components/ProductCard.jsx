@@ -50,13 +50,7 @@ export default function ProductCard({
       tabIndex="0"
       onKeyDown={handleCardKeyDown}
       onClick={() => onOpenDetail(product)}
-      className="group relative rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between h-full transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-[#B8D5ED] cursor-pointer focus-visible:outline-2 focus-visible:outline-[#145CFF] focus-visible:outline-offset-2"
-      style={{
-        background: '#FFFFFF',
-        border: '1px solid #DCE7F0',
-        borderRadius: '16px',
-        boxShadow: '0 2px 10px -2px rgba(16, 38, 61, 0.04), 0 1px 3px 0 rgba(16, 38, 61, 0.02)'
-      }}
+      className="group relative rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between h-full bg-white border border-[#DCE7F0] hover:border-[#145CFF]/40 shadow-2xs hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#145CFF] focus-visible:outline-offset-2"
       aria-label={`${product.title}, ${currencySymbol}${product.price}`}
     >
       {/* Top Media Display Pedestal */}
