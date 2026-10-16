@@ -371,13 +371,10 @@ export default function CheckoutModal({
       <header className="checkout-header">
         <div className="checkout-header-logo" onClick={onClose} title="Tech Nest Checkout">
           <img 
-            src="/assets/tech-nest-icon.png" 
+            src="/assets/tech-nest-logo-horizontal.png" 
             alt="Tech Nest" 
-            className="w-7 h-7 object-contain"
+            className="checkout-header-logo-img"
           />
-          <span className="checkout-header-brand">
-            Tech<span>Nest</span>
-          </span>
           <span className="checkout-header-tag">
             Checkout
           </span>

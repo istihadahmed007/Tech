@@ -136,7 +136,8 @@ export default function Hero({
               <span className="text-[11px] font-bold tracking-[0.14em] text-[#52677B] uppercase">
                 {currentSlide.eyebrow}
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-blue-100/70 text-[#0284C7] text-[10px] font-bold tracking-wider uppercase">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-100/80 text-[#0284C7] text-[11px] font-bold tracking-wider uppercase shadow-2xs">
+                <img src="/assets/tech-nest-icon.png" alt="" className="w-4 h-4 object-contain" />
                 Tech Nest
               </span>
             </div>

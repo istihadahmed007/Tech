@@ -84,3 +84,30 @@ if emblem_bbox:
     fav_32 = square_icon.resize((32, 32), Image.Resampling.LANCZOS)
     fav_32.save(os.path.join(public_dir, 'favicon.ico'), format='ICO')
     print("Saved favicon.png and favicon.ico")
+
+# Step 4: Generate Horizontal 3D Logo (Emblem + 3D Text)
+if bbox and emblem_bbox:
+    text_crop = rgba_im.crop((0, int(height * 0.73), width, height))
+    t_bbox = text_crop.getbbox()
+    if t_bbox:
+        actual_text = text_crop.crop(t_bbox)
+        target_h = 180
+        text_w = int(actual_text.width * (target_h / actual_text.height))
+        text_resized = actual_text.resize((text_w, target_h), Image.Resampling.LANCZOS)
+
+        emblem_h = int(target_h * 1.25)
+        emblem_w = int(emblem_final.width * (emblem_h / emblem_final.height))
+        emblem_resized = emblem_final.resize((emblem_w, emblem_h), Image.Resampling.LANCZOS)
+
+        gap = 30
+        total_w = emblem_w + gap + text_w
+        total_h = emblem_h
+
+        h_canvas = Image.new('RGBA', (total_w, total_h), (0, 0, 0, 0))
+        h_canvas.paste(emblem_resized, (0, 0), emblem_resized)
+        text_y = (total_h - text_resized.height) // 2 + 5
+        h_canvas.paste(text_resized, (emblem_w + gap, text_y), text_resized)
+
+        h_canvas.save(os.path.join(dest_dir, 'tech-nest-logo-horizontal.png'), optimize=True)
+        print("Saved tech-nest-logo-horizontal.png:", h_canvas.size)
+

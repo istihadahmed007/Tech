@@ -76,17 +76,14 @@ export default function Header({
                 onGoHome();
               }
             }}
-            className="flex items-center gap-2.5 sm:gap-3 group shrink-0 select-none"
-            title="Tech Nest — Home"
+            className="flex items-center group shrink-0 select-none py-0.5"
+            title="Tech Nest — Everyday Tech Upgrades"
           >
             <img 
-              src="/assets/tech-nest-icon.png" 
-              alt="Tech Nest Logo" 
-              className="w-8 h-8 sm:w-9 sm:h-9 object-contain drop-shadow-sm group-hover:scale-105 transition-transform" 
+              src="/assets/tech-nest-logo-horizontal.png" 
+              alt="Tech Nest" 
+              className="h-11 sm:h-13 md:h-14 lg:h-15 w-auto object-contain drop-shadow-md group-hover:scale-[1.03] transition-transform duration-200" 
             />
-            <span className="font-extrabold text-xl sm:text-2xl tracking-tight text-[#0F2942] group-hover:text-[#0284C7] transition-colors leading-none">
-              Tech<span className="text-[#0284C7]">Nest</span>
-            </span>
           </a>
 
           {/* Desktop Navigation Links */}
@@ -268,13 +265,10 @@ export default function Header({
           <div className="rounded-2xl bg-white border border-[#DCE7F0] p-5 shadow-xl flex flex-col gap-3">
             <div className="flex items-center gap-2.5 pb-2.5 border-b border-slate-100">
               <img 
-                src="/assets/tech-nest-icon.png" 
+                src="/assets/tech-nest-logo-horizontal.png" 
                 alt="Tech Nest Logo" 
-                className="w-7 h-7 object-contain" 
+                className="h-10 w-auto object-contain drop-shadow-sm" 
               />
-              <span className="font-extrabold text-lg text-[#0F2942]">
-                Tech<span className="text-[#0284C7]">Nest</span>
-              </span>
             </div>
             <nav className="flex flex-col gap-1 text-sm font-medium text-[#0F172A]">
             <a 

@@ -525,7 +525,9 @@ export function generateInvoiceHtml(order, options = {}) {
       <table class="header-table">
         <tr>
           <td style="vertical-align: top; width: 55%;">
-            <div class="brand-logo-title">${escapeHtml(storeInfo.name)}</div>
+            <div style="margin-bottom: 8px;">
+              <img src="/assets/tech-nest-logo-horizontal.png" alt="Tech Nest" style="height: 46px; width: auto; object-fit: contain;" />
+            </div>
             <div class="brand-subtitle">${escapeHtml(storeInfo.nameBn)} • ${escapeHtml(storeInfo.tagline)}</div>
             <div class="brand-meta">
               ${escapeHtml(storeInfo.address)}<br />
