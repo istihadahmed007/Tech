@@ -26,7 +26,8 @@ try {
   }
 }
 
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const rawPort = process.env.PORT || '3000';
+const PORT = isNaN(Number(rawPort)) ? rawPort : parseInt(rawPort, 10);
 const HOST = process.env.HOST || '0.0.0.0';
 const DIST_DIR = path.resolve(process.cwd(), 'dist');
 const UPLOADS_DIR = path.resolve(process.cwd(), 'public', 'uploads');
@@ -273,9 +274,15 @@ const isMainModule = Boolean(
 );
 
 if (isMainModule && process.env.NODE_ENV !== 'test' && !process.env.DISABLE_SERVER_LISTEN) {
-  server.listen(PORT, HOST, () => {
-    console.log(`[Production Server] Tech Nest Storefront & API listening on http://${HOST}:${PORT}`);
-  });
+  if (typeof PORT === 'number') {
+    server.listen(PORT, HOST, () => {
+      console.log(`[Production Server] Tech Nest Storefront & API listening on http://${HOST}:${PORT}`);
+    });
+  } else {
+    server.listen(PORT, () => {
+      console.log(`[Production Server] Tech Nest Storefront & API listening on socket ${PORT}`);
+    });
+  }
 }
 
 process.on('SIGINT', () => {
