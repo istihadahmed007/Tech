@@ -20,7 +20,7 @@ export default function OrderConfirmationModal({
         particleCount: 50,
         spread: 55,
         origin: { y: 0.6 },
-        colors: ['#EE4D2D', '#60A5FA', '#93C5FD', '#10B981']
+        colors: ['#168FC2', '#60A5FA', '#93C5FD', '#10B981']
       });
     } catch (e) {}
   }, []);
@@ -69,7 +69,7 @@ export default function OrderConfirmationModal({
       aria-labelledby="order-confirmed-heading"
     >
       <div 
-        className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCE7F0] shadow-2xl text-center animate-fadeIn"
+        className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCEAF1] shadow-2xl text-center animate-fadeIn"
         onClick={(e) => e.stopPropagation()}
         style={{
           boxShadow: '0 25px 60px -15px rgba(16, 38, 61, 0.20)'
@@ -78,7 +78,7 @@ export default function OrderConfirmationModal({
         <button
           ref={closeButtonRef}
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] transition-colors focus-visible:ring-2 focus-visible:ring-[#EE4D2D]"
+          className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-[#62788A] hover:text-[#102A43] transition-colors focus-visible:ring-2 focus-visible:ring-[#168FC2]"
           aria-label="Close confirmation dialog"
         >
           <X size={20} />
@@ -88,26 +88,26 @@ export default function OrderConfirmationModal({
           <CheckCircle size={36} className="stroke-[2.5]" />
         </div>
 
-        <h2 id="order-confirmed-heading" className="text-xl sm:text-2xl font-extrabold text-[#10263D] mb-1">
+        <h2 id="order-confirmed-heading" className="text-xl sm:text-2xl font-extrabold text-[#102A43] mb-1">
           {order.isDemo ? 'Demo Order Recorded' : (t?.orderConfirmedTitle || 'Order Placed Successfully')}
         </h2>
-        <p className="text-xs sm:text-sm text-[#52677B] mb-6">
+        <p className="text-xs sm:text-sm text-[#62788A] mb-6">
           Thank you, <strong>{order.customer?.name}</strong>. Your order has been recorded in our store system.
         </p>
 
         {/* Order Reference Box */}
-        <div className="bg-[#EAF4FC] border border-[#DCE7F0] rounded-2xl p-4 mb-4 text-left flex items-center justify-between">
+        <div className="bg-[#DDF4FC] border border-[#DCEAF1] rounded-2xl p-4 mb-4 text-left flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold uppercase text-[#52677B] block">
+            <span className="text-[11px] font-bold uppercase text-[#62788A] block">
               {t?.orderIdLabel || 'Order Reference ID:'}
             </span>
-            <span className="font-mono text-base sm:text-lg font-extrabold text-[#EE4D2D]">
+            <span className="font-mono text-base sm:text-lg font-extrabold text-[#168FC2]">
               {order.id}
             </span>
           </div>
           <button
             onClick={() => navigator.clipboard.writeText(order.id)}
-            className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white border border-[#DCE7F0] text-[#EE4D2D] hover:bg-[#EAF4FC] transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white border border-[#DCEAF1] text-[#168FC2] hover:bg-[#DDF4FC] transition-colors"
             title="Copy Order ID"
             aria-label="Copy Order ID to clipboard"
           >
@@ -120,11 +120,11 @@ export default function OrderConfirmationModal({
         {order.guestToken && (
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 mb-6 text-left flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-1 text-[11px] font-bold text-[#10263D]">
-                <Key size={13} className="text-[#EE4D2D]" />
+              <div className="flex items-center gap-1 text-[11px] font-bold text-[#102A43]">
+                <Key size={13} className="text-[#168FC2]" />
                 <span>Guest Order Security Token</span>
               </div>
-              <span className="font-mono text-xs text-[#52677B] block truncate max-w-[280px] sm:max-w-sm mt-0.5">
+              <span className="font-mono text-xs text-[#62788A] block truncate max-w-[280px] sm:max-w-sm mt-0.5">
                 {order.guestToken}
               </span>
             </div>
@@ -140,27 +140,27 @@ export default function OrderConfirmationModal({
         )}
 
         {/* Order Summary Details */}
-        <div className="text-left divide-y divide-slate-100 border border-[#DCE7F0] rounded-2xl p-4 bg-white mb-6 text-xs space-y-2.5">
+        <div className="text-left divide-y divide-slate-100 border border-[#DCEAF1] rounded-2xl p-4 bg-white mb-6 text-xs space-y-2.5">
           <div className="flex justify-between pt-1">
-            <span className="text-[#52677B]">Items Ordered:</span>
-            <span className="font-semibold text-[#10263D] text-right max-w-xs">
+            <span className="text-[#62788A]">Items Ordered:</span>
+            <span className="font-semibold text-[#102A43] text-right max-w-xs">
               {order.items?.map(i => `${i.title} (x${i.quantity})`).join(', ')}
             </span>
           </div>
           <div className="flex justify-between pt-2">
-            <span className="text-[#52677B]">Delivery Destination:</span>
-            <span className="font-semibold text-[#10263D] text-right max-w-xs">
+            <span className="text-[#62788A]">Delivery Destination:</span>
+            <span className="font-semibold text-[#102A43] text-right max-w-xs">
               {order.customer?.address}, {order.customer?.division}
             </span>
           </div>
           <div className="flex justify-between pt-2">
-            <span className="text-[#52677B]">Order Status:</span>
+            <span className="text-[#62788A]">Order Status:</span>
             <span className="font-semibold text-right text-slate-700 capitalize">
               {order.status}
             </span>
           </div>
           <div className="flex justify-between pt-2">
-            <span className="text-[#52677B]">Payment Status:</span>
+            <span className="text-[#62788A]">Payment Status:</span>
             <span className="font-bold text-right flex items-center gap-1">
               {isPaid ? (
                 <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">
@@ -179,8 +179,8 @@ export default function OrderConfirmationModal({
           </div>
 
           <div className="flex justify-between pt-2">
-            <span className="text-[#52677B]">Subtotal:</span>
-            <span className="font-medium text-[#10263D]">
+            <span className="text-[#62788A]">Subtotal:</span>
+            <span className="font-medium text-[#102A43]">
               {currencySymbol}{order.subtotal?.toLocaleString()}
             </span>
           </div>
@@ -191,15 +191,15 @@ export default function OrderConfirmationModal({
             </div>
           )}
           <div className="flex justify-between pt-2">
-            <span className="text-[#52677B]">Delivery Fee:</span>
-            <span className="font-medium text-[#10263D]">
+            <span className="text-[#62788A]">Delivery Fee:</span>
+            <span className="font-medium text-[#102A43]">
               {order.deliveryFee === 0 ? 'FREE' : `${currencySymbol}${order.deliveryFee}`}
             </span>
           </div>
 
           <div className="flex justify-between pt-2 text-sm font-extrabold">
-            <span className="text-[#10263D]">Total Amount:</span>
-            <span className="text-[#EE4D2D]">
+            <span className="text-[#102A43]">Total Amount:</span>
+            <span className="text-[#168FC2]">
               {currencySymbol}{order.total?.toLocaleString()}
             </span>
           </div>
@@ -212,7 +212,7 @@ export default function OrderConfirmationModal({
               onClose();
               onOpenTracking(order.id, order.guestToken);
             }}
-            className="w-full sm:flex-1 py-3 px-4 rounded-full bg-[#EE4D2D] hover:bg-[#D73211] text-white font-bold text-xs shadow-md shadow-orange-500/20 flex items-center justify-center gap-1.5 transition-all"
+            className="w-full sm:flex-1 py-3 px-4 rounded-full bg-[#168FC2] hover:bg-[#0F7CA6] text-white font-bold text-xs shadow-md shadow-sky-500/20 flex items-center justify-center gap-1.5 transition-all"
           >
             <Package size={15} />
             <span>{t?.trackThisOrder || 'Track Parcel Status'}</span>
@@ -221,7 +221,7 @@ export default function OrderConfirmationModal({
           <button
             type="button"
             onClick={() => openPrintWindow(order, 'invoice')}
-            className="w-full sm:w-auto py-3 px-4 rounded-full bg-white border border-[#DCE7F0] hover:bg-[#EAF4FC] text-[#EE4D2D] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+            className="w-full sm:w-auto py-3 px-4 rounded-full bg-white border border-[#DCEAF1] hover:bg-[#DDF4FC] text-[#168FC2] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
             title="Print or download official tax invoice PDF"
           >
             <Printer size={15} />
@@ -230,7 +230,7 @@ export default function OrderConfirmationModal({
 
           <button
             onClick={onClose}
-            className="w-full sm:w-auto py-3 px-5 rounded-full bg-slate-100 hover:bg-slate-200 text-[#10263D] font-semibold text-xs transition-colors"
+            className="w-full sm:w-auto py-3 px-5 rounded-full bg-slate-100 hover:bg-slate-200 text-[#102A43] font-semibold text-xs transition-colors"
           >
             {t?.continueShopping || 'Continue Shopping'}
           </button>

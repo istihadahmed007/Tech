@@ -36,22 +36,22 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
       aria-labelledby="support-dialog-title"
     >
       <div 
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCE7F0] shadow-2xl animate-fadeIn"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCEAF1] shadow-2xl animate-fadeIn"
         onClick={(e) => e.stopPropagation()}
         style={{
-          boxShadow: '0 25px 60px -15px rgba(16, 38, 61, 0.20)'
+          boxShadow: '0 25px 60px -15px rgba(16, 42, 67, 0.16)'
         }}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-[#DCEAF1] mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#EAF4FC] text-[#EE4D2D] flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#DDF4FC] text-[#168FC2] flex items-center justify-center font-bold">
               <HelpCircle size={18} />
             </div>
             <div>
-              <h2 id="support-dialog-title" className="text-xl font-bold text-[#10263D]">
+              <h2 id="support-dialog-title" className="text-xl font-bold text-[#102A43]">
                 {isBn ? 'কাস্টমার সাপোর্ট ও পলিসি' : 'Customer Support & Policies'}
               </h2>
-              <p className="text-xs text-[#52677B]">
+              <p className="text-xs text-[#62788A]">
                 {isBn 
                   ? 'ওয়ারেন্টি, ডেলিভারি চার্জ এবং রিটার্ন পলিসি সংক্রান্ত বিস্তারিত তথ্য' 
                   : 'Warranties, delivery tiers, and return inquiries in Bangladesh'}
@@ -61,18 +61,18 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#EE4D2D]"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-[#62788A] hover:text-[#102A43] focus-visible:ring-2 focus-visible:ring-[#168FC2]"
             aria-label={isBn ? 'সাপোর্ট ডায়লগ বন্ধ করুন' : 'Close support dialog'}
           >
             <X size={20} />
           </button>
         </div>
 
-        <div className="space-y-5 text-xs text-[#52677B]">
+        <div className="space-y-5 text-xs text-[#62788A]">
           {/* Warranty Policy */}
-          <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
-            <h3 className="text-sm font-bold text-[#10263D] flex items-center gap-2 mb-2">
-              <ShieldCheck size={18} className="text-[#EE4D2D]" />
+          <div className="p-4 rounded-2xl bg-[#F4FAFD] border border-[#DCEAF1]">
+            <h3 className="text-sm font-bold text-[#102A43] flex items-center gap-2 mb-2">
+              <ShieldCheck size={18} className="text-[#168FC2]" />
               <span>{isBn ? 'ম্যানুফ্যাকচারার ওয়ারেন্টি পলিসি' : 'Manufacturer Warranty Coverage'}</span>
             </h3>
             <p className="leading-relaxed">
@@ -83,9 +83,9 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
           </div>
 
           {/* Delivery & Logistics */}
-          <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
-            <h3 className="text-sm font-bold text-[#10263D] flex items-center gap-2 mb-2">
-              <Truck size={18} className="text-[#EE4D2D]" />
+          <div className="p-4 rounded-2xl bg-[#F4FAFD] border border-[#DCEAF1]">
+            <h3 className="text-sm font-bold text-[#102A43] flex items-center gap-2 mb-2">
+              <Truck size={18} className="text-[#168FC2]" />
               <span>{isBn ? 'ডেলিভারি চার্জ ও সময়সীমা' : 'Delivery Charges & Standards'}</span>
             </h3>
             <ul className="list-disc list-inside space-y-1.5 leading-relaxed">
@@ -106,9 +106,9 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
           </div>
 
           {/* Return Guidelines */}
-          <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
-            <h3 className="text-sm font-bold text-[#10263D] flex items-center gap-2 mb-2">
-              <RotateCcw size={18} className="text-[#EE4D2D]" />
+          <div className="p-4 rounded-2xl bg-[#F4FAFD] border border-[#DCEAF1]">
+            <h3 className="text-sm font-bold text-[#102A43] flex items-center gap-2 mb-2">
+              <RotateCcw size={18} className="text-[#168FC2]" />
               <span>{isBn ? 'রিটার্ন ও এক্সচেঞ্জ নির্দেশিকা' : 'Return Guidelines'}</span>
             </h3>
             <p className="leading-relaxed">
@@ -119,16 +119,16 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
           </div>
 
           {/* Direct Contact Support */}
-          <div className="pt-2 border-t border-[#DCE7F0] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="pt-2 border-t border-[#DCEAF1] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <span className="font-bold text-[#10263D] block">
+              <span className="font-bold text-[#102A43] block">
                 {isBn ? 'সরাসরি কাস্টমার সহায়তা:' : 'Customer Service Inquiries:'}
               </span>
-              <span className="text-[#EE4D2D] font-medium">support@store.local • Dhaka, Bangladesh</span>
+              <span className="text-[#168FC2] font-medium">support@store.local • Dhaka, Bangladesh</span>
             </div>
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-full bg-[#EE4D2D] hover:bg-[#D73211] text-white font-semibold text-xs shadow-xs"
+              className="px-6 py-2.5 rounded-full bg-[#168FC2] hover:bg-[#0F7CA6] text-white font-semibold text-xs shadow-xs"
             >
               {isBn ? 'বন্ধ করুন' : 'Close'}
             </button>

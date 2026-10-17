@@ -54,7 +54,7 @@ export default function ProductCard({
       tabIndex="0"
       onKeyDown={handleCardKeyDown}
       onClick={() => onOpenDetail(product)}
-      className="shopee-product-card group relative p-3 flex flex-col justify-between h-full bg-white border border-[#ECECEC] hover:border-[#EE4D2D] hover:shadow-md transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#EE4D2D]"
+      className="shopee-product-card group relative p-3 flex flex-col justify-between h-full bg-white border border-[#DCEAF1] hover:border-[#168FC2] hover:shadow-md transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#168FC2]"
       aria-label={`${product.title}, ${currencySymbol}${product.price}`}
     >
       {/* Top Media Showcase */}
@@ -78,7 +78,7 @@ export default function ProductCard({
         {/* Top-Left: Authentic Badges */}
         <div className="absolute top-1.5 left-1.5 flex flex-col gap-1 z-10">
           {product.badge && !isOutOfStock && (
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#10263D] text-white shadow-2xs">
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#102A43] text-white shadow-2xs">
               {product.badge}
             </span>
           )}
@@ -92,7 +92,7 @@ export default function ProductCard({
         {/* Sold Out Overlay */}
         {isOutOfStock && (
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-10 pointer-events-none">
-            <span className="px-2.5 py-1 rounded text-xs font-bold bg-[#10263D] text-white shadow-md border border-white/20">
+            <span className="px-2.5 py-1 rounded text-xs font-bold bg-[#102A43] text-white shadow-md border border-white/20">
               {lang === 'bn' ? 'স্টক শেষ' : 'Sold Out'}
             </span>
           </div>
@@ -104,8 +104,8 @@ export default function ProductCard({
           onClick={handleWishlistClick}
           className={`absolute bottom-2 right-2 w-7 h-7 rounded-full flex items-center justify-center transition-all z-20 shadow-xs ${
             isWishlisted 
-              ? 'bg-[#EE4D2D] text-white' 
-              : 'bg-white/90 text-slate-400 hover:text-[#EE4D2D] hover:bg-white border border-slate-200'
+              ? 'bg-[#168FC2] text-white' 
+              : 'bg-white/90 text-slate-400 hover:text-[#168FC2] hover:bg-white border border-[#DCEAF1]'
           }`}
           aria-label={isWishlisted ? `Remove from wishlist` : `Add to wishlist`}
         >
@@ -143,7 +143,7 @@ export default function ProductCard({
           </div>
 
           {/* Title (2-line clamp with uniform height) */}
-          <h3 className="font-semibold text-xs sm:text-sm text-[#10263D] leading-snug group-hover:text-[#EE4D2D] transition-colors line-clamp-2 min-h-[2.5rem] mb-1.5">
+          <h3 className="font-semibold text-xs sm:text-sm text-[#102A43] leading-snug group-hover:text-[#168FC2] transition-colors line-clamp-2 min-h-[2.5rem] mb-1.5">
             {lang === 'bn' ? product.titleBn : product.title}
           </h3>
 
@@ -167,7 +167,7 @@ export default function ProductCard({
         <div className="pt-2 border-t border-slate-100 mt-auto flex items-center justify-between gap-1">
           <div>
             <div className="flex items-baseline gap-1">
-              <span className="text-base sm:text-lg font-black text-[#EE4D2D]">
+              <span className="text-base sm:text-lg font-black text-[#168FC2]">
                 {currencySymbol}{product.price.toLocaleString()}
               </span>
               {hasDiscount && (
@@ -190,7 +190,7 @@ export default function ProductCard({
                 ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
                 : isQuickAdded
                   ? 'bg-emerald-600 text-white'
-                  : 'bg-[#FFF5F1] hover:bg-[#EE4D2D] text-[#EE4D2D] hover:text-white border border-[#FFDCD4]'
+                  : 'bg-[#DDF4FC] hover:bg-[#168FC2] text-[#168FC2] hover:text-white border border-[#B8E7F8]'
             }`}
             title={isOutOfStock ? 'Sold out' : `Add ${product.title} to bag`}
             aria-label={isOutOfStock ? 'Sold out' : `Add to cart`}

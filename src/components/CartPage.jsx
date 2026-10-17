@@ -209,7 +209,7 @@ export default function CartPage({
       {/* Toast Notification */}
       {toastMessage && (
         <div 
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#10263D] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-blue-400/30 flex items-center gap-2 animate-fadeIn"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#102A43] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-blue-400/30 flex items-center gap-2 animate-fadeIn"
           style={{ zIndex: 99999 }}
         >
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -238,7 +238,7 @@ export default function CartPage({
               {isFreeDelivery ? (
                 <CheckCircle2 className="amazon-free-ship-icon" />
               ) : (
-                <Truck className="amazon-free-ship-icon text-[#145CFF]" />
+                <Truck className="amazon-free-ship-icon text-[#168FC2]" />
               )}
               <div className="amazon-cart-banner-text">
                 {isFreeDelivery ? (
@@ -687,7 +687,7 @@ export default function CartPage({
                 </div>
 
                 <div className="amazon-trust-line">
-                  <ShieldCheck size={13} className="text-[#145CFF]" />
+                  <ShieldCheck size={13} className="text-[#168FC2]" />
                   <span>
                     {lang === 'bn' ? '৭ দিনের রিপ্লেসমেন্ট গ্যারান্টি' : '7-Day Easy Return & Warranty'}
                   </span>

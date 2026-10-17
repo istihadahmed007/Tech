@@ -21,8 +21,8 @@ export default function QuickShortcuts({
       id: 'new_arrivals',
       label: lang === 'bn' ? 'নতুন কালেকশন' : 'New Arrivals',
       icon: Sparkles,
-      bgColor: '#FFF5F1',
-      iconColor: '#EE4D2D',
+      bgColor: '#DDF4FC',
+      iconColor: '#168FC2',
       onClick: () => {
         if (onSetSortBy) onSetSortBy('newest');
         if (onNavigateSection) onNavigateSection('products-section');
@@ -43,8 +43,8 @@ export default function QuickShortcuts({
       id: 'flash_sale',
       label: lang === 'bn' ? 'ফ্ল্যাশ সেল' : 'Flash Sale',
       icon: Zap,
-      bgColor: '#FEE2E2',
-      iconColor: '#DC2626',
+      bgColor: '#EAF4FC',
+      iconColor: '#168FC2',
       onClick: () => {
         if (onNavigateSection) onNavigateSection('flash-sale-section');
       }
@@ -105,7 +105,7 @@ export default function QuickShortcuts({
   ];
 
   return (
-    <section className="w-full my-4 sm:my-6 p-4 sm:p-6 bg-white rounded-xl sm:rounded-2xl border border-[#ECECEC] shadow-xs">
+    <section className="w-full my-4 sm:my-6 p-4 sm:p-6 bg-white rounded-xl sm:rounded-2xl border border-[#DCEAF1] shadow-xs">
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 sm:gap-4">
         {shortcuts.map((sc) => {
           const Icon = sc.icon;
@@ -129,7 +129,7 @@ export default function QuickShortcuts({
               >
                 <Icon size={22} style={{ color: sc.iconColor }} />
               </div>
-              <span className="text-[11px] sm:text-xs font-semibold text-[#10263D] group-hover:text-[#EE4D2D] transition-colors line-clamp-1 leading-snug">
+              <span className="text-[11px] sm:text-xs font-semibold text-[#102A43] group-hover:text-[#168FC2] transition-colors line-clamp-1 leading-snug">
                 {sc.label}
               </span>
             </div>

@@ -82,7 +82,7 @@
 
 .amazon-free-ship-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #145CFF 0%, #007600 100%);
+  background: linear-gradient(90deg, #168FC2 0%, #007600 100%);
   border-radius: 9999px;
   transition: width 300ms ease;
 }
@@ -474,11 +474,11 @@
   cursor: pointer;
 }
 
-/* Signature Amazon Yellow/Gold Button */
+/* Signature Proceed to Checkout Button */
 .amazon-btn-proceed {
   width: 100%;
-  background: #EE4D2D;
-  border: 1px solid #EE4D2D;
+  background: #168FC2;
+  border: 1px solid #168FC2;
   border-radius: 6px;
   padding: 12px 16px;
   font-size: 15px;
@@ -486,7 +486,7 @@
   color: #FFFFFF;
   cursor: pointer;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(238, 77, 45, 0.25);
+  box-shadow: 0 4px 12px rgba(22, 143, 194, 0.25);
   transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
   display: flex;
   align-items: center;
@@ -495,14 +495,14 @@
 }
 
 .amazon-btn-proceed:hover:not(:disabled) {
-  background: #D73211;
-  border-color: #D73211;
-  box-shadow: 0 6px 16px rgba(238, 77, 45, 0.35);
+  background: #0F7CA6;
+  border-color: #0F7CA6;
+  box-shadow: 0 6px 16px rgba(22, 143, 194, 0.35);
 }
 
 .amazon-btn-proceed:active:not(:disabled) {
-  background: #BF2507;
-  border-color: #BF2507;
+  background: #0B678E;
+  border-color: #0B678E;
 }
 
 .amazon-btn-proceed:disabled {

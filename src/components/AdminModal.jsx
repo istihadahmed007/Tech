@@ -414,28 +414,28 @@ export default function AdminModal({
       aria-labelledby="admin-modal-title"
     >
       <div 
-        className="relative w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCE7F0] shadow-2xl animate-fadeIn"
+        className="relative w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCEAF1] shadow-2xl animate-fadeIn"
         onClick={(e) => e.stopPropagation()}
         style={{ boxShadow: '0 25px 60px -15px rgba(16, 38, 61, 0.20)' }}
       >
         {/* Top Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-[#DCEAF1] mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#10263D] text-white flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-[#102A43] text-white flex items-center justify-center font-bold">
               <Lock size={18} />
             </div>
             <div>
-              <h2 id="admin-modal-title" className="text-xl font-bold text-[#10263D]">
+              <h2 id="admin-modal-title" className="text-xl font-bold text-[#102A43]">
                 Store Operations Dashboard
               </h2>
-              <p className="text-xs text-[#52677B]">
+              <p className="text-xs text-[#62788A]">
                 Authoritative inventory, transactional orders, catalog & promotions
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-[#62788A] hover:text-[#102A43] focus-visible:ring-2 focus-visible:ring-[#168FC2]"
             aria-label="Close admin console"
           >
             <X size={20} />
@@ -445,13 +445,13 @@ export default function AdminModal({
         {!authToken ? (
           /* Password Authentication Gate */
           <div className="max-w-sm mx-auto py-10 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-[#EAF4FC] text-[#145CFF] mx-auto flex items-center justify-center mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-[#DDF4FC] text-[#168FC2] mx-auto flex items-center justify-center mb-4">
               <Key size={26} />
             </div>
-            <h3 className="text-lg font-bold text-[#10263D] mb-1">
+            <h3 className="text-lg font-bold text-[#102A43] mb-1">
               Store Manager Access
             </h3>
-            <p className="text-xs text-[#52677B] mb-5">
+            <p className="text-xs text-[#62788A] mb-5">
               Enter your secure admin passcode to access operational controls.
             </p>
 
@@ -476,7 +476,7 @@ export default function AdminModal({
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs shadow-md shadow-blue-500/20"
+                className="w-full py-2.5 rounded-full bg-[#168FC2] hover:bg-[#0F7CA6] text-white font-semibold text-xs shadow-md shadow-sky-500/20"
               >
                 Authenticate & Unlock
               </button>
@@ -486,7 +486,7 @@ export default function AdminModal({
           /* Logged In Admin Dashboard */
           <div>
             {/* Top Navigation Bar */}
-            <div className="flex border-b border-[#DCE7F0] mb-6 overflow-x-auto gap-3 text-xs font-bold">
+            <div className="flex border-b border-[#DCEAF1] mb-6 overflow-x-auto gap-3 text-xs font-bold">
               {[
                 { id: 'overview', label: 'Overview', icon: TrendingUp },
                 { id: 'orders', label: 'Orders', icon: Package },
@@ -503,8 +503,8 @@ export default function AdminModal({
                     onClick={() => setActiveTab(tab.id)}
                     className={`pb-3 border-b-2 flex items-center gap-1.5 transition-all shrink-0 ${
                       activeTab === tab.id
-                        ? 'border-[#145CFF] text-[#145CFF]'
-                        : 'border-transparent text-[#52677B] hover:text-[#10263D]'
+                        ? 'border-[#168FC2] text-[#168FC2]'
+                        : 'border-transparent text-[#62788A] hover:text-[#102A43]'
                     }`}
                   >
                     <Icon size={15} />
@@ -525,9 +525,9 @@ export default function AdminModal({
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#52677B] block mb-1">Paid Revenue</span>
-                    <span className="text-xl sm:text-2xl font-extrabold text-[#145CFF]">
+                  <div className="p-4 rounded-2xl bg-[#DDF4FC] border border-[#DCEAF1]">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#62788A] block mb-1">Paid Revenue</span>
+                    <span className="text-xl sm:text-2xl font-extrabold text-[#168FC2]">
                       {currencySymbol}{(metrics?.paidRevenue || 0).toLocaleString()}
                     </span>
                     <span className="text-[10px] text-emerald-600 block mt-1 font-medium">Verified electronic & COD</span>
@@ -542,46 +542,46 @@ export default function AdminModal({
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#52677B] block mb-1">Total Orders</span>
-                    <span className="text-xl sm:text-2xl font-extrabold text-[#10263D]">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#62788A] block mb-1">Total Orders</span>
+                    <span className="text-xl sm:text-2xl font-extrabold text-[#102A43]">
                       {metrics?.totalOrders || 0}
                     </span>
-                    <span className="text-[10px] text-[#52677B] block mt-1 font-medium">{metrics?.cancelledCount || 0} cancelled</span>
+                    <span className="text-[10px] text-[#62788A] block mt-1 font-medium">{metrics?.cancelledCount || 0} cancelled</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#52677B] block mb-1">Catalog Status</span>
-                    <span className="text-xl sm:text-2xl font-extrabold text-[#10263D]">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#62788A] block mb-1">Catalog Status</span>
+                    <span className="text-xl sm:text-2xl font-extrabold text-[#102A43]">
                       {metrics?.totalProducts || 0} SKUs
                     </span>
                     <span className="text-[10px] text-amber-600 block mt-1 font-medium">{metrics?.lowStockCount || 0} low stock</span>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-white border border-[#DCE7F0]">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-3">
+                <div className="p-5 rounded-2xl bg-white border border-[#DCEAF1]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43] mb-3">
                     Operational Status & Relational Integrity
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200 flex items-center gap-2.5">
                       <CheckCircle2 size={18} className="text-emerald-500" />
                       <div>
-                        <strong className="block text-[#10263D]">SQLite WAL Database</strong>
-                        <span className="text-[11px] text-[#52677B]">Transactional ACID guarantees</span>
+                        <strong className="block text-[#102A43]">SQLite WAL Database</strong>
+                        <span className="text-[11px] text-[#62788A]">Transactional ACID guarantees</span>
                       </div>
                     </div>
                     <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200 flex items-center gap-2.5">
-                      <ShieldCheck size={18} className="text-[#145CFF]" />
+                      <ShieldCheck size={18} className="text-[#168FC2]" />
                       <div>
-                        <strong className="block text-[#10263D]">Customer Data Protection</strong>
-                        <span className="text-[11px] text-[#52677B]">Unguessable tokens & auth</span>
+                        <strong className="block text-[#102A43]">Customer Data Protection</strong>
+                        <span className="text-[11px] text-[#62788A]">Unguessable tokens & auth</span>
                       </div>
                     </div>
                     <div className="p-3 rounded-xl bg-[#F8FAFC] border border-slate-200 flex items-center gap-2.5">
                       <Sparkles size={18} className="text-amber-500" />
                       <div>
-                        <strong className="block text-[#10263D]">Verified Reviews Only</strong>
-                        <span className="text-[11px] text-[#52677B]">Delivered purchase required</span>
+                        <strong className="block text-[#102A43]">Verified Reviews Only</strong>
+                        <span className="text-[11px] text-[#62788A]">Delivered purchase required</span>
                       </div>
                     </div>
                   </div>
@@ -621,7 +621,7 @@ export default function AdminModal({
 
                     <button
                       onClick={() => loadTabData('orders')}
-                      className="px-3 py-1.5 rounded-lg bg-[#145CFF] hover:bg-[#0D4BD9] text-white text-xs font-semibold transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-[#168FC2] hover:bg-[#0F7CA6] text-white text-xs font-semibold transition-colors"
                     >
                       Filter
                     </button>
@@ -645,17 +645,17 @@ export default function AdminModal({
                       <button
                         type="button"
                         onClick={toggleSelectAllOrders}
-                        className="flex items-center gap-1.5 font-semibold text-[#10263D] hover:text-[#145CFF] transition-colors"
+                        className="flex items-center gap-1.5 font-semibold text-[#102A43] hover:text-[#168FC2] transition-colors"
                       >
                         {selectedOrderIds.size === orders.length && orders.length > 0 ? (
-                          <CheckSquare size={16} className="text-[#145CFF]" />
+                          <CheckSquare size={16} className="text-[#168FC2]" />
                         ) : (
                           <Square size={16} className="text-slate-400" />
                         )}
                         <span>Select All ({orders.length})</span>
                       </button>
                       {selectedOrderIds.size > 0 && (
-                        <span className="text-[11px] font-bold text-[#145CFF]">
+                        <span className="text-[11px] font-bold text-[#168FC2]">
                           • {selectedOrderIds.size} selected
                         </span>
                       )}
@@ -666,7 +666,7 @@ export default function AdminModal({
                         <button
                           type="button"
                           onClick={() => handleBatchPrint('invoice')}
-                          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-[#DCE7F0] hover:bg-[#EAF4FC] text-[#145CFF] font-bold text-xs shadow-xs transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-[#DCEAF1] hover:bg-[#DDF4FC] text-[#168FC2] font-bold text-xs shadow-xs transition-colors"
                         >
                           <Printer size={13} />
                           <span>Print Invoices ({selectedOrderIds.size})</span>
@@ -674,7 +674,7 @@ export default function AdminModal({
                         <button
                           type="button"
                           onClick={() => handleBatchPrint('packing-slip')}
-                          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-[#DCE7F0] hover:bg-[#EAF4FC] text-[#10263D] font-bold text-xs shadow-xs transition-colors"
+                          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-[#DCEAF1] hover:bg-[#DDF4FC] text-[#102A43] font-bold text-xs shadow-xs transition-colors"
                         >
                           <FileText size={13} />
                           <span>Print Packing Slips ({selectedOrderIds.size})</span>
@@ -687,34 +687,34 @@ export default function AdminModal({
                 {/* Orders List */}
                 {loading ? (
                   <div className="text-center py-10">
-                    <span className="w-6 h-6 border-2 border-[#145CFF] border-t-transparent rounded-full animate-spin inline-block mb-2" />
-                    <p className="text-xs text-[#52677B]">Loading orders...</p>
+                    <span className="w-6 h-6 border-2 border-[#168FC2] border-t-transparent rounded-full animate-spin inline-block mb-2" />
+                    <p className="text-xs text-[#62788A]">Loading orders...</p>
                   </div>
                 ) : orders.length === 0 ? (
-                  <div className="text-center py-8 text-xs text-[#52677B]">No matching orders found.</div>
+                  <div className="text-center py-8 text-xs text-[#62788A]">No matching orders found.</div>
                 ) : (
                   orders.map((ord) => {
                     const isSelected = selectedOrderIds.has(ord.id);
                     return (
                     <div key={ord.id} className={`p-4 rounded-2xl border transition-all space-y-3 ${
-                      isSelected ? 'border-[#145CFF] bg-blue-50/20 shadow-xs' : 'border-[#DCE7F0] bg-white'
+                      isSelected ? 'border-[#168FC2] bg-blue-50/20 shadow-xs' : 'border-[#DCEAF1] bg-white'
                     }`}>
                       <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
                             onClick={() => toggleSelectOrder(ord.id)}
-                            className="text-slate-400 hover:text-[#145CFF]"
+                            className="text-slate-400 hover:text-[#168FC2]"
                             aria-label={`Select order ${ord.id}`}
                           >
                             {isSelected ? (
-                              <CheckSquare size={16} className="text-[#145CFF]" />
+                              <CheckSquare size={16} className="text-[#168FC2]" />
                             ) : (
                               <Square size={16} />
                             )}
                           </button>
-                          <span className="font-mono font-bold text-xs text-[#145CFF]">{ord.id}</span>
-                          <span className="text-[11px] text-[#52677B]">
+                          <span className="font-mono font-bold text-xs text-[#168FC2]">{ord.id}</span>
+                          <span className="text-[11px] text-[#62788A]">
                             {new Date(ord.createdAt).toLocaleDateString()}
                           </span>
                         </div>
@@ -723,7 +723,7 @@ export default function AdminModal({
                           <button
                             type="button"
                             onClick={() => openPrintWindow(ord, 'invoice')}
-                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-[#145CFF] text-[#10263D] text-xs font-semibold transition-colors"
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-[#168FC2] text-[#102A43] text-xs font-semibold transition-colors"
                             title="Print Customer Tax Invoice"
                           >
                             <Printer size={13} />
@@ -733,7 +733,7 @@ export default function AdminModal({
                           <button
                             type="button"
                             onClick={() => openPrintWindow(ord, 'packing-slip')}
-                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#10263D] text-xs font-semibold transition-colors"
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#102A43] text-xs font-semibold transition-colors"
                             title="Print Warehouse Packing & Courier Dispatch Slip"
                           >
                             <FileText size={13} />
@@ -768,22 +768,22 @@ export default function AdminModal({
                       {/* Customer Info & Street Address */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                         <div>
-                          <strong className="text-[#10263D]">{ord.customer?.name}</strong> ({ord.customer?.phone})
-                          <p className="text-[#52677B] mt-0.5">{ord.customer?.address}, {ord.customer?.division}</p>
+                          <strong className="text-[#102A43]">{ord.customer?.name}</strong> ({ord.customer?.phone})
+                          <p className="text-[#62788A] mt-0.5">{ord.customer?.address}, {ord.customer?.division}</p>
                         </div>
                         <div className="text-right sm:text-right">
-                          <span className="text-[11px] font-semibold text-[#52677B] block">
+                          <span className="text-[11px] font-semibold text-[#62788A] block">
                             Method: <strong className="uppercase">{ord.paymentMethod}</strong> • {ord.paymentStatus}
                           </span>
-                          <span className="text-sm font-extrabold text-[#145CFF]">
+                          <span className="text-sm font-extrabold text-[#168FC2]">
                             Total: {currencySymbol}{ord.total?.toLocaleString()}
                           </span>
                         </div>
                       </div>
 
                       {/* Items */}
-                      <div className="p-2.5 rounded-xl bg-[#F8FAFC] border border-slate-100 text-xs text-[#52677B]">
-                        <span className="font-bold text-[#10263D] block mb-1">Items Snapshot:</span>
+                      <div className="p-2.5 rounded-xl bg-[#F8FAFC] border border-slate-100 text-xs text-[#62788A]">
+                        <span className="font-bold text-[#102A43] block mb-1">Items Snapshot:</span>
                         {ord.items?.map((it, idx) => (
                           <div key={idx} className="flex justify-between">
                             <span>{it.title} ({it.variant}) × {it.quantity}</span>
@@ -834,7 +834,7 @@ export default function AdminModal({
                       });
                       setShowProductForm(true);
                     }}
-                    className="px-4 py-2 rounded-full bg-[#145CFF] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs"
+                    className="px-4 py-2 rounded-full bg-[#168FC2] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs"
                   >
                     <Plus size={15} />
                     <span>Create Product</span>
@@ -842,9 +842,9 @@ export default function AdminModal({
                 </div>
 
                 {/* Products Table */}
-                <div className="border border-[#DCE7F0] rounded-2xl overflow-hidden bg-white">
+                <div className="border border-[#DCEAF1] rounded-2xl overflow-hidden bg-white">
                   <table className="w-full text-xs text-left">
-                    <thead className="bg-[#F8FAFC] border-b border-[#DCE7F0] text-[#52677B] font-bold uppercase tracking-wider">
+                    <thead className="bg-[#F8FAFC] border-b border-[#DCEAF1] text-[#62788A] font-bold uppercase tracking-wider">
                       <tr>
                         <th className="p-3">Product</th>
                         <th className="p-3">Category</th>
@@ -858,14 +858,14 @@ export default function AdminModal({
                       {products.map(p => (
                         <tr key={p.id} className="hover:bg-slate-50">
                           <td className="p-3 flex items-center gap-2.5">
-                            <img src={p.image} alt={p.title} className="w-10 h-10 object-contain rounded-lg bg-[#EAF4FC]" />
+                            <img src={p.image} alt={p.title} className="w-10 h-10 object-contain rounded-lg bg-[#DDF4FC]" />
                             <div>
-                              <strong className="block text-[#10263D]">{p.title}</strong>
-                              <span className="text-[10px] text-[#52677B] font-mono">{p.sku}</span>
+                              <strong className="block text-[#102A43]">{p.title}</strong>
+                              <span className="text-[10px] text-[#62788A] font-mono">{p.sku}</span>
                             </div>
                           </td>
-                          <td className="p-3 uppercase font-semibold text-[#52677B]">{p.category}</td>
-                          <td className="p-3 font-bold text-[#10263D]">{currencySymbol}{p.price.toLocaleString()}</td>
+                          <td className="p-3 uppercase font-semibold text-[#62788A]">{p.category}</td>
+                          <td className="p-3 font-bold text-[#102A43]">{currencySymbol}{p.price.toLocaleString()}</td>
                           <td className="p-3">
                             <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
                               p.stock > 5 ? 'bg-emerald-50 text-emerald-700' :
@@ -885,7 +885,7 @@ export default function AdminModal({
                           <td className="p-3 text-right space-x-2">
                             <button
                               onClick={() => toggleProductStatus(p.id, p.status)}
-                              className="text-[11px] font-semibold text-[#52677B] hover:text-[#10263D]"
+                              className="text-[11px] font-semibold text-[#62788A] hover:text-[#102A43]"
                             >
                               {p.status === 'published' ? 'Archive' : 'Publish'}
                             </button>
@@ -899,7 +899,7 @@ export default function AdminModal({
                                 });
                                 setShowProductForm(true);
                               }}
-                              className="text-[11px] font-semibold text-[#145CFF] hover:underline"
+                              className="text-[11px] font-semibold text-[#168FC2] hover:underline"
                             >
                               Edit
                             </button>
@@ -913,9 +913,9 @@ export default function AdminModal({
                 {/* Create/Edit Product Form Modal */}
                 {showProductForm && (
                   <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-[#DCE7F0] shadow-2xl">
+                    <div className="bg-white rounded-3xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto border border-[#DCEAF1] shadow-2xl">
                       <div className="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
-                        <h3 className="font-bold text-sm text-[#10263D]">
+                        <h3 className="font-bold text-sm text-[#102A43]">
                           {editingProduct ? 'Edit Product' : 'Create New Product'}
                         </h3>
                         <button onClick={() => setShowProductForm(false)} className="text-slate-400 hover:text-slate-700">
@@ -1014,7 +1014,7 @@ export default function AdminModal({
                               placeholder="https://... or upload below"
                               className="input-field text-xs py-1.5 flex-1"
                             />
-                            <label className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-[#10263D] rounded-xl cursor-pointer font-semibold flex items-center gap-1">
+                            <label className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-[#102A43] rounded-xl cursor-pointer font-semibold flex items-center gap-1">
                               <Upload size={14} />
                               <span>Upload</span>
                               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
@@ -1042,7 +1042,7 @@ export default function AdminModal({
                           </button>
                           <button
                             type="submit"
-                            className="px-5 py-2 rounded-xl bg-[#145CFF] text-white font-semibold shadow-xs"
+                            className="px-5 py-2 rounded-xl bg-[#168FC2] text-white font-semibold shadow-xs"
                           >
                             Save Product
                           </button>
@@ -1058,12 +1058,12 @@ export default function AdminModal({
             {activeTab === 'inventory' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43] mb-3">
                     Active Stock Quantities & Fast Restocking
                   </h3>
-                  <div className="border border-[#DCE7F0] rounded-2xl overflow-hidden bg-white">
+                  <div className="border border-[#DCEAF1] rounded-2xl overflow-hidden bg-white">
                     <table className="w-full text-xs text-left">
-                      <thead className="bg-[#F8FAFC] border-b border-[#DCE7F0] text-[#52677B] font-bold uppercase">
+                      <thead className="bg-[#F8FAFC] border-b border-[#DCEAF1] text-[#62788A] font-bold uppercase">
                         <tr>
                           <th className="p-3">Product SKU</th>
                           <th className="p-3">Title</th>
@@ -1074,8 +1074,8 @@ export default function AdminModal({
                       <tbody className="divide-y divide-slate-100">
                         {products.map(p => (
                           <tr key={p.id} className="hover:bg-slate-50">
-                            <td className="p-3 font-mono text-[#145CFF] font-bold">{p.sku}</td>
-                            <td className="p-3 text-[#10263D] font-medium">{p.title}</td>
+                            <td className="p-3 font-mono text-[#168FC2] font-bold">{p.sku}</td>
+                            <td className="p-3 text-[#102A43] font-medium">{p.title}</td>
                             <td className="p-3 font-bold">{p.stock} units</td>
                             <td className="p-3 text-right">
                               <button
@@ -1084,7 +1084,7 @@ export default function AdminModal({
                                   setStockDelta(10);
                                   setStockReason('Restock shipment');
                                 }}
-                                className="px-3 py-1 rounded-lg bg-[#EAF4FC] text-[#145CFF] hover:bg-[#145CFF] hover:text-white font-semibold transition-colors"
+                                className="px-3 py-1 rounded-lg bg-[#DDF4FC] text-[#168FC2] hover:bg-[#168FC2] hover:text-white font-semibold transition-colors"
                               >
                                 Adjust Stock
                               </button>
@@ -1098,12 +1098,12 @@ export default function AdminModal({
 
                 {/* Audit Log Table */}
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D] mb-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43] mb-3">
                     Inventory Adjustment Audit History
                   </h3>
-                  <div className="border border-[#DCE7F0] rounded-2xl overflow-hidden bg-white">
+                  <div className="border border-[#DCEAF1] rounded-2xl overflow-hidden bg-white">
                     <table className="w-full text-xs text-left">
-                      <thead className="bg-[#F8FAFC] border-b border-[#DCE7F0] text-[#52677B] font-bold uppercase">
+                      <thead className="bg-[#F8FAFC] border-b border-[#DCEAF1] text-[#62788A] font-bold uppercase">
                         <tr>
                           <th className="p-3">Timestamp</th>
                           <th className="p-3">Product</th>
@@ -1116,7 +1116,7 @@ export default function AdminModal({
                       <tbody className="divide-y divide-slate-100">
                         {adjustments.map(adj => (
                           <tr key={adj.id}>
-                            <td className="p-3 text-[#52677B]">
+                            <td className="p-3 text-[#62788A]">
                               {new Date(adj.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                             </td>
                             <td className="p-3 font-mono font-semibold">{adj.product_id}</td>
@@ -1125,9 +1125,9 @@ export default function AdminModal({
                                 {adj.quantity_change > 0 ? `+${adj.quantity_change}` : adj.quantity_change}
                               </span>
                             </td>
-                            <td className="p-3 text-[#52677B]">{adj.previous_stock} → {adj.new_stock}</td>
-                            <td className="p-3 text-[#10263D]">{adj.reason}</td>
-                            <td className="p-3 text-[#52677B] font-mono">{adj.adjusted_by}</td>
+                            <td className="p-3 text-[#62788A]">{adj.previous_stock} → {adj.new_stock}</td>
+                            <td className="p-3 text-[#102A43]">{adj.reason}</td>
+                            <td className="p-3 text-[#62788A] font-mono">{adj.adjusted_by}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1138,9 +1138,9 @@ export default function AdminModal({
                 {/* Quick Stock Adjustment Modal */}
                 {stockAdjustmentTarget && (
                   <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#DCE7F0] shadow-2xl">
+                    <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#DCEAF1] shadow-2xl">
                       <div className="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
-                        <h3 className="font-bold text-sm text-[#10263D]">
+                        <h3 className="font-bold text-sm text-[#102A43]">
                           Adjust Stock: {stockAdjustmentTarget.title}
                         </h3>
                         <button onClick={() => setStockAdjustmentTarget(null)} className="text-slate-400">
@@ -1151,7 +1151,7 @@ export default function AdminModal({
                       <form onSubmit={handleExecuteStockAdjustment} className="space-y-3 text-xs">
                         <div>
                           <label className="font-bold block mb-1">Current Stock</label>
-                          <span className="font-bold text-base text-[#10263D]">{stockAdjustmentTarget.stock} units</span>
+                          <span className="font-bold text-base text-[#102A43]">{stockAdjustmentTarget.stock} units</span>
                         </div>
 
                         <div>
@@ -1163,7 +1163,7 @@ export default function AdminModal({
                             onChange={(e) => setStockDelta(parseInt(e.target.value, 10))}
                             className="input-field text-xs py-1.5"
                           />
-                          <span className="text-[10px] text-[#52677B]">Positive adds stock, negative removes stock.</span>
+                          <span className="text-[10px] text-[#62788A]">Positive adds stock, negative removes stock.</span>
                         </div>
 
                         <div>
@@ -1187,7 +1187,7 @@ export default function AdminModal({
                           </button>
                           <button
                             type="submit"
-                            className="px-4 py-1.5 rounded-lg bg-[#145CFF] text-white font-semibold"
+                            className="px-4 py-1.5 rounded-lg bg-[#168FC2] text-white font-semibold"
                           >
                             Apply Adjustment
                           </button>
@@ -1203,10 +1203,10 @@ export default function AdminModal({
             {activeTab === 'promotions' && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">Active Discount Promotions</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43]">Active Discount Promotions</h3>
                   <button
                     onClick={() => setShowPromoForm(!showPromoForm)}
-                    className="px-3.5 py-1.5 rounded-full bg-[#145CFF] text-white text-xs font-semibold flex items-center gap-1"
+                    className="px-3.5 py-1.5 rounded-full bg-[#168FC2] text-white text-xs font-semibold flex items-center gap-1"
                   >
                     <Plus size={14} />
                     <span>Create Promo</span>
@@ -1214,7 +1214,7 @@ export default function AdminModal({
                 </div>
 
                 {showPromoForm && (
-                  <form onSubmit={handleCreatePromo} className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0] space-y-3 text-xs">
+                  <form onSubmit={handleCreatePromo} className="p-4 rounded-2xl bg-[#DDF4FC] border border-[#DCEAF1] space-y-3 text-xs">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="font-bold block mb-1">Coupon Code</label>
@@ -1277,16 +1277,16 @@ export default function AdminModal({
                       <button type="button" onClick={() => setShowPromoForm(false)} className="px-3 py-1.5 text-slate-600">
                         Cancel
                       </button>
-                      <button type="submit" className="px-4 py-1.5 rounded-lg bg-[#145CFF] text-white font-semibold">
+                      <button type="submit" className="px-4 py-1.5 rounded-lg bg-[#168FC2] text-white font-semibold">
                         Save Promotion
                       </button>
                     </div>
                   </form>
                 )}
 
-                <div className="border border-[#DCE7F0] rounded-2xl overflow-hidden bg-white">
+                <div className="border border-[#DCEAF1] rounded-2xl overflow-hidden bg-white">
                   <table className="w-full text-xs text-left">
-                    <thead className="bg-[#F8FAFC] border-b border-[#DCE7F0] text-[#52677B] font-bold uppercase">
+                    <thead className="bg-[#F8FAFC] border-b border-[#DCEAF1] text-[#62788A] font-bold uppercase">
                       <tr>
                         <th className="p-3">Code</th>
                         <th className="p-3">Title</th>
@@ -1298,12 +1298,12 @@ export default function AdminModal({
                     <tbody className="divide-y divide-slate-100">
                       {promotions.map(p => (
                         <tr key={p.id}>
-                          <td className="p-3 font-mono font-bold text-[#145CFF]">{p.code}</td>
-                          <td className="p-3 font-semibold text-[#10263D]">{p.title}</td>
+                          <td className="p-3 font-mono font-bold text-[#168FC2]">{p.code}</td>
+                          <td className="p-3 font-semibold text-[#102A43]">{p.title}</td>
                           <td className="p-3 font-bold">
                             {p.discount_type === 'percentage' ? `${p.discount_value}%` : `৳${p.discount_value}`}
                           </td>
-                          <td className="p-3 text-[#52677B]">
+                          <td className="p-3 text-[#62788A]">
                             {new Date(p.start_date).toLocaleDateString()} – {new Date(p.end_date).toLocaleDateString()}
                           </td>
                           <td className="p-3 text-right">
@@ -1322,19 +1322,19 @@ export default function AdminModal({
             {/* TAB 6: REVIEWS MODERATION */}
             {activeTab === 'reviews' && (
               <div className="space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">Verified Customer Reviews</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43]">Verified Customer Reviews</h3>
                 {reviews.length === 0 ? (
-                  <div className="text-center py-8 text-xs text-[#52677B]">No reviews submitted yet.</div>
+                  <div className="text-center py-8 text-xs text-[#62788A]">No reviews submitted yet.</div>
                 ) : (
                   reviews.map(r => (
-                    <div key={r.id} className="p-4 rounded-xl border border-[#DCE7F0] bg-white flex justify-between items-center">
+                    <div key={r.id} className="p-4 rounded-xl border border-[#DCEAF1] bg-white flex justify-between items-center">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-bold text-xs text-[#10263D]">{r.user_name}</span>
+                          <span className="font-bold text-xs text-[#102A43]">{r.user_name}</span>
                           <span className="text-amber-500 font-bold text-xs">★ {r.rating}/5</span>
-                          <span className="text-[10px] text-[#52677B] font-mono">Product: {r.product_id}</span>
+                          <span className="text-[10px] text-[#62788A] font-mono">Product: {r.product_id}</span>
                         </div>
-                        <p className="text-xs text-[#52677B]">{r.comment}</p>
+                        <p className="text-xs text-[#62788A]">{r.comment}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -1367,21 +1367,21 @@ export default function AdminModal({
             {/* TAB 7: SERVICE REQUESTS */}
             {activeTab === 'services' && (
               <div className="space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">Hardware & Accessory Service Requests</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43]">Hardware & Accessory Service Requests</h3>
                 {serviceRequests.length === 0 ? (
-                  <div className="text-center py-8 text-xs text-[#52677B]">No service requests logged.</div>
+                  <div className="text-center py-8 text-xs text-[#62788A]">No service requests logged.</div>
                 ) : (
                   serviceRequests.map(s => (
-                    <div key={s.id} className="p-4 rounded-xl border border-[#DCE7F0] bg-white space-y-2">
+                    <div key={s.id} className="p-4 rounded-xl border border-[#DCEAF1] bg-white space-y-2">
                       <div className="flex justify-between items-center text-xs">
-                        <span className="font-mono font-bold text-[#145CFF]">{s.id}</span>
+                        <span className="font-mono font-bold text-[#168FC2]">{s.id}</span>
                         <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] uppercase">
                           {s.status}
                         </span>
                       </div>
-                      <div className="text-xs text-[#10263D]">
+                      <div className="text-xs text-[#102A43]">
                         <strong>{s.customer_name}</strong> ({s.customer_phone}) — {s.device_model}
-                        <p className="text-[#52677B] mt-0.5">{s.description}</p>
+                        <p className="text-[#62788A] mt-0.5">{s.description}</p>
                       </div>
                     </div>
                   ))

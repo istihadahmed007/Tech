@@ -49,9 +49,9 @@ export default function DailyDiscover({
   return (
     <section className="w-full my-8 sm:my-10">
       {/* Sticky-Style Header with Shopee Tabs */}
-      <div className="bg-white rounded-t-xl border border-[#ECECEC] border-b-0 shadow-2xs overflow-x-auto scrollbar-none">
-        <div className="flex items-center px-4 pt-3 border-b border-slate-100">
-          <div className="flex items-center gap-2 pr-6 pb-3 text-[#EE4D2D] font-extrabold text-lg uppercase tracking-tight shrink-0">
+      <div className="bg-white rounded-t-xl border border-[#DCEAF1] border-b-0 shadow-2xs overflow-x-auto scrollbar-none">
+        <div className="flex items-center px-4 pt-3 border-b border-[#DCEAF1]/60">
+          <div className="flex items-center gap-2 pr-6 pb-3 text-[#168FC2] font-extrabold text-lg uppercase tracking-tight shrink-0">
             <Sparkles size={20} />
             <span>{lang === 'bn' ? 'আপনার জন্য নির্বাচিত' : 'DAILY DISCOVER'}</span>
           </div>
@@ -78,7 +78,7 @@ export default function DailyDiscover({
       </div>
 
       {/* Grid of Product Cards */}
-      <div className="bg-white p-4 sm:p-5 border border-[#ECECEC] rounded-b-xl shadow-xs">
+      <div className="bg-white p-4 sm:p-5 border border-[#DCEAF1] rounded-b-xl shadow-xs">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {displayedItems.map((product) => (
             <ProductCard
@@ -102,7 +102,7 @@ export default function DailyDiscover({
             <button
               type="button"
               onClick={() => setVisibleCount(prev => prev + 12)}
-              className="px-8 py-3 rounded-md bg-white border border-slate-300 hover:border-[#EE4D2D] text-[#10263D] hover:text-[#EE4D2D] font-bold text-xs sm:text-sm transition-all shadow-2xs inline-flex items-center gap-2 cursor-pointer"
+              className="px-8 py-3 rounded-md bg-white border border-[#DCEAF1] hover:border-[#168FC2] text-[#102A43] hover:text-[#168FC2] font-bold text-xs sm:text-sm transition-all shadow-2xs inline-flex items-center gap-2 cursor-pointer"
             >
               <span>{lang === 'bn' ? 'আরও পণ্য দেখুন' : 'See More Products'}</span>
               <ArrowDown size={15} />

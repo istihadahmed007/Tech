@@ -31,19 +31,19 @@ export default function CategoryNav({
   return (
     <section className="w-full my-8 sm:my-12">
       {/* Section Header */}
-      <div className="flex items-end justify-between mb-6 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs">
+      <div className="flex items-end justify-between mb-6 p-4 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCEAF1] shadow-2xs">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#10263D] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#102A43] tracking-tight">
             {lang === 'bn' ? 'প্রতিদিনের সেরা সংগ্রহ' : 'The everyday edit'}
           </h2>
-          <p className="text-xs sm:text-sm text-[#52677B] mt-1 font-medium">
+          <p className="text-xs sm:text-sm text-[#62788A] mt-1 font-medium">
             {lang === 'bn' ? 'আপনার সাথে থাকার জন্য প্রস্তুত।' : 'Made to go with you.'}
           </p>
         </div>
 
         <button
           onClick={onShopAll}
-          className="text-xs sm:text-sm font-bold text-[#145CFF] hover:underline flex items-center gap-1 group pb-0.5"
+          className="text-xs sm:text-sm font-bold text-[#168FC2] hover:underline flex items-center gap-1 group pb-0.5"
         >
           <span>{lang === 'bn' ? 'সবগুলো দেখুন' : 'Shop all'}</span>
           <ChevronRight size={15} className="group-hover:translate-x-0.5 transition-transform stroke-[2.5]" />
@@ -61,8 +61,8 @@ export default function CategoryNav({
               onClick={() => onSelectCategory(isSelected ? null : cat.id)}
               className={`group flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl cursor-pointer transition-all duration-200 border ${
                 isSelected 
-                  ? 'bg-white border-[#145CFF] shadow-md ring-2 ring-[#145CFF]/20 -translate-y-1' 
-                  : 'bg-white/90 hover:bg-white border-[#DCE7F0] hover:border-[#145CFF]/40 hover:shadow-md hover:-translate-y-1'
+                  ? 'bg-white border-[#168FC2] shadow-md ring-2 ring-[#168FC2]/20 -translate-y-1' 
+                  : 'bg-white/90 hover:bg-white border-[#DCEAF1] hover:border-[#168FC2]/40 hover:shadow-md hover:-translate-y-1'
               }`}
             >
               {/* Product Imagery */}
@@ -76,9 +76,9 @@ export default function CategoryNav({
               </div>
 
               {/* Category Label with Chevron Right matching reference */}
-              <div className="flex items-center gap-1 font-bold text-sm sm:text-base text-[#10263D] group-hover:text-[#145CFF] transition-colors mt-1">
+              <div className="flex items-center gap-1 font-bold text-sm sm:text-base text-[#102A43] group-hover:text-[#168FC2] transition-colors mt-1">
                 <span>{cat.name}</span>
-                <ChevronRight size={16} className="stroke-[2.5] group-hover:translate-x-0.5 transition-transform text-slate-600 group-hover:text-[#145CFF]" />
+                <ChevronRight size={16} className="stroke-[2.5] group-hover:translate-x-0.5 transition-transform text-slate-600 group-hover:text-[#168FC2]" />
               </div>
             </div>
           );

@@ -102,10 +102,10 @@ export default function ProductGrid({
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`text-xs sm:text-sm font-semibold px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#EE4D2D] ${
+                className={`text-xs sm:text-sm font-semibold px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#168FC2] ${
                   isActive 
-                    ? 'bg-[#EE4D2D] text-white shadow-xs' 
-                    : 'bg-slate-50 text-slate-700 hover:text-[#EE4D2D] hover:bg-[#FFF5F1] border border-slate-200'
+                    ? 'bg-[#168FC2] text-white shadow-xs' 
+                    : 'bg-white text-[#62788A] hover:text-[#168FC2] hover:bg-[#DDF4FC] border border-[#DCEAF1]'
                 }`}
               >
                 {cat.label}
@@ -115,14 +115,14 @@ export default function ProductGrid({
         </div>
 
         {/* Secondary Filters: In-stock toggle & Sort Dropdown */}
-        <div className="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+        <div className="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-[#DCEAF1]">
           {/* In-Stock Toggle */}
-          <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer select-none">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-[#62788A] cursor-pointer select-none">
             <input
               type="checkbox"
               checked={inStockOnly}
               onChange={(e) => setInStockOnly(e.target.checked)}
-              className="rounded text-[#EE4D2D] focus:ring-[#EE4D2D] border-slate-300 h-4 w-4"
+              className="rounded text-[#168FC2] focus:ring-[#168FC2] border-[#DCEAF1] h-4 w-4"
             />
             <span>{t.inStockOnly || 'In-Stock Only'}</span>
           </label>
@@ -132,12 +132,12 @@ export default function ProductGrid({
             <label htmlFor="catalog-sort" className="sr-only">
               {t.sortBy || 'Sort by'}
             </label>
-            <ArrowUpDown size={14} className="text-slate-400" aria-hidden="true" />
+            <ArrowUpDown size={14} className="text-[#62788A]" aria-hidden="true" />
             <select
               id="catalog-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="text-xs font-semibold py-1.5 px-3 rounded-md bg-white border border-slate-200 text-[#10263D] outline-none focus:border-[#EE4D2D] cursor-pointer"
+              className="text-xs font-semibold py-1.5 px-3 rounded-md bg-white border border-[#DCEAF1] text-[#102A43] outline-none focus:border-[#168FC2] cursor-pointer"
             >
               <option value="featured">{t.sortFeatured || 'Featured'}</option>
               <option value="newest">{lang === 'bn' ? 'নতুন পণ্য' : 'Newest Arrivals'}</option>
@@ -151,16 +151,16 @@ export default function ProductGrid({
 
       {/* Active Filter Indicators */}
       {(selectedPhone || searchQuery || selectedCategory) && (
-        <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-[#52677B]" role="region" aria-label="Active filters">
-          <span className="font-semibold text-[#10263D]">{t.activeFilters || 'Active Filters:'}</span>
+        <div className="flex flex-wrap items-center gap-2 mb-6 text-xs text-[#62788A]" role="region" aria-label="Active filters">
+          <span className="font-semibold text-[#102A43]">{t.activeFilters || 'Active Filters:'}</span>
           
           {selectedPhone && (
-            <span className="flex items-center gap-1 bg-[#EAF4FC] text-[#10263D] border border-[#DCE7F0] px-3 py-1 rounded-full font-medium">
+            <span className="flex items-center gap-1 bg-[#DDF4FC] text-[#102A43] border border-[#B8E7F8] px-3 py-1 rounded-full font-medium">
               <span>{t.fitsFilter || 'Fits:'}</span>
               <strong>{selectedPhone}</strong>
               <button 
                 onClick={onClearPhoneFilter} 
-                className="ml-1 text-[#145CFF] hover:text-[#0D4BD9] font-bold p-0.5"
+                className="ml-1 text-[#168FC2] hover:text-[#0F7CA6] font-bold p-0.5"
                 aria-label={`Remove filter for ${selectedPhone}`}
               >
                 ×
@@ -169,12 +169,12 @@ export default function ProductGrid({
           )}
 
           {searchQuery && (
-            <span className="flex items-center gap-1 bg-[#EAF4FC] text-[#10263D] border border-[#DCE7F0] px-3 py-1 rounded-full font-medium">
+            <span className="flex items-center gap-1 bg-[#DDF4FC] text-[#102A43] border border-[#B8E7F8] px-3 py-1 rounded-full font-medium">
               <span>{t.searchFilter || 'Search:'}</span>
               <strong>"{searchQuery}"</strong>
               <button 
                 onClick={onClearSearch} 
-                className="ml-1 text-[#145CFF] hover:text-[#0D4BD9] font-bold p-0.5"
+                className="ml-1 text-[#168FC2] hover:text-[#0F7CA6] font-bold p-0.5"
                 aria-label="Clear search filter"
               >
                 ×
@@ -183,12 +183,12 @@ export default function ProductGrid({
           )}
 
           {selectedCategory && (
-            <span className="flex items-center gap-1 bg-[#EAF4FC] text-[#10263D] border border-[#DCE7F0] px-3 py-1 rounded-full font-medium">
+            <span className="flex items-center gap-1 bg-[#DDF4FC] text-[#102A43] border border-[#B8E7F8] px-3 py-1 rounded-full font-medium">
               <span>{t.categoryFilter || 'Category:'}</span>
               <strong>{activeCategoryLabel}</strong>
               <button 
                 onClick={() => onSelectCategory(null)} 
-                className="ml-1 text-[#145CFF] hover:text-[#0D4BD9] font-bold p-0.5"
+                className="ml-1 text-[#168FC2] hover:text-[#0F7CA6] font-bold p-0.5"
                 aria-label={`Remove category filter for ${activeCategoryLabel}`}
               >
                 ×
@@ -202,7 +202,7 @@ export default function ProductGrid({
               onClearSearch();
               onSelectCategory(null);
             }}
-            className="text-[#145CFF] hover:text-[#0D4BD9] font-semibold underline ml-1.5"
+            className="text-[#168FC2] hover:text-[#0F7CA6] font-semibold underline ml-1.5"
           >
             {t.clearAll || 'Clear all'}
           </button>
@@ -229,14 +229,14 @@ export default function ProductGrid({
         </div>
       ) : (
         /* Zero-State Handling */
-        <div className="rounded-2xl p-10 sm:p-12 text-center bg-white border border-[#ECECEC] shadow-xs max-w-lg mx-auto" role="status">
-          <div className="w-16 h-16 rounded-full bg-[#FFF5F1] text-[#EE4D2D] mx-auto flex items-center justify-center mb-4">
+        <div className="rounded-2xl p-10 sm:p-12 text-center bg-white border border-[#DCEAF1] shadow-xs max-w-lg mx-auto" role="status">
+          <div className="w-16 h-16 rounded-full bg-[#DDF4FC] text-[#168FC2] mx-auto flex items-center justify-center mb-4">
             <SearchX size={32} />
           </div>
-          <h4 className="text-base sm:text-lg font-bold text-[#10263D] mb-1">
+          <h4 className="text-base sm:text-lg font-bold text-[#102A43] mb-1">
             {t.noProductsFound || 'No matching accessories found'}
           </h4>
-          <p className="text-xs sm:text-sm text-[#52677B] mb-5">
+          <p className="text-xs sm:text-sm text-[#62788A] mb-5">
             {t.noProductsSub || 'Try clearing your filters or exploring different categories.'}
           </p>
           <button
@@ -246,7 +246,7 @@ export default function ProductGrid({
               onSelectCategory(null);
               setInStockOnly(false);
             }}
-            className="px-6 py-2.5 rounded-md bg-[#EE4D2D] hover:bg-[#D73211] text-white font-bold text-xs sm:text-sm shadow-xs cursor-pointer"
+            className="px-6 py-2.5 rounded-md bg-[#168FC2] hover:bg-[#0F7CA6] text-white font-bold text-xs sm:text-sm shadow-xs cursor-pointer"
           >
             {t.resetFilters || 'Reset All Filters'}
           </button>
@@ -255,8 +255,8 @@ export default function ProductGrid({
 
       {/* Honest Catalog Notice */}
       <div className="mt-8 text-center">
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-medium bg-[#EAF4FC] border border-[#DCE7F0] text-[#52677B]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#145CFF]" />
+        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-medium bg-[#DDF4FC] border border-[#B8E7F8] text-[#62788A]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#168FC2]" />
           {t.devSeedNotice}
         </span>
       </div>

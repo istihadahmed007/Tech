@@ -55,12 +55,12 @@ export default function ProductDetailPage({
   if (!product || product.notFound) {
     return (
       <div className="w-full max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <div className="max-w-md mx-auto p-8 rounded-2xl bg-white border border-[#DCE7F0] shadow-sm">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-orange-50 text-[#EE4D2D] flex items-center justify-center">
+        <div className="max-w-md mx-auto p-8 rounded-2xl bg-white border border-[#DCEAF1] shadow-sm">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#DDF4FC] text-[#168FC2] flex items-center justify-center">
             <AlertCircle size={32} />
           </div>
-          <h2 className="text-xl font-bold text-[#10263D] mb-2">{lang === 'bn' ? 'পণ্যটি খুঁজে পাওয়া যায়নি' : 'Product Not Found'}</h2>
-          <p className="text-sm text-[#52677B] mb-6">
+          <h2 className="text-xl font-bold text-[#102A43] mb-2">{lang === 'bn' ? 'পণ্যটি খুঁজে পাওয়া যায়নি' : 'Product Not Found'}</h2>
+          <p className="text-sm text-[#62788A] mb-6">
             {lang === 'bn' 
               ? 'অনুরোধকৃত ইলেকট্রনিক এক্সেসরিজটি পাওয়া যায়নি বা সরানো হয়েছে।'
               : 'The requested electronic accessory could not be found or has been moved.'}
@@ -68,7 +68,7 @@ export default function ProductDetailPage({
           <button
             type="button"
             onClick={onBackToHome}
-            className="w-full py-3 px-6 rounded-xl bg-[#EE4D2D] hover:bg-[#D73211] text-white font-semibold text-sm transition-colors shadow-sm"
+            className="w-full py-3 px-6 rounded-xl bg-[#168FC2] hover:bg-[#0F7CA6] text-white font-semibold text-sm transition-colors shadow-sm"
           >
             {lang === 'bn' ? 'টেক নেস্ট ক্যাটালগে ফিরুন' : 'Return to Tech Nest Catalog'}
           </button>
@@ -370,7 +370,7 @@ export default function ProductDetailPage({
             type="button"
             onClick={() => onSelectCategory && onSelectCategory(product.category)}
             className="pdp-breadcrumb-link"
-            style={{ color: '#EE4D2D' }}
+            style={{ color: '#168FC2' }}
           >
             {categoryLabel}
           </button>
@@ -584,7 +584,7 @@ export default function ProductDetailPage({
             <div className="pdp-variants-card">
               <div className="pdp-variants-header">
                 <span>{lang === 'bn' ? 'কালার / ফিনিশ:' : 'Color / Finish:'}</span>
-                <span style={{ color: '#EE4D2D', fontWeight: 600 }}>{selectedVariant?.name || 'Standard'}</span>
+                <span style={{ color: '#168FC2', fontWeight: 600 }}>{selectedVariant?.name || 'Standard'}</span>
               </div>
               
               <div className="pdp-variant-pills">
@@ -653,7 +653,7 @@ export default function ProductDetailPage({
           {/* Quick Specs Snapshot */}
           <div className="pdp-quick-specs">
             <div className="pdp-quick-spec-item">
-              <ShieldCheck size={16} style={{ color: '#EE4D2D', flexShrink: 0 }} />
+              <ShieldCheck size={16} style={{ color: '#168FC2', flexShrink: 0 }} />
               <span>{product.warranty || '6-Month Warranty'}</span>
             </div>
             <div className="pdp-quick-spec-item">
@@ -681,7 +681,7 @@ export default function ProductDetailPage({
             {/* Delivery Information */}
             <div className="pdp-delivery-box">
               <div className="pdp-delivery-row">
-                <MapPin size={16} style={{ color: '#EE4D2D', flexShrink: 0, marginTop: '2px' }} />
+                <MapPin size={16} style={{ color: '#168FC2', flexShrink: 0, marginTop: '2px' }} />
                 <div>
                   <span className="pdp-delivery-title">
                     {lang === 'bn' ? 'ডেলিভারি ঠিকানা: বাংলাদেশ' : 'Deliver to Bangladesh'}
@@ -834,7 +834,7 @@ export default function ProductDetailPage({
         <section aria-label="Frequently Bought Together" className="pdp-container">
           <div className="pdp-bundle-card">
             <h2 className="pdp-bundle-title">
-              <Sparkles size={18} style={{ color: '#EE4D2D' }} />
+              <Sparkles size={18} style={{ color: '#168FC2' }} />
               <span>{lang === 'bn' ? 'একসাথে কিনুন (স্পেশাল কম্বো)' : 'Frequently bought together'}</span>
             </h2>
 
@@ -873,7 +873,7 @@ export default function ProductDetailPage({
               {/* Bundle Pricing & Action Trigger */}
               <div className="pdp-bundle-actions">
                 <div>
-                  <span style={{ fontSize: '12px', color: '#52677B', display: 'block', fontWeight: 500 }}>
+                  <span style={{ fontSize: '12px', color: '#62788A', display: 'block', fontWeight: 500 }}>
                     {lang === 'bn' ? 'কম্বো মোট মূল্য:' : 'Total Bundle Price:'}
                   </span>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
@@ -953,21 +953,21 @@ export default function ProductDetailPage({
               {/* Highlights Cards */}
               <div className="pdp-overview-cards">
                 <div className="pdp-overview-card">
-                  <Award size={20} style={{ color: '#EE4D2D' }} />
-                  <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#10263D', margin: 0 }}>Official Tech Nest Standard</h4>
-                  <p style={{ fontSize: '13px', color: '#52677B', margin: 0, lineHeight: 1.5 }}>Inspected and packaged with verified authentic connectors and accessories.</p>
+                  <Award size={20} style={{ color: '#168FC2' }} />
+                  <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#102A43', margin: 0 }}>Official Tech Nest Standard</h4>
+                  <p style={{ fontSize: '13px', color: '#62788A', margin: 0, lineHeight: 1.5 }}>Inspected and packaged with verified authentic connectors and accessories.</p>
                 </div>
 
                 <div className="pdp-overview-card">
                   <ShieldCheck size={20} style={{ color: '#059669' }} />
-                  <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#10263D', margin: 0 }}>{product.warranty || 'Replacement Warranty'}</h4>
-                  <p style={{ fontSize: '13px', color: '#52677B', margin: 0, lineHeight: 1.5 }}>Complete support for hardware defects with hassle-free replacement.</p>
+                  <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#102A43', margin: 0 }}>{product.warranty || 'Replacement Warranty'}</h4>
+                  <p style={{ fontSize: '13px', color: '#62788A', margin: 0, lineHeight: 1.5 }}>Complete support for hardware defects with hassle-free replacement.</p>
                 </div>
 
                 <div className="pdp-overview-card">
                   <Truck size={20} style={{ color: '#9333EA' }} />
-                  <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#10263D', margin: 0 }}>Fast Bangladesh Shipping</h4>
-                  <p style={{ fontSize: '13px', color: '#52677B', margin: 0, lineHeight: 1.5 }}>Express dispatch from our central Dhaka warehouse within 24 hours.</p>
+                  <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#102A43', margin: 0 }}>Fast Bangladesh Shipping</h4>
+                  <p style={{ fontSize: '13px', color: '#62788A', margin: 0, lineHeight: 1.5 }}>Express dispatch from our central Dhaka warehouse within 24 hours.</p>
                 </div>
               </div>
             </div>
@@ -1029,9 +1029,9 @@ export default function ProductDetailPage({
                       fontSize: '13px',
                       padding: '8px 14px',
                       borderRadius: '10px',
-                      border: '1px solid #DCE7F0',
+                      border: '1px solid #DCEAF1',
                       background: '#F8FAFC',
-                      color: '#10263D',
+                      color: '#102A43',
                       outline: 'none',
                       boxSizing: 'border-box'
                     }}
@@ -1052,14 +1052,14 @@ export default function ProductDetailPage({
                           gap: '6px',
                           padding: '6px 12px',
                           borderRadius: '10px',
-                          background: '#EAF4FC',
-                          border: '1px solid #DCE7F0',
+                          background: '#DDF4FC',
+                          border: '1px solid #DCEAF1',
                           fontSize: '13px',
                           fontWeight: 600,
-                          color: '#10263D'
+                          color: '#102A43'
                         }}
                       >
-                        <Smartphone size={13} style={{ color: '#EE4D2D' }} />
+                        <Smartphone size={13} style={{ color: '#168FC2' }} />
                         <span>{model}</span>
                       </span>
                     ))}
@@ -1077,28 +1077,28 @@ export default function ProductDetailPage({
             <div className="pdp-tab-pane">
               <div className="pdp-shipping-grid">
                 <div className="pdp-shipping-card">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 700, color: '#10263D' }}>
-                    <Truck size={18} style={{ color: '#EE4D2D' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 700, color: '#102A43' }}>
+                    <Truck size={18} style={{ color: '#168FC2' }} />
                     <span>{lang === 'bn' ? 'ডেলিভারি পলিসি ও চার্জ' : 'Shipping Rates & Delivery Schedule'}</span>
                   </div>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#52677B', lineHeight: 1.6 }}>
-                    <li><strong style={{ color: '#10263D' }}>ঢাকা শহরের ভেতরে:</strong> ৳৬০ ডেলিভারি চার্জ (১–২ কার্যদিবস)।</li>
-                    <li><strong style={{ color: '#10263D' }}>ঢাকার বাইরে (সমগ্র বাংলাদেশ):</strong> ৳১২০ ডেলিভারি চার্জ (২–৪ কার্যদিবস)।</li>
-                    <li><strong style={{ color: '#10263D' }}>ফ্রি ডেলিভারি:</strong> ৳২,০০০ বা তার বেশি অর্ডারে সারা দেশে ডেলিভারি সম্পূর্ণ ফ্রি!</li>
-                    <li><strong style={{ color: '#10263D' }}>ক্যাশ অন ডেলিভারি (COD):</strong> পণ্য হাতে পেয়ে চেক করে মূল্য পরিশোধের সুযোগ।</li>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#62788A', lineHeight: 1.6 }}>
+                    <li><strong style={{ color: '#102A43' }}>ঢাকা শহরের ভেতরে:</strong> ৳৬০ ডেলিভারি চার্জ (১–২ কার্যদিবস)।</li>
+                    <li><strong style={{ color: '#102A43' }}>ঢাকার বাইরে (সমগ্র বাংলাদেশ):</strong> ৳১২০ ডেলিভারি চার্জ (২–৪ কার্যদিবস)।</li>
+                    <li><strong style={{ color: '#102A43' }}>ফ্রি ডেলিভারি:</strong> ৳২,০০০ বা তার বেশি অর্ডারে সারা দেশে ডেলিভারি সম্পূর্ণ ফ্রি!</li>
+                    <li><strong style={{ color: '#102A43' }}>ক্যাশ অন ডেলিভারি (COD):</strong> পণ্য হাতে পেয়ে চেক করে মূল্য পরিশোধের সুযোগ।</li>
                   </ul>
                 </div>
 
                 <div className="pdp-shipping-card">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 700, color: '#10263D' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 700, color: '#102A43' }}>
                     <RotateCcw size={18} style={{ color: '#9333EA' }} />
                     <span>{lang === 'bn' ? 'রিপ্লেসমেন্ট ও ওয়ারেন্টি নীতিমালা' : 'Replacement & Warranty Policy'}</span>
                   </div>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#52677B', lineHeight: 1.6 }}>
-                    <li><strong style={{ color: '#10263D' }}>৭ দিনের রিপ্লেসমেন্ট:</strong> কোনো ম্যানুফ্যাকচারিং ত্রুটি বা সমস্যা থাকলে ৭ দিনের মধ্যে সহজ রিপ্লেসমেন্ট।</li>
-                    <li><strong style={{ color: '#10263D' }}>ওয়ারেন্টি কভারেজ:</strong> {product.warranty || '৬ মাসের অফিশিয়াল সার্ভিস/রিপ্লেসমেন্ট ওয়ারেন্টি'}।</li>
-                    <li><strong style={{ color: '#10263D' }}>প্যাকেজিং সংরক্ষণ:</strong> ক্লেইমের সময় পণ্যের আসল বক্স ও মেমো সংরক্ষণ করুন।</li>
-                    <li><strong style={{ color: '#10263D' }}>কাস্টমার সাপোর্ট:</strong> যেকোনো প্রয়োজনে আমাদের হেল্পলাইনে মেসেজ বা কল করুন।</li>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#62788A', lineHeight: 1.6 }}>
+                    <li><strong style={{ color: '#102A43' }}>৭ দিনের রিপ্লেসমেন্ট:</strong> কোনো ম্যানুফ্যাকচারিং ত্রুটি বা সমস্যা থাকলে ৭ দিনের মধ্যে সহজ রিপ্লেসমেন্ট।</li>
+                    <li><strong style={{ color: '#102A43' }}>ওয়ারেন্টি কভারেজ:</strong> {product.warranty || '৬ মাসের অফিশিয়াল সার্ভিস/রিপ্লেসমেন্ট ওয়ারেন্টি'}।</li>
+                    <li><strong style={{ color: '#102A43' }}>প্যাকেজিং সংরক্ষণ:</strong> ক্লেইমের সময় পণ্যের আসল বক্স ও মেমো সংরক্ষণ করুন।</li>
+                    <li><strong style={{ color: '#102A43' }}>কাস্টমার সাপোর্ট:</strong> যেকোনো প্রয়োজনে আমাদের হেল্পলাইনে মেসেজ বা কল করুন।</li>
                   </ul>
                 </div>
               </div>
@@ -1112,7 +1112,7 @@ export default function ProductDetailPage({
                 {/* Left Breakdown (Amazon-style rating bars) */}
                 <div className="pdp-reviews-sidebar">
                   <div>
-                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#10263D', margin: '0 0 8px 0' }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#102A43', margin: '0 0 8px 0' }}>
                       {lang === 'bn' ? 'কাস্টমার রিভিউ রেটিং' : 'Customer Reviews'}
                     </h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1121,17 +1121,17 @@ export default function ProductDetailPage({
                           <Star key={star} size={18} fill="#F59E0B" className="stroke-none" />
                         ))}
                       </div>
-                      <span style={{ fontSize: '20px', fontWeight: 800, color: '#10263D' }}>{avgRating} out of 5</span>
+                      <span style={{ fontSize: '20px', fontWeight: 800, color: '#102A43' }}>{avgRating} out of 5</span>
                     </div>
-                    <span style={{ fontSize: '13px', color: '#52677B', display: 'block', marginTop: '4px' }}>
+                    <span style={{ fontSize: '13px', color: '#62788A', display: 'block', marginTop: '4px' }}>
                       {reviewCount} {lang === 'bn' ? 'জন যাচাইকৃত গ্রাহকের মতামত' : 'global ratings'}
                     </span>
                   </div>
 
                   {/* Rating Bars */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px', borderTop: '1px solid #DCE7F0' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px', borderTop: '1px solid #DCEAF1' }}>
                     {ratingDistribution.map((row) => (
-                      <div key={row.stars} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#52677B' }}>
+                      <div key={row.stars} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#62788A' }}>
                         <span style={{ width: '48px', textAlign: 'right', fontWeight: 500 }}>{row.stars} star</span>
                         <div style={{ flex: 1, height: '10px', borderRadius: '9999px', background: '#E2E8F0', overflow: 'hidden' }}>
                           <div
@@ -1144,17 +1144,17 @@ export default function ProductDetailPage({
                             }}
                           />
                         </div>
-                        <span style={{ width: '36px', textAlign: 'right', fontWeight: 700, color: '#10263D' }}>{row.percent}%</span>
+                        <span style={{ width: '36px', textAlign: 'right', fontWeight: 700, color: '#102A43' }}>{row.percent}%</span>
                       </div>
                     ))}
                   </div>
 
                   {/* Write a Review Button */}
-                  <div style={{ paddingTop: '12px', borderTop: '1px solid #DCE7F0' }}>
-                    <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#10263D', margin: '0 0 4px 0' }}>
+                  <div style={{ paddingTop: '12px', borderTop: '1px solid #DCEAF1' }}>
+                    <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#102A43', margin: '0 0 4px 0' }}>
                       {lang === 'bn' ? 'আপনার অভিজ্ঞতা শেয়ার করুন' : 'Review this product'}
                     </h4>
-                    <p style={{ fontSize: '12px', color: '#52677B', margin: '0 0 12px 0' }}>
+                    <p style={{ fontSize: '12px', color: '#62788A', margin: '0 0 12px 0' }}>
                       {lang === 'bn' ? 'অন্যান্য ক্রেতাদের সাহায্য করতে আপনার মতামত দিন।' : 'Share your thoughts with other customers.'}
                     </p>
                     <button
@@ -1179,12 +1179,12 @@ export default function ProductDetailPage({
                   {/* Review Submission Form */}
                   {showReviewForm && (
                     <form onSubmit={handleSubmitReview} style={{ padding: '20px', borderRadius: '16px', background: '#F0F7FF', border: '1px solid #B9DCFF', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                      <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#10263D', margin: 0 }}>
+                      <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#102A43', margin: 0 }}>
                         {lang === 'bn' ? 'যাচাইকৃত কাস্টমার রিভিউ ফরম' : 'Write a Verified Customer Review'}
                       </h4>
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#10263D' }}>Rating:</span>
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#102A43' }}>Rating:</span>
                         <div style={{ display: 'flex', gap: '4px' }}>
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
@@ -1203,7 +1203,7 @@ export default function ProductDetailPage({
                       </div>
 
                       <div>
-                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#10263D', marginBottom: '6px' }}>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#102A43', marginBottom: '6px' }}>
                           Your Review
                         </label>
                         <textarea
@@ -1217,7 +1217,7 @@ export default function ProductDetailPage({
                             fontSize: '13px',
                             padding: '10px 12px',
                             borderRadius: '10px',
-                            border: '1px solid #DCE7F0',
+                            border: '1px solid #DCEAF1',
                             background: '#FFFFFF',
                             boxSizing: 'border-box',
                             outline: 'none'
@@ -1243,7 +1243,7 @@ export default function ProductDetailPage({
                         <button
                           type="button"
                           onClick={() => setShowReviewForm(false)}
-                          style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 600, color: '#52677B', background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: '8px' }}
+                          style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 600, color: '#62788A', background: 'transparent', border: 'none', cursor: 'pointer', borderRadius: '8px' }}
                         >
                           Cancel
                         </button>
@@ -1262,13 +1262,13 @@ export default function ProductDetailPage({
                   {/* Reviews List */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {loadingReviews ? (
-                      <p style={{ fontSize: '13px', color: '#52677B' }}>Loading reviews...</p>
+                      <p style={{ fontSize: '13px', color: '#62788A' }}>Loading reviews...</p>
                     ) : reviews.length === 0 ? (
-                      <div style={{ padding: '24px', borderRadius: '16px', background: '#F8FAFC', border: '1px solid #DCE7F0', textAlign: 'center' }}>
-                        <p style={{ fontSize: '14px', fontWeight: 700, color: '#10263D', margin: '0 0 6px 0' }}>
+                      <div style={{ padding: '24px', borderRadius: '16px', background: '#F8FAFC', border: '1px solid #DCEAF1', textAlign: 'center' }}>
+                        <p style={{ fontSize: '14px', fontWeight: 700, color: '#102A43', margin: '0 0 6px 0' }}>
                           {lang === 'bn' ? 'এখনো কোনো রিভিউ নেই' : 'No customer reviews yet'}
                         </p>
-                        <p style={{ fontSize: '13px', color: '#52677B', margin: 0 }}>
+                        <p style={{ fontSize: '13px', color: '#62788A', margin: 0 }}>
                           {lang === 'bn' ? 'পণ্যটি ক্রয় করে প্রথম যাচাইকৃত রিভিউ প্রদান করুন!' : 'Be the first verified customer to share your experience with this accessory.'}
                         </p>
                       </div>
@@ -1277,7 +1277,7 @@ export default function ProductDetailPage({
                         <div key={r.id} className="pdp-review-card">
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span style={{ fontWeight: 700, color: '#10263D' }}>{r.user_name}</span>
+                              <span style={{ fontWeight: 700, color: '#102A43' }}>{r.user_name}</span>
                               <span style={{ fontSize: '11px', background: '#ECFDF5', color: '#047857', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600, border: '1px solid #A7F3D0' }}>
                                 Verified Purchase
                               </span>
@@ -1293,7 +1293,7 @@ export default function ProductDetailPage({
                             ))}
                           </div>
 
-                          <p style={{ fontSize: '13px', color: '#52677B', lineHeight: 1.55, margin: 0 }}>{r.comment}</p>
+                          <p style={{ fontSize: '13px', color: '#62788A', lineHeight: 1.55, margin: 0 }}>{r.comment}</p>
                         </div>
                       ))
                     )}
@@ -1312,10 +1312,10 @@ export default function ProductDetailPage({
         <section aria-label="Related Products" className="pdp-container">
           <div className="pdp-related-card">
             <div>
-              <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#10263D', margin: 0 }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#102A43', margin: 0 }}>
                 {lang === 'bn' ? 'সম্পর্কিত অন্যান্য প্রোডাক্ট' : 'Customers also viewed'}
               </h2>
-              <p style={{ fontSize: '13px', color: '#52677B', margin: '4px 0 0 0' }}>
+              <p style={{ fontSize: '13px', color: '#62788A', margin: '4px 0 0 0' }}>
                 {lang === 'bn' ? 'একই ক্যাটাগরির জনপ্রিয় এক্সেসরিজ কালেকশন' : 'Popular verified accessories in the same category'}
               </p>
             </div>
@@ -1334,13 +1334,13 @@ export default function ProductDetailPage({
                         alt={rel.title}
                       />
                       {rel.badge && (
-                        <span style={{ position: 'absolute', top: '8px', left: '8px', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, background: '#EE4D2D', color: '#FFFFFF' }}>
+                        <span style={{ position: 'absolute', top: '8px', left: '8px', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, background: '#168FC2', color: '#FFFFFF' }}>
                           {rel.badge}
                         </span>
                       )}
                     </div>
 
-                    <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#EE4D2D', display: 'block' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#168FC2', display: 'block' }}>
                       {rel.category}
                     </span>
                     <h3 className="pdp-related-title">

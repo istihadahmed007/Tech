@@ -27,7 +27,7 @@ export function generateCode128Svg(text, options = {}) {
     barWidth = 1.6, 
     quietZone = 16, 
     showText = true, 
-    color = '#10263D', 
+    color = '#102A43', 
     bgColor = '#FFFFFF' 
   } = options;
 

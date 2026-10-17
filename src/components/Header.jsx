@@ -103,7 +103,7 @@ export default function Header({
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-[#ECECEC] shadow-xs">
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-[#DCEAF1] shadow-xs">
       {/* Top Main Header Container */}
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-6">
         
@@ -177,7 +177,7 @@ export default function Header({
                   setSearchQuery(kw.query);
                   if (onGoToShop) onGoToShop();
                 }}
-                className="hover:text-[#EE4D2D] transition-colors cursor-pointer"
+                className="hover:text-[#168FC2] transition-colors cursor-pointer"
               >
                 {kw.label}
               </button>
@@ -189,13 +189,13 @@ export default function Header({
             <div className="search-suggestions-dropdown py-2 border border-slate-200 shadow-xl bg-white">
               <div className="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
                 <span>{lang === 'bn' ? 'প্রস্তাবিত পণ্যসমূহ' : 'Suggested Products'}</span>
-                <span className="text-[#EE4D2D] text-[10px]">{liveSuggestions.length} items</span>
+                <span className="text-[#168FC2] text-[10px]">{liveSuggestions.length} items</span>
               </div>
               {liveSuggestions.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => handleSuggestionClick(item)}
-                  className="px-3 py-2 flex items-center gap-3 hover:bg-[#FFF5F1] cursor-pointer transition-colors border-b border-slate-50 last:border-b-0"
+                  className="px-3 py-2 flex items-center gap-3 hover:bg-[#DDF4FC] cursor-pointer transition-colors border-b border-slate-50 last:border-b-0"
                 >
                   <img 
                     src={item.image} 
@@ -203,11 +203,11 @@ export default function Header({
                     className="w-10 h-10 object-contain rounded bg-white p-0.5 border border-slate-200 shrink-0" 
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-[#10263D] truncate">
+                    <p className="text-xs font-semibold text-[#102A43] truncate">
                       {lang === 'bn' ? (item.titleBn || item.title) : item.title}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs font-bold text-[#EE4D2D]">৳{item.price.toLocaleString()}</span>
+                      <span className="text-xs font-bold text-[#168FC2]">৳{item.price.toLocaleString()}</span>
                       {item.originalPrice && item.originalPrice > item.price && (
                         <span className="text-[10px] text-slate-400 line-through">৳{item.originalPrice.toLocaleString()}</span>
                       )}
@@ -216,14 +216,14 @@ export default function Header({
                       </span>
                     </div>
                   </div>
-                  <ArrowRight size={14} className="text-slate-400 group-hover:text-[#EE4D2D]" />
+                  <ArrowRight size={14} className="text-slate-400 group-hover:text-[#168FC2]" />
                 </div>
               ))}
               <div className="p-2 border-t border-slate-100 text-center">
                 <button
                   type="button"
                   onClick={handleSearchSubmit}
-                  className="text-xs font-bold text-[#EE4D2D] hover:underline cursor-pointer"
+                  className="text-xs font-bold text-[#168FC2] hover:underline cursor-pointer"
                 >
                   {lang === 'bn' ? `"${searchQuery}" এর সব ফলাফল দেখুন` : `View all results for "${searchQuery}"`}
                 </button>
@@ -248,13 +248,13 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenWishlist}
-            className="relative p-2 rounded-full hover:bg-slate-100 text-slate-700 hover:text-[#EE4D2D] transition-colors cursor-pointer"
+            className="relative p-2 rounded-full hover:bg-slate-100 text-slate-700 hover:text-[#168FC2] transition-colors cursor-pointer"
             aria-label="Wishlist"
             title="Saved items"
           >
             <Heart size={21} />
             {wishlistCount > 0 && (
-              <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-[#EE4D2D] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+              <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-[#168FC2] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                 {wishlistCount}
               </span>
             )}
@@ -264,7 +264,7 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenAccount}
-            className="p-1.5 sm:px-3 sm:py-1.5 rounded-full hover:bg-slate-100 text-slate-700 hover:text-[#EE4D2D] transition-colors flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-slate-200"
+            className="p-1.5 sm:px-3 sm:py-1.5 rounded-full hover:bg-slate-100 text-slate-700 hover:text-[#168FC2] transition-colors flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-slate-200"
             aria-label="Customer Account"
             title={currentUser ? `Account: ${currentUser.name}` : "Sign In / Register"}
           >
@@ -273,7 +273,7 @@ export default function Header({
               <span className="text-[10px] text-slate-400 leading-none">
                 {currentUser ? (lang === 'bn' ? 'আমার প্রোফাইল' : 'Hello,') : (lang === 'bn' ? 'সাইন ইন' : 'Sign In')}
               </span>
-              <span className="text-xs font-bold text-[#10263D] leading-tight max-w-[90px] truncate">
+              <span className="text-xs font-bold text-[#102A43] leading-tight max-w-[90px] truncate">
                 {currentUser ? currentUser.name.split(' ')[0] : (lang === 'bn' ? 'অ্যাকাউন্ট' : 'Account')}
               </span>
             </div>
@@ -283,14 +283,14 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenCart}
-            className="relative flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-[#FFF5F1] hover:bg-[#FEECE6] text-[#EE4D2D] border border-[#FFDCD4] transition-all cursor-pointer shadow-xs active:scale-95"
+            className="relative flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-[#DDF4FC] hover:bg-[#B8E7F8] text-[#168FC2] border border-[#B8E7F8] transition-all cursor-pointer shadow-xs active:scale-95"
             aria-label="Shopping Cart"
             title="View Shopping Cart"
           >
             <div className="relative">
               <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#EE4D2D] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
+                <span className="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#168FC2] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
                   {cartCount}
                 </span>
               )}
@@ -313,16 +313,16 @@ export default function Header({
       </div>
 
       {/* Subheader: Shopee-Style Category Navigation Strip */}
-      <div className="border-t border-[#F0F0F0] bg-white hidden lg:block">
+      <div className="border-t border-[#DCEAF1] bg-white hidden lg:block">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-          <nav className="flex items-center gap-1 sm:gap-2 py-1.5 text-xs font-semibold text-[#334155] overflow-x-auto scrollbar-none">
+          <nav className="flex items-center gap-1 sm:gap-2 py-1.5 text-xs font-semibold text-[#102A43] overflow-x-auto scrollbar-none">
             <button
               type="button"
               onClick={() => {
                 if (onSelectCategory) onSelectCategory(null);
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
             >
               {lang === 'bn' ? 'সব পণ্য' : 'All Accessories'}
             </button>
@@ -333,7 +333,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('earbuds');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
             >
               {lang === 'bn' ? 'ইয়ারবাডস ও হেডফোন' : 'Earbuds & Audio'}
             </button>
@@ -344,7 +344,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('chargers');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
             >
               {lang === 'bn' ? 'ফাস্ট চার্জার ও অ্যাডাপ্টার' : 'Chargers & Adapters'}
             </button>
@@ -355,7 +355,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('cables');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
             >
               {lang === 'bn' ? 'ইউএসবি ক্যাবল' : 'USB Cables'}
             </button>
@@ -366,7 +366,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('wearables');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
             >
               {lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches'}
             </button>
@@ -377,7 +377,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('cases');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
             >
               {lang === 'bn' ? 'কেস ও প্রোটেক্টর' : 'Cases & Protectors'}
             </button>
@@ -388,7 +388,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('power-banks');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
             >
               {lang === 'bn' ? 'পাওয়ার ব্যাংক' : 'Power Banks'}
             </button>
@@ -398,9 +398,9 @@ export default function Header({
             <button
               type="button"
               onClick={onScrollToFinder}
-              className="text-[#10263D] hover:text-[#EE4D2D] flex items-center gap-1 transition-colors cursor-pointer"
+              className="text-[#102A43] hover:text-[#168FC2] flex items-center gap-1 transition-colors cursor-pointer"
             >
-              <Sparkles size={13} className="text-[#EE4D2D]" />
+              <Sparkles size={13} className="text-[#168FC2]" />
               <span>{lang === 'bn' ? 'ফোন মডেল সার্চ' : 'Device Compatibility Fit'}</span>
             </button>
           </div>
@@ -448,7 +448,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory(null);
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#FFF5F1] hover:text-[#EE4D2D]"
+              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#DDF4FC] hover:text-[#168FC2]"
             >
               {lang === 'bn' ? 'সব পণ্য' : 'All Products'}
             </button>
@@ -459,7 +459,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('earbuds');
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#FFF5F1] hover:text-[#EE4D2D]"
+              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#DDF4FC] hover:text-[#168FC2]"
             >
               {lang === 'bn' ? 'ইয়ারবাডস' : 'Earbuds & Audio'}
             </button>
@@ -470,7 +470,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('chargers');
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#FFF5F1] hover:text-[#EE4D2D]"
+              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#DDF4FC] hover:text-[#168FC2]"
             >
               {lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Chargers & Cables'}
             </button>
@@ -481,7 +481,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('wearables');
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#FFF5F1] hover:text-[#EE4D2D]"
+              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#DDF4FC] hover:text-[#168FC2]"
             >
               {lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches'}
             </button>
@@ -496,7 +496,7 @@ export default function Header({
               }}
               className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded"
             >
-              <Package size={15} className="text-[#EE4D2D]" />
+              <Package size={15} className="text-[#168FC2]" />
               <span>{lang === 'bn' ? 'অর্ডার ট্র্যাকিং' : 'Track Order Status'}</span>
             </button>
             <button
@@ -507,7 +507,7 @@ export default function Header({
               }}
               className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded"
             >
-              <HelpCircle size={15} className="text-[#EE4D2D]" />
+              <HelpCircle size={15} className="text-[#168FC2]" />
               <span>{lang === 'bn' ? 'কাস্টমার সাপোর্ট' : 'Support & Warranty'}</span>
             </button>
             <button
@@ -516,9 +516,9 @@ export default function Header({
                 setMobileMenuOpen(false);
                 if (onOpenAccount) onOpenAccount();
               }}
-              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded font-semibold text-[#10263D]"
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded font-semibold text-[#102A43]"
             >
-              <User size={15} className="text-[#EE4D2D]" />
+              <User size={15} className="text-[#168FC2]" />
               <span>{currentUser ? `Profile (${currentUser.name})` : (lang === 'bn' ? 'সাইন ইন / রেজিস্টার' : 'Sign In / Register')}</span>
             </button>
           </div>

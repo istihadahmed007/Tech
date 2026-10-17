@@ -252,21 +252,21 @@ export default function AccountModal({
       aria-labelledby="customer-account-title"
     >
       <div 
-        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCE7F0] shadow-2xl animate-fadeIn"
+        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#DCEAF1] shadow-2xl animate-fadeIn"
         onClick={(e) => e.stopPropagation()}
         style={{ boxShadow: '0 25px 60px -15px rgba(16, 38, 61, 0.20)' }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-[#DCEAF1] mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#EAF4FC] text-[#145CFF] flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-[#DDF4FC] text-[#168FC2] flex items-center justify-center font-bold">
               <User size={20} />
             </div>
             <div>
-              <h2 id="customer-account-title" className="text-xl font-bold text-[#10263D]">
+              <h2 id="customer-account-title" className="text-xl font-bold text-[#102A43]">
                 {currentUser ? `Welcome, ${currentUser.name}` : 'Customer Account'}
               </h2>
-              <p className="text-xs text-[#52677B]">
+              <p className="text-xs text-[#62788A]">
                 {currentUser ? currentUser.email : 'Sign in to access order history, saved addresses & wishlist'}
               </p>
             </div>
@@ -274,7 +274,7 @@ export default function AccountModal({
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-[#62788A] hover:text-[#102A43] focus-visible:ring-2 focus-visible:ring-[#168FC2]"
             aria-label="Close account modal"
           >
             <X size={20} />
@@ -289,7 +289,7 @@ export default function AccountModal({
                 type="button"
                 onClick={() => { setAuthMode('login'); setAuthError(''); }}
                 className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${
-                  authMode === 'login' ? 'bg-white text-[#10263D] shadow-xs' : 'text-[#52677B] hover:text-[#10263D]'
+                  authMode === 'login' ? 'bg-white text-[#102A43] shadow-xs' : 'text-[#62788A] hover:text-[#102A43]'
                 }`}
               >
                 Sign In
@@ -298,7 +298,7 @@ export default function AccountModal({
                 type="button"
                 onClick={() => { setAuthMode('register'); setAuthError(''); }}
                 className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${
-                  authMode === 'register' ? 'bg-white text-[#10263D] shadow-xs' : 'text-[#52677B] hover:text-[#10263D]'
+                  authMode === 'register' ? 'bg-white text-[#102A43] shadow-xs' : 'text-[#62788A] hover:text-[#102A43]'
                 }`}
               >
                 Create Account
@@ -308,7 +308,7 @@ export default function AccountModal({
             <form onSubmit={handleAuthSubmit} className="space-y-4">
               {authMode === 'register' && (
                 <div>
-                  <label className="block text-xs font-bold text-[#10263D] mb-1">Full Name</label>
+                  <label className="block text-xs font-bold text-[#102A43] mb-1">Full Name</label>
                   <div className="relative">
                     <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
@@ -324,7 +324,7 @@ export default function AccountModal({
               )}
 
               <div>
-                <label className="block text-xs font-bold text-[#10263D] mb-1">Email Address</label>
+                <label className="block text-xs font-bold text-[#102A43] mb-1">Email Address</label>
                 <div className="relative">
                   <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
@@ -340,7 +340,7 @@ export default function AccountModal({
 
               {authMode === 'register' && (
                 <div>
-                  <label className="block text-xs font-bold text-[#10263D] mb-1">Mobile Number (BD)</label>
+                  <label className="block text-xs font-bold text-[#102A43] mb-1">Mobile Number (BD)</label>
                   <div className="relative">
                     <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
@@ -355,7 +355,7 @@ export default function AccountModal({
               )}
 
               <div>
-                <label className="block text-xs font-bold text-[#10263D] mb-1">Password</label>
+                <label className="block text-xs font-bold text-[#102A43] mb-1">Password</label>
                 <div className="relative">
                   <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
@@ -380,7 +380,7 @@ export default function AccountModal({
               <button
                 type="submit"
                 disabled={authLoading}
-                className="w-full py-3 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                className="w-full py-3 rounded-full bg-[#168FC2] hover:bg-[#0F7CA6] text-white font-semibold text-xs shadow-md shadow-sky-500/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
               >
                 {authLoading ? (
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -397,13 +397,13 @@ export default function AccountModal({
           /* Logged In Customer Dashboard */
           <div>
             {/* Tab Navigation */}
-            <div className="flex border-b border-[#DCE7F0] mb-6 overflow-x-auto gap-4">
+            <div className="flex border-b border-[#DCEAF1] mb-6 overflow-x-auto gap-4">
               <button
                 onClick={() => setActiveTab('orders')}
                 className={`pb-3 text-xs font-bold flex items-center gap-1.5 border-b-2 transition-all shrink-0 ${
                   activeTab === 'orders'
-                    ? 'border-[#145CFF] text-[#145CFF]'
-                    : 'border-transparent text-[#52677B] hover:text-[#10263D]'
+                    ? 'border-[#168FC2] text-[#168FC2]'
+                    : 'border-transparent text-[#62788A] hover:text-[#102A43]'
                 }`}
               >
                 <Package size={16} />
@@ -414,8 +414,8 @@ export default function AccountModal({
                 onClick={() => setActiveTab('addresses')}
                 className={`pb-3 text-xs font-bold flex items-center gap-1.5 border-b-2 transition-all shrink-0 ${
                   activeTab === 'addresses'
-                    ? 'border-[#145CFF] text-[#145CFF]'
-                    : 'border-transparent text-[#52677B] hover:text-[#10263D]'
+                    ? 'border-[#168FC2] text-[#168FC2]'
+                    : 'border-transparent text-[#62788A] hover:text-[#102A43]'
                 }`}
               >
                 <MapPin size={16} />
@@ -426,8 +426,8 @@ export default function AccountModal({
                 onClick={() => setActiveTab('wishlist')}
                 className={`pb-3 text-xs font-bold flex items-center gap-1.5 border-b-2 transition-all shrink-0 ${
                   activeTab === 'wishlist'
-                    ? 'border-[#145CFF] text-[#145CFF]'
-                    : 'border-transparent text-[#52677B] hover:text-[#10263D]'
+                    ? 'border-[#168FC2] text-[#168FC2]'
+                    : 'border-transparent text-[#62788A] hover:text-[#102A43]'
                 }`}
               >
                 <Heart size={16} />
@@ -438,8 +438,8 @@ export default function AccountModal({
                 onClick={() => setActiveTab('link_order')}
                 className={`pb-3 text-xs font-bold flex items-center gap-1.5 border-b-2 transition-all shrink-0 ${
                   activeTab === 'link_order'
-                    ? 'border-[#145CFF] text-[#145CFF]'
-                    : 'border-transparent text-[#52677B] hover:text-[#10263D]'
+                    ? 'border-[#168FC2] text-[#168FC2]'
+                    : 'border-transparent text-[#62788A] hover:text-[#102A43]'
                 }`}
               >
                 <ShieldCheck size={16} />
@@ -460,24 +460,24 @@ export default function AccountModal({
               <div className="space-y-4">
                 {loadingOrders ? (
                   <div className="text-center py-10">
-                    <span className="w-6 h-6 border-2 border-[#145CFF] border-t-transparent rounded-full animate-spin inline-block mb-2" />
-                    <p className="text-xs text-[#52677B]">Loading your order history...</p>
+                    <span className="w-6 h-6 border-2 border-[#168FC2] border-t-transparent rounded-full animate-spin inline-block mb-2" />
+                    <p className="text-xs text-[#62788A]">Loading your order history...</p>
                   </div>
                 ) : orders.length === 0 ? (
-                  <div className="text-center py-10 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0] p-6">
-                    <Package size={32} className="mx-auto text-[#145CFF] mb-2 opacity-60" />
-                    <h3 className="text-sm font-bold text-[#10263D] mb-1">No orders placed yet</h3>
-                    <p className="text-xs text-[#52677B]">Orders placed under your account will appear here with live tracking.</p>
+                  <div className="text-center py-10 rounded-2xl bg-[#DDF4FC] border border-[#DCEAF1] p-6">
+                    <Package size={32} className="mx-auto text-[#168FC2] mb-2 opacity-60" />
+                    <h3 className="text-sm font-bold text-[#102A43] mb-1">No orders placed yet</h3>
+                    <p className="text-xs text-[#62788A]">Orders placed under your account will appear here with live tracking.</p>
                   </div>
                 ) : (
                   orders.map((ord) => (
-                    <div key={ord.id} className="p-4 rounded-2xl bg-white border border-[#DCE7F0] hover:border-[#145CFF]/30 transition-all shadow-2xs">
+                    <div key={ord.id} className="p-4 rounded-2xl bg-white border border-[#DCEAF1] hover:border-[#168FC2]/30 transition-all shadow-2xs">
                       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
                         <div>
-                          <span className="text-[11px] font-mono font-bold text-[#145CFF] block">
+                          <span className="text-[11px] font-mono font-bold text-[#168FC2] block">
                             {ord.id}
                           </span>
-                          <span className="text-[10px] text-[#52677B]">
+                          <span className="text-[10px] text-[#62788A]">
                             {new Date(ord.createdAt).toLocaleDateString()} at {new Date(ord.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -500,22 +500,22 @@ export default function AccountModal({
                       {/* Items */}
                       <div className="py-2.5 space-y-1.5 text-xs">
                         {ord.items.map((it, idx) => (
-                          <div key={idx} className="flex justify-between text-[#52677B]">
+                          <div key={idx} className="flex justify-between text-[#62788A]">
                             <span>{it.title} ({it.variant}) × {it.quantity}</span>
-                            <span className="font-semibold text-[#10263D]">{currencySymbol}{(it.price * it.quantity).toLocaleString()}</span>
+                            <span className="font-semibold text-[#102A43]">{currencySymbol}{(it.price * it.quantity).toLocaleString()}</span>
                           </div>
                         ))}
                       </div>
 
-                      <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#10263D]">
+                      <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#102A43]">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-[#52677B]">Total:</span>
-                          <span className="text-sm text-[#145CFF]">{currencySymbol}{ord.total.toLocaleString()}</span>
+                          <span className="font-semibold text-[#62788A]">Total:</span>
+                          <span className="text-sm text-[#168FC2]">{currencySymbol}{ord.total.toLocaleString()}</span>
                         </div>
                         <button
                           type="button"
                           onClick={() => openPrintWindow(ord, 'invoice')}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#EAF4FC] hover:text-[#145CFF] text-[#10263D] text-[11px] font-semibold transition-colors"
+                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#DDF4FC] hover:text-[#168FC2] text-[#102A43] text-[11px] font-semibold transition-colors"
                           title="Print or view invoice receipt"
                         >
                           <Printer size={12} />
@@ -532,11 +532,11 @@ export default function AccountModal({
             {activeTab === 'addresses' && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#10263D]">Delivery Addresses</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43]">Delivery Addresses</h3>
                   <button
                     type="button"
                     onClick={() => setShowAddAddress(!showAddAddress)}
-                    className="text-xs font-bold text-[#145CFF] hover:underline flex items-center gap-1"
+                    className="text-xs font-bold text-[#168FC2] hover:underline flex items-center gap-1"
                   >
                     <Plus size={14} />
                     <span>Add New Address</span>
@@ -544,10 +544,10 @@ export default function AccountModal({
                 </div>
 
                 {showAddAddress && (
-                  <form onSubmit={handleSaveAddress} className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0] space-y-3">
+                  <form onSubmit={handleSaveAddress} className="p-4 rounded-2xl bg-[#DDF4FC] border border-[#DCEAF1] space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-[11px] font-bold text-[#10263D] mb-1">Label</label>
+                        <label className="block text-[11px] font-bold text-[#102A43] mb-1">Label</label>
                         <input
                           type="text"
                           required
@@ -558,7 +558,7 @@ export default function AccountModal({
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-bold text-[#10263D] mb-1">Division</label>
+                        <label className="block text-[11px] font-bold text-[#102A43] mb-1">Division</label>
                         <select
                           value={newAddress.division}
                           onChange={(e) => setNewAddress({ ...newAddress, division: e.target.value })}
@@ -577,7 +577,7 @@ export default function AccountModal({
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold text-[#10263D] mb-1">Street Address</label>
+                      <label className="block text-[11px] font-bold text-[#102A43] mb-1">Street Address</label>
                       <input
                         type="text"
                         required
@@ -598,7 +598,7 @@ export default function AccountModal({
                       </button>
                       <button
                         type="submit"
-                        className="px-4 py-1.5 rounded-lg bg-[#145CFF] text-white text-xs font-semibold shadow-xs"
+                        className="px-4 py-1.5 rounded-lg bg-[#168FC2] text-white text-xs font-semibold shadow-xs"
                       >
                         Save Address
                       </button>
@@ -607,20 +607,20 @@ export default function AccountModal({
                 )}
 
                 {(!currentUser.addresses || currentUser.addresses.length === 0) ? (
-                  <div className="text-center py-8 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-[#52677B]">
+                  <div className="text-center py-8 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-[#62788A]">
                     No saved addresses. Add an address to speed up checkout.
                   </div>
                 ) : (
                   currentUser.addresses.map((addr) => (
-                    <div key={addr.id} className="p-4 rounded-xl border border-[#DCE7F0] bg-white flex justify-between items-start">
+                    <div key={addr.id} className="p-4 rounded-xl border border-[#DCEAF1] bg-white flex justify-between items-start">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-bold text-xs text-[#10263D]">{addr.label}</span>
-                          <span className="text-[10px] bg-[#EAF4FC] text-[#145CFF] px-2 py-0.5 rounded font-medium">
+                          <span className="font-bold text-xs text-[#102A43]">{addr.label}</span>
+                          <span className="text-[10px] bg-[#DDF4FC] text-[#168FC2] px-2 py-0.5 rounded font-medium">
                             {addr.division}
                           </span>
                         </div>
-                        <p className="text-xs text-[#52677B]">{addr.address}</p>
+                        <p className="text-xs text-[#62788A]">{addr.address}</p>
                       </div>
                       <button
                         type="button"
@@ -641,28 +641,28 @@ export default function AccountModal({
               <div className="space-y-3">
                 {loadingWishlist ? (
                   <div className="text-center py-10">
-                    <span className="w-6 h-6 border-2 border-[#145CFF] border-t-transparent rounded-full animate-spin inline-block mb-2" />
-                    <p className="text-xs text-[#52677B]">Loading your wishlist...</p>
+                    <span className="w-6 h-6 border-2 border-[#168FC2] border-t-transparent rounded-full animate-spin inline-block mb-2" />
+                    <p className="text-xs text-[#62788A]">Loading your wishlist...</p>
                   </div>
                 ) : wishlistProducts.length === 0 ? (
-                  <div className="text-center py-8 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-[#52677B]">
+                  <div className="text-center py-8 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-[#62788A]">
                     Your saved wishlist is empty. Tap the heart on products you love to save them.
                   </div>
                 ) : (
                   wishlistProducts.map((p) => (
-                    <div key={p.id} className="p-3.5 rounded-xl border border-[#DCE7F0] bg-white flex items-center justify-between gap-3">
+                    <div key={p.id} className="p-3.5 rounded-xl border border-[#DCEAF1] bg-white flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <img src={p.image} alt={p.title} className="w-12 h-12 object-contain rounded-lg bg-[#EAF4FC]" />
+                        <img src={p.image} alt={p.title} className="w-12 h-12 object-contain rounded-lg bg-[#DDF4FC]" />
                         <div>
-                          <h4 className="text-xs font-bold text-[#10263D]">{p.title}</h4>
-                          <span className="text-xs font-bold text-[#145CFF]">{currencySymbol}{p.price.toLocaleString()}</span>
+                          <h4 className="text-xs font-bold text-[#102A43]">{p.title}</h4>
+                          <span className="text-xs font-bold text-[#168FC2]">{currencySymbol}{p.price.toLocaleString()}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => { onAddToCart(p); }}
-                          className="px-3 py-1.5 rounded-full bg-[#145CFF] text-white text-xs font-semibold hover:bg-[#0D4BD9]"
+                          className="px-3 py-1.5 rounded-full bg-[#168FC2] text-white text-xs font-semibold hover:bg-[#0F7CA6]"
                         >
                           Add to Bag
                         </button>
@@ -675,15 +675,15 @@ export default function AccountModal({
 
             {/* Tab 4: Link Guest Order */}
             {activeTab === 'link_order' && (
-              <div className="p-5 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
-                <h3 className="text-sm font-bold text-[#10263D] mb-1">Link an Existing Guest Order</h3>
-                <p className="text-xs text-[#52677B] mb-4">
+              <div className="p-5 rounded-2xl bg-[#DDF4FC] border border-[#DCEAF1]">
+                <h3 className="text-sm font-bold text-[#102A43] mb-1">Link an Existing Guest Order</h3>
+                <p className="text-xs text-[#62788A] mb-4">
                   Did you place an order before signing in? Enter your Order Reference ID and Access Token (from order confirmation) to link it to this account.
                 </p>
 
                 <form onSubmit={handleLinkGuestOrder} className="space-y-3 max-w-md">
                   <div>
-                    <label className="block text-xs font-bold text-[#10263D] mb-1">Order Reference ID</label>
+                    <label className="block text-xs font-bold text-[#102A43] mb-1">Order Reference ID</label>
                     <input
                       type="text"
                       required
@@ -695,7 +695,7 @@ export default function AccountModal({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#10263D] mb-1">Guest Access Token</label>
+                    <label className="block text-xs font-bold text-[#102A43] mb-1">Guest Access Token</label>
                     <input
                       type="text"
                       required
@@ -717,7 +717,7 @@ export default function AccountModal({
 
                   <button
                     type="submit"
-                    className="px-5 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white text-xs font-semibold shadow-xs"
+                    className="px-5 py-2.5 rounded-full bg-[#168FC2] hover:bg-[#0F7CA6] text-white text-xs font-semibold shadow-xs"
                   >
                     Verify & Link Order
                   </button>

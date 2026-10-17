@@ -674,7 +674,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-600 selection:text-white">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#10263D] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-blue-400/30 flex items-center gap-2 animate-fadeIn">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#102A43] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-[#B8E7F8]/40 flex items-center gap-2 animate-fadeIn">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>{toastMessage}</span>
         </div>

@@ -222,17 +222,17 @@ export default function Hero({
             }}
           >
             <div className="hero-promo-card-info">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#EE4D2D] uppercase tracking-wider mb-1">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#168FC2] uppercase tracking-wider mb-1">
                 <Zap size={12} className="shrink-0" />
                 <span>{lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charge Hub'}</span>
               </div>
-              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#10263D] leading-snug group-hover:text-[#EE4D2D] transition-colors line-clamp-2">
+              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#168FC2] transition-colors line-clamp-2">
                 {lang === 'bn' ? '১০০% অরিজিনাল ক্যাবল ও অ্যাডাপ্টার' : 'GaN Chargers & 120W Cables'}
               </h3>
               <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
                 {lang === 'bn' ? 'শুরু মাত্র ৳১৫০ থেকে' : 'Starting from ৳150 with warranty'}
               </p>
-              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#EE4D2D] mt-2 group-hover:underline">
+              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#168FC2] mt-2 group-hover:underline">
                 <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
                 <ChevronRight size={13} className="shrink-0" />
               </div>
@@ -264,17 +264,17 @@ export default function Hero({
             }}
           >
             <div className="hero-promo-card-info">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#EE4D2D] uppercase tracking-wider mb-1">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#168FC2] uppercase tracking-wider mb-1">
                 <Sparkles size={12} className="shrink-0" />
                 <span>{lang === 'bn' ? 'স্মার্ট গ্যাজেট' : 'Ultra Gear'}</span>
               </div>
-              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#10263D] leading-snug group-hover:text-[#EE4D2D] transition-colors line-clamp-2">
+              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#168FC2] transition-colors line-clamp-2">
                 {lang === 'bn' ? 'সিম সাপোর্টেড স্মার্টওয়াচ' : 'SIM Smartwatches & Combos'}
               </h3>
               <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
                 {lang === 'bn' ? '৮+১ মাল্টি-স্ট্র্যাপ সংস্করণ' : '8+1 Interchangeable Straps'}
               </p>
-              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#EE4D2D] mt-2 group-hover:underline">
+              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#168FC2] mt-2 group-hover:underline">
                 <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
                 <ChevronRight size={13} className="shrink-0" />
               </div>

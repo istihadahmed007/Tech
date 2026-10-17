@@ -298,7 +298,7 @@ export function createQRMatrix(text) {
 }
 
 export function generateQRCodeSvg(text, options = {}) {
-  const { size = 160, margin = 4, darkColor = '#10263D', lightColor = '#FFFFFF' } = options;
+  const { size = 160, margin = 4, darkColor = '#102A43', lightColor = '#FFFFFF' } = options;
   const matrix = createQRMatrix(text);
   const n = matrix.length;
   const total = n + margin * 2;
