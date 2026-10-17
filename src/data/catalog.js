@@ -115,7 +115,6 @@ export const INITIAL_PRODUCTS = [
     "gallery": [
       "/assets/products/h2-anc-pro-tws.jpg",
       "/assets/products/p01-pro-tws-white.jpg",
-      "/assets/products/p01-pro-tws-box-alt.jpg",
       "/assets/products/p01-pro-tws-stem-detail.jpg"
     ],
     "compatibleWith": [
@@ -175,7 +174,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p02-remax-rc155a-cable.jpg",
     "gallery": [
       "/assets/products/p02-remax-rc155a-cable.jpg",
-      "/assets/products/p02-remax-rc155a-pkg-p02.jpg",
       "/assets/products/p02-remax-rc155a-connector-detail.jpg"
     ],
     "compatibleWith": [
@@ -230,7 +228,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p02-remax-rc155a-cable.jpg",
     "gallery": [
       "/assets/products/p02-remax-rc155a-cable.jpg",
-      "/assets/products/p02-remax-rc155a-pkg-p02.jpg",
       "/assets/products/p02-remax-rc155a-connector-detail.jpg"
     ],
     "compatibleWith": [
@@ -476,7 +473,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p06-samsung-tws.jpg",
     "gallery": [
       "/assets/products/p06-samsung-tws.jpg",
-      "/assets/products/p06-samsung-pkg.jpg",
       "/assets/products/p06-samsung-detail.jpg"
     ],
     "compatibleWith": [
@@ -529,7 +525,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p06-realme-tws.jpg",
     "gallery": [
       "/assets/products/p06-realme-tws.jpg",
-      "/assets/products/p06-realme-pkg.jpg",
       "/assets/products/p06-tws-detail.jpg"
     ],
     "compatibleWith": [
@@ -632,7 +627,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p06-lenovo-tws.jpg",
     "gallery": [
       "/assets/products/p06-lenovo-tws.jpg",
-      "/assets/products/p06-lenovo-pkg.jpg",
       "/assets/products/p06-tws-detail.jpg"
     ],
     "compatibleWith": [
@@ -1283,7 +1277,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p16-ankeer-nk-ny200-headphones.jpg",
     "gallery": [
       "/assets/products/p16-ankeer-nk-ny200-headphones.jpg",
-      "/assets/products/p16-ankeer-nk-ny200-pkg.jpg",
       "/assets/products/p16-ankeer-nk-ny200-earcup.jpg"
     ],
     "compatibleWith": [
