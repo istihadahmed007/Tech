@@ -109,6 +109,23 @@ export async function handleApiRequest(req, res) {
   const url = new URL(req.url, 'http://localhost');
   const pathname = url.pathname;
   const method = req.method;
+
+  // Global CORS support for cross-origin or custom API port/domain configurations
+  const origin = req.headers['origin'];
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+
+  if (method === 'OPTIONS') {
+    res.statusCode = 204;
+    return res.end();
+  }
+
   const isTrustedProxy = process.env.TRUSTED_PROXY === 'true' || process.env.TRUSTED_PROXY === '1';
   let ip = req.socket?.remoteAddress || '127.0.0.1';
   if (isTrustedProxy && req.headers['x-forwarded-for']) {

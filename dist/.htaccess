@@ -1,18 +1,35 @@
-# Glacial Tech - Apache / LiteSpeed SPA Rewrite Configuration
-# Enables clean Single Page Application (SPA) routing for /product/:id and other deep links
+# Tech Nest - Apache / LiteSpeed SPA & API Gateway Configuration
+# Enables clean Single Page Application (SPA) routing while protecting backend API routes
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
   
-  # Allow direct access to existing files and directories
+  # 1. Allow direct access to existing physical files and directories
   RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 2. Proxy /api/ requests to local Node.js backend if mod_proxy is available
+  <IfModule mod_proxy.c>
+    RewriteCond %{REQUEST_URI} ^/api/
+    RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
+  </IfModule>
+
+  # 3. API Safety Guard: NEVER serve index.html for /api/* requests!
+  # If mod_proxy is not enabled or Node.js is restarting, return 503 Service Unavailable instead of HTML 200
+  RewriteCond %{REQUEST_URI} ^/api/
+  RewriteRule ^ - [R=503,L]
+
+  # 4. SPA Fallback: Rewrite non-API deep links to index.html for client-side routing
+  RewriteCond %{REQUEST_URI} !^/api/
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  
-  # Rewrite all other paths to index.html
   RewriteRule . /index.html [L]
 </IfModule>
 
-# Fallback error document to index.html for servers/subdomains without mod_rewrite
-ErrorDocument 404 /index.html
+# Fallback error document for non-API routes
+<IfModule !mod_rewrite.c>
+  ErrorDocument 404 /index.html
+</IfModule>

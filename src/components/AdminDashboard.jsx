@@ -38,10 +38,13 @@ import {
   AlertCircle,
   Copy,
   Truck,
-  CreditCard
+  CreditCard,
+  Settings,
+  Globe
 } from 'lucide-react';
 import { openPrintWindow, openBatchPrintWindow } from '../utils/invoice.js';
-import { safeFetchJson } from '../utils/api.js';
+import { safeFetchJson, getApiBaseUrl, setApiBaseUrl, testApiConnection } from '../utils/api.js';
+import { INITIAL_PRODUCTS } from '../data/catalog.js';
 
 export default function AdminDashboard({ 
   currencySymbol = "৳",
@@ -54,6 +57,13 @@ export default function AdminDashboard({
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
+
+  // API URL Configuration State
+  const [showApiSettings, setShowApiSettings] = useState(false);
+  const [customApiUrl, setCustomApiUrl] = useState(() => getApiBaseUrl());
+  const [testingConnection, setTestingConnection] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState(null);
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
 
   // Active Tab: 'overview' | 'orders' | 'products' | 'inventory' | 'promotions' | 'reviews'
   const [activeTab, setActiveTab] = useState('overview');
@@ -168,6 +178,11 @@ export default function AdminDashboard({
   }, [authToken, activeTab]);
 
   const loadTabData = async (tab) => {
+    if (isOfflineMode) {
+      setProducts(INITIAL_PRODUCTS);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const headers = { Authorization: `Bearer ${authToken}` };
 
@@ -230,6 +245,58 @@ export default function AdminDashboard({
     }
   };
 
+  // API Base URL Handlers
+  const handleTestConnection = async () => {
+    setTestingConnection(true);
+    setConnectionStatus(null);
+    try {
+      const res = await testApiConnection(customApiUrl);
+      if (res.ok) {
+        setConnectionStatus({ ok: true, message: `Connected! Server active (${res.status} OK).` });
+      } else {
+        setConnectionStatus({ ok: false, message: res.error || `Server responded with ${res.status}` });
+      }
+    } catch (err) {
+      setConnectionStatus({ ok: false, message: err.message || 'Connection failed' });
+    } finally {
+      setTestingConnection(false);
+    }
+  };
+
+  const handleSaveApiUrl = () => {
+    setApiBaseUrl(customApiUrl);
+    showToast('API Base URL saved');
+    setConnectionStatus({ ok: true, message: 'Saved to browser settings.' });
+  };
+
+  const handleResetApiUrl = () => {
+    setApiBaseUrl('');
+    setCustomApiUrl('');
+    showToast('Reset API Base URL');
+    setConnectionStatus(null);
+  };
+
+  const handleEnterPreviewMode = () => {
+    setIsOfflineMode(true);
+    setAuthToken('preview-staff-mode');
+    setProducts(INITIAL_PRODUCTS);
+    setMetrics({
+      totalRevenue: 0,
+      paidRevenue: 0,
+      pendingCodRevenue: 0,
+      totalOrders: 0,
+      pendingOrders: 0,
+      shippedOrders: 0,
+      deliveredOrders: 0,
+      cancelledOrders: 0,
+      totalCustomers: 0,
+      lowStockProducts: INITIAL_PRODUCTS.filter(p => p.stock > 0 && p.stock <= 5).length,
+      outOfStockProducts: INITIAL_PRODUCTS.filter(p => p.stock === 0).length,
+      activePromotions: 0
+    });
+    showToast('Catalog Preview Mode active');
+  };
+
   // Sign in handler
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -249,6 +316,7 @@ export default function AdminDashboard({
 
       if (!res.ok || !res.data?.success) {
         if (res.isHtml) {
+          setShowApiSettings(true);
           throw new Error('Backend route (/api/admin/login) returned an HTML page (200). The Node.js backend server is not running on this domain/host. Hostinger is currently serving only the static frontend build. Please start the Node.js application in your hosting panel (Hostinger hPanel → Node.js with entry server.js) or configure VITE_API_BASE_URL.');
         }
         throw new Error(res.error || 'Invalid admin credentials');
@@ -270,6 +338,7 @@ export default function AdminDashboard({
   // Sign out handler
   const handleLogout = () => {
     setAuthToken(null);
+    setIsOfflineMode(false);
     localStorage.removeItem('accessories_admin_token');
     setMetrics(null);
     setOrders([]);
@@ -722,6 +791,89 @@ export default function AdminDashboard({
             </button>
           </form>
 
+          {/* API Connection & Backend Configuration */}
+          <div className="pt-2 border-t border-[#DCE7F0]/80">
+            <button
+              type="button"
+              onClick={() => setShowApiSettings(!showApiSettings)}
+              className="w-full py-2 px-3 text-xs text-[#52677B] hover:text-[#10263D] flex items-center justify-between rounded-xl hover:bg-[#F0F5FA] transition-colors cursor-pointer font-medium"
+            >
+              <span className="flex items-center gap-1.5">
+                <Settings size={14} className="text-[#8FA6BE]" />
+                <span>API Connection Settings</span>
+              </span>
+              <span className="text-[11px] text-[#8FA6BE]">{showApiSettings ? 'Hide ▲' : 'Configure ▼'}</span>
+            </button>
+
+            {showApiSettings && (
+              <div className="mt-3 p-3.5 bg-[#F7FBFF] border border-[#DCE7F0] rounded-xl space-y-3 text-xs">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#10263D] mb-1">
+                    API Base URL (VITE_API_BASE_URL)
+                  </label>
+                  <p className="text-[10px] text-[#52677B] mb-1.5 leading-relaxed">
+                    Leave blank for same-origin relative calls (/api) or enter your backend URL (e.g. https://tech.vartualtutor.com).
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={customApiUrl}
+                      onChange={(e) => setCustomApiUrl(e.target.value)}
+                      placeholder="e.g. https://tech.vartualtutor.com"
+                      className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-[#DCE7F0] bg-white text-[#10263D] placeholder-[#8FA6BE] focus:outline-none focus:border-[#145CFF]"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSaveApiUrl}
+                      className="px-3 py-1.5 bg-[#145CFF] text-white rounded-lg font-medium hover:bg-[#0D4BD9] cursor-pointer"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    onClick={handleTestConnection}
+                    disabled={testingConnection}
+                    className="text-[11px] text-[#145CFF] hover:underline font-medium flex items-center gap-1 cursor-pointer"
+                  >
+                    {testingConnection ? <RefreshCw size={12} className="animate-spin" /> : <Globe size={12} />}
+                    <span>{testingConnection ? 'Testing...' : 'Test Connection (/api/health)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResetApiUrl}
+                    className="text-[11px] text-[#52677B] hover:text-red-600 underline cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                </div>
+
+                {connectionStatus && (
+                  <div className={`p-2 rounded-lg text-[11px] flex items-start gap-1.5 ${
+                    connectionStatus.ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'
+                  }`}>
+                    {connectionStatus.ok ? <Check size={14} className="shrink-0 mt-0.5 text-emerald-600" /> : <AlertTriangle size={14} className="shrink-0 mt-0.5 text-red-600" />}
+                    <span className="leading-tight">{connectionStatus.message}</span>
+                  </div>
+                )}
+
+                <div className="pt-2 border-t border-[#DCE7F0]/60 flex items-center justify-between">
+                  <span className="text-[11px] text-[#52677B]">Server unreachable?</span>
+                  <button
+                    type="button"
+                    onClick={handleEnterPreviewMode}
+                    className="text-[11px] font-semibold text-[#145CFF] hover:underline cursor-pointer"
+                  >
+                    Continue in Catalog Preview Mode →
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Privacy Footnote */}
           <div className="pt-4 border-t border-[#DCE7F0] flex flex-col items-center gap-2 text-center text-[11px] text-[#52677B]">
             <div className="flex items-center gap-1.5 text-emerald-600 font-medium">
@@ -1001,6 +1153,25 @@ export default function AdminDashboard({
       {/* MAIN CONTENT AREA */}
       {/* --------------------------------------------------------------------- */}
       <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full overflow-y-auto">
+        {isOfflineMode && (
+          <div className="mb-6 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle size={18} className="shrink-0 mt-0.5 text-amber-600" />
+              <div>
+                <span className="font-bold">Catalog Preview Mode Active</span>
+                <p className="text-[11px] text-amber-800 mt-0.5">
+                  Displaying local product catalog. Backend sync is paused. When Node.js is active or API URL is configured, sign in to sync live changes.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-[11px] shrink-0 cursor-pointer"
+            >
+              Exit Preview Mode
+            </button>
+          </div>
+        )}
         {/* Top Header Strip */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[#DCE7F0]">
           <div>

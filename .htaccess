@@ -1,36 +1,42 @@
-# Glacial Tech - Apache / LiteSpeed SPA Rewrite Configuration
-# Enables clean Single Page Application (SPA) routing for /product/:id and other deep links
+# Tech Nest - Apache / LiteSpeed SPA & Node.js API Gateway Configuration
+# Enables clean Single Page Application (SPA) routing and protects API endpoints
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
   
-  # Allow direct access to existing files and directories
+  # 1. Allow direct access to existing physical files and directories
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # Check if requested file or directory exists inside dist/ (for repos deployed to public_html root)
+  # 2. Check if requested static file or directory exists inside dist/ (for repos deployed to public_html root)
   RewriteCond %{DOCUMENT_ROOT}/dist/$1 -f [OR]
   RewriteCond %{DOCUMENT_ROOT}/dist/$1 -d
   RewriteRule ^(.*)$ dist/$1 [L]
 
-  # If Apache has mod_proxy and Node.js is running locally on port 3000
+  # 3. Proxy /api/ requests to local Node.js backend if mod_proxy is available
   <IfModule mod_proxy.c>
     RewriteCond %{REQUEST_URI} ^/api/
     RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
   </IfModule>
 
-  # Do NOT rewrite /api/ requests to index.html
+  # 4. API Safety Guard: NEVER serve index.html for /api/* requests!
+  # If mod_proxy is not enabled or Node.js is restarting, return 503 Service Unavailable instead of HTML 200
+  RewriteCond %{REQUEST_URI} ^/api/
+  RewriteRule ^ - [R=503,L]
+
+  # 5. SPA Fallback: Rewrite non-API deep links to dist/index.html if available, otherwise index.html
   RewriteCond %{REQUEST_URI} !^/api/
-  
-  # Rewrite all other frontend paths to dist/index.html if available, otherwise index.html
   RewriteCond %{DOCUMENT_ROOT}/dist/index.html -f
   RewriteRule . /dist/index.html [L]
 
+  RewriteCond %{REQUEST_URI} !^/api/
   RewriteRule . /index.html [L]
 </IfModule>
 
-# Fallback error document to index.html for servers/subdomains without mod_rewrite
-ErrorDocument 404 /index.html
+# Fallback error document for non-API routes
+<IfModule !mod_rewrite.c>
+  ErrorDocument 404 /index.html
+</IfModule>
