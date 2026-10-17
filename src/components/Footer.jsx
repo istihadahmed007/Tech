@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, ShieldCheck, Phone, MapPin, HelpCircle } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function Footer({ 
   storeName, 
@@ -16,11 +17,7 @@ export default function Footer({
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-3.5">
             <div className="flex items-center">
-              <img 
-                src="/assets/tech-nest-logo-horizontal.png" 
-                alt="Tech Nest Logo" 
-                className="h-14 sm:h-16 w-auto object-contain drop-shadow-sm" 
-              />
+              <BrandLogo height={48} className="h-12 sm:h-14 w-auto" />
             </div>
             <p className="text-xs text-[#52677B] leading-relaxed max-w-sm">
               {t.footerAbout}

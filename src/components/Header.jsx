@@ -15,6 +15,7 @@ import {
   Sparkles,
   ArrowRight
 } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function Header({ 
   storeName = "Tech Nest", 
@@ -118,10 +119,9 @@ export default function Header({
           className="flex items-center group shrink-0 select-none py-0.5"
           title="Tech Nest — Authentic Mobile Accessories"
         >
-          <img 
-            src="/assets/tech-nest-logo-horizontal.png" 
-            alt="Tech Nest" 
-            className="h-10 sm:h-12 md:h-13 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]" 
+          <BrandLogo 
+            height={48} 
+            className="h-10 sm:h-12 md:h-13 w-auto transition-transform duration-200 group-hover:scale-[1.02]" 
           />
         </a>
 
@@ -430,11 +430,7 @@ export default function Header({
       {mobileMenuOpen && (
         <div className="lg:hidden px-4 py-4 bg-white border-t border-slate-200 shadow-xl animate-fadeIn space-y-3">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <img 
-              src="/assets/tech-nest-logo-horizontal.png" 
-              alt="Tech Nest Logo" 
-              className="h-9 w-auto object-contain" 
-            />
+            <BrandLogo height={38} className="h-9 w-auto" />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}

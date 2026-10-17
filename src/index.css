@@ -1349,6 +1349,11 @@ img {
 .max-w-\[200px\] { max-width: 200px; }
 .max-w-\[210px\] { max-width: 210px; }
 .max-w-\[540px\] { max-width: 540px; }
+.max-w-\[620px\] { max-width: 620px; }
+.max-w-\[640px\] { max-width: 640px; }
+.max-w-\[680px\] { max-width: 680px; }
+.max-w-xl { max-width: 576px; }
+.max-w-2xl { max-width: 672px; }
 .max-w-\[1280px\] { max-width: 1280px; }
 .max-w-full { max-width: 100%; }
 .max-h-24 { max-height: 96px; }
