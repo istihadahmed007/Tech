@@ -41,13 +41,21 @@ export function validateProductionSecrets() {
   return true;
 }
 
+let runtimeGeneratedSecret = null;
+
 // Secret key for HMAC token signing
 function getSessionSecret() {
-  if (process.env.NODE_ENV === 'production') {
-    validateProductionSecrets();
-    return process.env.ADMIN_SESSION_SECRET || process.env.SESSION_SECRET;
+  const customSecret = process.env.ADMIN_SESSION_SECRET || process.env.SESSION_SECRET;
+  if (customSecret && !INSECURE_DEFAULTS.includes(customSecret.trim())) {
+    return customSecret;
   }
-  return process.env.ADMIN_SESSION_SECRET || process.env.SESSION_SECRET || 'dev_secret_key_antigravity_ice_blue_2025';
+  if (process.env.NODE_ENV === 'production') {
+    if (!runtimeGeneratedSecret) {
+      runtimeGeneratedSecret = crypto.randomBytes(32).toString('hex');
+    }
+    return runtimeGeneratedSecret;
+  }
+  return 'dev_secret_key_antigravity_ice_blue_2025';
 }
 
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours

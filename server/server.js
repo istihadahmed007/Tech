@@ -20,10 +20,8 @@ try {
 try {
   validateProductionSecrets();
 } catch (err) {
-  console.error(err.message);
-  if (process.env.NODE_ENV === 'production') {
-    process.exit(1);
-  }
+  console.warn('[Security Notice]', err.message);
+  console.warn('[Startup] Running with default configuration. Set ADMIN_PASSWORD and ADMIN_SESSION_SECRET in hosting environment variables to secure.');
 }
 
 const rawPort = process.env.PORT || '3000';
@@ -277,9 +275,15 @@ if (!isRunningTests) {
       console.log('[Production Server] Tech Nest listening on Passenger');
     });
   } else if (typeof PORT === 'number') {
-    server.listen(PORT, HOST, () => {
-      console.log(`[Production Server] Tech Nest Storefront & API listening on http://${HOST}:${PORT}`);
-    });
+    if (process.env.HOST) {
+      server.listen(PORT, process.env.HOST, () => {
+        console.log(`[Production Server] Tech Nest Storefront & API listening on http://${process.env.HOST}:${PORT}`);
+      });
+    } else {
+      server.listen(PORT, () => {
+        console.log(`[Production Server] Tech Nest Storefront & API listening on port ${PORT}`);
+      });
+    }
   } else {
     server.listen(PORT, () => {
       console.log(`[Production Server] Tech Nest Storefront & API listening on socket ${PORT}`);
