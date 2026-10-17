@@ -1747,6 +1747,7 @@ export function savePaymentSession(sessionId, sessionData) {
 }
 
 export function getPaymentSession(sessionId) {
+  if (!sessionId || typeof sessionId !== 'string') return null;
   const db = getDatabase();
   const row = db.prepare('SELECT * FROM payment_sessions WHERE session_id = ?').get(sessionId);
   if (!row) return null;

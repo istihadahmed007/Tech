@@ -138,39 +138,46 @@ function invokeServer(method, urlPath, headers = {}) {
 // =============================================================================
 
 test('Security: Payment verification bypass attempt without signature is rejected', async () => {
-  const prodId = `sec_prod_${Date.now()}`;
-  createProduct({
-    id: prodId,
-    sku: `SKU-SEC-${Date.now()}`,
-    title: 'Security Target Headset',
-    category: 'audio',
-    price: 2500,
-    stock: 20,
-    status: 'published'
-  });
+  const prevSandbox = process.env.ENABLE_SANDBOX_PAYMENT;
+  process.env.ENABLE_SANDBOX_PAYMENT = 'true';
+  try {
+    const prodId = `sec_prod_${Date.now()}`;
+    createProduct({
+      id: prodId,
+      sku: `SKU-SEC-${Date.now()}`,
+      title: 'Security Target Headset',
+      category: 'audio',
+      price: 2500,
+      stock: 20,
+      status: 'published'
+    });
 
-  const orderRes = await invokeApi('POST', '/api/orders', {
-    customer: { name: 'Payment Bypass Target', phone: '01711223344', address: 'Dhanmondi, Dhaka' },
-    items: [{ id: prodId, quantity: 1 }],
-    paymentMethod: 'online'
-  });
+    const orderRes = await invokeApi('POST', '/api/orders', {
+      customer: { name: 'Payment Bypass Target', phone: '01711223344', address: 'Dhanmondi, Dhaka' },
+      items: [{ id: prodId, quantity: 1 }],
+      paymentMethod: 'online'
+    });
 
-  assert.equal(orderRes.status, 201);
-  const orderId = orderRes.body.order.id;
+    assert.equal(orderRes.status, 201);
+    const orderId = orderRes.body.order.id;
 
-  // Attacker attempts to mark order as paid by posting provider: 'sandbox' without valid cryptographic signature
-  const bypassAttempt = await invokeApi('POST', '/api/payment/verify', {
-    orderId,
-    provider: 'sandbox',
-    status: 'success'
-  });
+    // Attacker attempts to mark order as paid by posting provider: 'sandbox' without valid cryptographic signature
+    const bypassAttempt = await invokeApi('POST', '/api/payment/verify', {
+      orderId,
+      provider: 'sandbox',
+      status: 'success'
+    });
 
-  assert.equal(bypassAttempt.status, 400);
-  assert.equal(bypassAttempt.body.verified, false);
+    assert.equal(bypassAttempt.status, 400);
+    assert.equal(bypassAttempt.body.verified, false);
 
-  // Verify order in database was NOT marked as paid
-  const checkOrder = findOrderById(orderId);
-  assert.notEqual(checkOrder.paymentStatus, 'paid', 'Order must NOT be marked as paid through unsigned verification bypass');
+    // Verify order in database was NOT marked as paid
+    const checkOrder = findOrderById(orderId);
+    assert.notEqual(checkOrder.paymentStatus, 'paid', 'Order must NOT be marked as paid through unsigned verification bypass');
+  } finally {
+    if (prevSandbox !== undefined) process.env.ENABLE_SANDBOX_PAYMENT = prevSandbox;
+    else delete process.env.ENABLE_SANDBOX_PAYMENT;
+  }
 });
 
 test('Security: Sandbox payments are strictly disabled in production mode', async () => {
@@ -248,38 +255,45 @@ test('Security: Payment verification never returns full customer personal detail
 });
 
 test('Security: Payment initiation requires valid guest tracking token or account authorization', async () => {
-  const prodId = `sec_init_${Date.now()}`;
-  createProduct({
-    id: prodId,
-    sku: `SKU-INIT-${Date.now()}`,
-    title: 'Payment Init Authorization Item',
-    category: 'charging',
-    price: 2200,
-    stock: 10,
-    status: 'published'
-  });
+  const prevSandbox = process.env.ENABLE_SANDBOX_PAYMENT;
+  process.env.ENABLE_SANDBOX_PAYMENT = 'true';
+  try {
+    const prodId = `sec_init_${Date.now()}`;
+    createProduct({
+      id: prodId,
+      sku: `SKU-INIT-${Date.now()}`,
+      title: 'Payment Init Authorization Item',
+      category: 'charging',
+      price: 2200,
+      stock: 10,
+      status: 'published'
+    });
 
-  const orderRes = await invokeApi('POST', '/api/orders', {
-    customer: { name: 'Customer Target', phone: '01744556677', address: 'Banani, Dhaka' },
-    items: [{ id: prodId, quantity: 1 }],
-    paymentMethod: 'online'
-  });
+    const orderRes = await invokeApi('POST', '/api/orders', {
+      customer: { name: 'Customer Target', phone: '01744556677', address: 'Banani, Dhaka' },
+      items: [{ id: prodId, quantity: 1 }],
+      paymentMethod: 'online'
+    });
 
-  assert.equal(orderRes.status, 201);
-  const orderId = orderRes.body.order.id;
+    assert.equal(orderRes.status, 201);
+    const orderId = orderRes.body.order.id;
 
-  // Unauthenticated caller attempts to initiate payment without guest token
-  const unauthorizedInit = await invokeApi('POST', '/api/payment/initiate', {
-    orderId
-  });
-  assert.equal(unauthorizedInit.status, 403, 'Payment initiation must reject unauthorized callers');
+    // Unauthenticated caller attempts to initiate payment without guest token
+    const unauthorizedInit = await invokeApi('POST', '/api/payment/initiate', {
+      orderId
+    });
+    assert.equal(unauthorizedInit.status, 403, 'Payment initiation must reject unauthorized callers');
 
-  // Wrong token attempt
-  const wrongTokenInit = await invokeApi('POST', '/api/payment/initiate', {
-    orderId,
-    guestToken: 'invalid_forged_token_xyz'
-  });
-  assert.equal(wrongTokenInit.status, 403);
+    // Wrong token attempt
+    const wrongTokenInit = await invokeApi('POST', '/api/payment/initiate', {
+      orderId,
+      guestToken: 'invalid_forged_token_xyz'
+    });
+    assert.equal(wrongTokenInit.status, 403);
+  } finally {
+    if (prevSandbox !== undefined) process.env.ENABLE_SANDBOX_PAYMENT = prevSandbox;
+    else delete process.env.ENABLE_SANDBOX_PAYMENT;
+  }
 });
 
 // =============================================================================

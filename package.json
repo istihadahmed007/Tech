@@ -11,7 +11,7 @@
     "build": "vite build && node scripts/generate-static-routes.js",
     "start": "node server.js",
     "preview": "vite preview",
-    "test": "node --test --test-concurrency=1 test/**/*.test.js"
+    "test": "node --test --test-concurrency=1 test/*.test.js"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

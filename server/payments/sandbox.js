@@ -63,6 +63,10 @@ export class SandboxPaymentProvider {
     }
 
     // 2. Gateway session lookup
+    if (!sessionId || typeof sessionId !== 'string') {
+      return { verified: false, reason: 'Payment session ID is required' };
+    }
+
     const session = getPaymentSession(sessionId);
     if (!session) {
       return { verified: false, reason: 'Payment session not found or expired' };
