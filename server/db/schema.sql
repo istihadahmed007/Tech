@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS products (
   title_bn VARCHAR(255),
   category_id VARCHAR(64) NOT NULL REFERENCES categories(id) ON UPDATE CASCADE,
   brand VARCHAR(64),
+  model VARCHAR(128),
+  photo_ref VARCHAR(32),
   price NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
   original_price NUMERIC(10, 2) CHECK (original_price >= 0),
   stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),

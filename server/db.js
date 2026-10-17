@@ -81,6 +81,8 @@ function initSchema(db) {
       title_bn TEXT,
       category_id TEXT NOT NULL,
       brand TEXT,
+      model TEXT,
+      photo_ref TEXT,
       price REAL NOT NULL,
       original_price REAL,
       stock INTEGER NOT NULL DEFAULT 0,
@@ -295,6 +297,8 @@ function initSchema(db) {
   // Ensure migrations for existing idempotency_keys tables
   try { db.exec('ALTER TABLE idempotency_keys ADD COLUMN requester_id TEXT;'); } catch (e) {}
   try { db.exec('ALTER TABLE idempotency_keys ADD COLUMN request_hash TEXT;'); } catch (e) {}
+  try { db.exec('ALTER TABLE products ADD COLUMN model TEXT;'); } catch (e) {}
+  try { db.exec('ALTER TABLE products ADD COLUMN photo_ref TEXT;'); } catch (e) {}
 }
 
 function migrateLegacyJson(db) {
@@ -435,11 +439,11 @@ function seedInitialCatalog(db) {
   // Seed Products
   const insertProduct = db.prepare(`
     INSERT INTO products (
-      id, sku, title, title_bn, category_id, brand, price, original_price,
+      id, sku, title, title_bn, category_id, brand, model, photo_ref, price, original_price,
       stock, status, badge, warranty, description, specs_json, image,
       gallery_json, compatible_with_json, is_development_seed, created_at, updated_at
     ) VALUES (
-      ?, ?, ?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?
     )
@@ -447,8 +451,9 @@ function seedInitialCatalog(db) {
       title = excluded.title,
       title_bn = excluded.title_bn,
       category_id = excluded.category_id,
-      price = excluded.price,
-      original_price = excluded.original_price,
+      brand = excluded.brand,
+      model = excluded.model,
+      photo_ref = excluded.photo_ref,
       badge = excluded.badge,
       warranty = excluded.warranty,
       description = excluded.description,
@@ -464,11 +469,7 @@ function seedInitialCatalog(db) {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  // Remove any legacy/mock products that are not in the authentic inventory catalog
-  const validIds = INITIAL_PRODUCTS.map(p => p.id);
-  const placeholders = validIds.map(() => '?').join(',');
-  db.prepare(`DELETE FROM product_variants WHERE product_id NOT IN (${placeholders})`).run(...validIds);
-  db.prepare(`DELETE FROM products WHERE id NOT IN (${placeholders})`).run(...validIds);
+  // Safe initialization: preserve existing products and user data without automatic deletion
 
   for (const p of INITIAL_PRODUCTS) {
     const sku = p.id;
@@ -478,7 +479,9 @@ function seedInitialCatalog(db) {
       p.title,
       p.titleBn || null,
       p.category,
-      p.brand || 'Glacial',
+      p.brand || (p.specs && p.specs.Brand) || 'Unknown',
+      p.model || (p.specs && (p.specs.Model || p.specs.model)) || null,
+      p.photoRef || null,
       p.price,
       p.originalPrice || null,
       p.stock || 0,
@@ -636,6 +639,8 @@ export function getAllProducts({
       titleBn: row.title_bn,
       category: row.category_id,
       brand: row.brand,
+      model: row.model || (specs && (specs.Model || specs.model)) || null,
+      photoRef: row.photo_ref || null,
       price: row.price,
       originalPrice: row.original_price,
       stock: row.stock,
@@ -658,6 +663,8 @@ export function getAllProducts({
 
   return results;
 }
+
+export const getProducts = getAllProducts;
 
 export function getProductById(id) {
   if (!id) return null;
@@ -698,6 +705,8 @@ export function getProductById(id) {
     titleBn: row.title_bn,
     category: row.category_id,
     brand: row.brand,
+    model: row.model || (specs && (specs.Model || specs.model)) || null,
+    photoRef: row.photo_ref || null,
     price: row.price,
     originalPrice: row.original_price,
     stock: row.stock,
@@ -727,11 +736,11 @@ export function createProduct(data) {
   try {
     db.prepare(`
       INSERT INTO products (
-        id, sku, title, title_bn, category_id, brand, price, original_price,
+        id, sku, title, title_bn, category_id, brand, model, photo_ref, price, original_price,
         stock, status, badge, warranty, description, specs_json, image,
         gallery_json, compatible_with_json, is_development_seed, created_at, updated_at
       ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?
       )
@@ -741,7 +750,9 @@ export function createProduct(data) {
       data.title,
       data.titleBn || null,
       data.category || data.categoryId || 'cases',
-      data.brand || 'Glacial',
+      data.brand || 'Unknown',
+      data.model || null,
+      data.photoRef || data.photo_ref || null,
       Number(data.price) || 0,
       data.originalPrice ? Number(data.originalPrice) : null,
       parseInt(data.stock, 10) || 0,
@@ -800,6 +811,8 @@ export function updateProduct(id, data) {
         title_bn = ?,
         category_id = ?,
         brand = ?,
+        model = ?,
+        photo_ref = ?,
         price = ?,
         original_price = ?,
         stock = ?,
@@ -818,6 +831,8 @@ export function updateProduct(id, data) {
       data.titleBn !== undefined ? data.titleBn : existing.titleBn,
       data.category !== undefined ? data.category : existing.category,
       data.brand !== undefined ? data.brand : existing.brand,
+      data.model !== undefined ? data.model : existing.model,
+      data.photoRef !== undefined ? data.photoRef : (data.photo_ref !== undefined ? data.photo_ref : existing.photoRef),
       data.price !== undefined ? Number(data.price) : existing.price,
       data.originalPrice !== undefined ? (data.originalPrice ? Number(data.originalPrice) : null) : existing.originalPrice,
       data.stock !== undefined ? parseInt(data.stock, 10) : existing.stock,

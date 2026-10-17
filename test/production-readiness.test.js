@@ -185,7 +185,7 @@ test('5. Production Security: Fails clearly on insecure default secrets in produ
 
 test('6. Privacy Protection: Order lookup masks personal details for unauthenticated requests', async () => {
   const allProducts = (await invokeApi('GET', '/api/products')).body.products;
-  const targetProduct = allProducts.find(p => p.stock > 0) || allProducts[0];
+  const targetProduct = allProducts.find(p => p.isDevelopmentSeed && p.stock > 5) || allProducts.find(p => p.stock > 0) || allProducts[0];
 
   // Create an order first
   const orderRes = await invokeApi('POST', '/api/orders', {

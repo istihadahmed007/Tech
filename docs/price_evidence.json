@@ -1,0 +1,344 @@
+[
+  {
+    "A": "",
+    "B": "",
+    "C": "",
+    "D": ""
+  },
+  {
+    "A": "Retail quotes and limitations",
+    "B": "",
+    "C": "",
+    "D": ""
+  },
+  {
+    "A": "Source IDs connect each photo to the actual quotation, status and matching limits.",
+    "B": "",
+    "C": "",
+    "D": ""
+  },
+  {
+    "A": "Research date: 15 October 2026. Prices are references, not approved selling prices. Delivery excluded.",
+    "B": "",
+    "C": "",
+    "D": ""
+  },
+  {
+    "A": "",
+    "B": "",
+    "C": "",
+    "D": ""
+  },
+  {
+    "A": "Source ID",
+    "B": "Listing / retailer",
+    "C": "Observed price and limitations",
+    "D": "Source URL"
+  },
+  {
+    "A": "S01",
+    "B": "bdsailor.com",
+    "C": "Comparable copies: white/black non-working-ANC versions BDT 650; white seller-claimed ANC version BDT 1,200. Listed available. Not authentication evidence.",
+    "D": "https://bdsailor.com/?bd=9810015674134"
+  },
+  {
+    "A": "S02",
+    "B": "nagarshopbd.com",
+    "C": "Pro 2-style master-copy white and black entries BDT 750. Model appearance only.",
+    "D": "https://nagarshopbd.com/"
+  },
+  {
+    "A": "S03",
+    "B": "bikroy.com",
+    "C": "RC-155a-labelled cable BDT 130, advertised brand new. Seller attributes USB-C to USB-C, conflicting with the supplied USB-A artwork.",
+    "D": "https://bikroy.com/pirgacha/cell-phones-tablets-accessories/remax-120w-fast-charging-data-cable-rc-155a-BBQ38MV2LtjFEFDi9RuuPyTR.html"
+  },
+  {
+    "A": "S04",
+    "B": "daraz.com.bd",
+    "C": "Different product: generic BT Max Plus 120H neckband BDT 309. Comparison only for SM 007 estimate.",
+    "D": "https://www.daraz.com.bd/tag/neckband-bt-earphones/"
+  },
+  {
+    "A": "S05",
+    "B": "othoba.com",
+    "C": "Different product: HnB BT Shine neckband BDT 531. Comparison only; battery claims not verified.",
+    "D": "https://othoba.com/hnb-bt-shine-120-hours-magnetic-onoff-voice-changing-gaming-neck-band-rejiya-mart-853500"
+  },
+  {
+    "A": "S06",
+    "B": "daraz.com.bd",
+    "C": "Ultrapods Pro BDT 235, buy button shown. Delivery extra.",
+    "D": "https://www.daraz.com.bd/products/ultrapods-pro-true-wireless-earbuds-transparent-design-bluetooth-53-waterproof-with-display-i465704439-s2237626910.html"
+  },
+  {
+    "A": "S07",
+    "B": "rokomari.com",
+    "C": "Ultrapods Pro BDT 439, listed in stock.",
+    "D": "https://www.rokomari.com/electronics/472235"
+  },
+  {
+    "A": "S08",
+    "B": "daraz.com.bd",
+    "C": "VDENMENV DR06 BDT 102 on the product page. Category snippets sometimes show BDT 95; product-page amount used.",
+    "D": "https://www.daraz.com.bd/products/vdenmenv-dr06-headphone-12meter-plastic-housing-contoller-with-mic-i348159961.html"
+  },
+  {
+    "A": "S09",
+    "B": "foodpanda.com.bd",
+    "C": "Denmen DR06 BDT 299, delivery-platform listing. Availability depends on location.",
+    "D": "https://www.foodpanda.com.bd/bn/shop/x5u8/ahd-bangladesh-x5u8"
+  },
+  {
+    "A": "S10",
+    "B": "ofuronto.com",
+    "C": "DR06 identification reference: seller describes a 3.5mm plug and inline microphone. No usable visible cash price.",
+    "D": "https://ofuronto.com/product/vdenmenv-dr06-earphone-414471/"
+  },
+  {
+    "A": "S11",
+    "B": "daraz.com.bd",
+    "C": "Realme-labelled Airpods Pro BDT 280. Comparable label, not evidence of genuine realme hardware.",
+    "D": "https://www.daraz.com.bd/products/-i1578318953.html"
+  },
+  {
+    "A": "S12",
+    "B": "daraz.com.bd",
+    "C": "Lenovo-labelled Airpods Pro BDT 400. Exact batch and authenticity unverified.",
+    "D": "https://www.daraz.com.bd/products/lenovo-airpods-pro-i551311280-s2584700679.html"
+  },
+  {
+    "A": "S13",
+    "B": "daraz.com.bd",
+    "C": "Lenovo-labelled Airpods Pro BDT 699. Exact batch and authenticity unverified.",
+    "D": "https://www.daraz.com.bd/products/lenovo-tws-i463583130.html"
+  },
+  {
+    "A": "S14",
+    "B": "daraz.com.bd",
+    "C": "Samsung-labelled clone listing BDT 585. Comparable copy, not genuine Samsung pricing.",
+    "D": "https://www.daraz.com.bd/products/samsung-airpods-pro-clone-copy-airpods-pro-1st-generation-airpods-i325022784.html"
+  },
+  {
+    "A": "S15",
+    "B": "daraz.com.bd",
+    "C": "Mi-labelled AirPods Pro BDT 399. Exact batch and authenticity unverified.",
+    "D": "https://www.daraz.com.bd/products/mi-airpods-pro-i415701442.html"
+  },
+  {
+    "A": "S16",
+    "B": "bdsailor.com",
+    "C": "OnePlus-labelled copy BDT 520; source also lists white/black Pro-style copies. No authenticity verification.",
+    "D": "https://bdsailor.com/?bd=9810015674134"
+  },
+  {
+    "A": "S17",
+    "B": "rvxshop.com",
+    "C": "OnePlus-labelled copy BDT 750; black Pro-style copy with non-working ANC BDT 1,150.",
+    "D": "https://rvxshop.com/"
+  },
+  {
+    "A": "S18",
+    "B": "daraz.com.bd",
+    "C": "Opened OPPO-labelled generic-adapter page shows BDT 150. Snapshot is old; search snippet showed BDT 199. Lower opened quote is retained as older evidence.",
+    "D": "https://www.daraz.com.bd/products/oppo-fast-charging-adapter-wonderfull-chargers-i386365274.html"
+  },
+  {
+    "A": "S19",
+    "B": "daraz.com.bd",
+    "C": "No-brand adapter titled OPPO 27W: BDT 346. Wattage and genuine-brand status not verified.",
+    "D": "https://www.daraz.com.bd/products/oppo-27w-charger-normal-button-mobile-usb-charging-adapter-for-all-devices-arif-electronics-bd-i526715674.html"
+  },
+  {
+    "A": "S20",
+    "B": "techtools.com.bd",
+    "C": "Generic 2-in-1 OTG adapter BDT 70. Seller's USB speed claims are not transferred to the photographed item.",
+    "D": "https://techtools.com.bd/product/2-in-1-otg-adapter/"
+  },
+  {
+    "A": "S21",
+    "B": "daraz.com.bd",
+    "C": "Generic 2-in-1 OTG adapter BDT 80, buy button shown.",
+    "D": "https://www.daraz.com.bd/products/2-in-1-otg-adapter-usb-20-female-to-type-c-micro-usb-male-connector-high-speed-data-transfer-compatible-with-usb-devices-i529886861.html"
+  },
+  {
+    "A": "S22",
+    "B": "opendoorbd24.com",
+    "C": "Generic 2-in-1 OTG adapter BDT 200 per piece.",
+    "D": "https://www.opendoorbd24.com/product/2in1-otg-usb-cable-adapter-micro-usb-type-c-LdFjfy"
+  },
+  {
+    "A": "S23",
+    "B": "bdstall.com",
+    "C": "TUCCI A5 BDT 900. Sold out, no current seller, page says updated four years ago. Historical reference only.",
+    "D": "https://www.bdstall.com/details/tucci-a5-fighter-super-bass-stereo-headphone-61121/"
+  },
+  {
+    "A": "S24",
+    "B": "techntrendbd.com",
+    "C": "KW68 Mini BDT 680. Page asks to check availability.",
+    "D": "https://techntrendbd.com/products/details/kw68-mini-smartwatch"
+  },
+  {
+    "A": "S25",
+    "B": "cartup.com",
+    "C": "KW68 Mini 3+1 set BDT 1,061, listed in stock.",
+    "D": "https://cartup.com/product/kw-68-mini-keqiwear-germany-kw68-mini-31-straps-smart-watch-series-8-touch-color-screen-bluetooth-calling-health-and-sports-and-three-3-straps-band-wireless-charging-smartwatch-1783250793632-2rjl"
+  },
+  {
+    "A": "S26",
+    "B": "techntrendbd.com",
+    "C": "Y80 Ultra strap set BDT 720. Page asks to check availability.",
+    "D": "https://techntrendbd.com/products/details/y80-ultra-smartwatch-with-eight-straps"
+  },
+  {
+    "A": "S27",
+    "B": "daraz.com.bd",
+    "C": "Opened Y80 page shows BDT 2,000. Search snippet had BDT 1,250 / timed sale 1,236. Opened-page amount used; confirm final checkout.",
+    "D": "https://www.daraz.com.bd/products/y80-ultra-81-smartwatch-i539396970.html"
+  },
+  {
+    "A": "S28",
+    "B": "sarbom.com",
+    "C": "Y80 Ultra 8+1 BDT 850 in retailer search result. Direct page fetch timed out; supporting search-only evidence.",
+    "D": "https://sarbom.com/"
+  },
+  {
+    "A": "S29",
+    "B": "bikroy.com",
+    "C": "K10 Ultra 2G SIM-labelled watch BDT 1,250, seller advertisement.",
+    "D": "https://bikroy.com/pirgacha/smart-watches/ultra-2-19-inch-screen-2g-sim-card-calling-smart-watch-BbcVOvae8Px8ldKZqwrPDqFO.html"
+  },
+  {
+    "A": "S30",
+    "B": "daraz.com.bd",
+    "C": "K10 Ultra BDT 1,480 on opened marketplace page.",
+    "D": "https://www.daraz.com.bd/products/laxasfit-k10-ultra-smart-watch-with-sim-supported-i539143891-s2555022186.html"
+  },
+  {
+    "A": "S31",
+    "B": "bdstall.com",
+    "C": "BDStall K10 Ultra seller range BDT 1,287–1,682. Network specifications conflict with the photographed 2G box.",
+    "D": "https://www.bdstall.com/details/laxasfit-k10-ultra-sim-supported-smart-watch-131703/"
+  },
+  {
+    "A": "S32",
+    "B": "techntrendbd.com",
+    "C": "T800 Ultra 2 BDT 499. Page asks to check availability.",
+    "D": "https://techntrendbd.com/products/details/t800-ultra-2-smart-watch"
+  },
+  {
+    "A": "S33",
+    "B": "artechbd.com",
+    "C": "T800 Ultra 2 BDT 750, product purchase controls shown.",
+    "D": "https://www.artechbd.com/products/t800-ultra-2-smartwatch"
+  },
+  {
+    "A": "S34",
+    "B": "tofa.com.bd",
+    "C": "T800 Ultra 2 BDT 1,090 in retailer listing.",
+    "D": "https://tofa.com.bd/products/92640"
+  },
+  {
+    "A": "S35",
+    "B": "ofuronto.com",
+    "C": "ANKEER NK-NY200 BDT 680 in retailer category listing. Used as a direct model-title quote and as a comparable for OR-08.",
+    "D": "https://ofuronto.com/product-category/headphones-earphones/page/2/?orderby=price"
+  },
+  {
+    "A": "S36",
+    "B": "ofuronto.com",
+    "C": "Different model: Luminous T4 BDT 810. Used only as a comparable for SAN-002 / OR-08 estimates.",
+    "D": "https://ofuronto.com/product/luminous-t4-wireless-headphone-472561/"
+  },
+  {
+    "A": "S37",
+    "B": "cellsii.com",
+    "C": "Different model: Luminous T39 BDT 1,200, in stock. Used only as a comparable for SAN-002 estimate.",
+    "D": "https://www.cellsii.com/luminous-wireless-headphone-t39/"
+  },
+  {
+    "A": "S38",
+    "B": "cartup.com",
+    "C": "NK-NY200 title BDT 1,351. Description gives RE-NY063 and 20h, conflicting with box's NK-NY200 / 40h. Do not reuse those specs.",
+    "D": "https://cartup.com/product/ankeer-nk-ny200-bluetooth-wireless-headphone-1772948224948-lxri"
+  },
+  {
+    "A": "S39",
+    "B": "ofuronto.com",
+    "C": "Different model: TUCCI X8 BDT 750. Used as a comparable for Q8 estimate only.",
+    "D": "https://ofuronto.com/product/gaming-headphone-266239/"
+  },
+  {
+    "A": "S40",
+    "B": "daraz.com.bd",
+    "C": "T9 wireless headset BDT 649, out of stock. Exact Luminous version is not confirmed.",
+    "D": "https://www.daraz.com.bd/products/bluetooth-wireless-headset-t9-black-i263635855-s1232067087.html"
+  },
+  {
+    "A": "S41",
+    "B": "daraz.com.bd",
+    "C": "RECRSI 65W 4-in-1 cable BDT 390, purchase controls shown. Rated power remains a seller claim.",
+    "D": "https://www.daraz.com.bd/products/recrsi-65w-4-in-1-fast-charging-data-cable-i534541395.html"
+  },
+  {
+    "A": "S42",
+    "B": "wefixfast.com.bd",
+    "C": "RECRSI 4-in-1 cable BDT 790; seller lists original/copy quality choices. Grade and stock require confirmation.",
+    "D": "https://wefixfast.com.bd/products/recrsi-65w-4-in-1-fast-data-cable"
+  },
+  {
+    "A": "S43",
+    "B": "daraz.com.bd",
+    "C": "RECRSI 4-in-1 cable BDT 169, out of stock. Excluded from the main current comparison band.",
+    "D": "https://www.daraz.com.bd/products/recrsi-4-in-1-fast-charging-cable-pd-27w65w-nylon-braided-zinc-alloy-data-cable-for-mobile-phones-i1578138006.html"
+  },
+  {
+    "A": "S44",
+    "B": "epicyou.store",
+    "C": "Hoco-labelled BT Diamond 700H BDT 790. Seller and packaging battery/runtime claims are untested.",
+    "D": "https://epicyou.store/product/hoco-bt-diamond/"
+  },
+  {
+    "A": "S45",
+    "B": "daraz.com.bd",
+    "C": "Matching Hoco BT Diamond-labelled neckband BDT 790, marketplace category listing. Not brand-authentication evidence.",
+    "D": "https://www.daraz.com.bd/tag/neckband-bt-earphones/"
+  },
+  {
+    "A": "S46",
+    "B": "daraz.com.bd",
+    "C": "VDENMENV D50T BDT 140 on marketplace product listing.",
+    "D": "https://www.daraz.com.bd/products/vdenmenv-d50t-24a-high-speed-data-cable-type-c-fast-charging-i349507728.html"
+  },
+  {
+    "A": "S47",
+    "B": "felnatech.com",
+    "C": "D50T BDT 140, in stock. Related D02L Lightning cable BDT 190 is a different model, useful only for D50L estimation.",
+    "D": "https://felnatech.com/pro/vdenmenv-d50t-24a-high-speed-data-cable-type-c-fast-charging/vdenmenv-d50t"
+  },
+  {
+    "A": "S48",
+    "B": "daraz.com.bd",
+    "C": "Different model: VDENMENV D01L Lightning cable BDT 99. Comparison only for D50L estimate.",
+    "D": "https://www.daraz.com.bd/tag/v-type-charger-cable/"
+  },
+  {
+    "A": "S49",
+    "B": "ofuronto.com",
+    "C": "Different model: KIN K101 BDT 100. Comparison only for unclear KIN / budget wired-earphone estimates.",
+    "D": "https://ofuronto.com/product/kin-k-101-earphone-336202/"
+  },
+  {
+    "A": "S50",
+    "B": "daraz.com.bd",
+    "C": "KIN K28 BDT 200, out of stock. Comparison only; exact photographed KIN model is unreadable.",
+    "D": "https://www.daraz.com.bd/products/kin-k28-wired-earphone-with-microphone-best-quality-i226990160.html"
+  },
+  {
+    "A": "S51",
+    "B": "ofuronto.com",
+    "C": "Samsung-labelled Airpods Pro BDT 597. Other category products are not used as specifications.",
+    "D": "https://ofuronto.com/product-tag/en-bluetooth-earphones/"
+  }
+]

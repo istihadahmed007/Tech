@@ -186,6 +186,10 @@ export default function ProductDetailModal({
                 src={selectedImage || product.image}
                 alt={product.title}
                 className="w-full h-full object-contain transition-all duration-300"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/assets/tech-nest-app-icon.png';
+                }}
               />
               {product.badge && (
                 <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-[#168FC2] text-white shadow-xs">
@@ -206,7 +210,15 @@ export default function ProductDetailModal({
                     }`}
                     aria-label={`View angle ${i + 1}`}
                   >
-                    <img src={img} alt="Thumbnail preview" className="w-full h-full object-cover rounded-lg" />
+                    <img 
+                      src={img} 
+                      alt="Thumbnail preview" 
+                      className="w-full h-full object-cover rounded-lg" 
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/assets/tech-nest-app-icon.png';
+                      }}
+                    />
                   </button>
                 ))}
               </div>
@@ -228,7 +240,7 @@ export default function ProductDetailModal({
               </div>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-[#DDF4FC] border border-[#DCEAF1]">
                 <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-                <span className="font-medium text-[#102A43]">Original Glacial Line</span>
+                <span className="font-medium text-[#102A43] truncate">{product.brand ? product.brand : 'Verified Quality'}</span>
               </div>
             </div>
           </div>
@@ -236,11 +248,21 @@ export default function ProductDetailModal({
           {/* Right Column: Product Info & Actions */}
           <div className="flex flex-col justify-between">
             <div>
-              {/* Category */}
+              {/* Category, Brand, Model & SKU */}
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className="text-xs uppercase font-extrabold tracking-wider text-[#168FC2] bg-[#DDF4FC] px-2.5 py-0.5 rounded-md">
                   {product.category}
                 </span>
+                {product.brand && (
+                  <span className="text-[11px] font-bold text-[#102A43] bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                    {product.brand}
+                  </span>
+                )}
+                {product.model && (
+                  <span className="text-[11px] font-mono font-bold text-[#168FC2] bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
+                    Model: {product.model}
+                  </span>
+                )}
                 {product.photoRef && (
                   <span className="text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
                     Ref: {product.photoRef}

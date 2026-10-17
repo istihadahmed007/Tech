@@ -66,6 +66,10 @@ export default function ProductCard({
             isOutOfStock ? 'opacity-60 grayscale-[20%]' : 'group-hover:scale-104'
           }`}
           loading="lazy"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = '/assets/tech-nest-app-icon.png';
+          }}
         />
 
         {/* Top-Right: Shopee-Style Discount Badge */}
@@ -131,11 +135,27 @@ export default function ProductCard({
       {/* Product Content Details */}
       <div className="flex flex-col flex-grow justify-between">
         <div>
-          {/* Category & Verified Badge */}
-          <div className="flex items-center gap-1.5 mb-1 text-[10px]">
+          {/* Category, Brand, Model & Stock */}
+          <div className="flex items-center flex-wrap gap-1 mb-1 text-[10px]">
             <span className="font-semibold text-slate-500 uppercase">
               {product.category}
             </span>
+            {product.brand && (
+              <>
+                <span className="text-slate-300">•</span>
+                <span className="font-bold text-[#168FC2] truncate max-w-[90px]" title={product.brand}>
+                  {product.brand}
+                </span>
+              </>
+            )}
+            {product.model && (
+              <>
+                <span className="text-slate-300">•</span>
+                <span className="font-mono text-slate-600 truncate max-w-[80px]" title={product.model}>
+                  {product.model}
+                </span>
+              </>
+            )}
             <span className="text-slate-300">•</span>
             <span className={`font-medium ${product.stock > 0 ? 'text-emerald-700' : 'text-slate-400'}`}>
               {product.stock > 0 ? (lang === 'bn' ? 'ইন স্টক' : 'In Stock') : (lang === 'bn' ? 'স্টক শেষ' : 'Out of Stock')}

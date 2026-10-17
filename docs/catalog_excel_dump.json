@@ -1,0 +1,880 @@
+{
+  "anchors": [
+    {
+      "row": 7,
+      "r_id": "Ra3cbd7f4ba924921",
+      "media_file": "image.jpg"
+    },
+    {
+      "row": 8,
+      "r_id": "R3eb1e0670b9a47eb",
+      "media_file": "image2.jpg"
+    },
+    {
+      "row": 9,
+      "r_id": "R9d1aaa49639f4afd",
+      "media_file": "image3.jpg"
+    },
+    {
+      "row": 10,
+      "r_id": "R4665af949ee14b65",
+      "media_file": "image4.jpg"
+    },
+    {
+      "row": 11,
+      "r_id": "Re13165437fd74b43",
+      "media_file": "image5.jpg"
+    },
+    {
+      "row": 12,
+      "r_id": "R924421bc4cdc4351",
+      "media_file": "image6.jpg"
+    },
+    {
+      "row": 13,
+      "r_id": "Raaf599cad9ec4ef9",
+      "media_file": "image7.jpg"
+    },
+    {
+      "row": 14,
+      "r_id": "R570cefffb2434820",
+      "media_file": "image8.jpg"
+    },
+    {
+      "row": 15,
+      "r_id": "Ra82cfe5d14974aae",
+      "media_file": "image9.jpg"
+    },
+    {
+      "row": 16,
+      "r_id": "Rf815de4965824abf",
+      "media_file": "image10.jpg"
+    },
+    {
+      "row": 17,
+      "r_id": "R630750b1e2ed4ff7",
+      "media_file": "image11.jpg"
+    },
+    {
+      "row": 18,
+      "r_id": "R85a41deda695473d",
+      "media_file": "image12.jpg"
+    },
+    {
+      "row": 19,
+      "r_id": "R7a9045f71fda4231",
+      "media_file": "image13.jpg"
+    },
+    {
+      "row": 20,
+      "r_id": "Rec2f6369d69e492d",
+      "media_file": "image14.jpg"
+    },
+    {
+      "row": 21,
+      "r_id": "R20c890a163b54f12",
+      "media_file": "image15.jpg"
+    },
+    {
+      "row": 22,
+      "r_id": "Refef8978dea047a6",
+      "media_file": "image16.jpg"
+    },
+    {
+      "row": 23,
+      "r_id": "Ra24ea29dc1b7436f",
+      "media_file": "image17.jpg"
+    },
+    {
+      "row": 24,
+      "r_id": "Rd1bb09d9221b4aa8",
+      "media_file": "image18.jpg"
+    },
+    {
+      "row": 25,
+      "r_id": "R7a2e5b028fa14567",
+      "media_file": "image19.jpg"
+    },
+    {
+      "row": 26,
+      "r_id": "R6e2a3aa070754c04",
+      "media_file": "image20.jpg"
+    },
+    {
+      "row": 27,
+      "r_id": "R431757bf88ff4626",
+      "media_file": "image21.jpg"
+    },
+    {
+      "row": 28,
+      "r_id": "R6612eca1e78a4635",
+      "media_file": "image22.jpg"
+    },
+    {
+      "row": 29,
+      "r_id": "R2150b48970a743cf",
+      "media_file": "image23.jpg"
+    },
+    {
+      "row": 30,
+      "r_id": "R0811901e01284e97",
+      "media_file": "image24.jpg"
+    },
+    {
+      "row": 31,
+      "r_id": "R88068e0756d34756",
+      "media_file": "image25.jpg"
+    },
+    {
+      "row": 32,
+      "r_id": "Rcd666d26e6a44072",
+      "media_file": "image26.jpg"
+    }
+  ],
+  "photo_prices": [
+    {
+      "row": 7,
+      "photo_id": "P01",
+      "product_name": "White Pro-style TWS earbuds",
+      "low_bdt": "650",
+      "high_bdt": "1200",
+      "basis": "Comparable copies",
+      "notes": "Apple-style packaging does not establish authenticity. H2 and ANC are sticker claims. This price is for comparable copy products, not genuine Apple AirPods.",
+      "sources": "S01, S02",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.07 PM.jpeg",
+      "media_file": "image.jpg"
+    },
+    {
+      "row": 8,
+      "photo_id": "P02",
+      "product_name": "REMAX-labelled RC-155a USB cable",
+      "low_bdt": "130",
+      "high_bdt": "130",
+      "basis": "Model-label listing",
+      "notes": "120W and original REMAX status are unverified. The seller listing conflicts on connector type, so confirm the actual cable. P21 shows the same printed RC-155a model.",
+      "sources": "S03",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.08 PM.jpeg",
+      "media_file": "image2.jpg"
+    },
+    {
+      "row": 9,
+      "photo_id": "P03",
+      "product_name": "SM 007 wireless neckband",
+      "low_bdt": "300",
+      "high_bdt": "600",
+      "basis": "Estimate",
+      "notes": "No exact Bangladesh SM 007 listing found. Estimate uses other budget neckbands. The printed 120-hour claim has not been tested.",
+      "sources": "S04, S05",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.08 PM (1).jpeg",
+      "media_file": "image3.jpg"
+    },
+    {
+      "row": 10,
+      "photo_id": "P04",
+      "product_name": "Ultrapods Pro transparent-case TWS",
+      "low_bdt": "235",
+      "high_bdt": "439",
+      "basis": "Model listings",
+      "notes": "Colours are variants, not separate models. Bluetooth 5.3, waterproofing and Hi-Res marks are packaging claims unless tested.",
+      "sources": "S06, S07",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.09 PM.jpeg",
+      "media_file": "image4.jpg"
+    },
+    {
+      "row": 11,
+      "photo_id": "P05",
+      "product_name": "VDENMENV DR06 wired earphones",
+      "low_bdt": "102",
+      "high_bdt": "299",
+      "basis": "Model listings",
+      "notes": "Confirm jack and remote operation on the actual batch. Same DR06 appears in P23. Price differences include seller/channel variation.",
+      "sources": "S08, S09, S10",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.09 PM (1).jpeg",
+      "media_file": "image5.jpg"
+    },
+    {
+      "row": 12,
+      "photo_id": "P06",
+      "product_name": "Assorted Pro-style TWS boxes",
+      "low_bdt": "280",
+      "high_bdt": "750",
+      "basis": "Mixed comparable listings",
+      "notes": "Samsung, realme, OnePlus, Lenovo, OPPO and Mi labels are visible; the blue box is unclear. The price band is a comparison across readable labels, not a quote for the bundle. See Mixed pictures.",
+      "sources": "S11, S12, S13, S14, S15, S16, S17",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.10 PM.jpeg",
+      "media_file": "image6.jpg"
+    },
+    {
+      "row": 13,
+      "photo_id": "P07",
+      "product_name": "White wall charger marked OPPO 27W",
+      "low_bdt": "150",
+      "high_bdt": "346",
+      "basis": "Label/comparable listings",
+      "notes": "Loose adapters have no readable electrical model label in this view. Neither 27W delivery, VOOC support nor original OPPO status is verified. Lower quote comes from an older page snapshot.",
+      "sources": "S18, S19",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.11 PM.jpeg",
+      "media_file": "image7.jpg"
+    },
+    {
+      "row": 14,
+      "photo_id": "P08",
+      "product_name": "2-in-1 Type-C / Micro-USB OTG adapter",
+      "low_bdt": "70",
+      "high_bdt": "200",
+      "basis": "Comparable listings",
+      "notes": "Price is per adapter, not the whole display card. Taher Telecom packaging is visible. USB 3.0 / 5Gbps performance is not established.",
+      "sources": "S20, S21, S22",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.11 PM (1).jpeg",
+      "media_file": "image8.jpg"
+    },
+    {
+      "row": 15,
+      "photo_id": "P09",
+      "product_name": "TUCCI A5 Fighter wired headset",
+      "low_bdt": "900",
+      "high_bdt": "900",
+      "basis": "Historical / sold out",
+      "notes": "The only exact Bangladesh quote found is BDT 900, sold out and updated four years ago. Current retail price is not verified.",
+      "sources": "S23",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.11 PM (2).jpeg",
+      "media_file": "image9.jpg"
+    },
+    {
+      "row": 16,
+      "photo_id": "P10",
+      "product_name": "KW68 Mini smartwatch, 3+1-labelled set",
+      "low_bdt": "680",
+      "high_bdt": "1061",
+      "basis": "Probable-model listings",
+      "notes": "Faint box text appears to read KW68 Mini. Treat identification as probable until a close-up confirms it. 3+1 contents and app support require checking.",
+      "sources": "S24, S25",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.12 PM.jpeg",
+      "media_file": "image10.jpg"
+    },
+    {
+      "row": 17,
+      "photo_id": "P11",
+      "product_name": "Y80 Ultra smartwatch strap set",
+      "low_bdt": "720",
+      "high_bdt": "2000",
+      "basis": "Model listings",
+      "notes": "Box has inconsistent 8+1 / seven-plus-one wording. BDT 720 listing says check availability; another opened listing shows BDT 2,000. Star Tech BDT 2,150 page is discontinued and excluded.",
+      "sources": "S26, S27, S28",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.13 PM.jpeg",
+      "media_file": "image11.jpg"
+    },
+    {
+      "row": 18,
+      "photo_id": "P12",
+      "product_name": "LAXASFIT K10 Ultra, 2G SIM-labelled watch",
+      "low_bdt": "1250",
+      "high_bdt": "1682",
+      "basis": "Model listings",
+      "notes": "Package says 2.19-inch and 2G. Do not copy the comparison site's conflicting 3G/4G wording. Actual network support and app functions need testing.",
+      "sources": "S29, S30, S31",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.13 PM (1).jpeg",
+      "media_file": "image12.jpg"
+    },
+    {
+      "row": 19,
+      "photo_id": "P13",
+      "product_name": "T800 Ultra 2 smartwatch",
+      "low_bdt": "499",
+      "high_bdt": "1090",
+      "basis": "Model listings",
+      "notes": "BDT 499 listing requires availability confirmation; AR Tech lists BDT 750 and Tofa BDT 1,090. 1.99-inch and wireless charging are printed claims. Do not advertise medical-grade readings.",
+      "sources": "S32, S33, S34",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.14 PM.jpeg",
+      "media_file": "image13.jpg"
+    },
+    {
+      "row": 20,
+      "photo_id": "P14",
+      "product_name": "OR-08 wireless headset, oraimo-labelled",
+      "low_bdt": "650",
+      "high_bdt": "1100",
+      "basis": "Estimate",
+      "notes": "No exact Bangladesh OR-08 price verified. Estimate is based on other budget wireless headphones. Authentic oraimo status, 48-hour claim and 365-day warranty are not established. P19 is identical.",
+      "sources": "S35, S36",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.18 PM.jpeg",
+      "media_file": "image14.jpg"
+    },
+    {
+      "row": 21,
+      "photo_id": "P15",
+      "product_name": "SAN-002 Luminous wireless headphones",
+      "low_bdt": "700",
+      "high_bdt": "1200",
+      "basis": "Estimate",
+      "notes": "Model appears SAN-002. No exact Bangladesh price found; estimate uses other Luminous T4/T39 listings. Do not transfer their battery specifications.",
+      "sources": "S36, S37",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.18 PM (1).jpeg",
+      "media_file": "image15.jpg"
+    },
+    {
+      "row": 22,
+      "photo_id": "P16",
+      "product_name": "ANKEER NK-NY200 wireless headphones",
+      "low_bdt": "680",
+      "high_bdt": "1351",
+      "basis": "Model-title listings",
+      "notes": "ANKEER is the printed name; do not rename it Anker or Soundcore. Box claims 40h, while one seller describes 20h and a different internal model. Battery life is unverified.",
+      "sources": "S35, S38",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.18 PM (2).jpeg",
+      "media_file": "image16.jpg"
+    },
+    {
+      "row": 23,
+      "photo_id": "P17",
+      "product_name": "TUCCI Q8 USB wired headset",
+      "low_bdt": "600",
+      "high_bdt": "1000",
+      "basis": "Estimate",
+      "notes": "No exact Bangladesh Q8 price found. Estimate uses TUCCI X8/A5 references. Do not price it as Q8 TWS earbuds or convert foreign prices.",
+      "sources": "S39, S23",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.19 PM.jpeg",
+      "media_file": "image17.jpg"
+    },
+    {
+      "row": 24,
+      "photo_id": "P18",
+      "product_name": "T9 Luminous wireless headphones",
+      "low_bdt": "649",
+      "high_bdt": "649",
+      "basis": "Comparable / sold out",
+      "notes": "BDT 649 T9 listing is out of stock. Same model code alone does not confirm the exact Luminous version. Current available price remains unverified.",
+      "sources": "S40",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.19 PM (1).jpeg",
+      "media_file": "image18.jpg"
+    },
+    {
+      "row": 25,
+      "photo_id": "P19",
+      "product_name": "OR-08 wireless headset — duplicate of P14",
+      "low_bdt": "650",
+      "high_bdt": "1100",
+      "basis": "Estimate / duplicate",
+      "notes": "SHA-256 confirms P14 and P19 are byte-identical. Do not count them as two products or double stock.",
+      "sources": "S35, S36",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.19 PM (2).jpeg",
+      "media_file": "image19.jpg"
+    },
+    {
+      "row": 26,
+      "photo_id": "P20",
+      "product_name": "RECRSI-style 4-in-1 charging/data cable",
+      "low_bdt": "390",
+      "high_bdt": "790",
+      "basis": "Closest-label listings",
+      "notes": "Brand is stylised and should be confirmed. Package claims 65W and PD27W, not tested. Daraz BDT 169 is out of stock and excluded from the current comparison band. Seller grades differ.",
+      "sources": "S41, S42, S43",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.25 PM.jpeg",
+      "media_file": "image20.jpg"
+    },
+    {
+      "row": 27,
+      "photo_id": "P21",
+      "product_name": "REMAX-labelled RC-155a cable — closer view",
+      "low_bdt": "130",
+      "high_bdt": "130",
+      "basis": "Model-label listing",
+      "notes": "Same printed model as P02. Treat as an alternate view after connector and colour confirmation. 120W and authenticity remain unverified.",
+      "sources": "S03",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.25 PM (1).jpeg",
+      "media_file": "image21.jpg"
+    },
+    {
+      "row": 28,
+      "photo_id": "P22",
+      "product_name": "Hoco-labelled BT Diamond 700H neckband",
+      "low_bdt": "790",
+      "high_bdt": "790",
+      "basis": "Matching-label listings",
+      "notes": "700H is a packaging/seller claim, not verified continuous playback. Authentic Hoco status and five-voice feature need confirmation.",
+      "sources": "S44, S45",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.30 PM.jpeg",
+      "media_file": "image22.jpg"
+    },
+    {
+      "row": 29,
+      "photo_id": "P23",
+      "product_name": "D50L Lightning cable + D50T Type-C cable + DR06",
+      "low_bdt": "100",
+      "high_bdt": "299",
+      "basis": "Mixed: estimate and model listings",
+      "notes": "D50T listed BDT 140; D50L estimated BDT 100–200 using similar cables; DR06 BDT 102–299. Do not present BDT 100–299 as a bundle price.",
+      "sources": "S46, S47, S48, S08, S09",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.33 PM.jpeg",
+      "media_file": "image23.jpg"
+    },
+    {
+      "row": 30,
+      "photo_id": "P24",
+      "product_name": "White Pro-style TWS box — blurry close-up",
+      "low_bdt": "650",
+      "high_bdt": "1200",
+      "basis": "Comparable copies",
+      "notes": "Too blurred for exact model/generation. May repeat P01, but not byte-identical. Copy-market reference only; genuine Apple pricing does not apply without authentication.",
+      "sources": "S01, S02",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.35 PM.jpeg",
+      "media_file": "image24.jpg"
+    },
+    {
+      "row": 31,
+      "photo_id": "P25",
+      "product_name": "Black Pro-style TWS earbuds",
+      "low_bdt": "650",
+      "high_bdt": "1150",
+      "basis": "Comparable copies",
+      "notes": "H2 and 100% ANC stickers do not verify the chipset or ANC. Treat as an unidentified Pro-style product; prices are for comparable black copies.",
+      "sources": "S01, S17",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.36 PM.jpeg",
+      "media_file": "image25.jpg"
+    },
+    {
+      "row": 32,
+      "photo_id": "P26",
+      "product_name": "DON-X20 wired earphones + mixed shelf stock",
+      "low_bdt": "100",
+      "high_bdt": "250",
+      "basis": "Estimate for DON-X20",
+      "notes": "No exact DON-X20 Bangladesh listing found. Estimate uses similar budget wired earphones. SF30, SH-777, SZ-06 and KIN boxes also appear; full identification is pending.",
+      "sources": "S08, S49, S50",
+      "original_filename": "WhatsApp Image 2026-10-13 at 3.08.48 PM.jpeg",
+      "media_file": "image26.jpg"
+    }
+  ],
+  "descriptions": [
+    {
+      "row": 7,
+      "photo_id": "P01",
+      "title": "White Pro-style TWS earbuds",
+      "desc_en": "White in-ear wireless earbuds with a compact stem design for everyday listening. The exact model, charging case and supported features need confirmation from an opened unit.",
+      "desc_bn": "দৈনন্দিন গান শোনা ও ভিডিও দেখার জন্য সাদা রঙের ইন-ইয়ার ওয়্যারলেস ইয়ারবাড। কেনার আগে আসল মডেল, চার্জিং কেস ও কার্যকর ফিচারগুলো নিশ্চিত করুন।",
+      "image_direction": "Use the clearest complete box from P01. P24 is a blurry possible repeat; use it only as a secondary reference. Request an unboxed photo for product-only imagery."
+    },
+    {
+      "row": 8,
+      "photo_id": "P02",
+      "title": "REMAX-labelled RC-155a USB cable",
+      "desc_en": "A one-metre charging and data cable shown with gold-coloured connectors and a USB-A to Type-C layout. Select the actual connector version supplied with your order.",
+      "desc_bn": "সোনালি রঙের কানেক্টরসহ এক মিটার চার্জিং ও ডেটা কেবল। ছবিতে USB-A থেকে Type-C সংস্করণ দেখানো আছে; অর্ডারের আগে প্রয়োজনীয় কানেক্টর মিলিয়ে নিন।",
+      "image_direction": "Choose P21 as the clearest package front. Keep USB-A and USB-C connector artwork unchanged. Do not render a three-ended cable."
+    },
+    {
+      "row": 9,
+      "photo_id": "P03",
+      "title": "SM 007 wireless neckband",
+      "desc_en": "A black neckband-style wireless earphone with in-ear tips and controls positioned along the neckband. A practical format for keeping both earpieces together between listening sessions.",
+      "desc_bn": "কালো রঙের নেকব্যান্ড ইয়ারফোন, সঙ্গে ইন-ইয়ার টিপস ও নেকব্যান্ডের পাশে কন্ট্রোল। ব্যবহার শেষে দুই ইয়ারপিস একসঙ্গে গলায় রাখার সুবিধাজনক ডিজাইন।",
+      "image_direction": "Rotate upright and isolate one green-and-white SM 007 box. Retain model 007; do not add 120-hour promotional text."
+    },
+    {
+      "row": 10,
+      "photo_id": "P04",
+      "title": "Ultrapods Pro transparent-case TWS",
+      "desc_en": "Colourful wireless earbuds presented with a transparent-style charging case and a visible battery display. Choose the colour you prefer and check the included charging accessories before purchase.",
+      "desc_bn": "স্বচ্ছ ডিজাইনের চার্জিং কেস ও ব্যাটারি ডিসপ্লেসহ রঙিন ওয়্যারলেস ইয়ারবাড। পছন্দের রং বেছে নিন এবং প্যাকেটে চার্জিংয়ের কী কী আনুষঙ্গিক আছে তা নিশ্চিত করুন।",
+      "image_direction": "Create separate images for clearly shown blue, green, black and pink variants. Keep the transparent case design; do not add silicone tips absent from the reference."
+    },
+    {
+      "row": 11,
+      "photo_id": "P05",
+      "title": "VDENMENV DR06 wired earphones",
+      "desc_en": "A simple wired earphone for compatible 3.5mm devices, available in white and black. The DR06 listing identifies an inline microphone and control for everyday audio and calls.",
+      "desc_bn": "৩.৫ মিমি অডিও পোর্টযুক্ত ডিভাইসের জন্য সাদা ও কালো রঙের তারযুক্ত ইয়ারফোন। DR06 মডেলের তালিকায় গান শোনা ও কলের জন্য ইনলাইন মাইক ও কন্ট্রোল উল্লেখ আছে।",
+      "image_direction": "Use one complete turquoise DR06 box for each visible colour. Keep the rounded earpiece shape and inline cable layout."
+    },
+    {
+      "row": 12,
+      "photo_id": "P06",
+      "title": "Assorted Pro-style TWS boxes",
+      "desc_en": "An assortment of white, stem-style wireless earbuds in differently labelled boxes. Each label and actual hardware version should have its own listing after the supplier confirms the model.",
+      "desc_bn": "বিভিন্ন লেবেলের বক্সে সাদা রঙের স্টেম ডিজাইনের ওয়্যারলেস ইয়ারবাড। সরবরাহকারীর কাছ থেকে মডেল নিশ্চিত করে প্রতিটি সংস্করণের আলাদা পণ্যের তালিকা তৈরি করুন।",
+      "image_direction": "Split each full package into a separate reference. Do not blend brands or turn the assortment into a single product. Blue/partial boxes require a clearer photo."
+    },
+    {
+      "row": 13,
+      "photo_id": "P07",
+      "title": "White wall charger marked OPPO 27W",
+      "desc_en": "A compact white wall adapter with a two-pin plug for charging a compatible device through the correct cable. Check the output label and port type before ordering.",
+      "desc_bn": "উপযুক্ত কেবল দিয়ে ডিভাইস চার্জ করার জন্য দুই পিনের সাদা ওয়াল অ্যাডাপ্টার। কেনার আগে আউটপুট রেটিং ও পোর্টের ধরন দেখে নিন।",
+      "image_direction": "Isolate the real adapter in the foreground. Preserve its two round pins and visible marking. Do not invent the hidden USB port or electrical certification marks."
+    },
+    {
+      "row": 14,
+      "photo_id": "P08",
+      "title": "2-in-1 Type-C / Micro-USB OTG adapter",
+      "desc_en": "A pocket-sized adapter with Type-C and Micro-USB connectors for compatible OTG-enabled devices. Useful for connecting supported USB accessories once your phone's OTG support is confirmed.",
+      "desc_bn": "Type-C ও Micro-USB কানেক্টরসহ ছোট OTG অ্যাডাপ্টার। ফোনে OTG সাপোর্ট থাকলে উপযুক্ত USB অ্যাকসেসরি সংযোগে ব্যবহার করা যায়।",
+      "image_direction": "Photograph or isolate one adapter with both visible connectors. Keep silver, blue, red, black and gold as colour choices only when stock is confirmed."
+    },
+    {
+      "row": 15,
+      "photo_id": "P09",
+      "title": "TUCCI A5 Fighter wired headset",
+      "desc_en": "An over-ear wired headset with padded earcups, a headband and a boom microphone. The box shows a 3.5mm connection for use with a compatible audio port.",
+      "desc_bn": "প্যাডযুক্ত ইয়ারকাপ ও বুম মাইক্রোফোনসহ ওভার-ইয়ার তারযুক্ত হেডসেট। বক্সে ৩.৫ মিমি কানেকশনের উল্লেখ আছে; ডিভাইসের অডিও পোর্টের সঙ্গে মিলিয়ে নিন।",
+      "image_direction": "Keep the black-and-red A5 design and boom microphone. Do not substitute the TUCCI Q8 model."
+    },
+    {
+      "row": 16,
+      "photo_id": "P10",
+      "title": "KW68 Mini smartwatch, 3+1-labelled set",
+      "desc_en": "A compact square-face smartwatch presented in a pink-themed strap set. Its smaller watch shape suits buyers who prefer a less bulky design; confirm the included straps and phone compatibility.",
+      "desc_bn": "গোলাপি থিমের স্ট্র্যাপ সেটে ছোট আকারের স্কয়ার-ফেস স্মার্টওয়াচ। হালকা ডিজাইন পছন্দ হলে দেখতে পারেন; সঙ্গে কতটি স্ট্র্যাপ আছে ও ফোনে সাপোর্ট করে কি না নিশ্চিত করুন।",
+      "image_direction": "Rotate the box upright, preserve the pink watch face and flower artwork. Do not invent extra straps or claim medical accuracy."
+    },
+    {
+      "row": 17,
+      "photo_id": "P11",
+      "title": "Y80 Ultra smartwatch strap set",
+      "desc_en": "An Ultra-style smartwatch in a strap-set presentation box. A choice for buyers who want to change their watch's look; confirm the strap count and supported calling features.",
+      "desc_bn": "স্ট্র্যাপ সেটের বক্সে আল্ট্রা ডিজাইনের স্মার্টওয়াচ। ঘড়ির লুক বদলাতে পছন্দ হলে দেখতে পারেন; স্ট্র্যাপের সংখ্যা ও কলিং ফিচার আগে নিশ্চিত করুন।",
+      "image_direction": "Retouch the orange Y80 box without changing printed text. Unbox and count straps before any flat-lay bundle image."
+    },
+    {
+      "row": 18,
+      "photo_id": "P12",
+      "title": "LAXASFIT K10 Ultra, 2G SIM-labelled watch",
+      "desc_en": "An Ultra-style smartwatch marketed with a SIM slot for wrist-based calling. The box identifies 2G support; confirm local SIM operation, charging method and the supplied strap colour.",
+      "desc_bn": "কবজি থেকেই কল করার জন্য সিম স্লটযুক্ত বলে বাজারজাত K10 Ultra স্মার্টওয়াচ। বক্সে 2G লেখা আছে; নিজের সিমে কাজ করে কি না ও চার্জিং পদ্ধতি নিশ্চিত করুন।",
+      "image_direction": "Keep the visible watch colours and SIM illustration on the box. Do not add a camera, 4G badge or a second included watch."
+    },
+    {
+      "row": 19,
+      "photo_id": "P13",
+      "title": "T800 Ultra 2 smartwatch",
+      "desc_en": "A square-face smartwatch in an Ultra-style design, presented with a dark strap. The model is sold for everyday watch functions and connected-phone features; verify compatibility with your handset.",
+      "desc_bn": "ডার্ক স্ট্র্যাপসহ আল্ট্রা ডিজাইনের স্কয়ার-ফেস স্মার্টওয়াচ। দৈনন্দিন ঘড়ির ব্যবহার ও ফোন-সংযুক্ত ফিচারের জন্য দেখতে পারেন; নিজের ফোনে কাজ করে কি না যাচাই করুন।",
+      "image_direction": "Use the complete white T800 Ultra 2 box. Request an actual watch photo for a product-only hero. Do not use an Apple Watch photo."
+    },
+    {
+      "row": 20,
+      "photo_id": "P14",
+      "title": "OR-08 wireless headset, oraimo-labelled",
+      "desc_en": "A black wireless headset with cushioned earcups and an adjustable-looking headband. Its simple over-ear form is suitable for a compact everyday audio listing once the exact model is confirmed.",
+      "desc_bn": "কুশনযুক্ত ইয়ারকাপ ও হেডব্যান্ডসহ কালো রঙের ওয়্যারলেস হেডসেট। দৈনন্দিন ব্যবহারের জন্য সরল ওভার-ইয়ার ডিজাইন; কেনার আগে মডেল ও কার্যকর ফিচার নিশ্চিত করুন।",
+      "image_direction": "Use P14 once and link P19 as an exact duplicate. Preserve the green packaging and OR-08 label. Do not generate a BoomPop model."
+    },
+    {
+      "row": 21,
+      "photo_id": "P15",
+      "title": "SAN-002 Luminous wireless headphones",
+      "desc_en": "Red-and-black over-ear wireless headphones with padded earcups and decorative light detailing shown on the box. Confirm the available colour and lighting behaviour on the supplied unit.",
+      "desc_bn": "প্যাডযুক্ত ইয়ারকাপসহ লাল-কালো ওভার-ইয়ার ওয়্যারলেস হেডফোন। বক্সে আলোর সাজ দেখানো আছে; পণ্যের রং ও আলো কীভাবে কাজ করে তা দেখে নিন।",
+      "image_direction": "Preserve the oval earcup detailing, red padding and SAN-002 label. Do not add cat ears or turn it into T9."
+    },
+    {
+      "row": 22,
+      "photo_id": "P16",
+      "title": "ANKEER NK-NY200 wireless headphones",
+      "desc_en": "Black over-ear wireless headphones with cushioned earcups and a padded headband. The NK-NY200 design offers a simple everyday listening format with the model clearly identified on its box.",
+      "desc_bn": "প্যাডযুক্ত হেডব্যান্ড ও কুশন ইয়ারকাপসহ কালো ওভার-ইয়ার ওয়্যারলেস হেডফোন। NK-NY200 মডেলের সহজ ডিজাইন দৈনন্দিন গান ও ভিডিও শোনার জন্য উপযোগী।",
+      "image_direction": "Preserve ANKEER spelling, NK-NY200 text, earcup shape and black finish. No Soundcore logo."
+    },
+    {
+      "row": 23,
+      "photo_id": "P17",
+      "title": "TUCCI Q8 USB wired headset",
+      "desc_en": "A black wired headset with a boom microphone, padded earcups and USB connection stated on the box. Intended for use with a compatible computer or USB audio device.",
+      "desc_bn": "বুম মাইক ও প্যাডযুক্ত ইয়ারকাপসহ কালো তারযুক্ত হেডসেট। বক্সে USB কানেকশন লেখা আছে; উপযুক্ত কম্পিউটার বা USB অডিও ডিভাইসে ব্যবহারের আগে সাপোর্ট মিলিয়ে নিন।",
+      "image_direction": "Keep Q8 USB packaging and black headset. Preserve the microphone arm. Do not change to a 3.5mm model."
+    },
+    {
+      "row": 24,
+      "photo_id": "P18",
+      "title": "T9 Luminous wireless headphones",
+      "desc_en": "Over-ear wireless headphones with padded earcups and circular decorative panels. The T9 label and illuminated-style artwork distinguish this version from the other headphones in the photos.",
+      "desc_bn": "প্যাডযুক্ত ইয়ারকাপ ও গোলাকার সাজযুক্ত ওভার-ইয়ার ওয়্যারলেস হেডফোন। T9 লেবেল ও আলোকসজ্জার ডিজাইন এই সংস্করণকে অন্য হেডফোন থেকে আলাদা করে।",
+      "image_direction": "Preserve round earcup panels, headband shape and gold-coloured accents. Do not reuse the SAN-002 artwork."
+    },
+    {
+      "row": 25,
+      "photo_id": "P19",
+      "title": "OR-08 wireless headset — duplicate of P14",
+      "desc_en": "The same OR-08 package shown in P14. Use one product record and one image set for this exact duplicate, with the same product description and price-review notes.",
+      "desc_bn": "এটি P14-এর একই OR-08 বক্সের হুবহু একই ছবি। আলাদা পণ্য হিসেবে যোগ না করে একই পণ্যের রেকর্ড, ছবি ও বিবরণ ব্যবহার করুন।",
+      "image_direction": "Do not generate a second image set; reuse P14 assets."
+    },
+    {
+      "row": 26,
+      "photo_id": "P20",
+      "title": "RECRSI-style 4-in-1 charging/data cable",
+      "desc_en": "A multi-connector cable shown with switchable USB-A/USB-C input and Type-C/Lightning output options. A convenient format for carrying fewer separate cables when your devices use different ports.",
+      "desc_bn": "USB-A/USB-C ইনপুট ও Type-C/Lightning আউটপুট বদলানোর সুবিধাসহ মাল্টি-কানেক্টর কেবল। ভিন্ন পোর্টের ডিভাইস ব্যবহার করলে একাধিক আলাদা কেবল বহনের প্রয়োজন কমাতে পারে।",
+      "image_direction": "Keep the gold connector sleeves and actual adapter arrangement. Do not turn 4-in-1 combinations into four simultaneous output leads."
+    },
+    {
+      "row": 27,
+      "photo_id": "P21",
+      "title": "REMAX-labelled RC-155a cable — closer view",
+      "desc_en": "A closer package view of the RC-155a cable, showing a USB-A plug and Type-C tip in the printed artwork. Use this clearer image to confirm the connector option.",
+      "desc_bn": "RC-155a কেবলের বক্সের কাছ থেকে তোলা ছবি; ছাপা ছবিতে USB-A প্লাগ ও Type-C মাথা দেখা যায়। কানেক্টর সংস্করণ মিলিয়ে নেওয়ার জন্য এই ছবিটি বেশি পরিষ্কার।",
+      "image_direction": "Use this as the main package source for the P02/P21 family. Remove the green support from the background without inventing obscured package edges."
+    },
+    {
+      "row": 28,
+      "photo_id": "P22",
+      "title": "Hoco-labelled BT Diamond 700H neckband",
+      "desc_en": "A neckband-style wireless earphone shown with in-ear tips and side controls. Its BT Diamond-labelled packaging identifies the version; check calling performance and the actual battery runtime.",
+      "desc_bn": "ইন-ইয়ার টিপস ও পাশে কন্ট্রোলসহ নেকব্যান্ড ওয়্যারলেস ইয়ারফোন। BT Diamond লেবেলের সংস্করণটি কেনার আগে কলের মান ও বাস্তব ব্যাটারি ব্যাকআপ পরীক্ষা করুন।",
+      "image_direction": "Choose one orange-and-white box and preserve BT Diamond wording. Do not add 700-hour advertising outside the existing packaging."
+    },
+    {
+      "row": 29,
+      "photo_id": "P23",
+      "title": "D50L Lightning cable + D50T Type-C cable + DR06",
+      "desc_en": "Three separate accessories are shown: a D50L Lightning cable, a D50T Type-C cable and DR06 wired earphones. List each independently and let the buyer choose the correct connector.",
+      "desc_bn": "ছবিতে তিনটি আলাদা পণ্য আছে: D50L Lightning কেবল, D50T Type-C কেবল ও DR06 তারযুক্ত ইয়ারফোন। প্রতিটির আলাদা তালিকা তৈরি করে সঠিক কানেক্টর বেছে নেওয়ার সুযোগ দিন।",
+      "image_direction": "Separate the purple D50L, blue D50T and turquoise DR06 packaging. Preserve Lightning versus USB-C connector artwork; do not swap them."
+    },
+    {
+      "row": 30,
+      "photo_id": "P24",
+      "title": "White Pro-style TWS box — blurry close-up",
+      "desc_en": "A white Pro-style earbud package photographed at close range. Use the clearer P01 photo as a reference and confirm whether this unit belongs to the same model and batch.",
+      "desc_bn": "সাদা Pro-style ইয়ারবাডের বক্সের কাছ থেকে তোলা ছবি। পরিষ্কার P01 ছবিটি রেফারেন্স হিসেবে ব্যবহার করুন এবং একই মডেল ও ব্যাচ কি না নিশ্চিত করুন।",
+      "image_direction": "Request a sharper retake. Do not sharpen unreadable text into invented model details or silently replace with a different premium product."
+    },
+    {
+      "row": 31,
+      "photo_id": "P25",
+      "title": "Black Pro-style TWS earbuds",
+      "desc_en": "Black in-ear wireless earbuds shown in a compact stem design with silicone-style tips. A dark-colour option for everyday audio; confirm the charging case and device pairing before ordering.",
+      "desc_bn": "সিলিকন ধরনের টিপস ও ছোট স্টেম ডিজাইনের কালো ওয়্যারলেস ইয়ারবাড। ডার্ক রং পছন্দ হলে দেখতে পারেন; চার্জিং কেস ও ফোনে পেয়ারিং আগে নিশ্চিত করুন।",
+      "image_direction": "Preserve black colour and the depicted eartips. Request an actual unboxed product photo; do not label the image as genuine Apple."
+    },
+    {
+      "row": 32,
+      "photo_id": "P26",
+      "title": "DON-X20 wired earphones + mixed shelf stock",
+      "desc_en": "DON-X20 in-ear wired earphones are the main product, shown with silicone-style tips and an angled 3.5mm plug. Other earphone boxes on the shelf should be listed separately once identified.",
+      "desc_bn": "ছবির মূল পণ্য DON-X20 তারযুক্ত ইন-ইয়ার ইয়ারফোন, সঙ্গে সিলিকন ধরনের টিপস ও বাঁকানো ৩.৫ মিমি প্লাগ। তাকের অন্য ইয়ারফোনগুলোর মডেল নিশ্চিত করে আলাদা তালিকা তৈরি করুন।",
+      "image_direction": "Choose one full DON-X20 box. Separate other visible models. Never treat all shelf stock as a bundle or use the photo to infer stock quantities."
+    }
+  ],
+  "mixed_pictures": [
+    {
+      "A": "",
+      "B": "",
+      "C": "",
+      "D": "",
+      "E": "",
+      "F": "",
+      "G": "",
+      "H": ""
+    },
+    {
+      "A": "Separate products in mixed photos",
+      "B": "",
+      "C": "",
+      "D": "",
+      "E": "",
+      "F": "",
+      "G": "",
+      "H": ""
+    },
+    {
+      "A": "Prices are per item. Rows with no number need clearer identification; estimates remain provisional.",
+      "B": "",
+      "C": "",
+      "D": "",
+      "E": "",
+      "F": "",
+      "G": "",
+      "H": ""
+    },
+    {
+      "A": "Research date: 15 October 2026. Prices are references, not approved selling prices. Delivery excluded.",
+      "B": "",
+      "C": "",
+      "D": "",
+      "E": "",
+      "F": "",
+      "G": "",
+      "H": ""
+    },
+    {
+      "A": "",
+      "B": "",
+      "C": "",
+      "D": "",
+      "E": "",
+      "F": "",
+      "G": "",
+      "H": ""
+    },
+    {
+      "A": "Photo ID",
+      "B": "Separate product",
+      "C": "Low BDT",
+      "D": "High BDT",
+      "E": "Price basis",
+      "F": "English description",
+      "G": "বাংলা বিবরণ",
+      "H": "Sources"
+    },
+    {
+      "A": "P06",
+      "B": "Samsung-labelled Pro-style TWS",
+      "C": "585",
+      "D": "597",
+      "E": "Comparable labels; authenticity unverified",
+      "F": "White stem-style wireless earbuds in Samsung-labelled packaging. Confirm the actual model and pairing functions before sale.",
+      "G": "Samsung লেবেলের বক্সে সাদা স্টেম ডিজাইনের ইয়ারবাড। বিক্রির আগে প্রকৃত মডেল ও পেয়ারিং ফিচার নিশ্চিত করুন।",
+      "H": "S14, S51"
+    },
+    {
+      "A": "P06",
+      "B": "realme-labelled Pro-style TWS",
+      "C": "280",
+      "D": "280",
+      "E": "Comparable label; authenticity unverified",
+      "F": "White Pro-style wireless earbuds in a yellow-and-white box. Confirm the charging case, connector and actual brand identity.",
+      "G": "হলুদ-সাদা বক্সে সাদা Pro-style ইয়ারবাড। চার্জিং কেস, কানেক্টর ও প্রকৃত ব্র্যান্ড পরিচয় নিশ্চিত করুন।",
+      "H": "S11"
+    },
+    {
+      "A": "P06",
+      "B": "OnePlus-labelled Pro-style TWS",
+      "C": "520",
+      "D": "750",
+      "E": "Comparable copy listings",
+      "F": "Stem-style wireless earbuds with a portable charging case shown on the box. Check the actual model and supplied accessories.",
+      "G": "বক্সে বহনযোগ্য চার্জিং কেসসহ স্টেম ডিজাইনের ইয়ারবাড দেখানো আছে। প্রকৃত মডেল ও সঙ্গে দেওয়া অ্যাকসেসরি যাচাই করুন।",
+      "H": "S16, S17"
+    },
+    {
+      "A": "P06",
+      "B": "Lenovo-labelled Pro-style TWS",
+      "C": "400",
+      "D": "699",
+      "E": "Comparable label; authenticity unverified",
+      "F": "White stem-style earbuds in Lenovo-labelled packaging. Verify the model independently of the box artwork.",
+      "G": "Lenovo লেবেলের বক্সে সাদা স্টেম ডিজাইনের ইয়ারবাড। শুধু বক্সের ছবি দেখে নয়, পণ্য দেখে মডেল নিশ্চিত করুন।",
+      "H": "S12, S13"
+    },
+    {
+      "A": "P06",
+      "B": "OPPO-labelled Pro-style TWS",
+      "C": "300",
+      "D": "700",
+      "E": "Estimate from adjacent budget TWS models",
+      "F": "White wireless earbuds shown with a charging case on green packaging. Confirm the exact model before publishing a branded listing.",
+      "G": "সবুজ বক্সে চার্জিং কেসসহ সাদা ওয়্যারলেস ইয়ারবাডের ছবি। ব্র্যান্ডের নামে তালিকা প্রকাশের আগে আসল মডেল নিশ্চিত করুন।",
+      "H": "S11, S12, S13"
+    },
+    {
+      "A": "P06",
+      "B": "Mi-labelled Pro-style TWS",
+      "C": "399",
+      "D": "399",
+      "E": "Comparable label; authenticity unverified",
+      "F": "White stem-style wireless earbuds pictured on orange packaging. Verify the connector and hardware version with the supplier.",
+      "G": "কমলা বক্সে সাদা স্টেম ডিজাইনের ইয়ারবাড দেখানো আছে। সরবরাহকারীর কাছে কানেক্টর ও হার্ডওয়্যার সংস্করণ যাচাই করুন।",
+      "H": "S15"
+    },
+    {
+      "A": "P06",
+      "B": "Unclear blue-box TWS",
+      "C": "",
+      "D": "",
+      "E": "Price unavailable: model unreadable",
+      "F": "Wireless-earbud packaging is visible, but the brand and model cannot be read reliably. Obtain a clear front and rear photo.",
+      "G": "ওয়্যারলেস ইয়ারবাডের বক্স দেখা যাচ্ছে, তবে ব্র্যান্ড ও মডেল পড়া যাচ্ছে না। সামনে ও পেছনের পরিষ্কার ছবি প্রয়োজন।",
+      "H": ""
+    },
+    {
+      "A": "P23",
+      "B": "VDENMENV D50L Lightning cable",
+      "C": "100",
+      "D": "200",
+      "E": "Estimate; D50L exact BD listing not found",
+      "F": "A one-metre USB-A to Lightning cable, marked 2.4A on the box, for compatible Lightning devices. Confirm charging and data support.",
+      "G": "উপযুক্ত Lightning ডিভাইসের জন্য এক মিটার USB-A থেকে Lightning কেবল। বক্সে 2.4A লেখা আছে; চার্জিং ও ডেটা সাপোর্ট মিলিয়ে নিন।",
+      "H": "S48, S47"
+    },
+    {
+      "A": "P23",
+      "B": "VDENMENV D50T Type-C cable",
+      "C": "140",
+      "D": "140",
+      "E": "Exact-model listing",
+      "F": "A one-metre USB-A to Type-C cable for charging and syncing compatible devices. The box and seller listing specify a 2.4A rating.",
+      "G": "উপযুক্ত ডিভাইসে চার্জিং ও ডেটা সিঙ্কের জন্য এক মিটার USB-A থেকে Type-C কেবল। বক্স ও বিক্রেতার তালিকায় 2.4A রেটিং উল্লেখ আছে।",
+      "H": "S47, S46"
+    },
+    {
+      "A": "P23",
+      "B": "VDENMENV DR06 wired earphones",
+      "C": "102",
+      "D": "299",
+      "E": "Same model as P05",
+      "F": "Wired earphones with an inline control for everyday audio. Use the DR06 description and product record associated with P05.",
+      "G": "দৈনন্দিন অডিওর জন্য ইনলাইন কন্ট্রোলসহ তারযুক্ত ইয়ারফোন। P05-এর DR06 পণ্যের একই রেকর্ড ও বিবরণ ব্যবহার করুন।",
+      "H": "S08, S09"
+    },
+    {
+      "A": "P26",
+      "B": "DON-X20 wired in-ear earphones",
+      "C": "100",
+      "D": "250",
+      "E": "Estimate from similar budget earphones",
+      "F": "In-ear wired earphones with silicone-style tips and an angled 3.5mm plug shown on the box. Confirm microphone support on the supplied unit.",
+      "G": "সিলিকন ধরনের টিপস ও বাঁকানো ৩.৫ মিমি প্লাগসহ তারযুক্ত ইন-ইয়ার ইয়ারফোন। পণ্যে মাইক আছে কি না দেখে নিশ্চিত করুন।",
+      "H": "S08, S49"
+    },
+    {
+      "A": "P26",
+      "B": "SF30 earphone box (upper left)",
+      "C": "100",
+      "D": "250",
+      "E": "Estimate; full model/brand needs close-up",
+      "F": "A wired-earphone box marked SF30 is visible on the upper shelf. Connector type and included microphone need a closer photograph.",
+      "G": "উপরের তাকে SF30 লেখা ইয়ারফোনের বক্স দেখা যাচ্ছে। কানেক্টর ও মাইকের তথ্যের জন্য কাছ থেকে পরিষ্কার ছবি প্রয়োজন।",
+      "H": "S08, S49"
+    },
+    {
+      "A": "P26",
+      "B": "SH-777 4-in-1-labelled earphones",
+      "C": "150",
+      "D": "300",
+      "E": "Estimate; exact Bangladesh listing not found",
+      "F": "White-and-blue wired earphones with an inline control are pictured on the SH-777 box. Confirm what the 4-in-1 label refers to.",
+      "G": "SH-777 বক্সে ইনলাইন কন্ট্রোলসহ সাদা-নীল তারযুক্ত ইয়ারফোন দেখানো আছে। 4-in-1 লেখা দিয়ে কী বোঝানো হয়েছে তা নিশ্চিত করুন।",
+      "H": "S08, S09"
+    },
+    {
+      "A": "P26",
+      "B": "SZ-06-labelled earphone box",
+      "C": "100",
+      "D": "250",
+      "E": "Estimate; model text partly visible",
+      "F": "A turquoise earphone box appears to carry model SZ-06. Obtain the full front view before describing its connector or features.",
+      "G": "ফিরোজা রঙের বক্সে সম্ভবত SZ-06 মডেল লেখা আছে। কানেক্টর ও ফিচার লেখার আগে সম্পূর্ণ সামনের ছবি প্রয়োজন।",
+      "H": "S08, S49"
+    },
+    {
+      "A": "P26",
+      "B": "KIN wired earphones, exact model unclear",
+      "C": "100",
+      "D": "200",
+      "E": "Comparable KIN models; exact item unconfirmed",
+      "F": "KIN-labelled wired earphones are visible in black and pink packs. Confirm whether these are colour variants of the same model.",
+      "G": "কালো ও গোলাপি প্যাকেটে KIN লেবেলের তারযুক্ত ইয়ারফোন দেখা যাচ্ছে। এগুলো একই মডেলের ভিন্ন রং কি না নিশ্চিত করুন।",
+      "H": "S49, S50"
+    },
+    {
+      "A": "P26",
+      "B": "Gold and other partly hidden earphone boxes",
+      "C": "",
+      "D": "",
+      "E": "Price unavailable: full identification missing",
+      "F": "Partly hidden packages cannot be assigned a reliable individual model or price. Request clear front and rear photos for each.",
+      "G": "আংশিক ঢাকা বক্স থেকে নির্ভরযোগ্যভাবে মডেল ও দাম নির্ধারণ করা যাচ্ছে না। প্রতিটির সামনে ও পেছনের পরিষ্কার ছবি প্রয়োজন।",
+      "H": ""
+    }
+  ]
+}

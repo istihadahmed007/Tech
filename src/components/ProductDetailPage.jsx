@@ -473,6 +473,10 @@ export default function ProductDetailPage({
                     transform: isZooming ? 'scale(2.2)' : 'scale(1)'
                   }}
                   loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/assets/tech-nest-app-icon.png';
+                  }}
                 />
               </div>
 
@@ -499,9 +503,13 @@ export default function ProductDetailPage({
                   >
                     <img 
                       src={img} 
-                      alt="" 
+                      alt={`${product.title} angle ${idx + 1}`} 
                       className="pdp-thumb-img" 
                       loading="lazy" 
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/assets/tech-nest-app-icon.png';
+                      }}
                     />
                   </button>
                 );
@@ -520,6 +528,20 @@ export default function ProductDetailPage({
               <span className="pdp-brand-tag">
                 {brandName}
               </span>
+              {product.model && (
+                <span className="pdp-model-tag" style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: '#168FC2',
+                  backgroundColor: '#EAF4FC',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                  border: '1px solid #B8E7F8',
+                  fontFamily: 'monospace'
+                }}>
+                  Model: {product.model}
+                </span>
+              )}
               {product.photoRef && (
                 <span className="pdp-ref-tag">
                   Ref: {product.photoRef}
@@ -1463,6 +1485,10 @@ export default function ProductDetailPage({
               src={galleryImages[lightboxIndex]}
               alt={`${product.title} angle ${lightboxIndex + 1}`}
               className="pdp-lightbox-img"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/assets/tech-nest-app-icon.png';
+              }}
             />
             
             {/* Counter */}

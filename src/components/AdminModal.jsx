@@ -68,7 +68,9 @@ export default function AdminModal({
     title: '',
     titleBn: '',
     category: 'audio',
-    brand: 'Apple',
+    brand: 'REMAX',
+    model: '',
+    photoRef: '',
     price: '',
     originalPrice: '',
     stock: '',
@@ -76,6 +78,7 @@ export default function AdminModal({
     badge: '',
     description: '',
     image: '',
+    gallery: '',
     specs: {},
     compatibleWith: [],
     variants: []
@@ -271,14 +274,21 @@ export default function AdminModal({
     const isEdit = Boolean(editingProduct);
     const url = isEdit ? `/api/admin/products/${editingProduct.id}` : '/api/admin/products';
 
+    const payload = {
+      ...productFormData,
+      gallery: typeof productFormData.gallery === 'string'
+        ? productFormData.gallery.split('\n').map(s => s.trim()).filter(Boolean)
+        : (productFormData.gallery || [])
+    };
+
     try {
       const res = await safeFetchJson(url, {
-        method: 'POST',
+        method: isEdit ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${authToken}`
         },
-        body: JSON.stringify(productFormData)
+        body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(res.error || 'Failed to save product');
 
@@ -820,7 +830,9 @@ export default function AdminModal({
                         title: '',
                         titleBn: '',
                         category: 'audio',
-                        brand: 'Apple',
+                        brand: 'REMAX',
+                        model: '',
+                        photoRef: '',
                         price: '',
                         originalPrice: '',
                         stock: '10',
@@ -828,6 +840,7 @@ export default function AdminModal({
                         badge: 'New',
                         description: '',
                         image: '',
+                        gallery: '',
                         specs: { "Drop Protection": "Military Grade" },
                         compatibleWith: ["iPhone 15 Pro Max", "iPhone 15 Pro"],
                         variants: [{ id: "v1", name: "Glacial Blue", hex: "#CBE4FC", stock: 10 }]
@@ -894,8 +907,13 @@ export default function AdminModal({
                                 setEditingProduct(p);
                                 setProductFormData({
                                   ...p,
-                                  stock: p.stock.toString(),
-                                  price: p.price.toString()
+                                  brand: p.brand || '',
+                                  model: p.model || (p.specs && (p.specs.Model || p.specs.model)) || '',
+                                  photoRef: p.photoRef || '',
+                                  gallery: Array.isArray(p.gallery) ? p.gallery.join('\n') : (p.gallery || ''),
+                                  stock: (p.stock ?? 0).toString(),
+                                  price: (p.price ?? 0).toString(),
+                                  originalPrice: p.originalPrice ? p.originalPrice.toString() : ''
                                 });
                                 setShowProductForm(true);
                               }}
@@ -948,6 +966,29 @@ export default function AdminModal({
                               <option value="cases">Cases</option>
                               <option value="powerbanks">Power Banks</option>
                             </select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="font-bold block mb-1">Brand</label>
+                            <input
+                              type="text"
+                              value={productFormData.brand || ''}
+                              onChange={(e) => setProductFormData({ ...productFormData, brand: e.target.value })}
+                              placeholder="e.g. REMAX, VDENMENV, TUCCI"
+                              className="input-field text-xs py-1.5"
+                            />
+                          </div>
+                          <div>
+                            <label className="font-bold block mb-1">Model Number</label>
+                            <input
+                              type="text"
+                              value={productFormData.model || ''}
+                              onChange={(e) => setProductFormData({ ...productFormData, model: e.target.value })}
+                              placeholder="e.g. RC-155a, DR06, SM 007"
+                              className="input-field text-xs py-1.5"
+                            />
                           </div>
                         </div>
 
@@ -1005,13 +1046,13 @@ export default function AdminModal({
                         </div>
 
                         <div>
-                          <label className="font-bold block mb-1">Product Image URL or Upload</label>
+                          <label className="font-bold block mb-1">Main Product Image URL or Upload</label>
                           <div className="flex gap-2">
                             <input
                               type="text"
                               value={productFormData.image || ''}
                               onChange={(e) => setProductFormData({ ...productFormData, image: e.target.value })}
-                              placeholder="https://... or upload below"
+                              placeholder="https://... or /assets/products/..."
                               className="input-field text-xs py-1.5 flex-1"
                             />
                             <label className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-[#102A43] rounded-xl cursor-pointer font-semibold flex items-center gap-1">
@@ -1020,6 +1061,17 @@ export default function AdminModal({
                               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                             </label>
                           </div>
+                        </div>
+
+                        <div>
+                          <label className="font-bold block mb-1">Image Gallery URLs (1 per line)</label>
+                          <textarea
+                            rows={3}
+                            value={productFormData.gallery || ''}
+                            onChange={(e) => setProductFormData({ ...productFormData, gallery: e.target.value })}
+                            placeholder="/assets/products/p02-remax-rc155a-front.jpg&#10;/assets/products/p02-remax-rc155a-connectors.jpg"
+                            className="input-field text-xs py-1.5 font-mono"
+                          />
                         </div>
 
                         <div>

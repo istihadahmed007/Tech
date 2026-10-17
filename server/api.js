@@ -1301,7 +1301,7 @@ export async function handleApiRequest(req, res) {
       }
     }
 
-    if (pathname.startsWith('/api/admin/products/') && method === 'PUT') {
+    if (pathname.startsWith('/api/admin/products/') && (method === 'PUT' || method === 'POST')) {
       if (!verifyAdminToken(req.headers['authorization'])) {
         return sendJson(403, { error: 'Unauthorized admin session' });
       }
