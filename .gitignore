@@ -86,7 +86,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist is tracked for Hostinger production deployment without build step
 
 # Gatsby files
 .cache/

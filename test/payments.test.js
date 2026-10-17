@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { getPaymentProvider, getPaymentConfigurationStatus, isPaymentConfigured } from '../server/payments/index.js';
 import { SandboxPaymentProvider } from '../server/payments/sandbox.js';
 import { PAYMENT_STATUS, ORDER_STATUS } from '../server/payments/types.js';
-import { verifyPassword, generateAdminToken, verifyAdminToken } from '../server/auth.js';
+import { verifyPassword, getAdminPassword, generateAdminToken, verifyAdminToken } from '../server/auth.js';
 import { savePaymentSession, getPaymentSession } from '../server/db.js';
 
 test('Payment Provider: returns null and marks online payments unavailable when credentials are not configured', () => {
@@ -160,10 +160,11 @@ test('Payment Security: HMAC signature generation and tamper protection', async 
 });
 
 test('Admin Auth: timing-safe password check and HMAC signed token verification', () => {
-  // Correct password check
-  assert.equal(verifyPassword('admin123'), true);
+  // Correct password check (dynamic based on environment config)
+  const validPassword = getAdminPassword();
+  assert.equal(verifyPassword(validPassword), true);
   // Incorrect password check
-  assert.equal(verifyPassword('wrongpassword'), false);
+  assert.equal(verifyPassword('wrongpassword_xyz123'), false);
   assert.equal(verifyPassword(''), false);
 
   // Token issue & verification

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+  <defs>
+    <linearGradient id="tnFlameIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B4A" />
+      <stop offset="50%" stop-color="#EE4D2D" />
+      <stop offset="100%" stop-color="#D73211" />
+    </linearGradient>
+    <linearGradient id="tnGoldIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF275" />
+      <stop offset="100%" stop-color="#FFB300" />
+    </linearGradient>
+    <linearGradient id="tnNavyIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A5F" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <filter id="iconGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#EE4D2D" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Rounded Squircle Background -->
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#tnNavyIcon)" />
+  <rect x="5" y="5" width="118" height="118" rx="27" stroke="rgba(255,255,255,0.12)" stroke-width="2" />
+
+  <!-- LOGO EMBLEM -->
+  <g transform="translate(24, 18)" filter="url(#iconGlow)">
+    <!-- Outer Shield / Hexagon -->
+    <path d="M40 4 L72 22 L72 62 L40 80 L8 62 L8 22 Z" 
+          fill="url(#tnFlameIcon)" />
+    
+    <!-- Inner Navy Hex Nest -->
+    <path d="M40 12 L64 26 L64 58 L40 72 L16 58 L16 26 Z" 
+          fill="url(#tnNavyIcon)" />
+
+    <!-- Stylized 'N' Circuit -->
+    <path d="M24 54 L24 30 L32 30 L48 54 L48 30 L56 30 L56 54 L48 54 L32 30 L32 54 Z" 
+          fill="#FFFFFF" opacity="0.95" />
+
+    <!-- Central Energy Lightning Bolt -->
+    <path d="M42 24 L34 42 L41 42 L37 60 L48 38 L41 38 Z" 
+          fill="url(#tnGoldIcon)" />
+          
+    <!-- Decorative Tech Nodes -->
+    <circle cx="40" cy="7" r="2.5" fill="#FFFFFF" />
+    <circle cx="69" cy="24" r="2.5" fill="#FFFFFF" />
+    <circle cx="69" cy="60" r="2.5" fill="#FFFFFF" />
+    <circle cx="40" cy="77" r="2.5" fill="#FFFFFF" />
+    <circle cx="11" cy="60" r="2.5" fill="#FFFFFF" />
+    <circle cx="11" cy="24" r="2.5" fill="#FFFFFF" />
+  </g>
+</svg>

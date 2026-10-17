@@ -11,6 +11,11 @@
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
+  # Check if requested file or directory exists inside dist/ (for repos deployed to public_html root)
+  RewriteCond %{DOCUMENT_ROOT}/dist/$1 -f [OR]
+  RewriteCond %{DOCUMENT_ROOT}/dist/$1 -d
+  RewriteRule ^(.*)$ dist/$1 [L]
+
   # If Apache has mod_proxy and Node.js is running locally on port 3000
   <IfModule mod_proxy.c>
     RewriteCond %{REQUEST_URI} ^/api/
@@ -20,7 +25,10 @@
   # Do NOT rewrite /api/ requests to index.html
   RewriteCond %{REQUEST_URI} !^/api/
   
-  # Rewrite all other frontend paths to index.html
+  # Rewrite all other frontend paths to dist/index.html if available, otherwise index.html
+  RewriteCond %{DOCUMENT_ROOT}/dist/index.html -f
+  RewriteRule . /dist/index.html [L]
+
   RewriteRule . /index.html [L]
 </IfModule>
 
