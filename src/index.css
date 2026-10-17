@@ -264,9 +264,64 @@ a {
   }
 }
 
-/* ==========================================================
-   Hero Section - Clean Static Product Composition
-   ========================================================== */
+/* Shopee Hero Layout Grid */
+.hero-shopee-layout {
+  display: grid;
+  grid-template-columns: 100%;
+  gap: 14px;
+  align-items: stretch;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .hero-shopee-layout {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    gap: 16px;
+  }
+}
+
+.hero-carousel-main {
+  width: 100%;
+  min-width: 0;
+  border-radius: 14px;
+  background-color: #FFFFFF;
+  border: 1px solid #ECECEC;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 380px;
+}
+
+@media (min-width: 640px) {
+  .hero-carousel-main {
+    min-height: 420px;
+  }
+}
+
+.hero-side-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hero-side-stack {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-side-stack {
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
 .hero-section {
   position: relative;
   width: 100%;
@@ -603,6 +658,10 @@ a {
 .col-span-5 { grid-column: span 5 / span 5; }
 .col-span-6 { grid-column: span 6 / span 6; }
 .col-span-7 { grid-column: span 7 / span 7; }
+.col-span-8 { grid-column: span 8 / span 8; }
+.col-span-9 { grid-column: span 9 / span 9; }
+.col-span-10 { grid-column: span 10 / span 10; }
+.col-span-11 { grid-column: span 11 / span 11; }
 .col-span-12 { grid-column: span 12 / span 12; }
 
 /* Gaps */
@@ -1031,10 +1090,14 @@ a {
   .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sm\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .sm\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .sm\:col-span-1 { grid-column: span 1 / span 1; }
   .sm\:col-span-2 { grid-column: span 2 / span 2; }
   .sm\:col-span-3 { grid-column: span 3 / span 3; }
   .sm\:col-span-4 { grid-column: span 4 / span 4; }
   .sm\:col-span-5 { grid-column: span 5 / span 5; }
+  .sm\:col-span-6 { grid-column: span 6 / span 6; }
+  .sm\:col-span-7 { grid-column: span 7 / span 7; }
+  .sm\:col-span-8 { grid-column: span 8 / span 8; }
   .sm\:col-span-12 { grid-column: span 12 / span 12; }
   .sm\:p-5 { padding: 20px; }
   .sm\:p-6 { padding: 24px; }
@@ -1080,9 +1143,18 @@ a {
   .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .lg\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .lg\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .lg\:col-span-1 { grid-column: span 1 / span 1; }
   .lg\:col-span-2 { grid-column: span 2 / span 2; }
+  .lg\:col-span-3 { grid-column: span 3 / span 3; }
+  .lg\:col-span-4 { grid-column: span 4 / span 4; }
   .lg\:col-span-5 { grid-column: span 5 / span 5; }
+  .lg\:col-span-6 { grid-column: span 6 / span 6; }
   .lg\:col-span-7 { grid-column: span 7 / span 7; }
+  .lg\:col-span-8 { grid-column: span 8 / span 8; }
+  .lg\:col-span-9 { grid-column: span 9 / span 9; }
+  .lg\:col-span-10 { grid-column: span 10 / span 10; }
+  .lg\:col-span-11 { grid-column: span 11 / span 11; }
+  .lg\:col-span-12 { grid-column: span 12 / span 12; }
   .lg\:h-\[560px\] { height: 560px; }
   .lg\:p-12 { padding: 48px; }
   .lg\:gap-12 { gap: 48px; }

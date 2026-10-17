@@ -86,16 +86,16 @@ export default function Hero({
 
   return (
     <section className="w-full my-4 sm:my-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-stretch">
+      <div className="hero-shopee-layout">
         
         {/* Left Column: Shopee-Style Hero Carousel Slider (8 cols on lg) */}
         <div 
-          className="lg:col-span-8 rounded-xl sm:rounded-2xl bg-white border border-[#ECECEC] shadow-xs relative overflow-hidden flex flex-col justify-between group min-h-[360px] sm:min-h-[420px]"
+          className="hero-carousel-main group"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
           {/* Slide Content Grid */}
-          <div className="p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 flex-1">
+          <div className="p-6 sm:p-8 lg:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 flex-1">
             {/* Slide Typography */}
             <div className="flex-1 max-w-md z-10 text-left">
               <div className="flex items-center gap-2 mb-2.5">
@@ -201,7 +201,7 @@ export default function Hero({
         </div>
 
         {/* Right Column: Shopee-Style Dual Stacked Promo Highlight Banners (4 cols on lg) */}
-        <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3.5 sm:gap-4">
+        <div className="hero-side-stack">
           
           {/* Mini Banner 1: Fast Chargers & Cables */}
           <div 
