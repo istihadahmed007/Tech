@@ -19,6 +19,7 @@ import {
   createProduct,
   updateProduct,
   updateProductStatus,
+  deleteProduct,
   adjustProductStock,
   getInventoryAdjustments,
   createOrderWithReservation,
@@ -45,6 +46,10 @@ import {
   findUserByEmail,
   findUserById,
   createUser,
+  createUserAdmin,
+  updateUserAdmin,
+  deleteUserAdmin,
+  getAllUsersAdminDetailed,
   updateUserProfile,
   getUserWishlist,
   setUserWishlist,
@@ -56,7 +61,10 @@ import {
   getAllBrands,
   getAllUsersAdmin,
   getStoreSettings,
-  updateStoreSettings
+  updateStoreSettings,
+  logAuditEvent,
+  getAuditLogs,
+  getBusinessReports
 } from './db.js';
 
 import {
@@ -64,7 +72,11 @@ import {
   hashPassword,
   verifyPasswordHash,
   generateAdminToken,
+  decodeAdminToken,
   verifyAdminToken,
+  getAdminUserFromToken,
+  hasPermission,
+  getDefaultPermissions,
   createCustomerSession,
   authenticateRequest,
   logoutSession,
@@ -1146,6 +1158,14 @@ export async function handleApiRequest(req, res) {
     // ---------------------------------------------------------------------------
     // 11. Admin Operations Console (Strictly Protected)
     // ---------------------------------------------------------------------------
+    // Helper to get authenticated admin or staff identity
+    const getAdminCaller = () => {
+      const authHeader = req.headers['authorization'];
+      const queryToken = url.searchParams.get('admin_token');
+      const token = authHeader || (queryToken ? `Bearer ${queryToken}` : null);
+      return decodeAdminToken(token);
+    };
+
     if (pathname === '/api/admin/login' && method === 'POST') {
       if (!checkRateLimit(ip, 'admin_console', 5, 15 * 60 * 1000)) {
         return sendJson(429, { error: 'Too many failed admin login attempts. Please wait 15 minutes.' });
@@ -1153,14 +1173,83 @@ export async function handleApiRequest(req, res) {
 
       const body = await parseBody();
       const expectedEmail = process.env.ADMIN_EMAIL ? process.env.ADMIN_EMAIL.trim().toLowerCase() : null;
-      const providedEmail = body.username ? String(body.username).trim().toLowerCase() : '';
-      const emailMatches = !expectedEmail || providedEmail === expectedEmail;
+      const providedUsername = body.username ? String(body.username).trim() : '';
+      const providedEmail = providedUsername.toLowerCase();
+      const password = body.password ? String(body.password) : '';
 
-      if (emailMatches && verifyPassword(body.password)) {
+      // 1. Check primary administrator password
+      const emailMatches = !expectedEmail || providedEmail === expectedEmail;
+      if (emailMatches && verifyPassword(password)) {
         clearFailedAttempts(ip, 'admin_console');
-        const token = generateAdminToken();
-        return sendJson(200, { success: true, token });
+        const token = generateAdminToken({
+          sub: 'admin_primary',
+          role: 'admin',
+          email: expectedEmail || 'admin@store.local',
+          name: 'Primary Administrator',
+          permissions: ['*']
+        });
+        logAuditEvent({
+          userId: 'admin_primary',
+          userEmail: expectedEmail || 'admin@store.local',
+          action: 'auth:login',
+          entityType: 'session',
+          entityId: 'admin_primary',
+          details: { role: 'admin', method: 'primary_key' },
+          ip
+        });
+        return sendJson(200, {
+          success: true,
+          token,
+          user: {
+            id: 'admin_primary',
+            email: expectedEmail || 'admin@store.local',
+            name: 'Primary Administrator',
+            role: 'admin',
+            permissions: ['*']
+          }
+        });
       }
+
+      // 2. Check database staff/manager/admin user
+      if (providedEmail) {
+        const dbUser = findUserByEmail(providedEmail);
+        if (dbUser && ['admin', 'manager', 'staff'].includes(dbUser.role) && (dbUser.status || 'active') === 'active') {
+          if (verifyPasswordHash(password, dbUser.password_hash)) {
+            clearFailedAttempts(ip, 'admin_console');
+            const perms = Array.isArray(dbUser.permissions) && dbUser.permissions.length > 0
+              ? dbUser.permissions
+              : getDefaultPermissions(dbUser.role);
+            const token = generateAdminToken({
+              sub: dbUser.id,
+              role: dbUser.role,
+              email: dbUser.email,
+              name: dbUser.name,
+              permissions: perms
+            });
+            logAuditEvent({
+              userId: dbUser.id,
+              userEmail: dbUser.email,
+              action: 'auth:login',
+              entityType: 'session',
+              entityId: dbUser.id,
+              details: { role: dbUser.role },
+              ip
+            });
+            return sendJson(200, {
+              success: true,
+              token,
+              user: {
+                id: dbUser.id,
+                email: dbUser.email,
+                name: dbUser.name,
+                role: dbUser.role,
+                permissions: perms
+              }
+            });
+          }
+        }
+      }
+
       recordFailedAttempt(ip, 'admin_console');
       return sendJson(401, { success: false, error: 'Invalid admin credentials' });
     }
@@ -1291,13 +1380,55 @@ export async function handleApiRequest(req, res) {
       return sendJson(200, { products });
     }
 
+    // Admin Export Products (CSV)
+    if (pathname === '/api/admin/products/export-csv' && method === 'GET') {
+      const authHeader = req.headers['authorization'];
+      const queryToken = url.searchParams.get('admin_token');
+      const token = queryToken || (authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null);
+      if (!verifyAdminToken(token)) {
+        return sendJson(403, { error: 'Unauthorized or expired admin session' });
+      }
+
+      const products = getAllProducts({ includeArchived: true });
+      const headers = ['Product ID', 'SKU', 'Title', 'Category', 'Brand', 'Model', 'Price (BDT)', 'Original Price', 'Stock', 'Status', 'Warranty'];
+      const rows = products.map(p => [
+        p.id,
+        p.sku || '',
+        `"${(p.title || '').replace(/"/g, '""')}"`,
+        `"${(p.category || '').replace(/"/g, '""')}"`,
+        `"${(p.brand || '').replace(/"/g, '""')}"`,
+        `"${(p.model || '').replace(/"/g, '""')}"`,
+        p.price,
+        p.originalPrice || '',
+        p.stock,
+        p.status,
+        `"${(p.warranty || '').replace(/"/g, '""')}"`
+      ].join(','));
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="tech-nest-products-${Date.now()}.csv"`);
+      res.statusCode = 200;
+      return res.end(csvContent);
+    }
+
     if (pathname === '/api/admin/products' && method === 'POST') {
-      if (!verifyAdminToken(req.headers['authorization'])) {
+      const caller = getAdminCaller();
+      if (!caller || !hasPermission(caller.permissions, 'manage:products')) {
         return sendJson(403, { error: 'Unauthorized admin session' });
       }
       const body = await parseBody();
       try {
         const created = createProduct(body);
+        logAuditEvent({
+          userId: caller.sub,
+          userEmail: caller.email,
+          action: 'product:create',
+          entityType: 'product',
+          entityId: created.id,
+          details: { title: created.title, price: created.price, stock: created.stock },
+          ip
+        });
         return sendJson(201, { success: true, product: created });
       } catch (err) {
         return sendJson(400, { success: false, error: err.message });
@@ -1305,13 +1436,23 @@ export async function handleApiRequest(req, res) {
     }
 
     if (pathname.startsWith('/api/admin/products/') && pathname.endsWith('/status') && method === 'PATCH') {
-      if (!verifyAdminToken(req.headers['authorization'])) {
+      const caller = getAdminCaller();
+      if (!caller || !hasPermission(caller.permissions, 'manage:products')) {
         return sendJson(403, { error: 'Unauthorized admin session' });
       }
       const productId = pathname.split('/')[4];
       const body = await parseBody();
       try {
         const updated = updateProductStatus(productId, body.status);
+        logAuditEvent({
+          userId: caller.sub,
+          userEmail: caller.email,
+          action: 'product:status_update',
+          entityType: 'product',
+          entityId: productId,
+          details: { status: body.status },
+          ip
+        });
         return sendJson(200, { success: true, product: updated });
       } catch (err) {
         return sendJson(400, { success: false, error: err.message });
@@ -1319,7 +1460,8 @@ export async function handleApiRequest(req, res) {
     }
 
     if (pathname.startsWith('/api/admin/products/') && (method === 'PUT' || method === 'POST')) {
-      if (!verifyAdminToken(req.headers['authorization'])) {
+      const caller = getAdminCaller();
+      if (!caller || !hasPermission(caller.permissions, 'manage:products')) {
         return sendJson(403, { error: 'Unauthorized admin session' });
       }
       const productId = pathname.replace('/api/admin/products/', '').trim();
@@ -1327,10 +1469,42 @@ export async function handleApiRequest(req, res) {
       try {
         const updated = updateProduct(productId, body);
         if (!updated) return sendJson(404, { error: 'Product not found' });
+        logAuditEvent({
+          userId: caller.sub,
+          userEmail: caller.email,
+          action: 'product:update',
+          entityType: 'product',
+          entityId: productId,
+          details: { title: updated.title, price: updated.price, stock: updated.stock },
+          ip
+        });
         return sendJson(200, { success: true, product: updated });
       } catch (err) {
         return sendJson(400, { success: false, error: err.message });
       }
+    }
+
+    if (pathname.startsWith('/api/admin/products/') && method === 'DELETE') {
+      const caller = getAdminCaller();
+      if (!caller || !hasPermission(caller.permissions, 'manage:products')) {
+        return sendJson(403, { error: 'Unauthorized or insufficient permissions' });
+      }
+      const productId = pathname.replace('/api/admin/products/', '').trim();
+      const existing = getProductById(productId);
+      if (!existing) {
+        return sendJson(404, { error: 'Product not found' });
+      }
+      deleteProduct(productId);
+      logAuditEvent({
+        userId: caller.sub,
+        userEmail: caller.email,
+        action: 'product:delete',
+        entityType: 'product',
+        entityId: productId,
+        details: { title: existing.title, sku: existing.sku },
+        ip
+      });
+      return sendJson(200, { success: true, message: 'Product deleted' });
     }
 
     // Stock Adjustments & Restocking
@@ -1542,7 +1716,7 @@ export async function handleApiRequest(req, res) {
     }
 
     // ---------------------------------------------------------------------------
-    // Admin Customers List
+    // Admin Customers & Users Management (Full RBAC CRUD)
     // ---------------------------------------------------------------------------
     if (pathname === '/api/admin/customers' && method === 'GET') {
       if (!verifyAdminToken(req.headers['authorization'])) {
@@ -1551,22 +1725,241 @@ export async function handleApiRequest(req, res) {
       return sendJson(200, { customers: getAllUsersAdmin() });
     }
 
+    if (pathname === '/api/admin/users' && method === 'GET') {
+      const caller = getAdminCaller();
+      if (!caller || !hasPermission(caller.permissions, 'view:all')) {
+        return sendJson(403, { error: 'Unauthorized or insufficient permissions' });
+      }
+      const search = url.searchParams.get('search') || '';
+      const role = url.searchParams.get('role') || '';
+      const status = url.searchParams.get('status') || '';
+      const limit = parseInt(url.searchParams.get('limit'), 10) || 100;
+      const offset = parseInt(url.searchParams.get('offset'), 10) || 0;
+      const users = getAllUsersAdminDetailed({ search, role, status, limit, offset });
+      return sendJson(200, { users });
+    }
+
+    if (pathname === '/api/admin/users' && method === 'POST') {
+      const caller = getAdminCaller();
+      if (!caller || caller.role !== 'admin') {
+        return sendJson(403, { error: 'Only administrators can create staff or admin accounts' });
+      }
+      const body = await parseBody();
+      if (!body.email || !body.name || !body.password) {
+        return sendJson(400, { error: 'Email, name, and password are required' });
+      }
+      if (body.password.length < 6) {
+        return sendJson(400, { error: 'Password must be at least 6 characters long' });
+      }
+      const existing = findUserByEmail(body.email);
+      if (existing) {
+        return sendJson(400, { error: 'A user with this email address already exists' });
+      }
+      const passwordHash = hashPassword(body.password);
+      const role = body.role || 'staff';
+      const perms = Array.isArray(body.permissions) && body.permissions.length > 0
+        ? body.permissions
+        : getDefaultPermissions(role);
+
+      const created = createUser({
+        email: body.email,
+        phone: body.phone || '',
+        name: body.name,
+        passwordHash,
+        role,
+        status: body.status || 'active',
+        permissions: perms
+      });
+
+      logAuditEvent({
+        userId: caller.sub,
+        userEmail: caller.email,
+        action: 'user:create',
+        entityType: 'user',
+        entityId: created.id,
+        details: { email: created.email, role: created.role },
+        ip
+      });
+
+      const { password_hash, ...sanitized } = created;
+      return sendJson(201, { success: true, user: sanitized });
+    }
+
+    if (pathname.startsWith('/api/admin/users/') && method === 'PUT') {
+      const caller = getAdminCaller();
+      if (!caller || caller.role !== 'admin') {
+        return sendJson(403, { error: 'Only administrators can modify user accounts' });
+      }
+      const targetUserId = pathname.replace('/api/admin/users/', '').trim();
+      const body = await parseBody();
+
+      let passwordHash = undefined;
+      if (body.password && typeof body.password === 'string' && body.password.trim()) {
+        if (body.password.length < 6) {
+          return sendJson(400, { error: 'Password must be at least 6 characters long' });
+        }
+        passwordHash = hashPassword(body.password);
+      }
+
+      const updated = updateUserAdmin(targetUserId, {
+        name: body.name,
+        phone: body.phone,
+        role: body.role,
+        status: body.status,
+        permissions: body.permissions,
+        passwordHash
+      });
+
+      if (!updated) {
+        return sendJson(404, { error: 'User not found' });
+      }
+
+      logAuditEvent({
+        userId: caller.sub,
+        userEmail: caller.email,
+        action: 'user:update',
+        entityType: 'user',
+        entityId: targetUserId,
+        details: { role: updated.role, status: updated.status },
+        ip
+      });
+
+      const { password_hash, ...sanitized } = updated;
+      return sendJson(200, { success: true, user: sanitized });
+    }
+
+    if (pathname.startsWith('/api/admin/users/') && method === 'DELETE') {
+      const caller = getAdminCaller();
+      if (!caller || caller.role !== 'admin') {
+        return sendJson(403, { error: 'Only administrators can delete user accounts' });
+      }
+      const targetUserId = pathname.replace('/api/admin/users/', '').trim();
+      try {
+        const deleted = deleteUserAdmin(targetUserId, caller.sub);
+        if (!deleted) return sendJson(404, { error: 'User not found' });
+
+        logAuditEvent({
+          userId: caller.sub,
+          userEmail: caller.email,
+          action: 'user:delete',
+          entityType: 'user',
+          entityId: targetUserId,
+          details: {},
+          ip
+        });
+
+        return sendJson(200, { success: true, message: 'User account removed' });
+      } catch (err) {
+        return sendJson(400, { error: err.message });
+      }
+    }
+
     // ---------------------------------------------------------------------------
-    // Admin Store & Shipping Settings
+    // Admin Audit Logs
     // ---------------------------------------------------------------------------
-    if (pathname === '/api/admin/shipping/config' && method === 'GET') {
+    if (pathname === '/api/admin/audit-logs' && method === 'GET') {
+      const caller = getAdminCaller();
+      if (!caller || !hasPermission(caller.permissions, 'view:all')) {
+        return sendJson(403, { error: 'Unauthorized or insufficient permissions' });
+      }
+      const limit = parseInt(url.searchParams.get('limit'), 10) || 100;
+      const offset = parseInt(url.searchParams.get('offset'), 10) || 0;
+      const action = url.searchParams.get('action') || null;
+      const entityType = url.searchParams.get('entityType') || null;
+      const search = url.searchParams.get('search') || '';
+      const logs = getAuditLogs({ limit, offset, action, entityType, search });
+      return sendJson(200, { logs });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Admin Business Reports & Analytics
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/admin/reports' && method === 'GET') {
+      const caller = getAdminCaller();
+      if (!caller || !hasPermission(caller.permissions, 'view:reports')) {
+        return sendJson(403, { error: 'Unauthorized or insufficient permissions' });
+      }
+      const startDate = url.searchParams.get('startDate') || null;
+      const endDate = url.searchParams.get('endDate') || null;
+      const reports = getBusinessReports({ startDate, endDate });
+      return sendJson(200, { reports });
+    }
+
+    if (pathname === '/api/admin/reports/export-csv' && method === 'GET') {
+      const authHeader = req.headers['authorization'];
+      const queryToken = url.searchParams.get('admin_token');
+      const token = queryToken || (authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null);
+      if (!verifyAdminToken(token)) {
+        return sendJson(403, { error: 'Unauthorized or expired admin session' });
+      }
+
+      const reports = getBusinessReports();
+      const lines = [
+        'Report: Business Performance Summary',
+        `Generated: ${new Date().toISOString()}`,
+        '',
+        'METRIC,VALUE',
+        `Total Non-Demo Orders,${reports.financials.totalOrders}`,
+        `Gross Revenue (BDT),${reports.financials.grossRevenue}`,
+        `Verified Paid Revenue (BDT),${reports.financials.paidRevenue}`,
+        `Pending COD Revenue (BDT),${reports.financials.pendingCodRevenue}`,
+        `Cancelled Revenue (BDT),${reports.financials.cancelledRevenue}`,
+        `Average Order Value (BDT),${reports.financials.averageOrderValue}`,
+        `Delivered Orders,${reports.financials.deliveredOrdersCount}`,
+        `Active Orders,${reports.financials.activeOrdersCount}`,
+        `Total Inventory Valuation (BDT),${reports.inventoryHealth.totalInventoryValuation}`,
+        `Total Units In Stock,${reports.inventoryHealth.totalUnitsInStock}`,
+        `Low Stock SKUs,${reports.inventoryHealth.lowStockCount}`,
+        `Out of Stock SKUs,${reports.inventoryHealth.outOfStockCount}`,
+        '',
+        'TOP SELLING PRODUCTS',
+        'SKU,Title,Units Sold,Revenue (BDT)'
+      ];
+
+      for (const tp of reports.topProducts) {
+        lines.push(`${tp.sku},"${(tp.title || '').replace(/"/g, '""')}",${tp.unitsSold},${tp.totalRevenue}`);
+      }
+
+      lines.push('');
+      lines.push('PAYMENT METHOD DISTRIBUTION');
+      lines.push('Method,Orders Count,Revenue (BDT)');
+      for (const pm of reports.paymentMethods) {
+        lines.push(`${pm.method},${pm.count},${pm.revenue}`);
+      }
+
+      const csvContent = '\uFEFF' + lines.join('\r\n');
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="tech-nest-business-report-${Date.now()}.csv"`);
+      res.statusCode = 200;
+      return res.end(csvContent);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Admin Store, Shipping & System Settings
+    // ---------------------------------------------------------------------------
+    if ((pathname === '/api/admin/shipping/config' || pathname === '/api/admin/settings') && method === 'GET') {
       if (!verifyAdminToken(req.headers['authorization'])) {
         return sendJson(403, { error: 'Unauthorized admin session' });
       }
       return sendJson(200, { settings: getStoreSettings() });
     }
 
-    if (pathname === '/api/admin/shipping/config' && method === 'PUT') {
-      if (!verifyAdminToken(req.headers['authorization'])) {
-        return sendJson(403, { error: 'Unauthorized admin session' });
+    if ((pathname === '/api/admin/shipping/config' || pathname === '/api/admin/settings') && method === 'PUT') {
+      const caller = getAdminCaller();
+      if (!caller || caller.role !== 'admin') {
+        return sendJson(403, { error: 'Only administrators can update store configuration' });
       }
       const body = await parseBody();
       const updated = updateStoreSettings(body);
+      logAuditEvent({
+        userId: caller.sub,
+        userEmail: caller.email,
+        action: 'settings:update',
+        entityType: 'settings',
+        entityId: 'delivery_and_store',
+        details: body,
+        ip
+      });
       return sendJson(200, { success: true, settings: updated });
     }
 

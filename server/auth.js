@@ -118,14 +118,60 @@ export function verifyPassword(providedPassword) {
 }
 
 // -----------------------------------------------------------------------------
+// Role-Based Access Control (RBAC) & Permissions
+// -----------------------------------------------------------------------------
+
+export const ROLE_PERMISSIONS = {
+  admin: ['*'],
+  manager: [
+    'view:all',
+    'manage:products',
+    'manage:orders',
+    'manage:inventory',
+    'manage:categories',
+    'manage:promotions',
+    'manage:reviews',
+    'manage:services',
+    'view:reports',
+    'export:data'
+  ],
+  staff: [
+    'view:orders',
+    'manage:orders',
+    'view:products',
+    'view:inventory',
+    'manage:reviews',
+    'manage:services'
+  ],
+  customer: [
+    'view:catalog',
+    'create:order'
+  ]
+};
+
+export function getDefaultPermissions(role) {
+  return ROLE_PERMISSIONS[role] || [];
+}
+
+export function hasPermission(userPermissions, requiredPermission) {
+  if (!userPermissions || !Array.isArray(userPermissions)) return false;
+  if (userPermissions.includes('*')) return true;
+  return userPermissions.includes(requiredPermission);
+}
+
+// -----------------------------------------------------------------------------
 // Admin Token Generation & Verification
 // -----------------------------------------------------------------------------
 
-export function generateAdminToken() {
+export function generateAdminToken(customPayload = {}) {
   const secret = getSessionSecret();
+  const role = customPayload.role || 'admin';
   const payload = {
-    role: 'admin',
-    sub: 'admin_console',
+    role,
+    sub: customPayload.sub || 'admin_console',
+    email: customPayload.email || 'admin@store.local',
+    name: customPayload.name || 'Administrator',
+    permissions: customPayload.permissions || getDefaultPermissions(role),
     exp: Date.now() + TOKEN_TTL_MS,
     nonce: crypto.randomBytes(8).toString('hex')
   };
@@ -134,14 +180,14 @@ export function generateAdminToken() {
   return `agy_admin.${payloadStr}.${signature}`;
 }
 
-export function verifyAdminToken(authHeader) {
+export function decodeAdminToken(authHeader) {
   if (!authHeader || typeof authHeader !== 'string') {
-    return false;
+    return null;
   }
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : authHeader.trim();
   const parts = token.split('.');
   if (parts.length !== 3 || parts[0] !== 'agy_admin') {
-    return false;
+    return null;
   }
 
   const [, payloadStr, signature] = parts;
@@ -151,18 +197,26 @@ export function verifyAdminToken(authHeader) {
   const sigBuffer = Buffer.from(signature);
   const expBuffer = Buffer.from(expectedSignature);
   if (sigBuffer.length !== expBuffer.length || !crypto.timingSafeEqual(sigBuffer, expBuffer)) {
-    return false;
+    return null;
   }
 
   try {
     const payload = JSON.parse(Buffer.from(payloadStr, 'base64url').toString('utf-8'));
-    if (payload.role !== 'admin' || Date.now() > payload.exp) {
-      return false;
+    if (!['admin', 'manager', 'staff'].includes(payload.role) || Date.now() > payload.exp) {
+      return null;
     }
-    return true;
+    return payload;
   } catch (e) {
-    return false;
+    return null;
   }
+}
+
+export function verifyAdminToken(authHeader) {
+  return Boolean(decodeAdminToken(authHeader));
+}
+
+export function getAdminUserFromToken(authHeader) {
+  return decodeAdminToken(authHeader);
 }
 
 // -----------------------------------------------------------------------------
@@ -181,14 +235,16 @@ export function authenticateRequest(req) {
 
   const token = authHeader.slice(7).trim();
 
-  // 1. Check if it's admin token
+  // 1. Check if it's admin/staff token
   if (token.startsWith('agy_admin.')) {
-    if (verifyAdminToken(authHeader)) {
+    const decoded = decodeAdminToken(authHeader);
+    if (decoded) {
       return {
-        id: 'admin',
-        role: 'admin',
-        email: 'admin@store.local',
-        name: 'Administrator'
+        id: decoded.sub || 'admin',
+        role: decoded.role || 'admin',
+        email: decoded.email || 'admin@store.local',
+        name: decoded.name || 'Administrator',
+        permissions: decoded.permissions || ['*']
       };
     }
     return null;

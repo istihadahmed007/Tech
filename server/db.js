@@ -292,6 +292,18 @@ function initSchema(db) {
       value_json TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS audit_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT,
+      user_email TEXT,
+      action TEXT NOT NULL,
+      entity_type TEXT NOT NULL,
+      entity_id TEXT,
+      details_json TEXT DEFAULT '{}',
+      ip TEXT,
+      created_at TEXT NOT NULL
+    );
   `);
 
   // Ensure migrations for existing idempotency_keys tables
@@ -299,6 +311,8 @@ function initSchema(db) {
   try { db.exec('ALTER TABLE idempotency_keys ADD COLUMN request_hash TEXT;'); } catch (e) {}
   try { db.exec('ALTER TABLE products ADD COLUMN model TEXT;'); } catch (e) {}
   try { db.exec('ALTER TABLE products ADD COLUMN photo_ref TEXT;'); } catch (e) {}
+  try { db.exec("ALTER TABLE users ADD COLUMN status TEXT NOT NULL DEFAULT 'active';"); } catch (e) {}
+  try { db.exec("ALTER TABLE users ADD COLUMN permissions_json TEXT NOT NULL DEFAULT '[]';"); } catch (e) {}
 }
 
 function migrateLegacyJson(db) {
@@ -883,6 +897,26 @@ export function updateProductStatus(id, status) {
 
   db.prepare('UPDATE products SET status = ?, updated_at = ? WHERE id = ?').run(status, new Date().toISOString(), id);
   return getProductById(id);
+}
+
+export function deleteProduct(id) {
+  const db = getDatabase();
+  const existing = getProductById(id);
+  if (!existing) return false;
+
+  db.exec('BEGIN IMMEDIATE;');
+  try {
+    db.prepare('DELETE FROM product_variants WHERE product_id = ?').run(id);
+    db.prepare('DELETE FROM inventory_adjustments WHERE product_id = ?').run(id);
+    db.prepare('DELETE FROM inventory_reservations WHERE product_id = ?').run(id);
+    db.prepare('DELETE FROM reviews WHERE product_id = ?').run(id);
+    db.prepare('DELETE FROM products WHERE id = ?').run(id);
+    db.exec('COMMIT;');
+    return true;
+  } catch (err) {
+    db.exec('ROLLBACK;');
+    throw err;
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -1590,7 +1624,9 @@ export function findUserByEmail(email) {
   if (!row) return null;
   let addresses = [];
   try { addresses = JSON.parse(row.addresses_json || '[]'); } catch (e) {}
-  return { ...row, addresses };
+  let permissions = [];
+  try { permissions = JSON.parse(row.permissions_json || '[]'); } catch (e) {}
+  return { ...row, addresses, permissions, status: row.status || 'active' };
 }
 
 export function findUserById(id) {
@@ -1600,20 +1636,88 @@ export function findUserById(id) {
   if (!row) return null;
   let addresses = [];
   try { addresses = JSON.parse(row.addresses_json || '[]'); } catch (e) {}
-  return { ...row, addresses };
+  let permissions = [];
+  try { permissions = JSON.parse(row.permissions_json || '[]'); } catch (e) {}
+  return { ...row, addresses, permissions, status: row.status || 'active' };
 }
 
-export function createUser({ email, phone, name, passwordHash, role = 'customer' }) {
+export function createUser({ email, phone, name, passwordHash, role = 'customer', status = 'active', permissions = [] }) {
   const db = getDatabase();
   const id = `usr_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
   const now = new Date().toISOString();
 
   db.prepare(`
-    INSERT INTO users (id, email, phone, name, password_hash, role, addresses_json, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, '[]', ?, ?)
-  `).run(id, email.toLowerCase().trim(), phone || '', name.trim(), passwordHash || '', role, now, now);
+    INSERT INTO users (id, email, phone, name, password_hash, role, status, permissions_json, addresses_json, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, '[]', ?, ?)
+  `).run(
+    id,
+    email.toLowerCase().trim(),
+    phone || '',
+    name.trim(),
+    passwordHash || '',
+    role,
+    status || 'active',
+    JSON.stringify(permissions || []),
+    now,
+    now
+  );
 
   return findUserById(id);
+}
+
+export const createUserAdmin = createUser;
+
+export function updateUserAdmin(id, { name, phone, role, status, permissions, passwordHash }) {
+  const db = getDatabase();
+  const user = findUserById(id);
+  if (!user) return null;
+
+  const now = new Date().toISOString();
+  db.prepare(`
+    UPDATE users SET
+      name = COALESCE(?, name),
+      phone = COALESCE(?, phone),
+      role = COALESCE(?, role),
+      status = COALESCE(?, status),
+      permissions_json = COALESCE(?, permissions_json),
+      password_hash = COALESCE(?, password_hash),
+      updated_at = ?
+    WHERE id = ?
+  `).run(
+    name !== undefined ? name.trim() : null,
+    phone !== undefined ? phone.trim() : null,
+    role !== undefined ? role : null,
+    status !== undefined ? status : null,
+    permissions !== undefined ? JSON.stringify(permissions) : null,
+    passwordHash !== undefined && passwordHash ? passwordHash : null,
+    now,
+    id
+  );
+
+  return findUserById(id);
+}
+
+export function deleteUserAdmin(id, currentAdminId) {
+  const db = getDatabase();
+  if (id === currentAdminId || id === 'admin_primary') {
+    throw new Error('Cannot delete your own administrator account or the primary administrator');
+  }
+  const user = findUserById(id);
+  if (!user) return false;
+
+  db.exec('BEGIN IMMEDIATE;');
+  try {
+    db.prepare('DELETE FROM user_sessions WHERE user_id = ?').run(id);
+    db.prepare('DELETE FROM wishlists WHERE user_id = ?').run(id);
+    db.prepare('UPDATE orders SET user_id = NULL WHERE user_id = ?').run(id);
+    db.prepare('UPDATE service_requests SET user_id = NULL WHERE user_id = ?').run(id);
+    db.prepare('DELETE FROM users WHERE id = ?').run(id);
+    db.exec('COMMIT;');
+    return true;
+  } catch (err) {
+    db.exec('ROLLBACK;');
+    throw err;
+  }
 }
 
 export function updateUserProfile(id, { name, phone, addresses }) {
@@ -1887,17 +1991,262 @@ export function getAllBrands() {
   }));
 }
 
-export function getAllUsersAdmin() {
+export function getAllUsersAdminDetailed({ search = '', role = '', status = '', limit = 100, offset = 0 } = {}) {
   const db = getDatabase();
-  return db.prepare(`
-    SELECT u.id, u.email, u.phone, u.name, u.role, u.created_at as createdAt,
+  let sql = `
+    SELECT u.id, u.email, u.phone, u.name, u.role, u.status, u.permissions_json, u.created_at as createdAt,
            COUNT(o.id) as ordersCount,
-           COALESCE(SUM(o.total), 0) as totalSpent
+           COALESCE(SUM(CASE WHEN o.payment_status = 'paid' THEN o.total ELSE 0 END), 0) as totalSpent
     FROM users u
     LEFT JOIN orders o ON u.id = o.user_id
-    GROUP BY u.id
-    ORDER BY u.created_at DESC
-  `).all();
+    WHERE 1=1
+  `;
+  const params = [];
+
+  if (role && role !== 'all') {
+    sql += ' AND u.role = ?';
+    params.push(role);
+  }
+  if (status && status !== 'all') {
+    sql += ' AND u.status = ?';
+    params.push(status);
+  }
+  if (search) {
+    sql += ' AND (u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)';
+    const term = `%${search.trim()}%`;
+    params.push(term, term, term);
+  }
+
+  sql += ' GROUP BY u.id ORDER BY u.created_at DESC LIMIT ? OFFSET ?';
+  params.push(limit, offset);
+
+  const rows = db.prepare(sql).all(...params);
+  return rows.map(r => {
+    let permissions = [];
+    try { permissions = JSON.parse(r.permissions_json || '[]'); } catch (e) {}
+    return {
+      id: r.id,
+      email: r.email,
+      phone: r.phone,
+      name: r.name,
+      role: r.role,
+      status: r.status || 'active',
+      permissions,
+      createdAt: r.createdAt,
+      ordersCount: r.ordersCount,
+      totalSpent: r.totalSpent
+    };
+  });
+}
+
+export function getAllUsersAdmin() {
+  return getAllUsersAdminDetailed({ limit: 1000 });
+}
+
+export function logAuditEvent({ userId = null, userEmail = null, action, entityType, entityId = null, details = {}, ip = null }) {
+  try {
+    const db = getDatabase();
+    const now = new Date().toISOString();
+    db.prepare(`
+      INSERT INTO audit_logs (user_id, user_email, action, entity_type, entity_id, details_json, ip, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      userId || null,
+      userEmail || 'system',
+      action,
+      entityType,
+      entityId ? String(entityId) : null,
+      JSON.stringify(details || {}),
+      ip || null,
+      now
+    );
+  } catch (err) {
+    console.warn('[Audit Log Error]', err.message);
+  }
+}
+
+export function getAuditLogs({ limit = 100, offset = 0, action = null, entityType = null, search = '' } = {}) {
+  const db = getDatabase();
+  let sql = 'SELECT * FROM audit_logs WHERE 1=1';
+  const params = [];
+
+  if (action && action !== 'all') {
+    sql += ' AND action = ?';
+    params.push(action);
+  }
+  if (entityType && entityType !== 'all') {
+    sql += ' AND entity_type = ?';
+    params.push(entityType);
+  }
+  if (search) {
+    sql += ' AND (user_email LIKE ? OR action LIKE ? OR entity_type LIKE ? OR entity_id LIKE ?)';
+    const term = `%${search}%`;
+    params.push(term, term, term, term);
+  }
+
+  sql += ' ORDER BY id DESC LIMIT ? OFFSET ?';
+  params.push(limit, offset);
+
+  const rows = db.prepare(sql).all(...params);
+  return rows.map(r => {
+    let details = {};
+    try { details = JSON.parse(r.details_json || '{}'); } catch (e) {}
+    return {
+      id: r.id,
+      userId: r.user_id,
+      userEmail: r.user_email,
+      action: r.action,
+      entityType: r.entity_type,
+      entityId: r.entity_id,
+      details,
+      ip: r.ip,
+      createdAt: r.created_at
+    };
+  });
+}
+
+export function getBusinessReports({ startDate = null, endDate = null } = {}) {
+  const db = getDatabase();
+  let dateFilter = '';
+  const dateParams = [];
+  if (startDate) {
+    dateFilter += ' AND created_at >= ?';
+    dateParams.push(startDate);
+  }
+  if (endDate) {
+    dateFilter += ' AND created_at <= ?';
+    dateParams.push(endDate);
+  }
+
+  // 1. Core Financials
+  const finSql = `
+    SELECT
+      COUNT(id) as totalOrders,
+      COALESCE(SUM(CASE WHEN status != 'cancelled' THEN total ELSE 0 END), 0) as grossRevenue,
+      COALESCE(SUM(CASE WHEN payment_status = 'paid' THEN total ELSE 0 END), 0) as paidRevenue,
+      COALESCE(SUM(CASE WHEN payment_method = 'cod' AND payment_status != 'paid' AND status != 'cancelled' THEN total ELSE 0 END), 0) as pendingCodRevenue,
+      COALESCE(SUM(CASE WHEN status = 'cancelled' THEN total ELSE 0 END), 0) as cancelledRevenue,
+      COALESCE(SUM(CASE WHEN payment_status = 'paid' THEN 1 ELSE 0 END), 0) as paidOrdersCount,
+      COALESCE(SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END), 0) as deliveredOrdersCount,
+      COALESCE(SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END), 0) as cancelledOrdersCount,
+      COALESCE(SUM(CASE WHEN status IN ('confirmed', 'processing', 'shipped') THEN 1 ELSE 0 END), 0) as activeOrdersCount
+    FROM orders
+    WHERE is_demo = 0 ${dateFilter}
+  `;
+  const finRow = db.prepare(finSql).get(...dateParams) || {};
+  const totalOrders = finRow.totalOrders || 0;
+  const grossRevenue = finRow.grossRevenue || 0;
+  const averageOrderValue = totalOrders > 0 ? Math.round((grossRevenue / totalOrders) * 100) / 100 : 0;
+
+  // 2. Sales by Payment Method
+  const payMethodSql = `
+    SELECT payment_method as method,
+           COUNT(id) as count,
+           COALESCE(SUM(total), 0) as revenue
+    FROM orders
+    WHERE is_demo = 0 AND status != 'cancelled' ${dateFilter}
+    GROUP BY payment_method
+    ORDER BY revenue DESC
+  `;
+  const paymentMethods = db.prepare(payMethodSql).all(...dateParams);
+
+  // 3. Sales by Order Status
+  const statusSql = `
+    SELECT status,
+           COUNT(id) as count,
+           COALESCE(SUM(total), 0) as revenue
+    FROM orders
+    WHERE is_demo = 0 ${dateFilter}
+    GROUP BY status
+    ORDER BY count DESC
+  `;
+  const ordersByStatus = db.prepare(statusSql).all(...dateParams);
+
+  // 4. Top Selling Products
+  const topProdSql = `
+    SELECT oi.product_id as productId,
+           oi.title,
+           oi.sku,
+           SUM(oi.quantity) as unitsSold,
+           SUM(oi.subtotal) as totalRevenue
+    FROM order_items oi
+    JOIN orders o ON oi.order_id = o.id
+    WHERE o.is_demo = 0 AND o.status != 'cancelled' ${dateFilter.replace(/created_at/g, 'o.created_at')}
+    GROUP BY oi.product_id
+    ORDER BY unitsSold DESC
+    LIMIT 10
+  `;
+  const topProducts = db.prepare(topProdSql).all(...dateParams);
+
+  // 5. Category Distribution
+  const catSql = `
+    SELECT p.category_id as categoryId,
+           COALESCE(c.name, p.category_id) as categoryName,
+           SUM(oi.quantity) as unitsSold,
+           SUM(oi.subtotal) as totalRevenue
+    FROM order_items oi
+    JOIN orders o ON oi.order_id = o.id
+    JOIN products p ON oi.product_id = p.id
+    LEFT JOIN categories c ON p.category_id = c.id
+    WHERE o.is_demo = 0 AND o.status != 'cancelled' ${dateFilter.replace(/created_at/g, 'o.created_at')}
+    GROUP BY p.category_id
+    ORDER BY totalRevenue DESC
+  `;
+  const salesByCategory = db.prepare(catSql).all(...dateParams);
+
+  // 6. Inventory Valuation & Health
+  const invRow = db.prepare(`
+    SELECT
+      COUNT(id) as totalProducts,
+      COALESCE(SUM(stock), 0) as totalUnitsInStock,
+      COALESCE(SUM(price * stock), 0) as totalInventoryValuation,
+      COALESCE(SUM(CASE WHEN stock = 0 THEN 1 ELSE 0 END), 0) as outOfStockCount,
+      COALESCE(SUM(CASE WHEN stock > 0 AND stock <= 5 THEN 1 ELSE 0 END), 0) as lowStockCount,
+      COALESCE(SUM(CASE WHEN stock > 5 THEN 1 ELSE 0 END), 0) as healthyStockCount
+    FROM products
+  `).get() || {};
+
+  // 7. Recent 30-Day Daily Sales Trend
+  const trendSql = `
+    SELECT SUBSTR(created_at, 1, 10) as date,
+           COUNT(id) as orderCount,
+           COALESCE(SUM(total), 0) as dailyRevenue
+    FROM orders
+    WHERE is_demo = 0 AND status != 'cancelled'
+    GROUP BY SUBSTR(created_at, 1, 10)
+    ORDER BY date DESC
+    LIMIT 30
+  `;
+  const dailyTrend = db.prepare(trendSql).all().reverse();
+
+  return {
+    financials: {
+      totalOrders,
+      grossRevenue,
+      paidRevenue: finRow.paidRevenue || 0,
+      pendingCodRevenue: finRow.pendingCodRevenue || 0,
+      cancelledRevenue: finRow.cancelledRevenue || 0,
+      paidOrdersCount: finRow.paidOrdersCount || 0,
+      deliveredOrdersCount: finRow.deliveredOrdersCount || 0,
+      cancelledOrdersCount: finRow.cancelledOrdersCount || 0,
+      activeOrdersCount: finRow.activeOrdersCount || 0,
+      averageOrderValue
+    },
+    paymentMethods,
+    ordersByStatus,
+    topProducts,
+    salesByCategory,
+    inventoryHealth: {
+      totalProducts: invRow.totalProducts || 0,
+      totalUnitsInStock: invRow.totalUnitsInStock || 0,
+      totalInventoryValuation: invRow.totalInventoryValuation || 0,
+      outOfStockCount: invRow.outOfStockCount || 0,
+      lowStockCount: invRow.lowStockCount || 0,
+      healthyStockCount: invRow.healthyStockCount || 0
+    },
+    dailyTrend,
+    generatedAt: new Date().toISOString()
+  };
 }
 
 export function getStoreSettings() {
@@ -1909,14 +2258,18 @@ export function getStoreSettings() {
     } catch (e) {}
   }
   return {
+    storeName: 'Tech Nest',
     insideDhakaFee: 60,
     outsideDhakaFee: 120,
     freeShippingThreshold: 2000,
     insideDhakaEta: '1–2 Business Days',
     outsideDhakaEta: '2–4 Business Days',
     codAvailable: true,
+    reviewsEnabled: true,
+    serviceRequestsEnabled: true,
     supportPhone: '+880 1700-000000',
     supportEmail: 'support@technest.com.bd',
+    address: 'Multiplan Center, Level 4, Shop 412, Elephant Road, Dhaka-1205',
     updatedAt: new Date().toISOString()
   };
 }
