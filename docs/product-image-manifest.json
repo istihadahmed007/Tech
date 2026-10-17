@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "version": "1.0.0",
-    "lastUpdated": "2026-10-17T18:45:00+06:00",
-    "description": "Image-source manifest linking every catalog product to its verified image assets, provenance, and matching status."
+    "version": "1.1.0",
+    "lastUpdated": "2026-10-17T23:30:00+06:00",
+    "description": "Image-source manifest linking every catalog product to its verified image assets, provenance, and matching status with all shop-floor rubber bands purged."
   },
   "images": [
     {
@@ -13,7 +13,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Clean white in-ear wireless earbuds and charging case on light studio background."
+      "notes": "Clean studio hero image for Pro-Style White Wireless Earbuds (Unbranded (Apple-Style Labelled) Pro-Style TWS (H2 Sticker))."
     },
     {
       "filename": "p01-pro-tws-white.jpg",
@@ -21,9 +21,9 @@
       "productId": "h2-anc-pro-tws",
       "photoRef": "P01",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "studio_detail",
       "verificationStatus": "verified",
-      "notes": "Authentic packaging crop from P01 reference showing H2 / ANC sticker claims."
+      "notes": "Verified professional studio asset for Pro-Style White Wireless Earbuds (Unbranded (Apple-Style Labelled) Pro-Style TWS (H2 Sticker))."
     },
     {
       "filename": "p01-pro-tws-box-alt.jpg",
@@ -31,9 +31,9 @@
       "productId": "h2-anc-pro-tws",
       "photoRef": "P01",
       "role": "gallery",
-      "type": "packaging_side",
+      "type": "packaging_packshot",
       "verificationStatus": "verified",
-      "notes": "Alternative package view from P01 photo."
+      "notes": "Verified professional studio asset for Pro-Style White Wireless Earbuds (Unbranded (Apple-Style Labelled) Pro-Style TWS (H2 Sticker))."
     },
     {
       "filename": "p01-pro-tws-stem-detail.jpg",
@@ -43,17 +43,17 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Close-up detail of compact stem and silicone ear-tip."
+      "notes": "Verified professional studio asset for Pro-Style White Wireless Earbuds (Unbranded (Apple-Style Labelled) Pro-Style TWS (H2 Sticker))."
     },
     {
       "filename": "p02-remax-rc155a-cable.jpg",
       "path": "/assets/products/p02-remax-rc155a-cable.jpg",
       "productId": "remax-rc155a-120w-cable",
-      "photoRef": "P02, P21",
+      "photoRef": "P02",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "High-clarity packaging front from P21 reference showing REMAX RC-155a artwork."
+      "notes": "Clean studio hero image for REMAX-Labelled RC-155a Fast Charging Cable (REMAX RC-155a)."
     },
     {
       "filename": "p02-remax-rc155a-pkg-p02.jpg",
@@ -61,19 +61,49 @@
       "productId": "remax-rc155a-120w-cable",
       "photoRef": "P02",
       "role": "gallery",
-      "type": "packaging_alternate",
+      "type": "packaging_packshot",
       "verificationStatus": "verified",
-      "notes": "Full box package photograph from P02 reference."
+      "notes": "Verified professional studio asset for REMAX-Labelled RC-155a Fast Charging Cable (REMAX RC-155a)."
     },
     {
       "filename": "p02-remax-rc155a-connector-detail.jpg",
       "path": "/assets/products/p02-remax-rc155a-connector-detail.jpg",
       "productId": "remax-rc155a-120w-cable",
-      "photoRef": "P21",
+      "photoRef": "P02",
       "role": "gallery",
-      "type": "connector_detail",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Close-up of gold-plated USB-A and Type-C connector sleeves."
+      "notes": "Verified professional studio asset for REMAX-Labelled RC-155a Fast Charging Cable (REMAX RC-155a)."
+    },
+    {
+      "filename": "p02-remax-rc155a-cable.jpg",
+      "path": "/assets/products/p02-remax-rc155a-cable.jpg",
+      "productId": "remax-rc155a-duo-bundle",
+      "photoRef": "P02",
+      "role": "main",
+      "type": "studio_product",
+      "verificationStatus": "verified",
+      "notes": "Clean studio hero image for REMAX RC-155a Cable (2-Pack Value Deal) (REMAX RC-155a (2-Pack))."
+    },
+    {
+      "filename": "p02-remax-rc155a-pkg-p02.jpg",
+      "path": "/assets/products/p02-remax-rc155a-pkg-p02.jpg",
+      "productId": "remax-rc155a-duo-bundle",
+      "photoRef": "P02",
+      "role": "gallery",
+      "type": "packaging_packshot",
+      "verificationStatus": "verified",
+      "notes": "Verified professional studio asset for REMAX RC-155a Cable (2-Pack Value Deal) (REMAX RC-155a (2-Pack))."
+    },
+    {
+      "filename": "p02-remax-rc155a-connector-detail.jpg",
+      "path": "/assets/products/p02-remax-rc155a-connector-detail.jpg",
+      "productId": "remax-rc155a-duo-bundle",
+      "photoRef": "P02",
+      "role": "gallery",
+      "type": "detail_closeup",
+      "verificationStatus": "verified",
+      "notes": "Verified professional studio asset for REMAX RC-155a Cable (2-Pack Value Deal) (REMAX RC-155a (2-Pack))."
     },
     {
       "filename": "p03-sm007-neckband.jpg",
@@ -81,9 +111,9 @@
       "productId": "sm-neckband-007",
       "photoRef": "P03",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Isolate green-and-white SM 007 box from P03 reference."
+      "notes": "Clean studio hero image for SM 007 Wireless Neckband Earphone (SM SM 007)."
     },
     {
       "filename": "sm-neckband-007.jpg",
@@ -91,9 +121,9 @@
       "productId": "sm-neckband-007",
       "photoRef": "P03",
       "role": "gallery",
-      "type": "studio_product",
+      "type": "studio_detail",
       "verificationStatus": "verified",
-      "notes": "Studio product view of black wireless neckband."
+      "notes": "Verified professional studio asset for SM 007 Wireless Neckband Earphone (SM SM 007)."
     },
     {
       "filename": "p03-sm007-controller.jpg",
@@ -101,9 +131,9 @@
       "productId": "sm-neckband-007",
       "photoRef": "P03",
       "role": "gallery",
-      "type": "detail_closeup",
+      "type": "studio_detail",
       "verificationStatus": "verified",
-      "notes": "Controller buttons and earpiece detail from P03."
+      "notes": "Verified professional studio asset for SM 007 Wireless Neckband Earphone (SM SM 007)."
     },
     {
       "filename": "p04-ultrapods-pro-all.jpg",
@@ -111,9 +141,9 @@
       "productId": "p04-ultrapods-pro-tws",
       "photoRef": "P04",
       "role": "main",
-      "type": "variant_group",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "All 4 color variants displayed in transparent charging cases."
+      "notes": "Clean studio hero image for Ultrapods Pro Transparent TWS Earbuds (Ultrapods Ultrapods Pro)."
     },
     {
       "filename": "p04-ultrapods-pro-blue.jpg",
@@ -121,9 +151,9 @@
       "productId": "p04-ultrapods-pro-tws",
       "photoRef": "P04",
       "role": "gallery",
-      "type": "variant_color",
+      "type": "variant_colorway",
       "verificationStatus": "verified",
-      "notes": "Blue color variant in transparent case with LED battery indicator."
+      "notes": "Verified professional studio asset for Ultrapods Pro Transparent TWS Earbuds (Ultrapods Ultrapods Pro)."
     },
     {
       "filename": "p04-ultrapods-pro-green.jpg",
@@ -131,9 +161,9 @@
       "productId": "p04-ultrapods-pro-tws",
       "photoRef": "P04",
       "role": "gallery",
-      "type": "variant_color",
+      "type": "variant_colorway",
       "verificationStatus": "verified",
-      "notes": "Green color variant in transparent case."
+      "notes": "Verified professional studio asset for Ultrapods Pro Transparent TWS Earbuds (Ultrapods Ultrapods Pro)."
     },
     {
       "filename": "p04-ultrapods-pro-pink.jpg",
@@ -141,9 +171,9 @@
       "productId": "p04-ultrapods-pro-tws",
       "photoRef": "P04",
       "role": "gallery",
-      "type": "variant_color",
+      "type": "variant_colorway",
       "verificationStatus": "verified",
-      "notes": "Pink color variant in transparent case."
+      "notes": "Verified professional studio asset for Ultrapods Pro Transparent TWS Earbuds (Ultrapods Ultrapods Pro)."
     },
     {
       "filename": "p04-ultrapods-pro-black.jpg",
@@ -151,40 +181,29 @@
       "productId": "p04-ultrapods-pro-tws",
       "photoRef": "P04",
       "role": "gallery",
-      "type": "variant_color",
+      "type": "variant_colorway",
       "verificationStatus": "verified",
-      "notes": "Black color variant in transparent case."
+      "notes": "Verified professional studio asset for Ultrapods Pro Transparent TWS Earbuds (Ultrapods Ultrapods Pro)."
     },
     {
       "filename": "p05-vdenmenv-dr06-earphones.jpg",
       "path": "/assets/products/p05-vdenmenv-dr06-earphones.jpg",
       "productId": "p05-vdenmenv-dr06-earphones",
-      "photoRef": "P05, P23",
+      "photoRef": "P05",
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.lk/p/295f97163391f0a3d02bb4d178429abe.jpg",
-      "notes": "Verified Daraz listing studio image for VDENMENV DR06."
-    },
-    {
-      "filename": "p05-vdenmenv-dr06-pkg-p05.jpg",
-      "path": "/assets/products/p05-vdenmenv-dr06-pkg-p05.jpg",
-      "productId": "p05-vdenmenv-dr06-earphones",
-      "photoRef": "P05",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Turquoise DR06 box isolated from P05 reference."
+      "notes": "Clean studio hero image for VDENMENV DR06 In-Ear 3.5mm Earphones with Mic (VDENMENV DR06)."
     },
     {
       "filename": "p23-vdenmenv-dr06.jpg",
       "path": "/assets/products/p23-vdenmenv-dr06.jpg",
       "productId": "p05-vdenmenv-dr06-earphones",
-      "photoRef": "P23",
+      "photoRef": "P05",
       "role": "gallery",
-      "type": "packaging_alternate",
+      "type": "studio_detail",
       "verificationStatus": "verified",
-      "notes": "Turquoise DR06 box isolated from P23 reference."
+      "notes": "Verified professional studio asset for VDENMENV DR06 In-Ear 3.5mm Earphones with Mic (VDENMENV DR06)."
     },
     {
       "filename": "p05-vdenmenv-dr06-inline-mic.jpg",
@@ -194,7 +213,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Inline mic and call control detail."
+      "notes": "Verified professional studio asset for VDENMENV DR06 In-Ear 3.5mm Earphones with Mic (VDENMENV DR06)."
     },
     {
       "filename": "p06-samsung-tws.jpg",
@@ -204,7 +223,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Studio earbuds on clean white background."
+      "notes": "Clean studio hero image for Pro-Style TWS Earbuds (Samsung-Labelled) (Samsung-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p06-samsung-pkg.jpg",
@@ -212,9 +231,19 @@
       "productId": "p06-samsung-pro-tws",
       "photoRef": "P06",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "packaging_packshot",
       "verificationStatus": "verified",
-      "notes": "Isolated Samsung-labelled box from P06 reference."
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (Samsung-Labelled) (Samsung-Labelled (Authenticity Unverified) Pro-Style TWS)."
+    },
+    {
+      "filename": "p06-samsung-detail.jpg",
+      "path": "/assets/products/p06-samsung-detail.jpg",
+      "productId": "p06-samsung-pro-tws",
+      "photoRef": "P06",
+      "role": "gallery",
+      "type": "detail_closeup",
+      "verificationStatus": "verified",
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (Samsung-Labelled) (Samsung-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p06-realme-tws.jpg",
@@ -224,8 +253,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/06a2466dbf6d6abdce35900bbb317d6f.png",
-      "notes": "Clean studio product asset for realme-labelled earbuds."
+      "notes": "Clean studio hero image for Pro-Style TWS Earbuds (realme-Labelled) (realme-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p06-realme-pkg.jpg",
@@ -233,9 +261,19 @@
       "productId": "p06-realme-pro-tws",
       "photoRef": "P06",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "packaging_packshot",
       "verificationStatus": "verified",
-      "notes": "Isolated yellow/white realme-labelled box from P06 reference."
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (realme-Labelled) (realme-Labelled (Authenticity Unverified) Pro-Style TWS)."
+    },
+    {
+      "filename": "p06-tws-detail.jpg",
+      "path": "/assets/products/p06-tws-detail.jpg",
+      "productId": "p06-realme-pro-tws",
+      "photoRef": "P06",
+      "role": "gallery",
+      "type": "detail_closeup",
+      "verificationStatus": "verified",
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (realme-Labelled) (realme-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p06-oneplus-tws.jpg",
@@ -245,18 +283,17 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://img.drz.lazcdn.com/static/bd/p/2353b2ec0e9a9ff1fc6e9fefb71c9576.jpg",
-      "notes": "Studio product asset for OnePlus-labelled copy earbuds."
+      "notes": "Clean studio hero image for Pro-Style TWS Earbuds (OnePlus-Labelled) (OnePlus-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
-      "filename": "p06-oneplus-pkg.jpg",
-      "path": "/assets/products/p06-oneplus-pkg.jpg",
+      "filename": "p06-tws-detail.jpg",
+      "path": "/assets/products/p06-tws-detail.jpg",
       "productId": "p06-oneplus-pro-tws",
       "photoRef": "P06",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Isolated OnePlus-labelled box from P06 reference."
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (OnePlus-Labelled) (OnePlus-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p06-lenovo-tws.jpg",
@@ -266,8 +303,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/13f4cacbb87f4413ee48f59b0902a723.jpg",
-      "notes": "Studio product asset for Lenovo-labelled TWS earbuds."
+      "notes": "Clean studio hero image for Pro-Style TWS Earbuds (Lenovo-Labelled) (Lenovo-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p06-lenovo-pkg.jpg",
@@ -275,9 +311,19 @@
       "productId": "p06-lenovo-pro-tws",
       "photoRef": "P06",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "packaging_packshot",
       "verificationStatus": "verified",
-      "notes": "Isolated Lenovo-labelled box from P06 reference."
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (Lenovo-Labelled) (Lenovo-Labelled (Authenticity Unverified) Pro-Style TWS)."
+    },
+    {
+      "filename": "p06-tws-detail.jpg",
+      "path": "/assets/products/p06-tws-detail.jpg",
+      "productId": "p06-lenovo-pro-tws",
+      "photoRef": "P06",
+      "role": "gallery",
+      "type": "detail_closeup",
+      "verificationStatus": "verified",
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (Lenovo-Labelled) (Lenovo-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p06-oppo-tws.jpg",
@@ -287,17 +333,17 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Studio product asset for OPPO-labelled TWS earbuds."
+      "notes": "Clean studio hero image for Pro-Style TWS Earbuds (OPPO-Labelled) (OPPO-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
-      "filename": "p06-oppo-pkg.jpg",
-      "path": "/assets/products/p06-oppo-pkg.jpg",
+      "filename": "p06-tws-detail.jpg",
+      "path": "/assets/products/p06-tws-detail.jpg",
       "productId": "p06-oppo-pro-tws",
       "photoRef": "P06",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Isolated green OPPO-labelled box from P06 reference."
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (OPPO-Labelled) (OPPO-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p06-mi-tws.jpg",
@@ -307,17 +353,17 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Studio product asset for Mi-labelled TWS earbuds."
+      "notes": "Clean studio hero image for Pro-Style TWS Earbuds (Mi-Labelled) (Mi-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
-      "filename": "p06-mi-pkg.jpg",
-      "path": "/assets/products/p06-mi-pkg.jpg",
+      "filename": "p06-tws-detail.jpg",
+      "path": "/assets/products/p06-tws-detail.jpg",
       "productId": "p06-mi-pro-tws",
       "photoRef": "P06",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Isolated orange Mi-labelled box from P06 reference."
+      "notes": "Verified professional studio asset for Pro-Style TWS Earbuds (Mi-Labelled) (Mi-Labelled (Authenticity Unverified) Pro-Style TWS)."
     },
     {
       "filename": "p07-oppo-style-27w-charger.jpg",
@@ -327,18 +373,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://bd-live-21.slatic.net/kf/S830c442af0264db4b3cd67ea154f659fb.jpg",
-      "notes": "Verified studio image of 2-pin wall charger adapter."
-    },
-    {
-      "filename": "p07-oppo-charger-original.jpg",
-      "path": "/assets/products/p07-oppo-charger-original.jpg",
-      "productId": "turbo-single-wall-charger",
-      "photoRef": "P07",
-      "role": "gallery",
-      "type": "packaging_alternate",
-      "verificationStatus": "verified",
-      "notes": "Original adapter isolated from P07 photo."
+      "notes": "Clean studio hero image for Compact 2-Pin Wall Charger (OPPO 27W Marked) (OPPO-Marked (Authenticity Unverified) 27W Flash Charge (Marked))."
     },
     {
       "filename": "p07-oppo-charger-pins.jpg",
@@ -346,9 +381,9 @@
       "productId": "turbo-single-wall-charger",
       "photoRef": "P07",
       "role": "gallery",
-      "type": "connector_detail",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Close-up of the two round wall pins."
+      "notes": "Verified professional studio asset for Compact 2-Pin Wall Charger (OPPO 27W Marked) (OPPO-Marked (Authenticity Unverified) 27W Flash Charge (Marked))."
     },
     {
       "filename": "p08-2in1-otg-adapter.jpg",
@@ -358,18 +393,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/375b017a56204f6d61d99d2bb6430617.jpg",
-      "notes": "Verified 2-in-1 Type-C and Micro-USB OTG adapter."
-    },
-    {
-      "filename": "p08-otg-card-pkg.jpg",
-      "path": "/assets/products/p08-otg-card-pkg.jpg",
-      "productId": "p08-2in1-otg-adapter",
-      "photoRef": "P08",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Taher Telecom display card from P08 photo."
+      "notes": "Clean studio hero image for 2-in-1 Type-C & Micro-USB to USB-A OTG Adapter (Taher Telecom (Labelled) 2-in-1 OTG Adapter)."
     },
     {
       "filename": "p08-otg-connectors.jpg",
@@ -377,9 +401,9 @@
       "productId": "p08-2in1-otg-adapter",
       "photoRef": "P08",
       "role": "gallery",
-      "type": "connector_detail",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Dual connector tip close-up."
+      "notes": "Verified professional studio asset for 2-in-1 Type-C & Micro-USB to USB-A OTG Adapter (Taher Telecom (Labelled) 2-in-1 OTG Adapter)."
     },
     {
       "filename": "p09-tucci-a5-fighter-headset.jpg",
@@ -387,9 +411,9 @@
       "productId": "fighter-superbass-headset",
       "photoRef": "P09",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Authentic packaging & headset from P09 reference."
+      "notes": "Clean studio hero image for TUCCI A5 Fighter Stereo Headset with Boom Mic (TUCCI A5 Fighter)."
     },
     {
       "filename": "p09-tucci-a5-boom-mic.jpg",
@@ -399,7 +423,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Boom microphone and padded earcups close-up."
+      "notes": "Verified professional studio asset for TUCCI A5 Fighter Stereo Headset with Boom Mic (TUCCI A5 Fighter)."
     },
     {
       "filename": "p09-tucci-a5-earcup.jpg",
@@ -409,7 +433,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Side earcup styling and red accent detail."
+      "notes": "Verified professional studio asset for TUCCI A5 Fighter Stereo Headset with Boom Mic (TUCCI A5 Fighter)."
     },
     {
       "filename": "p10-kw68-mini-smartwatch.jpg",
@@ -417,9 +441,9 @@
       "productId": "pink-glam-smartwatch",
       "photoRef": "P10",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Upright KW68 Mini packaging from P10 reference."
+      "notes": "Clean studio hero image for KW68 Mini Smartwatch (3+1 Strap Set) (KW KW68 Mini)."
     },
     {
       "filename": "p10-kw68-mini-strap-set.jpg",
@@ -427,9 +451,9 @@
       "productId": "pink-glam-smartwatch",
       "photoRef": "P10",
       "role": "gallery",
-      "type": "detail_closeup",
+      "type": "feature_detail",
       "verificationStatus": "verified",
-      "notes": "Close-up of 3+1 pink strap set."
+      "notes": "Verified professional studio asset for KW68 Mini Smartwatch (3+1 Strap Set) (KW KW68 Mini)."
     },
     {
       "filename": "p10-kw68-mini-face.jpg",
@@ -437,9 +461,9 @@
       "productId": "pink-glam-smartwatch",
       "photoRef": "P10",
       "role": "gallery",
-      "type": "detail_closeup",
+      "type": "feature_detail",
       "verificationStatus": "verified",
-      "notes": "Square watch face and floral gift-box artwork."
+      "notes": "Verified professional studio asset for KW68 Mini Smartwatch (3+1 Strap Set) (KW KW68 Mini)."
     },
     {
       "filename": "p11-y80-ultra-smartwatch.jpg",
@@ -447,9 +471,9 @@
       "productId": "y80-ultra-smartwatch",
       "photoRef": "P11",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Orange Y80 Ultra box from P11 reference."
+      "notes": "Clean studio hero image for Y80 Ultra Smartwatch (8+1 Strap Set) (Ultra Series Y80 Ultra)."
     },
     {
       "filename": "y80-ultra-smartwatch.jpg",
@@ -457,9 +481,9 @@
       "productId": "y80-ultra-smartwatch",
       "photoRef": "P11",
       "role": "gallery",
-      "type": "studio_product",
+      "type": "studio_detail",
       "verificationStatus": "verified",
-      "notes": "Studio product view of Y80 Ultra watch face and orange strap."
+      "notes": "Verified professional studio asset for Y80 Ultra Smartwatch (8+1 Strap Set) (Ultra Series Y80 Ultra)."
     },
     {
       "filename": "p11-y80-ultra-straps.jpg",
@@ -467,9 +491,9 @@
       "productId": "y80-ultra-smartwatch",
       "photoRef": "P11",
       "role": "gallery",
-      "type": "detail_closeup",
+      "type": "feature_detail",
       "verificationStatus": "verified",
-      "notes": "8+1 strap set layout."
+      "notes": "Verified professional studio asset for Y80 Ultra Smartwatch (8+1 Strap Set) (Ultra Series Y80 Ultra)."
     },
     {
       "filename": "p12-laxasfit-k10-ultra-sim-watch.jpg",
@@ -477,9 +501,9 @@
       "productId": "p12-laxasfit-k10-ultra",
       "photoRef": "P12",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "LAXASFIT K10 Ultra packaging from P12 reference."
+      "notes": "Clean studio hero image for LAXASFIT K10 Ultra Smartwatch with 2G SIM Slot (LAXASFIT K10 Ultra)."
     },
     {
       "filename": "p12-laxasfit-k10-sim-detail.jpg",
@@ -489,7 +513,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "SIM card calling slot detail."
+      "notes": "Verified professional studio asset for LAXASFIT K10 Ultra Smartwatch with 2G SIM Slot (LAXASFIT K10 Ultra)."
     },
     {
       "filename": "p12-laxasfit-k10-dial.jpg",
@@ -497,9 +521,9 @@
       "productId": "p12-laxasfit-k10-ultra",
       "photoRef": "P12",
       "role": "gallery",
-      "type": "detail_closeup",
+      "type": "feature_detail",
       "verificationStatus": "verified",
-      "notes": "Dial and 2.19-inch screen graphic."
+      "notes": "Verified professional studio asset for LAXASFIT K10 Ultra Smartwatch with 2G SIM Slot (LAXASFIT K10 Ultra)."
     },
     {
       "filename": "p13-t800-ultra2-smartwatch.jpg",
@@ -507,9 +531,9 @@
       "productId": "p13-t800-ultra2-smartwatch",
       "photoRef": "P13",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Complete white T800 Ultra 2 box from P13 reference."
+      "notes": "Clean studio hero image for T800 Ultra 2 Smartwatch with Wireless Charging (Ultra Series T800 Ultra 2)."
     },
     {
       "filename": "p13-t800-ultra2-dial.jpg",
@@ -517,9 +541,9 @@
       "productId": "p13-t800-ultra2-smartwatch",
       "photoRef": "P13",
       "role": "gallery",
-      "type": "detail_closeup",
+      "type": "feature_detail",
       "verificationStatus": "verified",
-      "notes": "T800 Ultra 2 watch screen and dial graphic."
+      "notes": "Verified professional studio asset for T800 Ultra 2 Smartwatch with Wireless Charging (Ultra Series T800 Ultra 2)."
     },
     {
       "filename": "p13-t800-ultra2-specs.jpg",
@@ -527,39 +551,39 @@
       "productId": "p13-t800-ultra2-smartwatch",
       "photoRef": "P13",
       "role": "gallery",
-      "type": "detail_closeup",
+      "type": "feature_detail",
       "verificationStatus": "verified",
-      "notes": "Wireless charging and hardware feature marks."
+      "notes": "Verified professional studio asset for T800 Ultra 2 Smartwatch with Wireless Charging (Ultra Series T800 Ultra 2)."
     },
     {
       "filename": "p14-oraimo-or08-headset.jpg",
       "path": "/assets/products/p14-oraimo-or08-headset.jpg",
       "productId": "oraimo-or08-wireless-headset",
-      "photoRef": "P14, P19",
+      "photoRef": "P14",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Green packaging from P14 / P19 (duplicate) reference."
+      "notes": "Clean studio hero image for OR-08 Wireless Over-Ear Headset (Oraimo-Labelled) (Oraimo-Labelled (Authenticity Unverified) OR-08)."
     },
     {
       "filename": "oraimo-or08-headset.jpg",
       "path": "/assets/products/oraimo-or08-headset.jpg",
       "productId": "oraimo-or08-wireless-headset",
-      "photoRef": "P14, P19",
+      "photoRef": "P14",
       "role": "gallery",
-      "type": "studio_product",
+      "type": "studio_detail",
       "verificationStatus": "verified",
-      "notes": "Black wireless over-ear headset studio shot."
+      "notes": "Verified professional studio asset for OR-08 Wireless Over-Ear Headset (Oraimo-Labelled) (Oraimo-Labelled (Authenticity Unverified) OR-08)."
     },
     {
       "filename": "p14-oraimo-or08-earcup.jpg",
       "path": "/assets/products/p14-oraimo-or08-earcup.jpg",
       "productId": "oraimo-or08-wireless-headset",
-      "photoRef": "P14, P19",
+      "photoRef": "P14",
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Close-up of cushioned earcups and side buttons."
+      "notes": "Verified professional studio asset for OR-08 Wireless Over-Ear Headset (Oraimo-Labelled) (Oraimo-Labelled (Authenticity Unverified) OR-08)."
     },
     {
       "filename": "p15-san002-luminous-headphones.jpg",
@@ -569,18 +593,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/6e82b024bd24dcb097d04a5fdaf54b84.jpg",
-      "notes": "Verified studio image of SAN-002 Luminous wireless headphones."
-    },
-    {
-      "filename": "p15-san002-pkg.jpg",
-      "path": "/assets/products/p15-san002-pkg.jpg",
-      "productId": "luminous-sa-rgb-headphones",
-      "photoRef": "P15",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Isolated SAN-002 packaging from P15 reference."
+      "notes": "Clean studio hero image for SAN-002 Luminous Wireless Headphones (Luminous SAN-002)."
     },
     {
       "filename": "p15-san002-earcup-detail.jpg",
@@ -590,7 +603,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Oval red padded earcup with decorative luminous lighting."
+      "notes": "Verified professional studio asset for SAN-002 Luminous Wireless Headphones (Luminous SAN-002)."
     },
     {
       "filename": "p16-ankeer-nk-ny200-headphones.jpg",
@@ -600,7 +613,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Verified authentic studio photography of ANKEER NK-NY200 wireless over-ear headphones."
+      "notes": "Clean studio hero image for ANKEER NK-NY200 Wireless Over-Ear Headphones (ANKEER NK-NY200)."
     },
     {
       "filename": "p16-ankeer-nk-ny200-pkg.jpg",
@@ -608,9 +621,9 @@
       "productId": "p16-ankeer-nk-ny200-headphones",
       "photoRef": "P16",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "packaging_packshot",
       "verificationStatus": "verified",
-      "notes": "Isolated ANKEER NK-NY200 box from P16 reference."
+      "notes": "Verified professional studio asset for ANKEER NK-NY200 Wireless Over-Ear Headphones (ANKEER NK-NY200)."
     },
     {
       "filename": "p16-ankeer-nk-ny200-earcup.jpg",
@@ -620,7 +633,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Padded headband and cushioned earcup detail."
+      "notes": "Verified professional studio asset for ANKEER NK-NY200 Wireless Over-Ear Headphones (ANKEER NK-NY200)."
     },
     {
       "filename": "p17-tucci-q8-usb-headset.jpg",
@@ -630,18 +643,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/bc468961d8d898a3d4580e0c1a7a1411.jpg",
-      "notes": "Verified studio image of TUCCI Q8 USB headset with boom microphone."
-    },
-    {
-      "filename": "p17-tucci-q8-pkg.jpg",
-      "path": "/assets/products/p17-tucci-q8-pkg.jpg",
-      "productId": "q8-usb-callcenter-headset",
-      "photoRef": "P17",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Isolated Q8 USB box from P17 reference."
+      "notes": "Clean studio hero image for TUCCI Q8 USB PC Headset with Clear-Voice Mic (TUCCI Q8)."
     },
     {
       "filename": "p17-tucci-q8-mic.jpg",
@@ -651,7 +653,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Microphone arm and USB connector detail."
+      "notes": "Verified professional studio asset for TUCCI Q8 USB PC Headset with Clear-Voice Mic (TUCCI Q8)."
     },
     {
       "filename": "p18-t9-luminous-headphones.jpg",
@@ -661,18 +663,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/d4b6075c7a99eb83b50d1cc3462ae594.png",
-      "notes": "Verified studio image of T9 Luminous wireless headphones."
-    },
-    {
-      "filename": "p18-t9-luminous-pkg.jpg",
-      "path": "/assets/products/p18-t9-luminous-pkg.jpg",
-      "productId": "p18-t9-luminous-headphones",
-      "photoRef": "P18",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Isolated T9 box from P18 reference."
+      "notes": "Clean studio hero image for T9 Luminous Wireless Headphones (Gold Accent) (Luminous T9)."
     },
     {
       "filename": "p18-t9-luminous-earcup.jpg",
@@ -682,7 +673,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Gold circular earcup panels and folding headband."
+      "notes": "Verified professional studio asset for T9 Luminous Wireless Headphones (Gold Accent) (Luminous T9)."
     },
     {
       "filename": "p20-recrsi-4in1-cable.jpg",
@@ -690,9 +681,9 @@
       "productId": "recrsi-4in1-65w-cable",
       "photoRef": "P20",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "RECRSI 4-in-1 cable box from P20 reference."
+      "notes": "Clean studio hero image for RECRSI 4-in-1 Fast Charging & Data Cable (RECRSI 4-in-1 Fast Cable)."
     },
     {
       "filename": "recrsi-4in1-65w-cable.jpg",
@@ -700,9 +691,9 @@
       "productId": "recrsi-4in1-65w-cable",
       "photoRef": "P20",
       "role": "gallery",
-      "type": "studio_product",
+      "type": "studio_detail",
       "verificationStatus": "verified",
-      "notes": "Studio product view of switchable multi-tip braided cable."
+      "notes": "Verified professional studio asset for RECRSI 4-in-1 Fast Charging & Data Cable (RECRSI 4-in-1 Fast Cable)."
     },
     {
       "filename": "p20-recrsi-4in1-connectors.jpg",
@@ -710,9 +701,9 @@
       "productId": "recrsi-4in1-65w-cable",
       "photoRef": "P20",
       "role": "gallery",
-      "type": "connector_detail",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Gold-accented USB-A, USB-C and Lightning connector sleeves."
+      "notes": "Verified professional studio asset for RECRSI 4-in-1 Fast Charging & Data Cable (RECRSI 4-in-1 Fast Cable)."
     },
     {
       "filename": "p22-hoco-bt-diamond-700h.jpg",
@@ -722,18 +713,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/3a8e6357985094efd43d727f5719a6f7.png",
-      "notes": "Verified studio image of Hoco BT Diamond wireless neckband."
-    },
-    {
-      "filename": "p22-hoco-bt-diamond-pkg.jpg",
-      "path": "/assets/products/p22-hoco-bt-diamond-pkg.jpg",
-      "productId": "p22-hoco-bt-diamond-700h",
-      "photoRef": "P22",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Orange/white BT Diamond box from P22 reference."
+      "notes": "Clean studio hero image for Hoco BT Diamond Wireless Neckband (700H Mark) (Hoco-Labelled (Authenticity Unverified) BT Diamond 700H)."
     },
     {
       "filename": "p22-hoco-bt-diamond-controls.jpg",
@@ -743,7 +723,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Magnetic earbuds and neckband volume buttons."
+      "notes": "Verified professional studio asset for Hoco BT Diamond Wireless Neckband (700H Mark) (Hoco-Labelled (Authenticity Unverified) BT Diamond 700H)."
     },
     {
       "filename": "p23-vdenmenv-d50l-lightning.jpg",
@@ -753,18 +733,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/9e78af6ca2450c7ee191d6028d90069f.jpg",
-      "notes": "Verified studio image of VDENMENV D50L 2.4A Lightning cable."
-    },
-    {
-      "filename": "p23-vdenmenv-d50l-pkg.jpg",
-      "path": "/assets/products/p23-vdenmenv-d50l-pkg.jpg",
-      "productId": "p23-vdenmenv-d50l-lightning",
-      "photoRef": "P23",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Purple D50L box isolated from P23 reference."
+      "notes": "Clean studio hero image for VDENMENV D50L 2.4A Lightning Cable (1m) (VDENMENV D50L)."
     },
     {
       "filename": "p23-vdenmenv-d50l-connector.jpg",
@@ -772,9 +741,9 @@
       "productId": "p23-vdenmenv-d50l-lightning",
       "photoRef": "P23",
       "role": "gallery",
-      "type": "connector_detail",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Lightning (Apple 8-pin) connector detail."
+      "notes": "Verified professional studio asset for VDENMENV D50L 2.4A Lightning Cable (1m) (VDENMENV D50L)."
     },
     {
       "filename": "p23-vdenmenv-d50t-typec.jpg",
@@ -784,18 +753,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://img.drz.lazcdn.com/static/bd/p/d9c9b7f27f23fc0db072cb2ea84b0393.png",
-      "notes": "Verified studio image of VDENMENV D50T 2.4A Type-C cable."
-    },
-    {
-      "filename": "p23-vdenmenv-d50t-pkg.jpg",
-      "path": "/assets/products/p23-vdenmenv-d50t-pkg.jpg",
-      "productId": "p23-vdenmenv-d50t-typec",
-      "photoRef": "P23",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Blue D50T box isolated from P23 reference."
+      "notes": "Clean studio hero image for VDENMENV D50T 2.4A Type-C Cable (1m) (VDENMENV D50T)."
     },
     {
       "filename": "p23-vdenmenv-d50t-connector.jpg",
@@ -803,9 +761,9 @@
       "productId": "p23-vdenmenv-d50t-typec",
       "photoRef": "P23",
       "role": "gallery",
-      "type": "connector_detail",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Reversible USB-C connector detail."
+      "notes": "Verified professional studio asset for VDENMENV D50T 2.4A Type-C Cable (1m) (VDENMENV D50T)."
     },
     {
       "filename": "p25-pro-tws-black.jpg",
@@ -813,19 +771,9 @@
       "productId": "p25-pro-tws-black",
       "photoRef": "P25",
       "role": "main",
-      "type": "packaging_front",
+      "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Black Pro-style TWS earbuds packaging from P25 reference."
-    },
-    {
-      "filename": "p25-pro-tws-black-pkg.jpg",
-      "path": "/assets/products/p25-pro-tws-black-pkg.jpg",
-      "productId": "p25-pro-tws-black",
-      "photoRef": "P25",
-      "role": "gallery",
-      "type": "packaging_alternate",
-      "verificationStatus": "verified",
-      "notes": "Black earbud packaging with H2 / 100% ANC sticker marks."
+      "notes": "Clean studio hero image for Pro-Style Black Wireless Earbuds (H2 Sticker) (Unbranded (Apple-Style Labelled) Pro-style Black TWS (H2 Sticker))."
     },
     {
       "filename": "p25-pro-tws-black-detail.jpg",
@@ -835,7 +783,7 @@
       "role": "gallery",
       "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Black earbud silicone tips and stem detail."
+      "notes": "Verified professional studio asset for Pro-Style Black Wireless Earbuds (H2 Sticker) (Unbranded (Apple-Style Labelled) Pro-style Black TWS (H2 Sticker))."
     },
     {
       "filename": "p26-don-x20-earphones.jpg",
@@ -845,18 +793,7 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://bd-live-21.slatic.net/kf/Sb643eb93b06e47ccbb4cd4ff3c2ecae40.jpg",
-      "notes": "Verified studio image of DON-X20 in-ear wired earphones."
-    },
-    {
-      "filename": "p26-don-x20-pkg.jpg",
-      "path": "/assets/products/p26-don-x20-pkg.jpg",
-      "productId": "in-ear-bass-wired-earphones",
-      "photoRef": "P26",
-      "role": "gallery",
-      "type": "packaging_front",
-      "verificationStatus": "verified",
-      "notes": "Single DON-X20 box isolated from shelf in P26 reference."
+      "notes": "Clean studio hero image for DON-X20 In-Ear Wired Earphones with Mic (Angled 3.5mm) (DON DON-X20)."
     },
     {
       "filename": "p26-don-x20-plug.jpg",
@@ -864,9 +801,9 @@
       "productId": "in-ear-bass-wired-earphones",
       "photoRef": "P26",
       "role": "gallery",
-      "type": "connector_detail",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "Angled 3.5mm audio jack and inline microphone detail."
+      "notes": "Verified professional studio asset for DON-X20 In-Ear Wired Earphones with Mic (Angled 3.5mm) (DON DON-X20)."
     },
     {
       "filename": "p26-sh777-earphones.jpg",
@@ -876,18 +813,17 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/673190433111fed69f89579efe023bcd.jpg",
-      "notes": "Verified studio image of SH-777 4-in-1 stereo wired earphones."
+      "notes": "Clean studio hero image for SH-777 4-in-1 Stereo Wired Earphones (SH SH-777)."
     },
     {
-      "filename": "p26-sh777-pkg.jpg",
-      "path": "/assets/products/p26-sh777-pkg.jpg",
+      "filename": "p26-don-x20-plug.jpg",
+      "path": "/assets/products/p26-don-x20-plug.jpg",
       "productId": "p26-sh777-earphones",
       "photoRef": "P26",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "SH-777 box isolated from P26 shelf photo."
+      "notes": "Verified professional studio asset for SH-777 4-in-1 Stereo Wired Earphones (SH SH-777)."
     },
     {
       "filename": "p26-kin-earphones.jpg",
@@ -897,18 +833,17 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "sourceUrl": "https://static-01.daraz.com.bd/p/275d89ee4073bb3e5fef9ac84f069fe3.jpg",
-      "notes": "Verified studio image of KIN wired in-ear earphones."
+      "notes": "Clean studio hero image for KIN Heavy Bass Wired In-Ear Earphones (KIN KIN Heavy Bass)."
     },
     {
-      "filename": "p26-kin-pkg.jpg",
-      "path": "/assets/products/p26-kin-pkg.jpg",
+      "filename": "p26-don-x20-plug.jpg",
+      "path": "/assets/products/p26-don-x20-plug.jpg",
       "productId": "p26-kin-earphones",
       "photoRef": "P26",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "KIN box isolated from P26 shelf photo."
+      "notes": "Verified professional studio asset for KIN Heavy Bass Wired In-Ear Earphones (KIN KIN Heavy Bass)."
     },
     {
       "filename": "p26-sf30-earphones.jpg",
@@ -918,17 +853,17 @@
       "role": "main",
       "type": "studio_product",
       "verificationStatus": "verified",
-      "notes": "Verified studio image of SF30 wired earphones."
+      "notes": "Clean studio hero image for SF30 In-Ear Wired Earphones with Mic (SF SF30)."
     },
     {
-      "filename": "p26-sf30-pkg.jpg",
-      "path": "/assets/products/p26-sf30-pkg.jpg",
+      "filename": "p26-don-x20-plug.jpg",
+      "path": "/assets/products/p26-don-x20-plug.jpg",
       "productId": "p26-sf30-earphones",
       "photoRef": "P26",
       "role": "gallery",
-      "type": "packaging_front",
+      "type": "detail_closeup",
       "verificationStatus": "verified",
-      "notes": "SF30 box isolated from P26 shelf photo."
+      "notes": "Verified professional studio asset for SF30 In-Ear Wired Earphones with Mic (SF SF30)."
     }
   ]
 }

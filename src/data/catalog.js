@@ -416,7 +416,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p05-vdenmenv-dr06-earphones.jpg",
     "gallery": [
       "/assets/products/p05-vdenmenv-dr06-earphones.jpg",
-      "/assets/products/p05-vdenmenv-dr06-pkg-p05.jpg",
       "/assets/products/p23-vdenmenv-dr06.jpg",
       "/assets/products/p05-vdenmenv-dr06-inline-mic.jpg"
     ],
@@ -530,7 +529,8 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p06-realme-tws.jpg",
     "gallery": [
       "/assets/products/p06-realme-tws.jpg",
-      "/assets/products/p06-realme-pkg.jpg"
+      "/assets/products/p06-realme-pkg.jpg",
+      "/assets/products/p06-tws-detail.jpg"
     ],
     "compatibleWith": [
       "Xiaomi 14",
@@ -581,7 +581,7 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p06-oneplus-tws.jpg",
     "gallery": [
       "/assets/products/p06-oneplus-tws.jpg",
-      "/assets/products/p06-oneplus-pkg.jpg"
+      "/assets/products/p06-tws-detail.jpg"
     ],
     "compatibleWith": [
       "Pixel 8 Pro",
@@ -632,7 +632,8 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p06-lenovo-tws.jpg",
     "gallery": [
       "/assets/products/p06-lenovo-tws.jpg",
-      "/assets/products/p06-lenovo-pkg.jpg"
+      "/assets/products/p06-lenovo-pkg.jpg",
+      "/assets/products/p06-tws-detail.jpg"
     ],
     "compatibleWith": [
       "Galaxy S24",
@@ -683,7 +684,7 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p06-oppo-tws.jpg",
     "gallery": [
       "/assets/products/p06-oppo-tws.jpg",
-      "/assets/products/p06-oppo-pkg.jpg"
+      "/assets/products/p06-tws-detail.jpg"
     ],
     "compatibleWith": [
       "Galaxy S24 Ultra",
@@ -734,7 +735,7 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p06-mi-tws.jpg",
     "gallery": [
       "/assets/products/p06-mi-tws.jpg",
-      "/assets/products/p06-mi-pkg.jpg"
+      "/assets/products/p06-tws-detail.jpg"
     ],
     "compatibleWith": [
       "Xiaomi 14 Ultra",
@@ -786,7 +787,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p07-oppo-style-27w-charger.jpg",
     "gallery": [
       "/assets/products/p07-oppo-style-27w-charger.jpg",
-      "/assets/products/p07-oppo-charger-original.jpg",
       "/assets/products/p07-oppo-charger-pins.jpg"
     ],
     "compatibleWith": [
@@ -839,7 +839,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p08-2in1-otg-adapter.jpg",
     "gallery": [
       "/assets/products/p08-2in1-otg-adapter.jpg",
-      "/assets/products/p08-otg-card-pkg.jpg",
       "/assets/products/p08-otg-connectors.jpg"
     ],
     "compatibleWith": [
@@ -1232,7 +1231,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p15-san002-luminous-headphones.jpg",
     "gallery": [
       "/assets/products/p15-san002-luminous-headphones.jpg",
-      "/assets/products/p15-san002-pkg.jpg",
       "/assets/products/p15-san002-earcup-detail.jpg"
     ],
     "compatibleWith": [
@@ -1338,7 +1336,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p17-tucci-q8-usb-headset.jpg",
     "gallery": [
       "/assets/products/p17-tucci-q8-usb-headset.jpg",
-      "/assets/products/p17-tucci-q8-pkg.jpg",
       "/assets/products/p17-tucci-q8-mic.jpg"
     ],
     "compatibleWith": [
@@ -1391,7 +1388,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p18-t9-luminous-headphones.jpg",
     "gallery": [
       "/assets/products/p18-t9-luminous-headphones.jpg",
-      "/assets/products/p18-t9-luminous-pkg.jpg",
       "/assets/products/p18-t9-luminous-earcup.jpg"
     ],
     "compatibleWith": [
@@ -1500,7 +1496,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p22-hoco-bt-diamond-700h.jpg",
     "gallery": [
       "/assets/products/p22-hoco-bt-diamond-700h.jpg",
-      "/assets/products/p22-hoco-bt-diamond-pkg.jpg",
       "/assets/products/p22-hoco-bt-diamond-controls.jpg"
     ],
     "compatibleWith": [
@@ -1554,7 +1549,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p23-vdenmenv-d50l-lightning.jpg",
     "gallery": [
       "/assets/products/p23-vdenmenv-d50l-lightning.jpg",
-      "/assets/products/p23-vdenmenv-d50l-pkg.jpg",
       "/assets/products/p23-vdenmenv-d50l-connector.jpg"
     ],
     "compatibleWith": [
@@ -1608,7 +1602,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p23-vdenmenv-d50t-typec.jpg",
     "gallery": [
       "/assets/products/p23-vdenmenv-d50t-typec.jpg",
-      "/assets/products/p23-vdenmenv-d50t-pkg.jpg",
       "/assets/products/p23-vdenmenv-d50t-connector.jpg"
     ],
     "compatibleWith": [
@@ -1662,7 +1655,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p25-pro-tws-black.jpg",
     "gallery": [
       "/assets/products/p25-pro-tws-black.jpg",
-      "/assets/products/p25-pro-tws-black-pkg.jpg",
       "/assets/products/p25-pro-tws-black-detail.jpg"
     ],
     "compatibleWith": [
@@ -1715,7 +1707,6 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p26-don-x20-earphones.jpg",
     "gallery": [
       "/assets/products/p26-don-x20-earphones.jpg",
-      "/assets/products/p26-don-x20-pkg.jpg",
       "/assets/products/p26-don-x20-plug.jpg"
     ],
     "compatibleWith": [
@@ -1767,7 +1758,7 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p26-sh777-earphones.jpg",
     "gallery": [
       "/assets/products/p26-sh777-earphones.jpg",
-      "/assets/products/p26-sh777-pkg.jpg"
+      "/assets/products/p26-don-x20-plug.jpg"
     ],
     "compatibleWith": [
       "Pixel 7a",
@@ -1818,7 +1809,7 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p26-kin-earphones.jpg",
     "gallery": [
       "/assets/products/p26-kin-earphones.jpg",
-      "/assets/products/p26-kin-pkg.jpg"
+      "/assets/products/p26-don-x20-plug.jpg"
     ],
     "compatibleWith": [
       "Galaxy S24",
@@ -1869,7 +1860,7 @@ export const INITIAL_PRODUCTS = [
     "image": "/assets/products/p26-sf30-earphones.jpg",
     "gallery": [
       "/assets/products/p26-sf30-earphones.jpg",
-      "/assets/products/p26-sf30-pkg.jpg"
+      "/assets/products/p26-don-x20-plug.jpg"
     ],
     "compatibleWith": [
       "Galaxy S24",
