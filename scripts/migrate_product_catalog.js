@@ -18,7 +18,11 @@ console.log(`[migration] Safe pre-migration backup created at: ${backupPath}`);
 
 const db = new DatabaseSync(DB_PATH);
 
-// 2. Safe Migration: Update brand, model, image, gallery, and specs without wiping stock or orders
+// Ensure model and photo_ref columns exist
+try { db.exec('ALTER TABLE products ADD COLUMN model TEXT;'); } catch (e) {}
+try { db.exec('ALTER TABLE products ADD COLUMN photo_ref TEXT;'); } catch (e) {}
+
+// 2. Safe Migration: Update brand, model, photo_ref, image, gallery, and specs without wiping stock or orders
 db.exec('BEGIN IMMEDIATE;');
 
 try {
@@ -29,6 +33,8 @@ try {
       title_bn = ?,
       category_id = ?,
       brand = ?,
+      model = ?,
+      photo_ref = ?,
       badge = ?,
       warranty = ?,
       description = ?,
@@ -42,11 +48,11 @@ try {
 
   const insertProduct = db.prepare(`
     INSERT INTO products (
-      id, sku, title, title_bn, category_id, brand, price, original_price,
+      id, sku, title, title_bn, category_id, brand, model, photo_ref, price, original_price,
       stock, status, badge, warranty, description, specs_json, image,
       gallery_json, compatible_with_json, is_development_seed, created_at, updated_at
     ) VALUES (
-      ?, ?, ?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?
     )
@@ -70,6 +76,8 @@ try {
         p.titleBn || null,
         p.category,
         p.brand,
+        p.model || null,
+        p.photoRef || null,
         p.badge || null,
         p.warranty || null,
         p.description || '',
@@ -89,6 +97,8 @@ try {
         p.titleBn || null,
         p.category,
         p.brand,
+        p.model || null,
+        p.photoRef || null,
         p.price,
         p.originalPrice || null,
         p.stock || 20,
