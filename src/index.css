@@ -1,36 +1,56 @@
 :root {
-  --canvas-bg: #F4F8FC;
-  --canvas-bg-radial: linear-gradient(180deg, #F9FBFE 0%, #F1F6FB 40%, #EBF3FA 100%);
-  --surface-glass-l1: rgba(255, 255, 255, 0.94);
-  --surface-glass-l2: rgba(255, 255, 255, 0.98);
-  --surface-glass-l3: #FFFFFF;
-  --surface-solid: #FFFFFF;
-  --section-ice: #EDF5FC;
+  /* Shopee-Inspired High-Converting Color Palette & Tech Nest Brand */
+  --canvas-bg: #F5F5F5;
+  --surface-white: #FFFFFF;
+  --surface-card: #FFFFFF;
+  --surface-alt: #FAFAFA;
+  --surface-muted: #F8F9FA;
   
   --text-primary: #10263D;
-  --text-secondary: #475E75;
-  --text-tertiary: #7C95AE;
+  --text-secondary: #52677B;
+  --text-tertiary: #8FA6BE;
+  --text-muted: #757575;
   --text-inverted: #FFFFFF;
 
-  --brand-primary: #145CFF;
-  --brand-hover: #0D4BD9;
-  --brand-active: #0B3FB8;
-  --brand-subtle: rgba(20, 92, 255, 0.08);
-  --brand-glow: rgba(20, 92, 255, 0.16);
+  /* Primary Shopee Orange & Tech Nest Navy */
+  --brand-orange: #EE4D2D;
+  --brand-orange-hover: #D73211;
+  --brand-orange-active: #BF2507;
+  --brand-orange-light: #FFF5F1;
+  --brand-orange-border: #FFDCD4;
+  --brand-orange-glow: rgba(238, 77, 45, 0.24);
 
-  --border-glass: #DCE7F0;
-  --border-glass-hover: rgba(20, 92, 255, 0.28);
-  --border-highlight: rgba(255, 255, 255, 0.95);
+  --brand-navy: #10263D;
+  --brand-navy-dark: #0B1B2C;
+  --brand-navy-light: #1A365D;
 
-  --shadow-l1: 0 2px 10px -2px rgba(16, 38, 61, 0.04), 0 1px 2px 0 rgba(16, 38, 61, 0.02);
-  --shadow-l2: 0 8px 24px -4px rgba(16, 38, 61, 0.06), 0 2px 6px -1px rgba(20, 92, 255, 0.03);
-  --shadow-l3: 0 16px 36px -6px rgba(16, 38, 61, 0.10), 0 4px 10px -2px rgba(20, 92, 255, 0.05);
-  --inset-specular: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  --brand-primary: #EE4D2D;
+  --brand-hover: #D73211;
+  --brand-active: #BF2507;
+  --brand-subtle: #FFF5F1;
+  --brand-glow: rgba(238, 77, 45, 0.20);
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  /* Clean Borders & Dividers */
+  --border-subtle: #ECECEC;
+  --border-card: #E5E7EB;
+  --border-glass: #E2E8F0;
+  --border-glass-hover: rgba(238, 77, 45, 0.35);
+  --border-highlight: #FFFFFF;
+
+  /* Subtle E-commerce Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 14px -2px rgba(16, 38, 61, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 28px -4px rgba(16, 38, 61, 0.12), 0 4px 10px -2px rgba(238, 77, 45, 0.06);
+  --shadow-l1: var(--shadow-sm);
+  --shadow-l2: var(--shadow-md);
+  --shadow-l3: var(--shadow-lg);
+  --inset-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-full: 9999px;
 
   --font-family: 'Plus Jakarta Sans', 'Inter', 'Noto Sans Bengali', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -45,11 +65,9 @@
 html, body {
   font-family: var(--font-family);
   background-color: var(--canvas-bg);
-  background-image: var(--canvas-bg-radial);
-  background-attachment: fixed;
   color: var(--text-primary);
-  line-height: 1.55;
-  letter-spacing: -0.012em;
+  line-height: 1.5;
+  letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -60,7 +78,7 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.024em;
+  letter-spacing: -0.02em;
   font-feature-settings: 'cv02' 1, 'cv03' 1, 'cv04' 1;
 }
 
@@ -1500,3 +1518,212 @@ img {
   .xl\:col-span-6 { grid-column: span 6 / span 6; }
   .xl\:text-\[62px\] { font-size: 62px; }
 }
+
+/* ==========================================================
+   Shopee Marketplace UI Components & Utility System
+   ========================================================== */
+
+/* Shopee Top Utility Bar */
+.top-utility-bar {
+  background-color: #0F172A;
+  color: #CBD5E1;
+  font-size: 12px;
+  border-bottom: 1px solid #1E293B;
+}
+
+.top-utility-link {
+  color: #E2E8F0;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 150ms ease;
+  font-size: 12px;
+}
+
+.top-utility-link:hover {
+  color: #FF7A59;
+}
+
+/* Shopee-Style Large Search Bar */
+.shopee-search-bar {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border: 2px solid var(--brand-orange);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(238, 77, 45, 0.08);
+}
+
+.shopee-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #10263D;
+  background: transparent;
+}
+
+.shopee-search-btn {
+  background: var(--brand-orange);
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 22px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.shopee-search-btn:hover {
+  background: var(--brand-orange-hover);
+}
+
+/* Live Search Suggestions Dropdown */
+.search-suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+/* Shopee Circular Shortcut Items */
+.shopee-shortcut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 160ms ease;
+  user-select: none;
+}
+
+.shopee-shortcut-item:hover {
+  transform: translateY(-2px);
+}
+
+.shopee-shortcut-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  transition: box-shadow 160ms ease, background-color 160ms ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.shopee-shortcut-item:hover .shopee-shortcut-circle {
+  box-shadow: 0 4px 14px rgba(238, 77, 45, 0.2);
+}
+
+/* Shopee Discount Tag / Badge */
+.shopee-discount-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(254, 238, 234, 0.96);
+  color: #EE4D2D;
+  font-weight: 800;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-bottom-left-radius: 4px;
+  border: 1px solid rgba(238, 77, 45, 0.3);
+  z-index: 10;
+  line-height: 1.1;
+  text-align: center;
+}
+
+/* Flash Sale Section Styling */
+.flash-sale-wrapper {
+  background: #FFFFFF;
+  border-radius: 8px;
+  border: 1px solid #ECECEC;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.flash-countdown-box {
+  background: #000000;
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 13px;
+  border-radius: 4px;
+  padding: 2px 6px;
+  letter-spacing: 0.5px;
+}
+
+.flash-progress-bar {
+  height: 14px;
+  border-radius: 7px;
+  background: #FFD2C8;
+  position: relative;
+  overflow: hidden;
+}
+
+.flash-progress-fill {
+  height: 100%;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #FF7A59 0%, #EE4D2D 100%);
+  transition: width 300ms ease;
+}
+
+.flash-progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Shopee Product Card */
+.shopee-product-card {
+  background: #FFFFFF;
+  border: 1px solid #ECECEC;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+  cursor: pointer;
+}
+
+.shopee-product-card:hover {
+  border-color: #EE4D2D;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.09);
+}
+
+/* Daily Discover Tabs */
+.daily-discover-tab {
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4B5563;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+
+.daily-discover-tab.is-active {
+  color: #EE4D2D;
+  border-bottom-color: #EE4D2D;
+}
+

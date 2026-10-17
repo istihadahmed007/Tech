@@ -74,17 +74,17 @@ export default function BundleDeals({ onAddBundle, lang = 'en', t = {} }) {
                   </div>
 
                   {/* Top-Right Savings Pill */}
-                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#145CFF] text-white shadow-xs">
+                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#EE4D2D] text-white shadow-xs">
                     {(t.bundleSavings || 'Save ৳{amount}').replace('{amount}', bundle.savings.toLocaleString())}
                   </span>
                 </div>
 
                 {/* Content */}
                 <div className="p-5 sm:p-6">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#145CFF]">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#EE4D2D]">
                     {badgeText}
                   </span>
-                  <h3 className="text-base sm:text-lg font-bold text-[#10263D] mt-1 line-clamp-1 min-h-[1.75rem] group-hover:text-[#145CFF] transition-colors">
+                  <h3 className="text-base sm:text-lg font-bold text-[#10263D] mt-1 line-clamp-1 min-h-[1.75rem] group-hover:text-[#EE4D2D] transition-colors">
                     {title}
                   </h3>
                   <p className="text-xs text-[#52677B] mt-1.5 leading-relaxed line-clamp-2 min-h-[2.5rem]">
@@ -122,7 +122,7 @@ export default function BundleDeals({ onAddBundle, lang = 'en', t = {} }) {
 
                 <button
                   onClick={() => onAddBundle(bundle)}
-                  className="w-full py-3 px-4 rounded-xl bg-[#145CFF] hover:bg-[#0047E0] active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-[#EE4D2D] hover:bg-[#D73211] active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
                 >
                   <ShoppingBag size={16} />
                   <span>{t.addBundleToCart || (lang === 'bn' ? 'বান্ডিল ব্যাগে যুক্ত করুন' : 'Add Bundle to Bag')}</span>

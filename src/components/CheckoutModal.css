@@ -332,8 +332,8 @@
 }
 
 .checkout-input:focus {
-  border-color: #E77600;
-  box-shadow: 0 0 0 3px rgba(231, 118, 0, 0.22);
+  border-color: #EE4D2D;
+  box-shadow: 0 0 0 3px rgba(238, 77, 45, 0.18);
 }
 
 .checkout-textarea {
@@ -358,9 +358,9 @@
 }
 
 .checkout-payment-option.is-active {
-  border-color: #E77600 !important;
-  background-color: #FDF8F3 !important;
-  box-shadow: 0 1px 4px rgba(231, 118, 0, 0.12);
+  border-color: #EE4D2D !important;
+  background-color: #FFF5F1 !important;
+  box-shadow: 0 1px 4px rgba(238, 77, 45, 0.12);
 }
 
 .checkout-radio-flex {
@@ -372,7 +372,7 @@
 .checkout-radio-input {
   width: 17px;
   height: 17px;
-  accent-color: #E77600;
+  accent-color: #EE4D2D;
   cursor: pointer;
   margin-top: 2px;
 }
@@ -419,20 +419,20 @@
   color: #FFFFFF;
 }
 
-/* Amazon Signature Yellow Place Order Button */
+/* Shopee-style Tech Nest Place Order Button */
 .checkout-btn-order {
   width: 100%;
-  background-color: #FFD814 !important;
-  border: 1px solid #FCD200 !important;
-  border-radius: 9999px !important;
-  padding: 12px 18px !important;
-  font-size: 14px !important;
+  background-color: #EE4D2D !important;
+  border: 1px solid #EE4D2D !important;
+  border-radius: 8px !important;
+  padding: 14px 20px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
-  color: #0F1111 !important;
+  color: #FFFFFF !important;
   cursor: pointer !important;
   text-align: center !important;
-  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5) !important;
-  transition: background 150ms ease, box-shadow 150ms ease !important;
+  box-shadow: 0 2px 8px rgba(238, 77, 45, 0.25) !important;
+  transition: all 150ms ease !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -440,12 +440,13 @@
 }
 
 .checkout-btn-order:hover:not(:disabled) {
-  background-color: #F7CA00 !important;
-  box-shadow: 0 2px 5px rgba(213, 217, 217, 0.8) !important;
+  background-color: #D73211 !important;
+  border-color: #D73211 !important;
+  box-shadow: 0 4px 12px rgba(238, 77, 45, 0.35) !important;
 }
 
 .checkout-btn-order:active:not(:disabled) {
-  background-color: #F0B800 !important;
+  background-color: #BD290A !important;
 }
 
 .checkout-btn-order:disabled {

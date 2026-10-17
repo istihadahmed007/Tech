@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   ShoppingBag, 
   Search, 
@@ -10,172 +10,251 @@ import {
   HelpCircle,
   Menu,
   ShieldCheck,
-  Lock,
-  LogOut,
-  Package
+  Package,
+  ChevronDown,
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 
 export default function Header({ 
-  storeName, 
+  storeName = "Tech Nest", 
   t = {}, 
   lang = 'en', 
   setLang, 
   currentUser,
-  cartCount, 
-  wishlistCount, 
+  cartCount = 0, 
+  wishlistCount = 0, 
   onOpenCart, 
   onOpenWishlist, 
   onOpenSupport,
   onOpenAccount,
   onOpenTracking,
-  searchQuery, 
+  searchQuery = '', 
   setSearchQuery,
   onScrollToFinder,
   onGoHome,
-  onGoToShop
+  onGoToShop,
+  onSelectCategory,
+  onSelectProduct,
+  products = []
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchContainerRef = useRef(null);
+
+  // Close search suggestions on click outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setMobileMenuOpen(false);
         setSearchOpen(false);
+        setShowSuggestions(false);
       }
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const toggleMobileSearch = () => {
-    setSearchOpen((prev) => {
-      if (!prev) setMobileMenuOpen(false);
-      return !prev;
-    });
+  // Filter products for live suggestions
+  const liveSuggestions = React.useMemo(() => {
+    if (!searchQuery || searchQuery.trim().length < 2) return [];
+    const q = searchQuery.toLowerCase().trim();
+    return products.filter((p) => {
+      return (
+        p.title?.toLowerCase().includes(q) ||
+        (p.titleBn && p.titleBn.toLowerCase().includes(q)) ||
+        p.category?.toLowerCase().includes(q) ||
+        (p.photoRef && p.photoRef.toLowerCase().includes(q))
+      );
+    }).slice(0, 5);
+  }, [searchQuery, products]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setShowSuggestions(false);
+    if (onGoToShop) onGoToShop();
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen((prev) => {
-      if (!prev) setSearchOpen(false);
-      return !prev;
-    });
+  const handleSuggestionClick = (product) => {
+    setShowSuggestions(false);
+    if (onSelectProduct) {
+      onSelectProduct(product);
+    }
   };
+
+  const popularKeywords = [
+    { label: 'Ultrapods', query: 'Ultrapods' },
+    { label: '120W Cable', query: '120W' },
+    { label: 'Smartwatch', query: 'Smartwatch' },
+    { label: 'Pro TWS', query: 'TWS' },
+    { label: 'Neckband', query: 'Neckband' }
+  ];
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all bg-white/92 backdrop-blur-md border-b border-[#DCE7F0]/80 shadow-2xs">
-      <div className="container flex items-center justify-between gap-3 py-3 sm:py-3.5">
-        {/* Left: Brand Name & Main Nav Links */}
-        <div className="flex items-center gap-4 sm:gap-8 lg:gap-10 min-w-0">
-          <a 
-            href="/" 
-            onClick={(e) => {
-              if (onGoHome) {
-                e.preventDefault();
-                onGoHome();
-              }
-            }}
-            className="flex items-center group shrink-0 select-none py-0.5"
-            title="Tech Nest — Everyday Tech Upgrades"
-          >
-            <img 
-              src="/assets/tech-nest-logo-horizontal.png" 
-              alt="Tech Nest" 
-              className="h-11 sm:h-13 md:h-14 lg:h-15 w-auto object-contain drop-shadow-md group-hover:scale-[1.03] transition-transform duration-200" 
-            />
-          </a>
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-[#ECECEC] shadow-xs">
+      {/* Top Main Header Container */}
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-6">
+        
+        {/* Left: Tech Nest Logo */}
+        <a 
+          href="/" 
+          onClick={(e) => {
+            if (onGoHome) {
+              e.preventDefault();
+              onGoHome();
+            }
+          }}
+          className="flex items-center group shrink-0 select-none py-0.5"
+          title="Tech Nest — Authentic Mobile Accessories"
+        >
+          <img 
+            src="/assets/tech-nest-logo-horizontal.png" 
+            alt="Tech Nest" 
+            className="h-10 sm:h-12 md:h-13 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]" 
+          />
+        </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-7 text-[15px] font-medium text-[#334155]">
-            <a 
-              href="#products-section" 
-              onClick={(e) => {
-                if (onGoToShop) {
-                  e.preventDefault();
-                  onGoToShop();
-                }
-              }}
-              className="nav-link-btn"
-            >
-              {t.navShop || 'Shop'}
-            </a>
-            <button 
-              onClick={onScrollToFinder}
-              className="nav-link-btn"
-            >
-              {t.navFindFit || 'Find my fit'}
-            </button>
-            <button 
-              onClick={() => onOpenTracking('')}
-              className="nav-link-btn text-[#145CFF] font-semibold flex items-center gap-1"
-            >
-              <Package size={15} />
-              <span>{t.navTrackOrder || 'Track Order'}</span>
-            </button>
-            <button 
-              onClick={onOpenSupport}
-              className="nav-link-btn"
-            >
-              {t.navSupport || 'Support'}
-            </button>
-          </nav>
-        </div>
-
-        {/* Center: Search Input */}
-        <div className="hidden lg:flex items-center flex-1 max-w-md mx-4">
-          <div className="relative w-full">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+        {/* Center: Shopee-Style Large Search Bar */}
+        <div ref={searchContainerRef} className="hidden lg:flex flex-col flex-1 max-w-2xl mx-2 relative">
+          <form onSubmit={handleSearchSubmit} className="shopee-search-bar relative">
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t.searchPlaceholder || "Search for cases, earbuds, chargers and more..."}
-              className="w-full text-xs font-normal pl-9 pr-8 py-2 rounded-full bg-white/85 border border-slate-200/90 focus:bg-white focus:border-[#145CFF] focus:ring-2 focus:ring-blue-100 outline-none text-[#0F172A] placeholder-[#94A3B8] transition-all shadow-2xs"
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => {
+                if (searchQuery.trim().length >= 2) setShowSuggestions(true);
+              }}
+              placeholder={t.searchPlaceholder || "Search for phone cases, chargers, earbuds, cables & smartwatches..."}
+              className="shopee-search-input"
             />
+            
             {searchQuery && (
               <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#0F172A]"
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setShowSuggestions(false);
+                }}
+                className="px-2 text-slate-400 hover:text-slate-600 cursor-pointer"
                 aria-label="Clear search"
               >
-                <X size={14} />
+                <X size={16} />
               </button>
             )}
+
+            <button 
+              type="submit"
+              className="shopee-search-btn"
+              title="Search products"
+            >
+              <Search size={16} />
+              <span>{lang === 'bn' ? 'খুঁজুন' : 'Search'}</span>
+            </button>
+          </form>
+
+          {/* Quick trending search tags below search bar (Shopee style) */}
+          <div className="flex items-center gap-2 mt-1 px-1 text-[11px] text-slate-500 overflow-hidden whitespace-nowrap">
+            <span className="font-semibold text-slate-400">{lang === 'bn' ? 'জনপ্রিয়:' : 'Trending:'}</span>
+            {popularKeywords.map((kw) => (
+              <button
+                key={kw.query}
+                type="button"
+                onClick={() => {
+                  setSearchQuery(kw.query);
+                  if (onGoToShop) onGoToShop();
+                }}
+                className="hover:text-[#EE4D2D] transition-colors cursor-pointer"
+              >
+                {kw.label}
+              </button>
+            ))}
           </div>
+
+          {/* Predictive Search Suggestions Dropdown */}
+          {showSuggestions && liveSuggestions.length > 0 && (
+            <div className="search-suggestions-dropdown py-2 border border-slate-200 shadow-xl bg-white">
+              <div className="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                <span>{lang === 'bn' ? 'প্রস্তাবিত পণ্যসমূহ' : 'Suggested Products'}</span>
+                <span className="text-[#EE4D2D] text-[10px]">{liveSuggestions.length} items</span>
+              </div>
+              {liveSuggestions.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => handleSuggestionClick(item)}
+                  className="px-3 py-2 flex items-center gap-3 hover:bg-[#FFF5F1] cursor-pointer transition-colors border-b border-slate-50 last:border-b-0"
+                >
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="w-10 h-10 object-contain rounded bg-white p-0.5 border border-slate-200 shrink-0" 
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-[#10263D] truncate">
+                      {lang === 'bn' ? (item.titleBn || item.title) : item.title}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs font-bold text-[#EE4D2D]">৳{item.price.toLocaleString()}</span>
+                      {item.originalPrice && item.originalPrice > item.price && (
+                        <span className="text-[10px] text-slate-400 line-through">৳{item.originalPrice.toLocaleString()}</span>
+                      )}
+                      <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded uppercase">
+                        {item.category}
+                      </span>
+                    </div>
+                  </div>
+                  <ArrowRight size={14} className="text-slate-400 group-hover:text-[#EE4D2D]" />
+                </div>
+              ))}
+              <div className="p-2 border-t border-slate-100 text-center">
+                <button
+                  type="button"
+                  onClick={handleSearchSubmit}
+                  className="text-xs font-bold text-[#EE4D2D] hover:underline cursor-pointer"
+                >
+                  {lang === 'bn' ? `"${searchQuery}" এর সব ফলাফল দেখুন` : `View all results for "${searchQuery}"`}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Rightmost Action Icons */}
-        <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
-          {/* Mobile Search Trigger */}
+        {/* Right Actions: Wishlist, Customer Account & Shopping Cart */}
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          {/* Mobile Search Button */}
           <button 
-            onClick={toggleMobileSearch}
-            className="lg:hidden p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#0F172A] transition-colors focus-visible:ring-2 focus-visible:ring-[#145CFF]"
-            aria-label="Toggle mobile search"
-            aria-expanded={searchOpen}
+            type="button"
+            onClick={() => setSearchOpen(!searchOpen)}
+            className="lg:hidden p-2 rounded-full hover:bg-slate-100 text-slate-700"
+            aria-label="Toggle Search"
           >
-            <Search size={19} />
+            <Search size={20} />
           </button>
 
-          {/* Language Switcher Pill */}
+          {/* Wishlist Button */}
           <button
-            onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-            className="hidden md:flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border border-slate-200 bg-white/80 hover:bg-white text-slate-700 transition-colors"
-            title="Switch Language (English / বাংলা)"
-          >
-            <Globe size={13} className="text-[#145CFF]" />
-            <span>{lang === 'en' ? 'BN' : 'EN'}</span>
-          </button>
-
-          {/* Wishlist Icon */}
-          <button
+            type="button"
             onClick={onOpenWishlist}
-            className="relative p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-pink-600 transition-colors"
+            className="relative p-2 rounded-full hover:bg-slate-100 text-slate-700 hover:text-[#EE4D2D] transition-colors cursor-pointer"
             aria-label="Wishlist"
             title="Saved items"
           >
-            <Heart size={19} />
+            <Heart size={21} />
             {wishlistCount > 0 && (
-              <span className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-pink-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+              <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-[#EE4D2D] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                 {wishlistCount}
               </span>
             )}
@@ -183,141 +262,269 @@ export default function Header({
 
           {/* Customer Account Button */}
           <button
+            type="button"
             onClick={onOpenAccount}
-            className="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#334155] hover:text-[#145CFF] transition-colors flex items-center gap-1.5"
+            className="p-1.5 sm:px-3 sm:py-1.5 rounded-full hover:bg-slate-100 text-slate-700 hover:text-[#EE4D2D] transition-colors flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-slate-200"
             aria-label="Customer Account"
-            title={currentUser ? `Account: ${currentUser.name}` : "Sign In / Account"}
+            title={currentUser ? `Account: ${currentUser.name}` : "Sign In / Register"}
           >
-            <User size={19} />
-            {currentUser && (
-              <span className="hidden xl:inline text-xs font-bold text-[#10263D] max-w-[80px] truncate">
-                {currentUser.name.split(' ')[0]}
+            <User size={20} />
+            <div className="hidden md:flex flex-col text-left">
+              <span className="text-[10px] text-slate-400 leading-none">
+                {currentUser ? (lang === 'bn' ? 'আমার প্রোফাইল' : 'Hello,') : (lang === 'bn' ? 'সাইন ইন' : 'Sign In')}
               </span>
-            )}
+              <span className="text-xs font-bold text-[#10263D] leading-tight max-w-[90px] truncate">
+                {currentUser ? currentUser.name.split(' ')[0] : (lang === 'bn' ? 'অ্যাকাউন্ট' : 'Account')}
+              </span>
+            </div>
           </button>
 
-
-          {/* Shopping Bag Trigger Icon */}
+          {/* Shopee-Style Shopping Cart Button */}
           <button
+            type="button"
             onClick={onOpenCart}
-            className="relative p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#0F172A] hover:text-[#145CFF] transition-colors"
-            aria-label="Shopping Bag"
-            title="Shopping Bag"
+            className="relative flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-[#FFF5F1] hover:bg-[#FEECE6] text-[#EE4D2D] border border-[#FFDCD4] transition-all cursor-pointer shadow-xs active:scale-95"
+            aria-label="Shopping Cart"
+            title="View Shopping Cart"
           >
-            <ShoppingBag size={20} />
-            {cartCount > 0 && (
-              <span className="absolute top-0 right-0 w-4.5 h-4.5 rounded-full bg-[#145CFF] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
-                {cartCount}
-              </span>
-            )}
+            <div className="relative">
+              <ShoppingBag size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#EE4D2D] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+            <span className="hidden sm:inline text-xs font-bold">
+              {lang === 'bn' ? 'কার্ট' : 'Cart'}
+            </span>
           </button>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Hamburger */}
           <button
-            onClick={toggleMobileMenu}
-            className="lg:hidden p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-[#0F172A] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
-            aria-label="Toggle mobile menu"
-            aria-expanded={mobileMenuOpen}
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 rounded-full hover:bg-slate-100 text-slate-700 cursor-pointer"
+            aria-label="Toggle mobile navigation menu"
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Search Bar Dropdown */}
+      {/* Subheader: Shopee-Style Category Navigation Strip */}
+      <div className="border-t border-[#F0F0F0] bg-white hidden lg:block">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+          <nav className="flex items-center gap-1 sm:gap-2 py-1.5 text-xs font-semibold text-[#334155] overflow-x-auto scrollbar-none">
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectCategory) onSelectCategory(null);
+                if (onGoToShop) onGoToShop();
+              }}
+              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'সব পণ্য' : 'All Accessories'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectCategory) onSelectCategory('earbuds');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'ইয়ারবাডস ও হেডফোন' : 'Earbuds & Audio'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectCategory) onSelectCategory('chargers');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'ফাস্ট চার্জার ও অ্যাডাপ্টার' : 'Chargers & Adapters'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectCategory) onSelectCategory('cables');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'ইউএসবি ক্যাবল' : 'USB Cables'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectCategory) onSelectCategory('wearables');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectCategory) onSelectCategory('cases');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'কেস ও প্রোটেক্টর' : 'Cases & Protectors'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectCategory) onSelectCategory('power-banks');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="px-3 py-1.5 rounded-md hover:bg-[#FFF5F1] hover:text-[#EE4D2D] transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'পাওয়ার ব্যাংক' : 'Power Banks'}
+            </button>
+          </nav>
+
+          <div className="flex items-center gap-3 text-xs font-semibold py-1">
+            <button
+              type="button"
+              onClick={onScrollToFinder}
+              className="text-[#10263D] hover:text-[#EE4D2D] flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              <Sparkles size={13} className="text-[#EE4D2D]" />
+              <span>{lang === 'bn' ? 'ফোন মডেল সার্চ' : 'Device Compatibility Fit'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Search Input Drawer */}
       {searchOpen && (
-        <div className="container lg:hidden pt-1 pb-3 animate-fadeIn">
-          <div className="relative">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+        <div className="lg:hidden px-4 py-2.5 bg-slate-50 border-t border-slate-200">
+          <form onSubmit={handleSearchSubmit} className="shopee-search-bar">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t.searchPlaceholder || "Search for cases, earbuds, chargers and more..."}
+              placeholder={t.searchPlaceholder || "Search products..."}
               autoFocus
-              className="w-full pl-9 pr-9 py-2.5 rounded-full bg-white border border-slate-300 shadow-sm outline-none text-xs text-[#0F172A]"
+              className="shopee-search-input py-2 text-xs"
             />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
-              >
-                <X size={15} />
-              </button>
-            )}
-          </div>
+            <button type="submit" className="shopee-search-btn py-2 px-3">
+              <Search size={15} />
+            </button>
+          </form>
         </div>
       )}
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="container md:hidden pb-4 animate-fadeIn">
-          <div className="rounded-2xl bg-white border border-[#DCE7F0] p-5 shadow-xl flex flex-col gap-3">
-            <div className="flex items-center gap-2.5 pb-2.5 border-b border-slate-100">
-              <img 
-                src="/assets/tech-nest-logo-horizontal.png" 
-                alt="Tech Nest Logo" 
-                className="h-10 w-auto object-contain drop-shadow-sm" 
-              />
-            </div>
-            <nav className="flex flex-col gap-1 text-sm font-medium text-[#0F172A]">
-            <a 
-              href="#products-section" 
-              onClick={(e) => {
-                setMobileMenuOpen(false);
-                if (onGoToShop) {
-                  e.preventDefault();
-                  onGoToShop();
-                }
-              }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 font-semibold"
-            >
-              {t.navShop || 'Shop'}
-            </a>
-            <button 
-              onClick={() => { setMobileMenuOpen(false); onScrollToFinder(); }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-left"
-            >
-              {t.navFindFit || 'Find my fit'}
-            </button>
-            <button 
-              onClick={() => { setMobileMenuOpen(false); onOpenCart(); }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-center justify-between font-semibold text-[#0F1111]"
-            >
-              <span>{lang === 'bn' ? 'শপিং কার্ট' : 'Shopping Cart'} ({cartCount})</span>
-              <ShoppingBag size={16} className="text-[#145CFF]" />
-            </button>
-            <button 
-              onClick={() => { setMobileMenuOpen(false); onOpenTracking(''); }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-left text-[#145CFF] font-semibold flex items-center justify-between"
-            >
-              <span>{t.navTrackOrder || 'Track Order'}</span>
-              <ShieldCheck size={16} />
-            </button>
-            <button 
-              onClick={() => { setMobileMenuOpen(false); onOpenAccount(); }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-center justify-between"
-            >
-              <span>{currentUser ? `Account: ${currentUser.name}` : (lang === 'bn' ? 'সাইন ইন / রেজিস্টার' : 'Sign In / Register')}</span>
-              <User size={16} />
-            </button>
-            <button 
-              onClick={() => { setMobileMenuOpen(false); onOpenSupport(); }}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-left"
-            >
-              {t.navSupport || 'Support'}
-            </button>
-            </nav>
-
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <span>Currency: <strong>BDT (৳)</strong></span>
+        <div className="lg:hidden px-4 py-4 bg-white border-t border-slate-200 shadow-xl animate-fadeIn space-y-3">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <img 
+              src="/assets/tech-nest-logo-horizontal.png" 
+              alt="Tech Nest Logo" 
+              className="h-9 w-auto object-contain" 
+            />
             <button
-              onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-              className="text-[#145CFF] font-bold"
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-1 rounded text-slate-500"
             >
-              Switch to {lang === 'en' ? 'বাংলা' : 'English'}
+              <X size={20} />
             </button>
           </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onSelectCategory) onSelectCategory(null);
+                if (onGoToShop) onGoToShop();
+              }}
+              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#FFF5F1] hover:text-[#EE4D2D]"
+            >
+              {lang === 'bn' ? 'সব পণ্য' : 'All Products'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onSelectCategory) onSelectCategory('earbuds');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#FFF5F1] hover:text-[#EE4D2D]"
+            >
+              {lang === 'bn' ? 'ইয়ারবাডস' : 'Earbuds & Audio'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onSelectCategory) onSelectCategory('chargers');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#FFF5F1] hover:text-[#EE4D2D]"
+            >
+              {lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Chargers & Cables'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onSelectCategory) onSelectCategory('wearables');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#FFF5F1] hover:text-[#EE4D2D]"
+            >
+              {lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches'}
+            </button>
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 flex flex-col gap-2 text-xs font-medium text-slate-700">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onOpenTracking) onOpenTracking('');
+              }}
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded"
+            >
+              <Package size={15} className="text-[#EE4D2D]" />
+              <span>{lang === 'bn' ? 'অর্ডার ট্র্যাকিং' : 'Track Order Status'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onOpenSupport) onOpenSupport();
+              }}
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded"
+            >
+              <HelpCircle size={15} className="text-[#EE4D2D]" />
+              <span>{lang === 'bn' ? 'কাস্টমার সাপোর্ট' : 'Support & Warranty'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onOpenAccount) onOpenAccount();
+              }}
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded font-semibold text-[#10263D]"
+            >
+              <User size={15} className="text-[#EE4D2D]" />
+              <span>{currentUser ? `Profile (${currentUser.name})` : (lang === 'bn' ? 'সাইন ইন / রেজিস্টার' : 'Sign In / Register')}</span>
+            </button>
           </div>
         </div>
       )}

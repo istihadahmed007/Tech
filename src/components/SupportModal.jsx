@@ -44,7 +44,7 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
       >
         <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#EAF4FC] text-[#145CFF] flex items-center justify-center font-bold">
+            <div className="w-9 h-9 rounded-xl bg-[#EAF4FC] text-[#EE4D2D] flex items-center justify-center font-bold">
               <HelpCircle size={18} />
             </div>
             <div>
@@ -61,7 +61,7 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#EE4D2D]"
             aria-label={isBn ? 'সাপোর্ট ডায়লগ বন্ধ করুন' : 'Close support dialog'}
           >
             <X size={20} />
@@ -72,7 +72,7 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
           {/* Warranty Policy */}
           <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
             <h3 className="text-sm font-bold text-[#10263D] flex items-center gap-2 mb-2">
-              <ShieldCheck size={18} className="text-[#145CFF]" />
+              <ShieldCheck size={18} className="text-[#EE4D2D]" />
               <span>{isBn ? 'ম্যানুফ্যাকচারার ওয়ারেন্টি পলিসি' : 'Manufacturer Warranty Coverage'}</span>
             </h3>
             <p className="leading-relaxed">
@@ -85,7 +85,7 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
           {/* Delivery & Logistics */}
           <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
             <h3 className="text-sm font-bold text-[#10263D] flex items-center gap-2 mb-2">
-              <Truck size={18} className="text-[#145CFF]" />
+              <Truck size={18} className="text-[#EE4D2D]" />
               <span>{isBn ? 'ডেলিভারি চার্জ ও সময়সীমা' : 'Delivery Charges & Standards'}</span>
             </h3>
             <ul className="list-disc list-inside space-y-1.5 leading-relaxed">
@@ -108,7 +108,7 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
           {/* Return Guidelines */}
           <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0]">
             <h3 className="text-sm font-bold text-[#10263D] flex items-center gap-2 mb-2">
-              <RotateCcw size={18} className="text-[#145CFF]" />
+              <RotateCcw size={18} className="text-[#EE4D2D]" />
               <span>{isBn ? 'রিটার্ন ও এক্সচেঞ্জ নির্দেশিকা' : 'Return Guidelines'}</span>
             </h3>
             <p className="leading-relaxed">
@@ -124,11 +124,11 @@ export default function SupportModal({ isOpen, onClose, t = {}, lang = 'en' }) {
               <span className="font-bold text-[#10263D] block">
                 {isBn ? 'সরাসরি কাস্টমার সহায়তা:' : 'Customer Service Inquiries:'}
               </span>
-              <span className="text-[#145CFF] font-medium">support@store.local • Dhaka, Bangladesh</span>
+              <span className="text-[#EE4D2D] font-medium">support@store.local • Dhaka, Bangladesh</span>
             </div>
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs shadow-xs"
+              className="px-6 py-2.5 rounded-full bg-[#EE4D2D] hover:bg-[#D73211] text-white font-semibold text-xs shadow-xs"
             >
               {isBn ? 'বন্ধ করুন' : 'Close'}
             </button>

@@ -284,6 +284,12 @@ function initSchema(db) {
       identifier TEXT NOT NULL,
       attempt_time INTEGER NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS store_settings (
+      key TEXT PRIMARY KEY,
+      value_json TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
   `);
 
   // Ensure migrations for existing idempotency_keys tables
@@ -1808,4 +1814,107 @@ export function getDb() {
 
 export function saveDb(data) {
   // Compatibility no-op or sync for tests
+}
+
+export function getAllCategories() {
+  const db = getDatabase();
+  return db.prepare('SELECT id, name, name_bn as nameBn, description, badge, icon, created_at as createdAt FROM categories ORDER BY name ASC').all();
+}
+
+export function createCategory({ id, name, nameBn = null, description = '', badge = null, icon = null }) {
+  const db = getDatabase();
+  const slug = (id || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
+  const now = new Date().toISOString();
+  db.prepare(`
+    INSERT INTO categories (id, name, name_bn, description, badge, icon, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(slug, name, nameBn, description, badge, icon, now);
+  return { id: slug, name, nameBn, description, badge, icon, createdAt: now };
+}
+
+export function updateCategory(id, { name, nameBn, description, badge, icon }) {
+  const db = getDatabase();
+  const existing = db.prepare('SELECT * FROM categories WHERE id = ?').get(id);
+  if (!existing) return null;
+  db.prepare(`
+    UPDATE categories SET
+      name = COALESCE(?, name),
+      name_bn = COALESCE(?, name_bn),
+      description = COALESCE(?, description),
+      badge = COALESCE(?, badge),
+      icon = COALESCE(?, icon)
+    WHERE id = ?
+  `).run(
+    name !== undefined ? name : null,
+    nameBn !== undefined ? nameBn : null,
+    description !== undefined ? description : null,
+    badge !== undefined ? badge : null,
+    icon !== undefined ? icon : null,
+    id
+  );
+  return db.prepare('SELECT id, name, name_bn as nameBn, description, badge, icon, created_at as createdAt FROM categories WHERE id = ?').get(id);
+}
+
+export function deleteCategory(id) {
+  const db = getDatabase();
+  return db.prepare('DELETE FROM categories WHERE id = ?').run(id);
+}
+
+export function getAllBrands() {
+  const db = getDatabase();
+  const rows = db.prepare('SELECT id, name, models_json, created_at as createdAt FROM brands ORDER BY name ASC').all();
+  return rows.map(r => ({
+    id: r.id,
+    name: r.name,
+    models: JSON.parse(r.models_json || '[]'),
+    createdAt: r.createdAt
+  }));
+}
+
+export function getAllUsersAdmin() {
+  const db = getDatabase();
+  return db.prepare(`
+    SELECT u.id, u.email, u.phone, u.name, u.role, u.created_at as createdAt,
+           COUNT(o.id) as ordersCount,
+           COALESCE(SUM(o.total), 0) as totalSpent
+    FROM users u
+    LEFT JOIN orders o ON u.id = o.user_id
+    GROUP BY u.id
+    ORDER BY u.created_at DESC
+  `).all();
+}
+
+export function getStoreSettings() {
+  const db = getDatabase();
+  const row = db.prepare('SELECT value_json FROM store_settings WHERE key = ?').get('delivery_and_store');
+  if (row) {
+    try {
+      return JSON.parse(row.value_json);
+    } catch (e) {}
+  }
+  return {
+    insideDhakaFee: 60,
+    outsideDhakaFee: 120,
+    freeShippingThreshold: 2000,
+    insideDhakaEta: '1–2 Business Days',
+    outsideDhakaEta: '2–4 Business Days',
+    codAvailable: true,
+    supportPhone: '+880 1700-000000',
+    supportEmail: 'support@technest.com.bd',
+    updatedAt: new Date().toISOString()
+  };
+}
+
+export function updateStoreSettings(settings) {
+  const db = getDatabase();
+  const current = getStoreSettings();
+  const merged = { ...current, ...settings, updatedAt: new Date().toISOString() };
+  db.prepare(`
+    INSERT INTO store_settings (key, value_json, updated_at)
+    VALUES ('delivery_and_store', ?, ?)
+    ON CONFLICT(key) DO UPDATE SET
+      value_json = excluded.value_json,
+      updated_at = excluded.updated_at
+  `).run(JSON.stringify(merged), merged.updatedAt);
+  return merged;
 }

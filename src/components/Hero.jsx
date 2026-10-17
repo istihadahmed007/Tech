@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Smartphone, Pause, Play, ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Smartphone, Pause, Play, ChevronDown, Sparkles, Zap, ShieldCheck, Truck } from 'lucide-react';
 import { BRANDS_AND_MODELS } from '../data/catalog';
 
 export default function Hero({ 
@@ -11,296 +11,266 @@ export default function Hero({
   lang = 'en',
   selectedCategory = null
 }) {
-  // Available slides corresponding directly to flagship collections
   const SLIDES = [
     {
       id: 'audio',
       productType: 'audio',
-      tabLabel: 'Audio',
-      eyebrow: 'AUTHENTIC SOUND COLLECTION',
-      title: 'Better sound.\nBeautifully simple.',
-      titleBn: 'উন্নত সাউন্ড।\nঅনবদ্য সরলতা।',
-      subtitle: 'Discover wireless earbuds, studio gaming headsets & sports neckbands with active noise cancellation.',
-      subtitleBn: 'ওয়্যারলেস এয়ারবাডস, গেমিং হেডসেট ও স্পোর্টস নেকব্যান্ডের সেরা কালেকশন।',
-      hasInlineForm: false,
-      ctaText: 'Shop Audio Collection',
-      ctaTextBn: 'অডিও কালেকশন কিনুন',
-      onCtaClick: () => onSelectCategory && onSelectCategory('audio'),
+      tabLabel: lang === 'bn' ? 'অডিও ও ইয়ারবাডস' : 'Audio Gear',
+      eyebrow: lang === 'bn' ? 'অথেনটিক সাউন্ড কালেকশন' : 'AUTHENTIC SOUND COLLECTION',
+      title: lang === 'bn' ? 'উন্নত সাউন্ড ও স্পষ্ট কলিং\nপ্রো-টিডব্লিউএস ইয়ারবাডস' : 'Premium Studio Sound.\nPro TWS & ANC Earbuds.',
+      subtitle: lang === 'bn' 
+        ? 'হাইড্রোফোবিক বিল্ড, অ্যাক্টিভ নয়েজ ক্যান্সেলেশন ও ক্রিস্টাল ক্লিয়ার কলিং মাইক্রোফোন।'
+        : 'Wireless earbuds, gaming headsets & sports neckbands with real acoustic performance.',
+      ctaText: lang === 'bn' ? 'অডিও কালেকশন কিনুন' : 'Shop Audio Collection',
+      category: 'earbuds',
       image: '/assets/hero-audio-headphones.jpg',
-      imageAlt: 'Premium wireless audio headphones and crystal TWS earbuds'
-    },
-    {
-      id: 'wearables',
-      productType: 'wearables',
-      tabLabel: 'Smartwatches',
-      eyebrow: 'ULTRA WEARABLES',
-      title: 'Smart style.\nAll-day connected.',
-      titleBn: 'স্মার্ট স্টাইল।\nসারাদিনের কানেক্টিভিটি।',
-      subtitle: 'Cellular SIM smartwatches, multi-strap combo editions & aerospace titanium designs.',
-      subtitleBn: 'সিম সাপোর্টেড স্মার্টওয়াচ, ৮+১ স্ট্র্যাপ কম্বো ও হেলথ ট্র্যাকিং।',
-      hasInlineForm: false,
-      ctaText: 'Shop Smartwatches',
-      ctaTextBn: 'স্মার্টওয়াচ কালেকশন কিনুন',
-      onCtaClick: () => onSelectCategory && onSelectCategory('wearables'),
-      image: '/assets/cat-wearables.jpg',
-      imageAlt: 'Ultra smartwatch with interchangeable straps'
+      badge: lang === 'bn' ? 'সেরা অডিও' : 'Top Audio',
+      accentColor: '#EE4D2D'
     },
     {
       id: 'charging',
       productType: 'charging',
-      tabLabel: 'Charging',
-      eyebrow: 'POWER & CABLES',
-      title: 'Fast charging.\nEveryday ready.',
-      titleBn: 'দ্রুত চার্জিং।\nপ্রতিদিনের প্রস্তুতি।',
-      subtitle: 'High-speed braided multi-tip cables, OTG adapters & cryogenic 65W GaN turbo chargers.',
-      subtitleBn: 'ব্রেইডেড ৪-ইন-১ ক্যাবল, ওটিজি অ্যাডাপ্টার ও ফাস্ট চার্জার।',
-      hasInlineForm: false,
-      ctaText: 'Shop Charging Gear',
-      ctaTextBn: 'চার্জিং সামগ্রী কিনুন',
-      onCtaClick: () => onSelectCategory && onSelectCategory('charging'),
+      tabLabel: lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Fast Charging',
+      eyebrow: lang === 'bn' ? 'টার্বো পাওয়ার সল্যুশন' : 'TURBO POWER & CABLES',
+      title: lang === 'bn' ? 'ফাস্ট চার্জিং ক্যাবল\n১২০W ম্যাক্স আউটপুট' : 'Fast Charging Cables.\n120W Max High-Speed.',
+      subtitle: lang === 'bn'
+        ? 'ব্রেইডেড ৪-ইন-১ ক্যাবল, গোল্ড-প্লেটেড কানেক্টর ও ওটিজি অ্যাডাপ্টার।'
+        : 'High-density braided cables, OTG adapters & fast wall chargers for all devices.',
+      ctaText: lang === 'bn' ? 'চার্জিং সামগ্রী কিনুন' : 'Shop Charging Gear',
+      category: 'chargers',
       image: '/assets/cat-charging.jpg',
-      imageAlt: 'Fast charging adapters and multi-tip braided cables'
+      badge: lang === 'bn' ? 'সুপার ফাস্ট' : 'Super Fast',
+      accentColor: '#EE4D2D'
     },
     {
-      id: 'compatibility',
-      productType: 'audio',
-      tabLabel: 'Device Fit',
-      eyebrow: 'MADE FOR YOUR PHONE',
-      title: 'Your phone.\nYour perfect fit.',
-      titleBn: 'আপনার ফোন।\nআপনার পারফেক্ট ফিট।',
-      subtitle: 'Find verified compatible cables, chargers, and audio gear for your phone model.',
-      subtitleBn: 'আপনার ফোন মডেলের জন্য সম্পূর্ণ মানানসই ক্যাবল, চার্জার ও অডিও খুঁজুন।',
-      hasInlineForm: true,
-      image: '/assets/hero-phone-cases-fit.jpg',
-      imageAlt: 'Curated accessories matched to smartphone models'
+      id: 'wearables',
+      productType: 'wearables',
+      tabLabel: lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches',
+      eyebrow: lang === 'bn' ? 'স্মার্ট ওয়েয়ারবেলস' : 'ULTRA SMARTWEAR',
+      title: lang === 'bn' ? 'সিম সাপোর্টেড স্মার্টওয়াচ\n৮+১ স্ট্র্যাপ কম্বো সেট' : 'Cellular Smartwatches.\n8+1 Strap Combo Sets.',
+      subtitle: lang === 'bn'
+        ? 'এইচডি ডিসপ্লে, ওয়্যারলেস চার্জিং, ব্লুটুথ কলিং ও ফিটনেস ট্র্যাকিং।'
+        : 'Ultra display, interchangeable strap sets, cellular SIM calling & health tracking.',
+      ctaText: lang === 'bn' ? 'স্মার্টওয়াচ কিনুন' : 'Shop Smartwatches',
+      category: 'wearables',
+      image: '/assets/cat-wearables.jpg',
+      badge: lang === 'bn' ? 'ট্রেন্ডিং' : 'Trending',
+      accentColor: '#EE4D2D'
     }
   ];
 
-  // Active slide index
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Inline form state
-  const [activeBrand, setActiveBrand] = useState('Apple');
-  const [activeModel, setActiveModel] = useState('iPhone 15 Pro');
-
   const currentSlide = SLIDES[activeSlideIndex];
-  const brandModels = BRANDS_AND_MODELS.find(b => b.brand === activeBrand)?.models || [];
 
-  // Handle inline form submit
-  const handleInlineFormSubmit = (e) => {
-    e.preventDefault();
-    if (activeModel && onSelectPhone) {
-      onSelectPhone(activeModel);
-    }
-    if (onShopClick) {
-      onShopClick();
-    }
-  };
-
-  // Auto-rotation timer (every 8.5 seconds when not paused)
+  // Auto-rotation timer (every 6 seconds when not paused)
   useEffect(() => {
     if (isPaused) return;
-
     const timer = setInterval(() => {
       setActiveSlideIndex(prev => (prev + 1) % SLIDES.length);
-    }, 8500);
-
+    }, 6000);
     return () => clearInterval(timer);
   }, [isPaused, SLIDES.length]);
 
+  const handlePrev = (e) => {
+    e.stopPropagation();
+    setActiveSlideIndex(prev => (prev === 0 ? SLIDES.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e) => {
+    e.stopPropagation();
+    setActiveSlideIndex(prev => (prev + 1) % SLIDES.length);
+  };
+
   return (
-    <section 
-      className="relative w-full mb-8 sm:mb-12 overflow-hidden rounded-3xl border border-[#DCE7F0] shadow-sm"
-      style={{
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(234, 245, 255, 0.90) 50%, rgba(255, 255, 255, 0.95) 100%)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)'
-      }}
-    >
-      {/* Background Specular Ambient Glow */}
-      <div 
-        className="absolute -top-32 -right-32 w-96 h-96 rounded-full pointer-events-none opacity-40 blur-3xl"
-        style={{ background: 'radial-gradient(circle, #C8E3FC 0%, rgba(200, 227, 252, 0) 70%)' }}
-        aria-hidden="true"
-      />
+    <section className="w-full my-4 sm:my-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-stretch">
+        
+        {/* Left Column: Shopee-Style Hero Carousel Slider (8 cols on lg) */}
+        <div 
+          className="lg:col-span-8 rounded-xl sm:rounded-2xl bg-white border border-[#ECECEC] shadow-xs relative overflow-hidden flex flex-col justify-between group min-h-[360px] sm:min-h-[420px]"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {/* Slide Content Grid */}
+          <div className="p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6 flex-1">
+            {/* Slide Typography */}
+            <div className="flex-1 max-w-md z-10 text-left">
+              <div className="flex items-center gap-2 mb-2.5">
+                <span className="text-[11px] font-extrabold tracking-wider text-[#EE4D2D] bg-[#FFF5F1] px-2.5 py-0.5 rounded border border-[#FFDCD4]">
+                  {currentSlide.badge}
+                </span>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  {currentSlide.eyebrow}
+                </span>
+              </div>
 
-      <div className="relative z-10 px-4 sm:px-8 lg:px-16 pt-6 sm:pt-12 pb-10 sm:pb-14">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
-          
-          {/* Left Column: Typography, Eyebrow & Controls */}
-          <div className="lg:col-span-5 flex flex-col items-start z-10">
-            {/* Eyebrow Pill / Label */}
-            <div className="flex items-center gap-2 mb-3.5">
-              <span className="text-[11px] font-bold tracking-[0.14em] text-[#52677B] uppercase">
-                {currentSlide.eyebrow}
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-100/80 text-[#0284C7] text-[11px] font-bold tracking-wider uppercase shadow-2xs">
-                <img src="/assets/tech-nest-icon.png" alt="" className="w-4 h-4 object-contain" />
-                Tech Nest
-              </span>
-            </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#10263D] tracking-tight leading-tight mb-2.5 whitespace-pre-line">
+                {currentSlide.title}
+              </h1>
 
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-extrabold text-[#10263D] tracking-tight leading-[1.08] mb-3.5 whitespace-pre-line">
-              {lang === 'bn' && currentSlide.titleBn ? currentSlide.titleBn : currentSlide.title}
-            </h1>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
+                {currentSlide.subtitle}
+              </p>
 
-            {/* Subtitle */}
-            <p className="text-sm sm:text-base lg:text-[17px] text-[#52677B] leading-relaxed mb-6 max-w-md">
-              {lang === 'bn' && currentSlide.subtitleBn ? currentSlide.subtitleBn : currentSlide.subtitle}
-            </p>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onSelectCategory) onSelectCategory(currentSlide.category);
+                    if (onShopClick) onShopClick();
+                  }}
+                  className="px-6 py-2.5 sm:py-3 rounded-md bg-[#EE4D2D] hover:bg-[#D73211] active:scale-98 text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+                >
+                  <span>{currentSlide.ctaText}</span>
+                  <ChevronRight size={16} className="stroke-[2.5]" />
+                </button>
 
-            {/* Action Area: Either Inline Phone Selector OR Primary Action Buttons */}
-            {currentSlide.hasInlineForm ? (
-              <form onSubmit={handleInlineFormSubmit} className="w-full max-w-sm space-y-3.5">
-                <div>
-                  <label htmlFor="hero-phone-brand" className="block text-xs font-semibold text-[#10263D] mb-1.5">
-                    Phone brand
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="hero-phone-brand"
-                      value={activeBrand}
-                      onChange={(e) => {
-                        setActiveBrand(e.target.value);
-                        const m = BRANDS_AND_MODELS.find(b => b.brand === e.target.value)?.models || [];
-                        if (m.length > 0) setActiveModel(m[0]);
-                      }}
-                      className="w-full bg-white text-xs sm:text-sm font-medium text-[#10263D] rounded-xl border border-[#DCE7F0] px-3.5 py-2.5 outline-none focus:border-[#145CFF] shadow-2xs appearance-none cursor-pointer pr-8"
-                    >
-                      {BRANDS_AND_MODELS.map(b => (
-                        <option key={b.brand} value={b.brand}>{b.brand}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="hero-phone-model" className="block text-xs font-semibold text-[#10263D] mb-1.5">
-                    Phone model
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="hero-phone-model"
-                      value={activeModel}
-                      onChange={(e) => setActiveModel(e.target.value)}
-                      className="w-full bg-white text-xs sm:text-sm font-medium text-[#10263D] rounded-xl border border-[#DCE7F0] px-3.5 py-2.5 outline-none focus:border-[#145CFF] shadow-2xs appearance-none cursor-pointer pr-8"
-                    >
-                      {brandModels.map(m => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                  </div>
-                </div>
-
-                <div className="pt-1 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                  <button
-                    type="submit"
-                    className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.98] text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all"
-                  >
-                    <span>{lang === 'bn' ? 'আমার অ্যাক্সেসরিজ খুঁজুন' : 'Find my accessories'}</span>
-                    <ChevronRight size={16} className="stroke-[2.5]" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={onShopClick}
-                    className="text-xs sm:text-sm font-semibold text-[#145CFF] hover:underline flex items-center gap-1 pl-1 pt-1 sm:pt-0"
-                  >
-                    <span>{lang === 'bn' ? 'সব অ্যাক্সেসরিজ ব্রাউজ করুন' : 'Browse all accessories'}</span>
-                    <ChevronRight size={14} />
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="flex flex-wrap items-center gap-3.5">
-                {/* Working Primary Shop Now Button */}
                 <button
                   type="button"
                   onClick={onShopClick}
-                  className="px-6 py-3 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.98] text-white font-semibold text-sm sm:text-base flex items-center gap-2 shadow-sm transition-all"
+                  className="px-4 py-2.5 sm:py-3 rounded-md bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm border border-slate-200 transition-colors cursor-pointer"
                 >
-                  <span>{lang === 'bn' ? 'শপ নাও • ক্যাটালগ দেখুন' : 'Shop Now'}</span>
-                  <ChevronRight size={17} className="stroke-[2.5]" />
-                </button>
-
-                {/* Secondary Collection / Category Filter Button */}
-                <button
-                  type="button"
-                  onClick={currentSlide.onCtaClick}
-                  className="px-5 py-3 rounded-full bg-white/90 hover:bg-white text-[#10263D] font-semibold text-sm sm:text-base flex items-center gap-2 border border-[#DCE7F0] shadow-2xs transition-colors"
-                >
-                  <span>{lang === 'bn' && currentSlide.ctaTextBn ? currentSlide.ctaTextBn : currentSlide.ctaText}</span>
-                  <ChevronRight size={15} className="text-[#145CFF]" />
+                  <span>{lang === 'bn' ? 'সব পণ্য' : 'Browse All'}</span>
                 </button>
               </div>
-            )}
+            </div>
+
+            {/* Slide Image Showcase */}
+            <div className="w-full sm:w-[280px] md:w-[320px] aspect-square flex items-center justify-center p-3 relative shrink-0">
+              <img
+                key={currentSlide.image}
+                src={currentSlide.image}
+                alt={currentSlide.title}
+                className="w-full h-full object-contain drop-shadow-md transition-transform duration-500 hover:scale-105"
+                loading="eager"
+              />
+            </div>
           </div>
 
-          {/* Right Column: Authentic Studio Photography Presentation */}
-          <div className="lg:col-span-7 flex flex-col items-center justify-center relative">
-            <div className="w-full max-w-[620px]">
-              <div className="relative w-full aspect-[4/3] flex items-center justify-center p-4 sm:p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-[#DCE7F0]/80 shadow-sm transition-all">
-                <img
-                  key={currentSlide.image}
-                  src={currentSlide.image}
-                  alt={currentSlide.imageAlt}
-                  className={`w-full h-full object-contain drop-shadow-md transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-90'}`}
-                  loading="eager"
-                  onLoad={() => setImageLoaded(true)}
-                />
-              </div>
+          {/* Navigation Controls: Arrows, Dots & Category Tabs */}
+          <div className="px-4 sm:px-6 py-2.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-xs">
+            {/* Category Slide Indicators */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {SLIDES.map((slide, idx) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  onClick={() => setActiveSlideIndex(idx)}
+                  className={`px-2.5 py-1 rounded text-xs font-semibold transition-all cursor-pointer ${
+                    idx === activeSlideIndex
+                      ? 'bg-[#EE4D2D] text-white shadow-xs'
+                      : 'text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {slide.tabLabel}
+                </button>
+              ))}
+            </div>
+
+            {/* Prev / Next & Pause Controls */}
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handlePrev}
+                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-700 cursor-pointer shadow-2xs"
+                aria-label="Previous Slide"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-700 cursor-pointer shadow-2xs"
+                aria-label="Next Slide"
+              >
+                <ChevronRight size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPaused(p => !p)}
+                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer shadow-2xs ml-1"
+                title={isPaused ? "Play" : "Pause"}
+              >
+                {isPaused ? <Play size={12} /> : <Pause size={12} />}
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar: Interactive Category Tabs + Pause/Play Button */}
-        <div className="mt-8 pt-4 border-t border-[#DCE7F0]/60 flex flex-wrap items-center justify-between gap-5 text-xs sm:text-sm">
-          {/* Subtle Live Status Indicator */}
-          <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[#52677B]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0284C7]" />
-            <span>Tech Nest Premium Electronics Bangladesh</span>
+        {/* Right Column: Shopee-Style Dual Stacked Promo Highlight Banners (4 cols on lg) */}
+        <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3.5 sm:gap-4">
+          
+          {/* Mini Banner 1: Fast Chargers & Cables */}
+          <div 
+            onClick={() => {
+              if (onSelectCategory) onSelectCategory('chargers');
+              if (onShopClick) onShopClick();
+            }}
+            className="flex-1 rounded-xl sm:rounded-2xl bg-white border border-[#ECECEC] p-4 sm:p-5 shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center justify-between gap-4 group"
+          >
+            <div className="flex-1">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#EE4D2D] uppercase tracking-wider mb-1">
+                <Zap size={12} />
+                <span>{lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charge Hub'}</span>
+              </div>
+              <h3 className="text-sm sm:text-base font-extrabold text-[#10263D] leading-tight group-hover:text-[#EE4D2D] transition-colors">
+                {lang === 'bn' ? '১০০% অরিজিনাল ক্যাবল ও অ্যাডাপ্টার' : 'GaN Chargers & 120W Cables'}
+              </h3>
+              <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
+                {lang === 'bn' ? 'শুরু মাত্র ৳১৫০ থেকে' : 'Starting from ৳150 with warranty'}
+              </p>
+              <span className="inline-flex items-center gap-1 text-xs font-bold text-[#EE4D2D] mt-2 group-hover:underline">
+                <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
+                <ChevronRight size={13} />
+              </span>
+            </div>
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-slate-50 p-2 border border-slate-100 shrink-0 flex items-center justify-center">
+              <img 
+                src="/assets/cat-charging.jpg" 
+                alt="Chargers & Cables" 
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform" 
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-6 ml-auto overflow-x-auto max-w-full py-1">
-            {SLIDES.map((slide, idx) => {
-              const isActive = idx === activeSlideIndex;
-              return (
-                <button
-                  key={slide.id}
-                  onClick={() => {
-                    setActiveSlideIndex(idx);
-                    setIsPaused(true);
-                  }}
-                  className={`pb-1 transition-all font-semibold relative whitespace-nowrap shrink-0 text-xs sm:text-sm ${
-                    isActive 
-                      ? 'text-[#145CFF]' 
-                      : 'text-[#52677B] hover:text-[#10263D]'
-                  }`}
-                >
-                  <span>{slide.tabLabel}</span>
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#145CFF] rounded-full" />
-                  )}
-                </button>
-              );
-            })}
-
-            {/* Pause / Play Control */}
-            <button
-              onClick={() => setIsPaused(prev => !prev)}
-              className="p-1.5 rounded-full text-[#52677B] hover:text-[#10263D] hover:bg-white/80 transition-colors"
-              title={isPaused ? "Play auto-rotation" : "Pause auto-rotation"}
-              aria-label={isPaused ? "Play slide transition" : "Pause slide transition"}
-            >
-              {isPaused ? <Play size={15} /> : <Pause size={15} />}
-            </button>
+          {/* Mini Banner 2: Ultra Smartwatches */}
+          <div 
+            onClick={() => {
+              if (onSelectCategory) onSelectCategory('wearables');
+              if (onShopClick) onShopClick();
+            }}
+            className="flex-1 rounded-xl sm:rounded-2xl bg-white border border-[#ECECEC] p-4 sm:p-5 shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center justify-between gap-4 group"
+          >
+            <div className="flex-1">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#EE4D2D] uppercase tracking-wider mb-1">
+                <Sparkles size={12} />
+                <span>{lang === 'bn' ? 'স্মার্ট গ্যাজেট' : 'Ultra Gear'}</span>
+              </div>
+              <h3 className="text-sm sm:text-base font-extrabold text-[#10263D] leading-tight group-hover:text-[#EE4D2D] transition-colors">
+                {lang === 'bn' ? 'সিম সাপোর্টেড স্মার্টওয়াচ' : 'SIM Smartwatches & Combos'}
+              </h3>
+              <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
+                {lang === 'bn' ? 'মাল্টি-স্ট্র্যাপ সংস্করণ' : '8+1 Interchangeable Straps'}
+              </p>
+              <span className="inline-flex items-center gap-1 text-xs font-bold text-[#EE4D2D] mt-2 group-hover:underline">
+                <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
+                <ChevronRight size={13} />
+              </span>
+            </div>
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-slate-50 p-2 border border-slate-100 shrink-0 flex items-center justify-center">
+              <img 
+                src="/assets/cat-wearables.jpg" 
+                alt="Smartwatches" 
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform" 
+              />
+            </div>
           </div>
+
         </div>
+
       </div>
     </section>
   );

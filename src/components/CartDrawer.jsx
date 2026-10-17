@@ -121,7 +121,7 @@ export default function CartDrawer({
           {/* Header */}
           <div className="px-5 sm:px-6 py-4 sm:py-5 border-b border-[#DCE7F0] flex items-center justify-between bg-white">
             <div className="flex items-center gap-2">
-              <ShoppingBag size={20} className="text-[#145CFF]" />
+              <ShoppingBag size={20} className="text-[#EE4D2D]" />
               <h2 id="cart-drawer-title" className="text-base sm:text-lg font-bold text-[#10263D]">
                 {t?.cartTitle || 'Your Shopping Bag'} ({totalItemCount})
               </h2>
@@ -129,7 +129,7 @@ export default function CartDrawer({
             <button
               ref={closeButtonRef}
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] transition-colors focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+              className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] transition-colors focus-visible:ring-2 focus-visible:ring-[#EE4D2D]"
               aria-label="Close shopping bag"
             >
               <X size={20} />
@@ -162,7 +162,7 @@ export default function CartDrawer({
                   {(t?.freeShippingAway || 'Add ৳{amount} more to get Free Delivery!').replace('{amount}', remainingForFreeShipping.toLocaleString())}
                 </span>
               )}
-              <span className="text-[#145CFF] font-bold">{progressPercent}%</span>
+              <span className="text-[#EE4D2D] font-bold">{progressPercent}%</span>
             </div>
             <div 
               className="w-full h-2 rounded-full bg-[#DCE7F0] overflow-hidden" 
@@ -172,7 +172,7 @@ export default function CartDrawer({
               aria-valuemax="100"
             >
               <div 
-                className="h-full bg-[#145CFF] transition-all duration-500 rounded-full"
+                className="h-full bg-[#EE4D2D] transition-all duration-500 rounded-full"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -251,7 +251,7 @@ export default function CartDrawer({
               ))
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center py-12">
-                <div className="w-16 h-16 rounded-full bg-[#EAF4FC] text-[#145CFF] flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-[#EAF4FC] text-[#EE4D2D] flex items-center justify-center mb-4">
                   <ShoppingBag size={28} />
                 </div>
                 <h3 className="font-bold text-base text-[#10263D] mb-1">
@@ -262,7 +262,7 @@ export default function CartDrawer({
                 </p>
                 <button
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-full bg-[#145CFF] text-white text-xs font-semibold hover:bg-[#0D4BD9] transition-colors shadow-xs"
+                  className="px-6 py-2.5 rounded-full bg-[#EE4D2D] text-white text-xs font-semibold hover:bg-[#D73211] transition-colors shadow-xs"
                 >
                   {lang === 'bn' ? 'কেনাকাটা শুরু করুন' : 'Start Shopping'}
                 </button>
@@ -286,7 +286,7 @@ export default function CartDrawer({
 
               <div className="pt-2 border-t border-slate-100 flex justify-between items-baseline">
                 <span className="text-sm font-bold text-[#10263D]">{t?.total || 'Total'}</span>
-                <span className="text-xl font-extrabold text-[#145CFF]">
+                <span className="text-xl font-extrabold text-[#EE4D2D]">
                   {currencySymbol}{subtotal.toLocaleString()}
                 </span>
               </div>
@@ -296,7 +296,7 @@ export default function CartDrawer({
                   onClose();
                   onOpenCheckout();
                 }}
-                className="w-full py-3.5 px-6 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full py-3.5 px-6 rounded-md bg-[#EE4D2D] hover:bg-[#D73211] active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-orange-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 <span>{t?.checkoutBtn || 'Proceed to Checkout'}</span>
                 <ArrowRight size={17} />

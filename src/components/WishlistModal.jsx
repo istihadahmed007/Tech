@@ -68,7 +68,7 @@ export default function WishlistModal({
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#EE4D2D]"
             aria-label="Close wishlist dialog"
           >
             <X size={20} />
@@ -87,14 +87,14 @@ export default function WishlistModal({
                     className={`flex items-center gap-3 ${onSelectProduct ? 'cursor-pointer group' : ''}`}
                     onClick={() => onSelectProduct && onSelectProduct(product)}
                   >
-                    <div className="w-14 h-14 rounded-xl bg-[#EAF4FC] p-2 shrink-0 border border-[#DCE7F0] flex items-center justify-center group-hover:border-[#145CFF] transition-colors">
+                    <div className="w-14 h-14 rounded-xl bg-[#EAF4FC] p-2 shrink-0 border border-[#DCE7F0] flex items-center justify-center group-hover:border-[#EE4D2D] transition-colors">
                       <img src={product.image} alt={displayTitle} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-xs sm:text-sm text-[#10263D] group-hover:text-[#145CFF] transition-colors line-clamp-1">
+                      <h3 className="font-bold text-xs sm:text-sm text-[#10263D] group-hover:text-[#EE4D2D] transition-colors line-clamp-1">
                         {displayTitle}
                       </h3>
-                      <span className="font-bold text-xs text-[#145CFF] block mt-0.5">
+                      <span className="font-bold text-xs text-[#EE4D2D] block mt-0.5">
                         {currencySymbol}{formattedPrice}
                       </span>
                     </div>
@@ -106,7 +106,7 @@ export default function WishlistModal({
                         onAddToCart(product);
                         onRemoveFromWishlist(product.id);
                       }}
-                      className="p-2 sm:px-3 sm:py-1.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white text-xs font-semibold flex items-center gap-1 shadow-xs focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+                      className="p-2 sm:px-3 sm:py-1.5 rounded-full bg-[#EE4D2D] hover:bg-[#D73211] text-white text-xs font-semibold flex items-center gap-1 shadow-xs focus-visible:ring-2 focus-visible:ring-[#EE4D2D]"
                       title="Move to bag"
                       aria-label={`Move ${displayTitle} to bag`}
                     >
@@ -141,7 +141,7 @@ export default function WishlistModal({
             </p>
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs shadow-xs"
+              className="px-6 py-2.5 rounded-full bg-[#EE4D2D] hover:bg-[#D73211] text-white font-semibold text-xs shadow-xs"
             >
               {lang === 'bn' ? 'এক্সেসরিজ কালেকশন দেখুন' : 'Discover Accessories'}
             </button>

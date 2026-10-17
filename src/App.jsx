@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import TopUtilityBar from './components/TopUtilityBar';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import QuickShortcuts from './components/QuickShortcuts';
+import FlashSale from './components/FlashSale';
+import FeaturedCategories from './components/FeaturedCategories';
+import DailyDiscover from './components/DailyDiscover';
+import BrandSection from './components/BrandSection';
+import ReviewsSection from './components/ReviewsSection';
+import NewsletterSection from './components/NewsletterSection';
 import CompatibilityFinder from './components/CompatibilityFinder';
 import CategoryNav from './components/CategoryNav';
 import ProductGrid from './components/ProductGrid';
@@ -672,7 +680,20 @@ export default function App() {
         </div>
       )}
 
-      {/* Frosted Glass Header */}
+      {/* Shopee-Inspired Top Utility Bar */}
+      <TopUtilityBar
+        onOpenTracking={(id) => {
+          setTrackingOrderId(id || '');
+          setTrackingToken('');
+          setActiveModal('tracking');
+        }}
+        onOpenSupport={() => setActiveModal('support')}
+        lang={lang}
+        setLang={setLang}
+        t={t}
+      />
+
+      {/* Shopee-Style Header */}
       <Header
         storeName={import.meta.env.VITE_STORE_NAME || "Tech Nest"}
         t={t}
@@ -714,10 +735,13 @@ export default function App() {
             scrollToSection('products-section');
           }
         }}
+        onSelectCategory={navigateToCategory}
+        onSelectProduct={(p) => navigateToProduct(p, true)}
+        products={products}
       />
 
       {/* Main Content Area */}
-      <main className={selectedProduct || isCartView || isCheckoutView ? "flex-grow w-full" : "container flex-grow pt-4"}>
+      <main className={selectedProduct || isCartView || isCheckoutView ? "flex-grow w-full" : "container flex-grow pt-2 sm:pt-4"}>
         {selectedProduct ? (
           <ProductDetailPage
             product={selectedProduct}
@@ -763,7 +787,7 @@ export default function App() {
           />
         ) : (
           <>
-            {/* Hero Section with Interactive Story Tabs (Audio, Cases, Charging, Power) */}
+            {/* 1. Hero Carousel + Side Highlight Banners */}
             <Hero
               onShopClick={() => scrollToSection('products-section')}
               onFindPhoneClick={() => scrollToSection('compatibility-finder')}
@@ -780,25 +804,31 @@ export default function App() {
               selectedCategory={selectedCategory}
             />
 
-            {/* Compatibility Finder directly below hero */}
-            <CompatibilityFinder
-              selectedPhone={selectedPhone}
-              onSelectPhone={(phone) => {
-                setSelectedPhone(phone);
-                scrollToSection('products-section');
-              }}
-              onClearFilter={() => setSelectedPhone(null)}
-              t={t}
+            {/* 2. Shopee-Style Quick Shopping Shortcuts */}
+            <QuickShortcuts
+              onSelectCategory={navigateToCategory}
+              onNavigateSection={scrollToSection}
+              onSetSortBy={() => scrollToSection('products-section')}
               lang={lang}
             />
 
-            {/* Category Collections Strip: The Everyday Edit */}
-            <CategoryNav
-              selectedCategory={selectedCategory}
-              onSelectCategory={(catId) => {
-                setSelectedCategory(catId);
+            {/* 3. Flash Sale Section With Countdown Clock */}
+            <FlashSale
+              products={products}
+              onOpenDetail={(p) => navigateToProduct(p, true)}
+              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+              onViewAllFlashDeals={() => {
+                setSelectedCategory(null);
                 scrollToSection('products-section');
               }}
+              currencySymbol="৳"
+              lang={lang}
+            />
+
+            {/* 4. Featured Mobile Accessory Categories */}
+            <FeaturedCategories
+              selectedCategory={selectedCategory}
+              onSelectCategory={navigateToCategory}
               onShopAll={() => {
                 setSelectedCategory(null);
                 scrollToSection('products-section');
@@ -806,14 +836,16 @@ export default function App() {
               lang={lang}
             />
 
-            {/* Smart Free Delivery Combos (৳2,000+ Threshold Deals) */}
-            <BundleDeals
-              onAddBundle={handleAddBundle}
-              lang={lang}
-              t={t}
-            />
+            {/* 5. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
+            <div id="bundles-section">
+              <BundleDeals
+                onAddBundle={handleAddBundle}
+                lang={lang}
+                t={t}
+              />
+            </div>
 
-            {/* Product Collection Grid with Filtering & Search */}
+            {/* 6. Product Collection Grid with Category Filtering & Search */}
             <ProductGrid
               products={products}
               currencySymbol="৳"
@@ -831,48 +863,41 @@ export default function App() {
               lang={lang}
             />
 
-            {/* Value Proposition Highlights: Delivery, Warranty & Support */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 my-8 sm:my-10">
-              <div className="p-3.5 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs hover:shadow-xs transition-shadow flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
-                  <Truck size={20} />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D] truncate">{t.prop1Title}</h4>
-                  <p className="text-[11px] text-[#52677B] line-clamp-1 mt-0.5">{t.prop1Sub}</p>
-                </div>
-              </div>
+            {/* 7. Shopee Daily Discover Tabbed Product Recommendations */}
+            <DailyDiscover
+              products={products}
+              currencySymbol="৳"
+              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+              onOpenDetail={(p) => navigateToProduct(p, true)}
+              wishlistIds={wishlistIds}
+              onToggleWishlist={handleToggleWishlist}
+              selectedPhone={selectedPhone}
+              t={t}
+              lang={lang}
+            />
 
-              <div className="p-3.5 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs hover:shadow-xs transition-shadow flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                  <Award size={20} />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D] truncate">{t.prop2Title}</h4>
-                  <p className="text-[11px] text-[#52677B] line-clamp-1 mt-0.5">{t.prop2Sub}</p>
-                </div>
-              </div>
+            {/* 8. Brand & Phone Model Compatibility */}
+            <BrandSection
+              selectedPhone={selectedPhone}
+              onSelectPhone={(phone) => {
+                setSelectedPhone(phone);
+                scrollToSection('products-section');
+              }}
+              onClearPhoneFilter={() => setSelectedPhone(null)}
+              lang={lang}
+            />
 
-              <div className="p-3.5 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs hover:shadow-xs transition-shadow flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#145CFF] flex items-center justify-center shrink-0">
-                  <ShieldCheck size={20} />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D] truncate">{t.prop3Title}</h4>
-                  <p className="text-[11px] text-[#52677B] line-clamp-1 mt-0.5">{t.prop3Sub}</p>
-                </div>
-              </div>
+            {/* 9. Verified Customer Reviews & Shopping Benefits */}
+            <ReviewsSection
+              onOpenSupport={() => setActiveModal('support')}
+              lang={lang}
+              t={t}
+            />
 
-              <div className="p-3.5 sm:p-5 rounded-2xl bg-white/90 backdrop-blur-md border border-[#DCE7F0] shadow-2xs hover:shadow-xs transition-shadow flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                  <RotateCcw size={20} />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-xs sm:text-sm font-bold text-[#10263D] truncate">{t.prop4Title}</h4>
-                  <p className="text-[11px] text-[#52677B] line-clamp-1 mt-0.5">{t.prop4Sub}</p>
-                </div>
-              </div>
-            </div>
+            {/* 10. Newsletter Signup */}
+            <NewsletterSection
+              lang={lang}
+            />
           </>
         )}
       </main>

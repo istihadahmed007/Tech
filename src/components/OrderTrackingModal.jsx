@@ -136,7 +136,7 @@ export default function OrderTrackingModal({
       >
         <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#EAF4FC] flex items-center justify-center text-[#145CFF] font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-[#EAF4FC] flex items-center justify-center text-[#EE4D2D] font-bold">
               <Package size={20} />
             </div>
             <div>
@@ -151,7 +151,7 @@ export default function OrderTrackingModal({
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+            className="p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] focus-visible:ring-2 focus-visible:ring-[#EE4D2D]"
             aria-label="Close tracking dialog"
           >
             <X size={20} />
@@ -198,7 +198,7 @@ export default function OrderTrackingModal({
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition-colors"
+              className="px-6 py-2.5 rounded-full bg-[#EE4D2D] hover:bg-[#D73211] text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition-colors"
             >
               {loading ? (
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -226,7 +226,7 @@ export default function OrderTrackingModal({
                 : 'bg-blue-50/70 border-blue-200 text-blue-900'
             }`}>
               <div className="flex items-center gap-2">
-                {isAuthorized ? <ShieldCheck size={17} className="text-emerald-600 shrink-0" /> : <Lock size={17} className="text-[#145CFF] shrink-0" />}
+                {isAuthorized ? <ShieldCheck size={17} className="text-emerald-600 shrink-0" /> : <Lock size={17} className="text-[#EE4D2D] shrink-0" />}
                 <span>
                   {isAuthorized 
                     ? 'Verified Owner Access: Full delivery address and recipient details unlocked.' 
@@ -239,7 +239,7 @@ export default function OrderTrackingModal({
             <div className="p-4 rounded-2xl bg-[#EAF4FC] border border-[#DCE7F0] flex flex-wrap justify-between items-center gap-3 text-xs">
               <div>
                 <span className="text-[11px] font-bold uppercase text-[#52677B] block">
-                  Reference ID: <strong className="font-mono text-[#145CFF]">{searchedOrder.id}</strong>
+                  Reference ID: <strong className="font-mono text-[#EE4D2D]">{searchedOrder.id}</strong>
                 </span>
                 <span className="text-xs text-[#10263D]">
                   Recipient: <strong>{searchedOrder.customer?.name}</strong> ({searchedOrder.customer?.phone})
@@ -255,14 +255,14 @@ export default function OrderTrackingModal({
                   <button
                     type="button"
                     onClick={() => openPrintWindow(searchedOrder, 'invoice')}
-                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#DCE7F0] hover:bg-slate-50 text-[#145CFF] font-bold text-xs shadow-2xs transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#DCE7F0] hover:bg-slate-50 text-[#EE4D2D] font-bold text-xs shadow-2xs transition-colors"
                     title="Print or download official invoice receipt"
                   >
                     <Printer size={13} />
                     <span>Print Invoice</span>
                   </button>
                 )}
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#145CFF] text-white capitalize shadow-xs">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#EE4D2D] text-white capitalize shadow-xs">
                   Status: {searchedOrder.status}
                 </span>
               </div>
@@ -283,9 +283,9 @@ export default function OrderTrackingModal({
                       <div 
                         className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold mb-2 transition-all ${
                           isDone 
-                            ? 'bg-[#145CFF] text-white shadow-xs' 
+                            ? 'bg-[#EE4D2D] text-white shadow-xs' 
                             : 'bg-slate-100 text-slate-400 border border-[#DCE7F0]'
-                        } ${isCurrent ? 'ring-4 ring-blue-100' : ''}`}
+                        } ${isCurrent ? 'ring-4 ring-orange-100' : ''}`}
                       >
                         {isDone ? <CheckCircle2 size={16} /> : idx + 1}
                       </div>
@@ -319,7 +319,7 @@ export default function OrderTrackingModal({
               {searchedOrder.total && (
                 <div className="pt-2 border-t border-[#DCE7F0] flex justify-between font-bold text-[#10263D]">
                   <span>Total Amount:</span>
-                  <span className="text-[#145CFF]">{currencySymbol}{searchedOrder.total?.toLocaleString()}</span>
+                  <span className="text-[#EE4D2D]">{currencySymbol}{searchedOrder.total?.toLocaleString()}</span>
                 </div>
               )}
             </div>

@@ -188,7 +188,7 @@ export default function PaymentGatewayModal({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#DCE7F0] mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-[#145CFF] text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[#EE4D2D] text-white flex items-center justify-center font-bold shadow-md shadow-orange-500/20 shrink-0">
               <Lock size={19} />
             </div>
             <div>
@@ -218,7 +218,7 @@ export default function PaymentGatewayModal({
         <div className="p-3.5 rounded-2xl bg-[#F0F7FF] border border-[#D0E4F7] mb-4 text-xs space-y-1.5">
           <div className="flex justify-between items-center">
             <span className="text-[#52677B] font-medium">Order Number:</span>
-            <span className="font-mono font-bold text-[#145CFF]">{sessionInfo.orderId}</span>
+            <span className="font-mono font-bold text-[#EE4D2D]">{sessionInfo.orderId}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-[#52677B] font-medium">Payable Total:</span>
@@ -244,7 +244,7 @@ export default function PaymentGatewayModal({
             type="button"
             onClick={() => setActiveTab('gateway')}
             className={`py-2 px-1 rounded-lg text-center transition-all ${
-              activeTab === 'gateway' ? 'bg-white text-[#145CFF] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'gateway' ? 'bg-white text-[#EE4D2D] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Portal
@@ -253,7 +253,7 @@ export default function PaymentGatewayModal({
             type="button"
             onClick={() => setActiveTab('qr')}
             className={`py-2 px-1 rounded-lg text-center transition-all ${
-              activeTab === 'qr' ? 'bg-white text-[#145CFF] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'qr' ? 'bg-white text-[#EE4D2D] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Scan QR
@@ -262,7 +262,7 @@ export default function PaymentGatewayModal({
             type="button"
             onClick={() => setActiveTab('trxid')}
             className={`py-2 px-1 rounded-lg text-center transition-all ${
-              activeTab === 'trxid' ? 'bg-white text-[#145CFF] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'trxid' ? 'bg-white text-[#EE4D2D] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Submit TrxID
@@ -271,7 +271,7 @@ export default function PaymentGatewayModal({
             type="button"
             onClick={() => setActiveTab('simulate')}
             className={`py-2 px-1 rounded-lg text-center transition-all ${
-              activeTab === 'simulate' ? 'bg-white text-[#145CFF] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'simulate' ? 'bg-white text-[#EE4D2D] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Test Mode
@@ -283,7 +283,7 @@ export default function PaymentGatewayModal({
           <div className="space-y-4 animate-fadeIn">
             <div className="p-4 rounded-2xl bg-white border border-[#DCE7F0] space-y-3">
               <div className="flex items-center gap-2 text-xs font-bold text-[#10263D]">
-                <Smartphone size={16} className="text-[#145CFF]" />
+                <Smartphone size={16} className="text-[#EE4D2D]" />
                 <span>Pay via Official Paymently Portal</span>
               </div>
               <p className="text-xs text-[#52677B] leading-relaxed">
@@ -295,7 +295,7 @@ export default function PaymentGatewayModal({
                   href={paymentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 px-4 rounded-xl bg-[#145CFF] hover:bg-[#0047E0] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                  className="flex-1 py-3 px-4 rounded-xl bg-[#EE4D2D] hover:bg-[#0047E0] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
                 >
                   <span>Open Payment Portal</span>
                   <ExternalLink size={14} />
@@ -332,7 +332,7 @@ export default function PaymentGatewayModal({
                 />
               </div>
               <div className="flex items-center gap-1.5 text-xs font-bold text-[#10263D] mb-1">
-                <QrCode size={15} className="text-[#145CFF]" />
+                <QrCode size={15} className="text-[#EE4D2D]" />
                 <span>Scan with bKash or Nagad App</span>
               </div>
               <p className="text-[11px] text-[#52677B] max-w-xs leading-relaxed">
@@ -364,7 +364,7 @@ export default function PaymentGatewayModal({
                   placeholder="e.g. BK72918349 or 10-character TrxID"
                   value={trxId}
                   onChange={(e) => setTrxId(e.target.value.toUpperCase())}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] focus:border-[#145CFF] focus:ring-2 focus:ring-[#145CFF]/20 outline-none text-xs font-mono font-bold"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] focus:border-[#EE4D2D] focus:ring-2 focus:ring-[#EE4D2D]/20 outline-none text-xs font-mono font-bold"
                 />
               </div>
 
@@ -377,7 +377,7 @@ export default function PaymentGatewayModal({
                   placeholder="e.g. 017XXXXXXXX"
                   value={senderPhone}
                   onChange={(e) => setSenderPhone(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] focus:border-[#145CFF] focus:ring-2 focus:ring-[#145CFF]/20 outline-none text-xs"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] focus:border-[#EE4D2D] focus:ring-2 focus:ring-[#EE4D2D]/20 outline-none text-xs"
                 />
               </div>
             </div>

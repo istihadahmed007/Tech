@@ -48,7 +48,15 @@ import {
   updateUserProfile,
   getUserWishlist,
   setUserWishlist,
-  getDatabase
+  getDatabase,
+  getAllCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  getAllBrands,
+  getAllUsersAdmin,
+  getStoreSettings,
+  updateStoreSettings
 } from './db.js';
 
 import {
@@ -191,6 +199,14 @@ export async function handleApiRequest(req, res) {
 
     if (pathname === '/api/payment/config' && method === 'GET') {
       return sendJson(200, getPaymentConfigurationStatus());
+    }
+
+    if (pathname === '/api/categories' && method === 'GET') {
+      return sendJson(200, { categories: getAllCategories() });
+    }
+
+    if (pathname === '/api/shipping/config' && method === 'GET') {
+      return sendJson(200, { settings: getStoreSettings() });
     }
 
     // ---------------------------------------------------------------------------
@@ -1452,6 +1468,89 @@ export async function handleApiRequest(req, res) {
       const body = await parseBody();
       const updated = updateServiceRequestStatus(reqId, body.status, body.quotedPrice, body.note);
       return sendJson(200, { success: true, serviceRequest: updated });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Admin Categories CRUD
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/admin/categories' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      return sendJson(200, { categories: getAllCategories() });
+    }
+
+    if (pathname === '/api/admin/categories' && method === 'POST') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const body = await parseBody();
+      if (!body.name || typeof body.name !== 'string') {
+        return sendJson(400, { error: 'Category name is required' });
+      }
+      const cat = createCategory(body);
+      return sendJson(201, { success: true, category: cat });
+    }
+
+    if (pathname.startsWith('/api/admin/categories/') && method === 'PUT') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const catId = pathname.replace('/api/admin/categories/', '').trim();
+      const body = await parseBody();
+      const updated = updateCategory(catId, body);
+      if (!updated) {
+        return sendJson(404, { error: 'Category not found' });
+      }
+      return sendJson(200, { success: true, category: updated });
+    }
+
+    if (pathname.startsWith('/api/admin/categories/') && method === 'DELETE') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const catId = pathname.replace('/api/admin/categories/', '').trim();
+      deleteCategory(catId);
+      return sendJson(200, { success: true });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Admin Brands List
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/admin/brands' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      return sendJson(200, { brands: getAllBrands() });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Admin Customers List
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/admin/customers' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      return sendJson(200, { customers: getAllUsersAdmin() });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Admin Store & Shipping Settings
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/admin/shipping/config' && method === 'GET') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      return sendJson(200, { settings: getStoreSettings() });
+    }
+
+    if (pathname === '/api/admin/shipping/config' && method === 'PUT') {
+      if (!verifyAdminToken(req.headers['authorization'])) {
+        return sendJson(403, { error: 'Unauthorized admin session' });
+      }
+      const body = await parseBody();
+      const updated = updateStoreSettings(body);
+      return sendJson(200, { success: true, settings: updated });
     }
 
     return sendJson(404, { error: 'API route not found' });

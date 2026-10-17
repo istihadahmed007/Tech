@@ -27,14 +27,14 @@ export function generateStaticRoutes() {
   );
   fs.writeFileSync(path.join(productDir, 'index.html'), productFallbackHtml, 'utf-8');
 
-  // Generate /cart/index.html (Amazon-style Shopping Cart)
+  // Generate /cart/index.html (Shopping Cart)
   const cartDir = path.join(DIST_DIR, 'cart');
   if (!fs.existsSync(cartDir)) {
     fs.mkdirSync(cartDir, { recursive: true });
   }
   const cartHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Amazon.com Shopping Cart — Tech Nest</title>'
+    '<title>Shopping Cart — Tech Nest</title>'
   );
   fs.writeFileSync(path.join(cartDir, 'index.html'), cartHtml, 'utf-8');
 
@@ -45,7 +45,7 @@ export function generateStaticRoutes() {
   }
   const checkoutHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Amazon.com Checkout — Tech Nest</title>'
+    '<title>Secure Checkout — Tech Nest</title>'
   );
   fs.writeFileSync(path.join(checkoutDir, 'index.html'), checkoutHtml, 'utf-8');
 

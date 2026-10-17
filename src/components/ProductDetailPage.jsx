@@ -56,7 +56,7 @@ export default function ProductDetailPage({
     return (
       <div className="w-full max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <div className="max-w-md mx-auto p-8 rounded-2xl bg-white border border-[#DCE7F0] shadow-sm">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-50 text-[#145CFF] flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-orange-50 text-[#EE4D2D] flex items-center justify-center">
             <AlertCircle size={32} />
           </div>
           <h2 className="text-xl font-bold text-[#10263D] mb-2">{lang === 'bn' ? 'পণ্যটি খুঁজে পাওয়া যায়নি' : 'Product Not Found'}</h2>
@@ -68,7 +68,7 @@ export default function ProductDetailPage({
           <button
             type="button"
             onClick={onBackToHome}
-            className="w-full py-3 px-6 rounded-xl bg-[#145CFF] hover:bg-blue-700 text-white font-semibold text-sm transition-colors shadow-sm"
+            className="w-full py-3 px-6 rounded-xl bg-[#EE4D2D] hover:bg-[#D73211] text-white font-semibold text-sm transition-colors shadow-sm"
           >
             {lang === 'bn' ? 'টেক নেস্ট ক্যাটালগে ফিরুন' : 'Return to Tech Nest Catalog'}
           </button>
@@ -370,7 +370,7 @@ export default function ProductDetailPage({
             type="button"
             onClick={() => onSelectCategory && onSelectCategory(product.category)}
             className="pdp-breadcrumb-link"
-            style={{ color: '#145CFF' }}
+            style={{ color: '#EE4D2D' }}
           >
             {categoryLabel}
           </button>
@@ -584,7 +584,7 @@ export default function ProductDetailPage({
             <div className="pdp-variants-card">
               <div className="pdp-variants-header">
                 <span>{lang === 'bn' ? 'কালার / ফিনিশ:' : 'Color / Finish:'}</span>
-                <span style={{ color: '#145CFF' }}>{selectedVariant?.name || 'Standard'}</span>
+                <span style={{ color: '#EE4D2D', fontWeight: 600 }}>{selectedVariant?.name || 'Standard'}</span>
               </div>
               
               <div className="pdp-variant-pills">
@@ -653,7 +653,7 @@ export default function ProductDetailPage({
           {/* Quick Specs Snapshot */}
           <div className="pdp-quick-specs">
             <div className="pdp-quick-spec-item">
-              <ShieldCheck size={16} style={{ color: '#145CFF', flexShrink: 0 }} />
+              <ShieldCheck size={16} style={{ color: '#EE4D2D', flexShrink: 0 }} />
               <span>{product.warranty || '6-Month Warranty'}</span>
             </div>
             <div className="pdp-quick-spec-item">
@@ -681,7 +681,7 @@ export default function ProductDetailPage({
             {/* Delivery Information */}
             <div className="pdp-delivery-box">
               <div className="pdp-delivery-row">
-                <MapPin size={16} style={{ color: '#145CFF', flexShrink: 0, marginTop: '2px' }} />
+                <MapPin size={16} style={{ color: '#EE4D2D', flexShrink: 0, marginTop: '2px' }} />
                 <div>
                   <span className="pdp-delivery-title">
                     {lang === 'bn' ? 'ডেলিভারি ঠিকানা: বাংলাদেশ' : 'Deliver to Bangladesh'}
@@ -834,7 +834,7 @@ export default function ProductDetailPage({
         <section aria-label="Frequently Bought Together" className="pdp-container">
           <div className="pdp-bundle-card">
             <h2 className="pdp-bundle-title">
-              <Sparkles size={18} style={{ color: '#145CFF' }} />
+              <Sparkles size={18} style={{ color: '#EE4D2D' }} />
               <span>{lang === 'bn' ? 'একসাথে কিনুন (স্পেশাল কম্বো)' : 'Frequently bought together'}</span>
             </h2>
 
@@ -953,7 +953,7 @@ export default function ProductDetailPage({
               {/* Highlights Cards */}
               <div className="pdp-overview-cards">
                 <div className="pdp-overview-card">
-                  <Award size={20} style={{ color: '#145CFF' }} />
+                  <Award size={20} style={{ color: '#EE4D2D' }} />
                   <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#10263D', margin: 0 }}>Official Tech Nest Standard</h4>
                   <p style={{ fontSize: '13px', color: '#52677B', margin: 0, lineHeight: 1.5 }}>Inspected and packaged with verified authentic connectors and accessories.</p>
                 </div>
@@ -1059,7 +1059,7 @@ export default function ProductDetailPage({
                           color: '#10263D'
                         }}
                       >
-                        <Smartphone size={13} style={{ color: '#145CFF' }} />
+                        <Smartphone size={13} style={{ color: '#EE4D2D' }} />
                         <span>{model}</span>
                       </span>
                     ))}
@@ -1078,7 +1078,7 @@ export default function ProductDetailPage({
               <div className="pdp-shipping-grid">
                 <div className="pdp-shipping-card">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px', fontWeight: 700, color: '#10263D' }}>
-                    <Truck size={18} style={{ color: '#145CFF' }} />
+                    <Truck size={18} style={{ color: '#EE4D2D' }} />
                     <span>{lang === 'bn' ? 'ডেলিভারি পলিসি ও চার্জ' : 'Shipping Rates & Delivery Schedule'}</span>
                   </div>
                   <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#52677B', lineHeight: 1.6 }}>
@@ -1334,13 +1334,13 @@ export default function ProductDetailPage({
                         alt={rel.title}
                       />
                       {rel.badge && (
-                        <span style={{ position: 'absolute', top: '8px', left: '8px', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, background: '#145CFF', color: '#FFFFFF' }}>
+                        <span style={{ position: 'absolute', top: '8px', left: '8px', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, background: '#EE4D2D', color: '#FFFFFF' }}>
                           {rel.badge}
                         </span>
                       )}
                     </div>
 
-                    <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#145CFF', display: 'block' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#EE4D2D', display: 'block' }}>
                       {rel.category}
                     </span>
                     <h3 className="pdp-related-title">

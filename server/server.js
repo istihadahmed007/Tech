@@ -266,7 +266,12 @@ process.on('unhandledRejection', (reason) => {
   console.error('[Unhandled Rejection]', reason);
 });
 
-if (process.env.NODE_ENV !== 'test' && !process.env.DISABLE_SERVER_LISTEN) {
+const isRunningTests = process.env.NODE_ENV === 'test' || 
+  process.argv.some(a => a.includes('test')) || 
+  process.execArgv.some(a => a.includes('test')) || 
+  Boolean(process.env.DISABLE_SERVER_LISTEN);
+
+if (!isRunningTests) {
   if (typeof PhusionPassenger !== 'undefined' || process.env.PORT === 'passenger') {
     server.listen('passenger', () => {
       console.log('[Production Server] Tech Nest listening on Passenger');

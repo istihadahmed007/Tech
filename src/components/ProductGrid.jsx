@@ -22,18 +22,37 @@ export default function ProductGrid({
   const [inStockOnly, setInStockOnly] = useState(false);
 
   const categories = useMemo(() => [
-    { id: null, label: t.allProducts },
-    { id: 'audio', label: t.catAudio },
-    { id: 'charging', label: t.catCharging },
-    { id: 'wearables', label: t.catWearables || 'Smartwatches' }
-  ], [t]);
+    { id: null, label: t.allProducts || 'All Products' },
+    { id: 'earbuds', label: lang === 'bn' ? 'ইয়ারবাডস' : 'Earbuds & TWS' },
+    { id: 'headphones', label: lang === 'bn' ? 'হেডফোন ও নেকব্যান্ড' : 'Headphones' },
+    { id: 'chargers', label: lang === 'bn' ? 'চার্জার' : 'Chargers' },
+    { id: 'cables', label: lang === 'bn' ? 'ক্যাবল' : 'Cables' },
+    { id: 'wearables', label: t.catWearables || 'Smartwatches' },
+    { id: 'cases', label: lang === 'bn' ? 'কেস ও কভার' : 'Cases' }
+  ], [t, lang]);
 
   // Comprehensive filter and search matching
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
-      // Category filter
-      if (selectedCategory && item.category !== selectedCategory) {
-        return false;
+      // Category filter supporting both broad and granular IDs
+      if (selectedCategory) {
+        if (selectedCategory === 'earbuds') {
+          if (item.category !== 'audio' || item.id.includes('headphone') || item.id.includes('neckband') || item.id.includes('headset')) return false;
+        } else if (selectedCategory === 'headphones') {
+          if (!item.id.includes('headphone') && !item.id.includes('neckband') && !item.id.includes('headset')) return false;
+        } else if (selectedCategory === 'cables') {
+          if (!item.id.includes('cable')) return false;
+        } else if (selectedCategory === 'chargers') {
+          if (!item.id.includes('charger') && !item.id.includes('adapter')) return false;
+        } else if (selectedCategory === 'wearables') {
+          if (item.category !== 'wearables') return false;
+        } else if (selectedCategory === 'audio') {
+          if (item.category !== 'audio') return false;
+        } else if (selectedCategory === 'charging') {
+          if (item.category !== 'charging') return false;
+        } else if (item.category !== selectedCategory) {
+          return false;
+        }
       }
       // Phone compatibility filter
       if (selectedPhone && !item.compatibleWith?.includes(selectedPhone)) {
@@ -60,6 +79,7 @@ export default function ProductGrid({
       if (sortBy === 'price-asc') return a.price - b.price;
       if (sortBy === 'price-desc') return b.price - a.price;
       if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
+      if (sortBy === 'newest') return (b.id > a.id ? 1 : -1);
       return 0; // featured default order
     });
   }, [products, selectedCategory, selectedPhone, searchQuery, inStockOnly, sortBy]);
@@ -69,17 +89,9 @@ export default function ProductGrid({
   }, [categories, selectedCategory]);
 
   return (
-    <section id="products-section" className="w-full my-8 sm:my-10">
+    <section id="products-section" className="w-full my-6 sm:my-8">
       {/* Filter and Sorting Control Bar */}
-      <div 
-        className="rounded-2xl p-3.5 sm:p-4 mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"
-        style={{
-          background: 'rgba(255, 255, 255, 0.94)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid #DCE7F0',
-          boxShadow: '0 4px 18px -2px rgba(16, 38, 61, 0.04)'
-        }}
-      >
+      <div className="bg-white rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 border border-[#ECECEC] shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* Horizontal Category Pill Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none" role="tablist" aria-label="Product categories">
           {categories.map((cat) => {
@@ -90,10 +102,10 @@ export default function ProductGrid({
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`text-xs sm:text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-[#145CFF] ${
+                className={`text-xs sm:text-sm font-semibold px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#EE4D2D] ${
                   isActive 
-                    ? 'bg-[#145CFF] text-white shadow-xs' 
-                    : 'bg-white text-[#52677B] hover:text-[#10263D] hover:bg-[#EAF4FC] border border-[#DCE7F0]'
+                    ? 'bg-[#EE4D2D] text-white shadow-xs' 
+                    : 'bg-slate-50 text-slate-700 hover:text-[#EE4D2D] hover:bg-[#FFF5F1] border border-slate-200'
                 }`}
               >
                 {cat.label}
@@ -103,14 +115,14 @@ export default function ProductGrid({
         </div>
 
         {/* Secondary Filters: In-stock toggle & Sort Dropdown */}
-        <div className="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-[#DCE7F0]">
+        <div className="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
           {/* In-Stock Toggle */}
-          <label className="flex items-center gap-2 text-xs font-semibold text-[#52677B] cursor-pointer select-none">
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={inStockOnly}
               onChange={(e) => setInStockOnly(e.target.checked)}
-              className="rounded text-[#145CFF] focus:ring-[#145CFF] border-[#DCE7F0] h-4 w-4"
+              className="rounded text-[#EE4D2D] focus:ring-[#EE4D2D] border-slate-300 h-4 w-4"
             />
             <span>{t.inStockOnly || 'In-Stock Only'}</span>
           </label>
@@ -120,17 +132,18 @@ export default function ProductGrid({
             <label htmlFor="catalog-sort" className="sr-only">
               {t.sortBy || 'Sort by'}
             </label>
-            <ArrowUpDown size={14} className="text-[#8FA6BE]" aria-hidden="true" />
+            <ArrowUpDown size={14} className="text-slate-400" aria-hidden="true" />
             <select
               id="catalog-sort"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="text-xs font-semibold py-1.5 px-3 rounded-lg bg-white border border-[#DCE7F0] text-[#10263D] outline-none focus:border-[#145CFF]"
+              className="text-xs font-semibold py-1.5 px-3 rounded-md bg-white border border-slate-200 text-[#10263D] outline-none focus:border-[#EE4D2D] cursor-pointer"
             >
-              <option value="featured">{t.sortFeatured}</option>
-              <option value="price-asc">{t.sortPriceAsc}</option>
-              <option value="price-desc">{t.sortPriceDesc}</option>
-              <option value="rating">{t.sortRating}</option>
+              <option value="featured">{t.sortFeatured || 'Featured'}</option>
+              <option value="newest">{lang === 'bn' ? 'নতুন পণ্য' : 'Newest Arrivals'}</option>
+              <option value="price-asc">{t.sortPriceAsc || 'Price: Low to High'}</option>
+              <option value="price-desc">{t.sortPriceDesc || 'Price: High to Low'}</option>
+              <option value="rating">{t.sortRating || 'Highest Rated'}</option>
             </select>
           </div>
         </div>
@@ -198,7 +211,7 @@ export default function ProductGrid({
 
       {/* Responsive Product Grid */}
       {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -216,8 +229,8 @@ export default function ProductGrid({
         </div>
       ) : (
         /* Zero-State Handling */
-        <div className="rounded-3xl p-10 sm:p-12 text-center bg-white border border-[#DCE7F0] shadow-xs max-w-lg mx-auto" role="status">
-          <div className="w-16 h-16 rounded-full bg-[#EAF4FC] text-[#145CFF] mx-auto flex items-center justify-center mb-4">
+        <div className="rounded-2xl p-10 sm:p-12 text-center bg-white border border-[#ECECEC] shadow-xs max-w-lg mx-auto" role="status">
+          <div className="w-16 h-16 rounded-full bg-[#FFF5F1] text-[#EE4D2D] mx-auto flex items-center justify-center mb-4">
             <SearchX size={32} />
           </div>
           <h4 className="text-base sm:text-lg font-bold text-[#10263D] mb-1">
@@ -233,7 +246,7 @@ export default function ProductGrid({
               onSelectCategory(null);
               setInStockOnly(false);
             }}
-            className="px-6 py-2.5 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-semibold text-xs sm:text-sm shadow-xs"
+            className="px-6 py-2.5 rounded-md bg-[#EE4D2D] hover:bg-[#D73211] text-white font-bold text-xs sm:text-sm shadow-xs cursor-pointer"
           >
             {t.resetFilters || 'Reset All Filters'}
           </button>

@@ -108,6 +108,29 @@ export default function AdminDashboard({
   // Reusable Confirmation Dialog State
   const [confirmationDialog, setConfirmationDialog] = useState(null);
 
+  // Category & Brand Management State
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [showCatModal, setShowCatModal] = useState(false);
+  const [editingCat, setEditingCat] = useState(null);
+  const [catForm, setCatForm] = useState({ id: '', name: '', nameBn: '', description: '', badge: '' });
+
+  // Customer Management State
+  const [customers, setCustomers] = useState([]);
+
+  // Shipping & Delivery Configuration State
+  const [shippingSettings, setShippingSettings] = useState({
+    insideDhakaFee: 60,
+    outsideDhakaFee: 120,
+    freeShippingThreshold: 2000,
+    insideDhakaEta: '1–2 Business Days',
+    outsideDhakaEta: '2–4 Business Days',
+    codAvailable: true,
+    supportPhone: '+880 1700-000000',
+    supportEmail: 'support@technest.com.bd'
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
+
   // Auto-dismiss transient action alerts
   const showToast = useCallback((msg, type = 'success') => {
     setActionMessage({ text: msg, type });
@@ -160,6 +183,19 @@ export default function AdminDashboard({
       } else if (tab === 'reviews') {
         const res = await safeFetchJson('/api/admin/reviews', { headers });
         if (res.ok && res.data?.reviews) setReviews(res.data.reviews);
+      } else if (tab === 'categories') {
+        const [catRes, brandRes] = await Promise.all([
+          safeFetchJson('/api/admin/categories', { headers }),
+          safeFetchJson('/api/admin/brands', { headers })
+        ]);
+        if (catRes.ok && catRes.data?.categories) setCategories(catRes.data.categories);
+        if (brandRes.ok && brandRes.data?.brands) setBrands(brandRes.data.brands);
+      } else if (tab === 'customers') {
+        const res = await safeFetchJson('/api/admin/customers', { headers });
+        if (res.ok && res.data?.customers) setCustomers(res.data.customers);
+      } else if (tab === 'shipping') {
+        const res = await safeFetchJson('/api/admin/shipping/config', { headers });
+        if (res.ok && res.data?.settings) setShippingSettings(res.data.settings);
       }
     } catch (err) {
       console.warn('Failed to load admin tab data:', err);
@@ -470,6 +506,113 @@ export default function AdminDashboard({
     });
   }, [products, productCategoryFilter, productPublicationFilter, productStockFilter, productSearch]);
 
+  const handleOpenCatModal = (cat = null) => {
+    if (cat) {
+      setEditingCat(cat);
+      setCatForm({
+        id: cat.id,
+        name: cat.name,
+        nameBn: cat.nameBn || '',
+        description: cat.description || '',
+        badge: cat.badge || ''
+      });
+    } else {
+      setEditingCat(null);
+      setCatForm({ id: '', name: '', nameBn: '', description: '', badge: '' });
+    }
+    setShowCatModal(true);
+  };
+
+  const handleSaveCategory = async (e) => {
+    e.preventDefault();
+    if (!catForm.name.trim()) return;
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${authToken}`
+    };
+    try {
+      if (editingCat) {
+        const res = await safeFetchJson(`/api/admin/categories/${editingCat.id}`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(catForm)
+        });
+        if (res.ok) {
+          showToast(`Category "${catForm.name}" updated successfully`);
+          setShowCatModal(false);
+          loadTabData('categories');
+        } else {
+          showToast(res.error || 'Failed to update category', 'error');
+        }
+      } else {
+        const res = await safeFetchJson('/api/admin/categories', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(catForm)
+        });
+        if (res.ok) {
+          showToast(`Category "${catForm.name}" created successfully`);
+          setShowCatModal(false);
+          loadTabData('categories');
+        } else {
+          showToast(res.error || 'Failed to create category', 'error');
+        }
+      }
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  };
+
+  const handleDeleteCategory = (cat) => {
+    setConfirmationDialog({
+      title: `Delete Category "${cat.name}"?`,
+      message: `Are you sure you want to delete this category? Products associated with it should be reassigned.`,
+      confirmLabel: 'Delete Category',
+      isDestructive: true,
+      onConfirm: async () => {
+        setConfirmationDialog(null);
+        try {
+          const res = await safeFetchJson(`/api/admin/categories/${cat.id}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${authToken}` }
+          });
+          if (res.ok) {
+            showToast(`Category "${cat.name}" deleted`);
+            loadTabData('categories');
+          } else {
+            showToast(res.error || 'Failed to delete category', 'error');
+          }
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      }
+    });
+  };
+
+  const handleSaveShippingSettings = async (e) => {
+    e.preventDefault();
+    setSavingSettings(true);
+    try {
+      const res = await safeFetchJson('/api/admin/shipping/config', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify(shippingSettings)
+      });
+      if (res.ok) {
+        showToast('Shipping and delivery configuration saved successfully');
+      } else {
+        showToast(res.error || 'Failed to save shipping settings', 'error');
+      }
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
   // ---------------------------------------------------------------------------
   // 1. PRIVATE SIGN-IN SCREEN (When Unauthenticated)
   // ---------------------------------------------------------------------------
@@ -682,6 +825,9 @@ export default function AdminDashboard({
                   { id: 'orders', label: 'Orders', icon: Package, alertCount: needsAttention.ordersToProcessCount },
                   { id: 'products', label: 'Products', icon: Layers },
                   { id: 'inventory', label: 'Inventory & Restock', icon: RefreshCw, alertCount: needsAttention.lowStockCount },
+                  { id: 'categories', label: 'Categories & Brands', icon: Tag },
+                  { id: 'customers', label: 'Customers', icon: User },
+                  { id: 'shipping', label: 'Delivery & Shipping', icon: Truck },
                   { id: 'promotions', label: 'Promotions', icon: Percent },
                   { id: 'reviews', label: 'Reviews Moderation', icon: Sparkles, alertCount: needsAttention.pendingReviewsCount }
                 ].map(item => {
@@ -766,6 +912,9 @@ export default function AdminDashboard({
               { id: 'orders', label: 'Orders', icon: Package, alertCount: needsAttention.ordersToProcessCount },
               { id: 'products', label: 'Products', icon: Layers },
               { id: 'inventory', label: 'Inventory', icon: RefreshCw, alertCount: needsAttention.lowStockCount },
+              { id: 'categories', label: 'Categories & Brands', icon: Tag },
+              { id: 'customers', label: 'Customers', icon: User },
+              { id: 'shipping', label: 'Delivery & Shipping', icon: Truck },
               { id: 'promotions', label: 'Promotions', icon: Percent },
               { id: 'reviews', label: 'Reviews', icon: Sparkles, alertCount: needsAttention.pendingReviewsCount }
             ].map(item => {
@@ -2128,7 +2277,376 @@ export default function AdminDashboard({
             </div>
           </div>
         )}
+
+        {/* ------------------------------------------------------------------- */}
+        {/* TAB 7: CATEGORIES & BRANDS MANAGEMENT */}
+        {/* ------------------------------------------------------------------- */}
+        {activeTab === 'categories' && (
+          <div className="space-y-6 pt-6">
+            <div className="bg-white p-5 rounded-2xl border border-[#DCE7F0] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-base font-bold text-[#10263D]">
+                  Product Categories &amp; Brand Taxonomies
+                </h3>
+                <p className="text-xs text-[#52677B]">
+                  Manage mobile accessory catalog categories, badges, and brand device support.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleOpenCatModal()}
+                className="px-4 py-2.5 rounded-xl bg-[#EE4D2D] hover:bg-[#D73211] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
+              >
+                <Plus size={15} />
+                <span>Add Category</span>
+              </button>
+            </div>
+
+            {/* Categories Table */}
+            <div className="bg-white rounded-2xl border border-[#DCE7F0] shadow-2xs overflow-hidden">
+              <div className="p-4 border-b border-[#DCE7F0]">
+                <h4 className="text-sm font-bold text-[#10263D]">All Active Categories ({categories.length})</h4>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#F7FBFF] text-[#52677B] font-semibold border-b border-[#DCE7F0]">
+                    <tr>
+                      <th className="py-3 px-4">Category Slug</th>
+                      <th className="py-3 px-4">English Name</th>
+                      <th className="py-3 px-4">Bengali Name</th>
+                      <th className="py-3 px-4">Badge / Highlight</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#DCE7F0]">
+                    {categories.map(cat => (
+                      <tr key={cat.id} className="hover:bg-[#F0F7FD] transition-colors">
+                        <td className="py-3 px-4 font-mono font-bold text-[#10263D]">{cat.id}</td>
+                        <td className="py-3 px-4 font-semibold text-[#10263D]">{cat.name}</td>
+                        <td className="py-3 px-4 text-[#52677B]">{cat.nameBn || '—'}</td>
+                        <td className="py-3 px-4">
+                          {cat.badge ? (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-[#EE4D2D]">
+                              {cat.badge}
+                            </span>
+                          ) : '—'}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenCatModal(cat)}
+                              className="px-2.5 py-1 rounded-lg bg-blue-50 text-[#145CFF] hover:bg-blue-100 font-bold transition-colors cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteCategory(cat)}
+                              className="px-2.5 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-bold transition-colors cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Brands Reference */}
+            <div className="bg-white rounded-2xl border border-[#DCE7F0] shadow-2xs p-5">
+              <h4 className="text-sm font-bold text-[#10263D] mb-3">Compatible Brand Ecosystems ({brands.length})</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {brands.map(b => (
+                  <div key={b.id} className="p-3 rounded-xl border border-[#DCE7F0] bg-[#F7FBFF]">
+                    <span className="font-bold text-sm text-[#10263D] capitalize">{b.name}</span>
+                    <span className="text-[11px] text-[#52677B] block mt-1">
+                      {b.models?.length || 0} registered models supported
+                    </span>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {b.models?.slice(0, 3).map((m, i) => (
+                        <span key={i} className="text-[10px] bg-white px-2 py-0.5 rounded border border-[#DCE7F0] text-slate-700">
+                          {m}
+                        </span>
+                      ))}
+                      {b.models?.length > 3 && (
+                        <span className="text-[10px] text-[#52677B] font-semibold self-center">
+                          +{b.models.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------------- */}
+        {/* TAB 8: CUSTOMER MANAGEMENT */}
+        {/* ------------------------------------------------------------------- */}
+        {activeTab === 'customers' && (
+          <div className="space-y-4 pt-6">
+            <div className="bg-white p-5 rounded-2xl border border-[#DCE7F0] shadow-2xs">
+              <h3 className="text-base font-bold text-[#10263D]">
+                Customer Account Profiles ({customers.length})
+              </h3>
+              <p className="text-xs text-[#52677B]">
+                Registered Tech Nest customer accounts, order frequency, and cumulative spend.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-[#DCE7F0] shadow-2xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#F7FBFF] text-[#52677B] font-semibold border-b border-[#DCE7F0]">
+                    <tr>
+                      <th className="py-3 px-4">Customer Name</th>
+                      <th className="py-3 px-4">Contact Email</th>
+                      <th className="py-3 px-4">Phone Number</th>
+                      <th className="py-3 px-4">Orders Placed</th>
+                      <th className="py-3 px-4">Total Spent</th>
+                      <th className="py-3 px-4">Account Type</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#DCE7F0]">
+                    {customers.map(cust => (
+                      <tr key={cust.id} className="hover:bg-[#F0F7FD] transition-colors">
+                        <td className="py-3 px-4 font-bold text-[#10263D]">{cust.name}</td>
+                        <td className="py-3 px-4 text-[#52677B] font-mono">{cust.email}</td>
+                        <td className="py-3 px-4 text-[#52677B] font-mono">{cust.phone || '—'}</td>
+                        <td className="py-3 px-4">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-[#145CFF]">
+                            {cust.ordersCount} orders
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 font-extrabold text-[#10263D]">
+                          {currencySymbol}{cust.totalSpent.toLocaleString()}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                            cust.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-700'
+                          }`}>
+                            {cust.role}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {customers.length === 0 && (
+                      <tr>
+                        <td colSpan="6" className="py-8 text-center text-[#52677B]">
+                          No registered customer accounts found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------------- */}
+        {/* TAB 9: SHIPPING & DELIVERY CONFIGURATION */}
+        {/* ------------------------------------------------------------------- */}
+        {activeTab === 'shipping' && (
+          <div className="space-y-6 pt-6">
+            <div className="bg-white p-5 rounded-2xl border border-[#DCE7F0] shadow-2xs">
+              <h3 className="text-base font-bold text-[#10263D]">
+                Shipping &amp; Delivery Configuration
+              </h3>
+              <p className="text-xs text-[#52677B]">
+                Configure regional courier delivery fees, free delivery order thresholds, and fulfillment timeframes.
+              </p>
+            </div>
+
+            <form onSubmit={handleSaveShippingSettings} className="bg-white rounded-2xl border border-[#DCE7F0] shadow-2xs p-6 space-y-5 max-w-2xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#10263D] mb-1">
+                    Inside Dhaka Delivery Fee ({currencySymbol}) *
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    required
+                    value={shippingSettings.insideDhakaFee}
+                    onChange={(e) => setShippingSettings(prev => ({ ...prev, insideDhakaFee: Number(e.target.value) }))}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] text-sm text-[#10263D] font-bold"
+                  />
+                  <span className="text-[11px] text-[#52677B] mt-1 block">Default: ৳60</span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#10263D] mb-1">
+                    Outside Dhaka Delivery Fee ({currencySymbol}) *
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    required
+                    value={shippingSettings.outsideDhakaFee}
+                    onChange={(e) => setShippingSettings(prev => ({ ...prev, outsideDhakaFee: Number(e.target.value) }))}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] text-sm text-[#10263D] font-bold"
+                  />
+                  <span className="text-[11px] text-[#52677B] mt-1 block">Default: ৳120</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#10263D] mb-1">
+                  Free Delivery Minimum Order Amount ({currencySymbol}) *
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  required
+                  value={shippingSettings.freeShippingThreshold}
+                  onChange={(e) => setShippingSettings(prev => ({ ...prev, freeShippingThreshold: Number(e.target.value) }))}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] text-sm text-[#10263D] font-bold"
+                />
+                <span className="text-[11px] text-[#52677B] mt-1 block">Orders equal to or above this amount receive 100% free delivery. Default: ৳2,000.</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#10263D] mb-1">
+                    Dhaka Delivery ETA
+                  </label>
+                  <input
+                    type="text"
+                    value={shippingSettings.insideDhakaEta || '1–2 Business Days'}
+                    onChange={(e) => setShippingSettings(prev => ({ ...prev, insideDhakaEta: e.target.value }))}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] text-sm text-[#10263D]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#10263D] mb-1">
+                    Outside Dhaka Delivery ETA
+                  </label>
+                  <input
+                    type="text"
+                    value={shippingSettings.outsideDhakaEta || '2–4 Business Days'}
+                    onChange={(e) => setShippingSettings(prev => ({ ...prev, outsideDhakaEta: e.target.value }))}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCE7F0] text-sm text-[#10263D]"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-[#DCE7F0] flex items-center justify-end">
+                <button
+                  type="submit"
+                  disabled={savingSettings}
+                  className="px-6 py-2.5 rounded-xl bg-[#EE4D2D] hover:bg-[#D73211] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer flex items-center gap-2"
+                >
+                  {savingSettings ? <RefreshCw size={14} className="animate-spin" /> : <Check size={14} />}
+                  <span>Save Delivery Rules</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
       </main>
+
+      {/* Modal: Category Create/Edit */}
+      {showCatModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#10263D]/40 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl border border-[#DCE7F0] shadow-xl p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#DCE7F0]">
+              <h3 className="text-base font-bold text-[#10263D]">
+                {editingCat ? `Edit Category: ${editingCat.name}` : 'Create New Category'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowCatModal(false)}
+                className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCategory} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-[#10263D] mb-1">Category Slug / ID *</label>
+                <input
+                  type="text"
+                  required
+                  disabled={Boolean(editingCat)}
+                  value={catForm.id}
+                  onChange={(e) => setCatForm(prev => ({ ...prev, id: e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '') }))}
+                  placeholder="e.g. power-banks"
+                  className="w-full px-3 py-2 rounded-xl border border-[#DCE7F0] font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#10263D] mb-1">Category Name (English) *</label>
+                <input
+                  type="text"
+                  required
+                  value={catForm.name}
+                  onChange={(e) => setCatForm(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="e.g. Power Banks &amp; Chargers"
+                  className="w-full px-3 py-2 rounded-xl border border-[#DCE7F0]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#10263D] mb-1">Category Name (Bengali)</label>
+                <input
+                  type="text"
+                  value={catForm.nameBn}
+                  onChange={(e) => setCatForm(prev => ({ ...prev, nameBn: e.target.value }))}
+                  placeholder="e.g. পাওয়ার ব্যাংক ও চার্জার"
+                  className="w-full px-3 py-2 rounded-xl border border-[#DCE7F0]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#10263D] mb-1">Badge Tag</label>
+                <input
+                  type="text"
+                  value={catForm.badge}
+                  onChange={(e) => setCatForm(prev => ({ ...prev, badge: e.target.value }))}
+                  placeholder="e.g. Popular or Hot Deals"
+                  className="w-full px-3 py-2 rounded-xl border border-[#DCE7F0]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#10263D] mb-1">Description</label>
+                <textarea
+                  rows={2}
+                  value={catForm.description}
+                  onChange={(e) => setCatForm(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Short description for SEO and category headers"
+                  className="w-full px-3 py-2 rounded-xl border border-[#DCE7F0]"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-[#DCE7F0] flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCatModal(false)}
+                  className="px-4 py-2 rounded-xl border border-[#DCE7F0] font-semibold text-slate-600 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-[#EE4D2D] hover:bg-[#D73211] text-white font-bold cursor-pointer"
+                >
+                  Save Category
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

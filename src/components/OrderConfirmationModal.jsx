@@ -20,7 +20,7 @@ export default function OrderConfirmationModal({
         particleCount: 50,
         spread: 55,
         origin: { y: 0.6 },
-        colors: ['#145CFF', '#60A5FA', '#93C5FD', '#10B981']
+        colors: ['#EE4D2D', '#60A5FA', '#93C5FD', '#10B981']
       });
     } catch (e) {}
   }, []);
@@ -78,7 +78,7 @@ export default function OrderConfirmationModal({
         <button
           ref={closeButtonRef}
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] transition-colors focus-visible:ring-2 focus-visible:ring-[#145CFF]"
+          className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-100 text-[#52677B] hover:text-[#10263D] transition-colors focus-visible:ring-2 focus-visible:ring-[#EE4D2D]"
           aria-label="Close confirmation dialog"
         >
           <X size={20} />
@@ -101,13 +101,13 @@ export default function OrderConfirmationModal({
             <span className="text-[11px] font-bold uppercase text-[#52677B] block">
               {t?.orderIdLabel || 'Order Reference ID:'}
             </span>
-            <span className="font-mono text-base sm:text-lg font-extrabold text-[#145CFF]">
+            <span className="font-mono text-base sm:text-lg font-extrabold text-[#EE4D2D]">
               {order.id}
             </span>
           </div>
           <button
             onClick={() => navigator.clipboard.writeText(order.id)}
-            className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white border border-[#DCE7F0] text-[#145CFF] hover:bg-[#EAF4FC] transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-white border border-[#DCE7F0] text-[#EE4D2D] hover:bg-[#EAF4FC] transition-colors"
             title="Copy Order ID"
             aria-label="Copy Order ID to clipboard"
           >
@@ -121,7 +121,7 @@ export default function OrderConfirmationModal({
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 mb-6 text-left flex items-center justify-between">
             <div>
               <div className="flex items-center gap-1 text-[11px] font-bold text-[#10263D]">
-                <Key size={13} className="text-[#145CFF]" />
+                <Key size={13} className="text-[#EE4D2D]" />
                 <span>Guest Order Security Token</span>
               </div>
               <span className="font-mono text-xs text-[#52677B] block truncate max-w-[280px] sm:max-w-sm mt-0.5">
@@ -199,7 +199,7 @@ export default function OrderConfirmationModal({
 
           <div className="flex justify-between pt-2 text-sm font-extrabold">
             <span className="text-[#10263D]">Total Amount:</span>
-            <span className="text-[#145CFF]">
+            <span className="text-[#EE4D2D]">
               {currencySymbol}{order.total?.toLocaleString()}
             </span>
           </div>
@@ -212,7 +212,7 @@ export default function OrderConfirmationModal({
               onClose();
               onOpenTracking(order.id, order.guestToken);
             }}
-            className="w-full sm:flex-1 py-3 px-4 rounded-full bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold text-xs shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 transition-all"
+            className="w-full sm:flex-1 py-3 px-4 rounded-full bg-[#EE4D2D] hover:bg-[#D73211] text-white font-bold text-xs shadow-md shadow-orange-500/20 flex items-center justify-center gap-1.5 transition-all"
           >
             <Package size={15} />
             <span>{t?.trackThisOrder || 'Track Parcel Status'}</span>
@@ -221,7 +221,7 @@ export default function OrderConfirmationModal({
           <button
             type="button"
             onClick={() => openPrintWindow(order, 'invoice')}
-            className="w-full sm:w-auto py-3 px-4 rounded-full bg-white border border-[#DCE7F0] hover:bg-[#EAF4FC] text-[#145CFF] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+            className="w-full sm:w-auto py-3 px-4 rounded-full bg-white border border-[#DCE7F0] hover:bg-[#EAF4FC] text-[#EE4D2D] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
             title="Print or download official tax invoice PDF"
           >
             <Printer size={15} />

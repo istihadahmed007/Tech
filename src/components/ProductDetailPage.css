@@ -1,6 +1,6 @@
 /* ==========================================================================
    Glacial Tech — Product Detail Page (PDP) Professional Stylesheet
-   Design Identity: High-contrast ice-blue retail (#EAF5FF, #F8FCFF, #10263D, #145CFF)
+   Design Identity: High-contrast ice-blue retail (#EAF5FF, #F8FCFF, #10263D, #EE4D2D)
    Typography: Inter & Noto Sans Bengali (26-32px title, 28-34px price, 20-24px headings)
    ========================================================================== */
 
@@ -87,7 +87,7 @@
 }
 
 .pdp-breadcrumb-link:hover {
-  color: #145CFF;
+  color: #EE4D2D;
 }
 
 .pdp-breadcrumb-separator {
@@ -135,8 +135,8 @@
 }
 
 .pdp-btn-pill-subtle:hover {
-  border-color: #145CFF;
-  color: #145CFF;
+  border-color: #EE4D2D;
+  color: #EE4D2D;
 }
 
 .pdp-btn-pill-primary-subtle {
@@ -146,8 +146,8 @@
   padding: 6px 14px;
   border-radius: 9999px;
   background: #EAF4FC;
-  border: 1px solid rgba(20, 92, 255, 0.15);
-  color: #145CFF;
+  border: 1px solid rgba(238, 77, 45, 0.15);
+  color: #EE4D2D;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -155,7 +155,7 @@
 }
 
 .pdp-btn-pill-primary-subtle:hover {
-  background: #145CFF;
+  background: #EE4D2D;
   color: #FFFFFF;
 }
 
@@ -236,13 +236,13 @@
   top: 14px;
   left: 14px;
   z-index: 10;
-  background: #145CFF;
+  background: #EE4D2D;
   color: #FFFFFF;
   font-size: 12px;
   font-weight: 700;
   padding: 4px 12px;
   border-radius: 9999px;
-  box-shadow: 0 2px 6px rgba(20, 92, 255, 0.3);
+  box-shadow: 0 2px 6px rgba(238, 77, 45, 0.3);
 }
 
 .pdp-stage-wishlist-btn {
@@ -297,8 +297,8 @@
 
 .pdp-stage-fullscreen-btn:hover {
   background: #FFFFFF;
-  color: #145CFF;
-  border-color: #145CFF;
+  color: #EE4D2D;
+  border-color: #EE4D2D;
 }
 
 .pdp-stage-image-container {
@@ -392,13 +392,13 @@
 }
 
 .pdp-thumb-btn:hover {
-  border-color: rgba(20, 92, 255, 0.5);
+  border-color: rgba(238, 77, 45, 0.5);
   opacity: 1;
 }
 
 .pdp-thumb-btn.selected {
-  border-color: #145CFF;
-  box-shadow: 0 0 0 2px rgba(20, 92, 255, 0.2);
+  border-color: #EE4D2D;
+  box-shadow: 0 0 0 2px rgba(238, 77, 45, 0.2);
 }
 
 .pdp-thumb-img {
@@ -444,7 +444,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #145CFF;
+  color: #EE4D2D;
   background: #EAF4FC;
   padding: 3px 10px;
   border-radius: 6px;
@@ -523,7 +523,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: #145CFF;
+  color: #EE4D2D;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -557,8 +557,8 @@
 .pdp-price-current {
   font-size: 26px;
   line-height: 1;
-  font-weight: 800;
-  color: #10263D;
+  font-weight: 900;
+  color: #EE4D2D;
   letter-spacing: -0.02em;
 }
 
@@ -570,7 +570,7 @@
 
 @media (min-width: 1024px) {
   .pdp-price-current {
-    font-size: 32px;
+    font-size: 34px;
   }
 }
 
@@ -583,12 +583,12 @@
 
 .pdp-discount-badge {
   font-size: 12px;
-  font-weight: 700;
-  background: #ECFDF5;
-  color: #047857;
-  border: 1px solid #A7F3D0;
+  font-weight: 800;
+  background: #FFF5F1;
+  color: #EE4D2D;
+  border: 1px solid #FFDCD4;
   padding: 3px 8px;
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
 .pdp-vat-note {
@@ -643,11 +643,11 @@
 }
 
 .pdp-variant-pill.selected {
-  border-color: #145CFF;
+  border-color: #EE4D2D;
   background: #EAF4FC;
   color: #10263D;
   font-weight: 700;
-  box-shadow: 0 0 0 2px rgba(20, 92, 255, 0.25);
+  box-shadow: 0 0 0 2px rgba(238, 77, 45, 0.25);
 }
 
 .pdp-variant-dot {
@@ -731,7 +731,7 @@
 }
 
 .pdp-bullet-dot {
-  color: #145CFF;
+  color: #EE4D2D;
   font-weight: 700;
   font-size: 16px;
   line-height: 1;
@@ -905,7 +905,7 @@
 
 .pdp-qty-btn:hover:not(:disabled) {
   background: #FFFFFF;
-  color: #145CFF;
+  color: #EE4D2D;
   box-shadow: 0 1px 2px rgba(16, 38, 61, 0.05);
 }
 
@@ -936,24 +936,23 @@
   width: 100%;
   min-height: 48px;
   padding: 12px 20px;
-  border-radius: 9999px;
-  background: #145CFF;
-  color: #FFFFFF;
+  border-radius: 6px;
+  background: #FFF5F1;
+  color: #EE4D2D;
   font-size: 15px;
   font-weight: 700;
-  border: none;
+  border: 1px solid #EE4D2D;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 4px 14px rgba(20, 92, 255, 0.25);
+  box-shadow: 0 1px 3px rgba(238, 77, 45, 0.08);
   transition: all 160ms ease;
 }
 
 .pdp-btn-cart:hover:not(:disabled) {
-  background: #0D4BD9;
-  box-shadow: 0 6px 20px rgba(20, 92, 255, 0.35);
+  background: #FEECE6;
 }
 
 .pdp-btn-cart:active:not(:disabled) {
@@ -970,8 +969,8 @@
   width: 100%;
   min-height: 48px;
   padding: 12px 20px;
-  border-radius: 9999px;
-  background: #10263D;
+  border-radius: 6px;
+  background: #EE4D2D;
   color: #FFFFFF;
   font-size: 15px;
   font-weight: 700;
@@ -981,12 +980,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 2px 6px rgba(16, 38, 61, 0.1);
+  box-shadow: 0 4px 14px rgba(238, 77, 45, 0.25);
   transition: all 160ms ease;
 }
 
 .pdp-btn-buy:hover:not(:disabled) {
-  background: #1A3857;
+  background: #D73211;
+  box-shadow: 0 6px 20px rgba(238, 77, 45, 0.35);
 }
 
 .pdp-btn-buy:active:not(:disabled) {
@@ -1124,7 +1124,7 @@
 
 .pdp-bundle-item.active {
   background: #EAF4FC;
-  border-color: #145CFF;
+  border-color: #EE4D2D;
 }
 
 .pdp-bundle-item-thumb {
@@ -1164,7 +1164,7 @@
 .pdp-bundle-item-price {
   font-size: 14px;
   font-weight: 800;
-  color: #145CFF;
+  color: #EE4D2D;
   margin-top: 2px;
 }
 
@@ -1261,9 +1261,9 @@
 }
 
 .pdp-tab-btn.active {
-  background: #145CFF;
+  background: #EE4D2D;
   color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(20, 92, 255, 0.25);
+  box-shadow: 0 2px 8px rgba(238, 77, 45, 0.25);
 }
 
 .pdp-tab-pane {
@@ -1393,7 +1393,7 @@
 
 .pdp-related-item:hover {
   transform: translateY(-2px);
-  border-color: #145CFF;
+  border-color: #EE4D2D;
   box-shadow: 0 8px 24px -4px rgba(16, 38, 61, 0.08);
 }
 
@@ -1505,7 +1505,7 @@
 .pdp-mobile-bar-price {
   font-size: 14px;
   font-weight: 800;
-  color: #145CFF;
+  color: #EE4D2D;
   line-height: 1;
 }
 
@@ -1519,7 +1519,7 @@
 .pdp-mobile-btn-cart {
   padding: 8px 14px;
   border-radius: 9999px;
-  background: #145CFF;
+  background: #EE4D2D;
   color: #FFFFFF;
   font-size: 13px;
   font-weight: 700;
