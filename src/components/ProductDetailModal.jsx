@@ -290,7 +290,7 @@ export default function ProductDetailModal({
 
               {/* Price */}
               <div className="flex items-baseline gap-3 mb-4">
-                <span className="text-2xl sm:text-3xl font-extrabold text-[#102A43]">
+                <span className="text-2xl sm:text-3xl font-extrabold text-[#0F172A]">
                   {currencySymbol}{(product.price || 0).toLocaleString()}
                 </span>
                 {product.originalPrice && product.originalPrice > product.price && (
@@ -306,7 +306,7 @@ export default function ProductDetailModal({
               </div>
 
               {/* Description */}
-              <p className="text-xs sm:text-sm text-[#62788A] leading-relaxed mb-4">
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mb-4">
                 {lang === 'bn' ? (product.descriptionBn || product.description) : product.description}
               </p>
 
@@ -333,8 +333,8 @@ export default function ProductDetailModal({
               {/* Variant Selector */}
               {product.variants && product.variants.length > 0 && (
                 <div className="mb-5">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#102A43] mb-2">
-                    Finish: <span className="text-[#168FC2] font-semibold">{selectedVariant?.name}</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-2">
+                    Finish: <span className="text-[#145CFF] font-semibold">{selectedVariant?.name}</span>
                   </label>
                   <div className="flex items-center gap-2.5">
                     {product.variants.map((v) => (
@@ -342,8 +342,8 @@ export default function ProductDetailModal({
                         key={v.id}
                         type="button"
                         onClick={() => setSelectedVariant(v)}
-                        className={`group relative p-1 rounded-full border-2 transition-all focus-visible:ring-2 focus-visible:ring-[#168FC2] ${
-                          selectedVariant?.id === v.id ? 'border-[#168FC2] scale-110 shadow-sm' : 'border-[#DCEAF1] hover:border-[#168FC2]'
+                        className={`group relative p-1 rounded-full border-2 transition-all focus-visible:ring-2 focus-visible:ring-[#145CFF] ${
+                          selectedVariant?.id === v.id ? 'border-[#145CFF] scale-110 shadow-sm' : 'border-[#E2E8F0] hover:border-[#145CFF]'
                         }`}
                         title={v.name}
                         aria-label={`Select ${v.name} finish`}
@@ -361,15 +361,15 @@ export default function ProductDetailModal({
 
               {/* Verified Device Compatibility */}
               {product.compatibleWith && product.compatibleWith.length > 0 && (
-                <div className="mb-5 bg-[#DDF4FC] border border-[#DCEAF1] rounded-2xl p-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43] mb-2">
+                <div className="mb-5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-2xl p-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-2">
                     Verified Device Compatibility
                   </h3>
                   <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
                     {product.compatibleWith.map((model) => (
                       <span 
                         key={model}
-                        className="text-[11px] font-medium bg-white text-[#102A43] px-2.5 py-1 rounded-md border border-[#DCEAF1] shadow-2xs"
+                        className="text-[11px] font-medium bg-white text-[#0F172A] px-2.5 py-1 rounded-md border border-[#E2E8F0] shadow-2xs"
                       >
                         {model}
                       </span>
@@ -381,14 +381,14 @@ export default function ProductDetailModal({
               {/* Technical Specifications Sheet */}
               {product.specs && Object.keys(product.specs).length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#102A43] mb-2.5">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#0F172A] mb-2.5">
                     Technical Specifications
                   </h3>
-                  <div className="divide-y divide-slate-100 border border-[#DCEAF1] rounded-xl overflow-hidden bg-white text-xs">
+                  <div className="divide-y divide-slate-100 border border-[#E2E8F0] rounded-xl overflow-hidden bg-white text-xs">
                     {Object.entries(product.specs).map(([key, val]) => (
                       <div key={key} className="flex justify-between py-2 px-3 hover:bg-slate-50">
-                        <span className="text-[#62788A] font-medium">{key}</span>
-                        <span className="text-[#102A43] font-semibold text-right">{val}</span>
+                        <span className="text-slate-500 font-medium">{key}</span>
+                        <span className="text-[#0F172A] font-semibold text-right">{val}</span>
                       </div>
                     ))}
                   </div>
@@ -397,24 +397,24 @@ export default function ProductDetailModal({
             </div>
 
             {/* Actions: Quantity + Add to Cart + Buy Now */}
-            <div className="pt-4 border-t border-[#DCEAF1] flex flex-col sm:flex-row items-center gap-3">
+            <div className="pt-4 border-t border-[#E2E8F0] flex flex-col sm:flex-row items-center gap-3">
               {/* Quantity Selector */}
-              <div className="flex items-center justify-between border border-[#DCEAF1] rounded-xl bg-white px-2 py-1 w-full sm:w-auto">
+              <div className="flex items-center justify-between border border-[#E2E8F0] rounded-xl bg-white px-2 py-1 w-full sm:w-auto">
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="p-1.5 text-[#62788A] hover:text-[#168FC2] rounded-lg hover:bg-[#DDF4FC]"
+                  className="p-1.5 text-slate-500 hover:text-[#145CFF] rounded-lg hover:bg-[#EFF6FF]"
                   aria-label="Decrease quantity"
                 >
                   <Minus size={15} />
                 </button>
-                <span className="w-10 text-center font-bold text-sm text-[#102A43]" aria-live="polite">
+                <span className="w-10 text-center font-bold text-sm text-[#0F172A]" aria-live="polite">
                   {quantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.min(product.stock || 99, quantity + 1))}
-                  className="p-1.5 text-[#62788A] hover:text-[#168FC2] rounded-lg hover:bg-[#DDF4FC]"
+                  className="p-1.5 text-slate-500 hover:text-[#145CFF] rounded-lg hover:bg-[#EFF6FF]"
                   aria-label="Increase quantity"
                 >
                   <Plus size={15} />
@@ -426,7 +426,7 @@ export default function ProductDetailModal({
                 type="button"
                 onClick={handleAdd}
                 disabled={!product.stock || product.stock === 0}
-                className="w-full sm:flex-1 py-3 px-5 rounded-full bg-[#168FC2] hover:bg-[#0F7CA6] active:scale-[0.99] text-white font-semibold text-sm shadow-md shadow-sky-500/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                className="w-full sm:flex-1 py-3 px-5 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.99] text-white font-semibold text-sm shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
               >
                 {addedAnimation ? (
                   <>
@@ -446,7 +446,7 @@ export default function ProductDetailModal({
                 type="button"
                 onClick={handleBuy}
                 disabled={!product.stock || product.stock === 0}
-                className="w-full sm:w-auto py-3 px-6 rounded-full bg-[#102A43] hover:bg-[#1a3857] active:scale-[0.99] text-white font-semibold text-sm shadow-xs transition-all disabled:opacity-50"
+                className="w-full sm:w-auto py-3 px-6 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] active:scale-[0.99] text-white font-semibold text-sm shadow-xs transition-all disabled:opacity-50 cursor-pointer"
               >
                 Buy Now
               </button>

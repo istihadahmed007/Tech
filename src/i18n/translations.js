@@ -1,13 +1,46 @@
 export const translations = {
   en: {
     brandName: "Tech Nest",
-    tagline: "Everyday Tech Upgrades. Next-day delivery in Bangladesh.",
-    heroTitle: "Everyday Tech Upgrades. Engineered for Peak Performance.",
-    heroSub: "Discover cases, charging essentials and audio for everyday use.",
-    findMyAccessories: "Find my accessories",
-    shopAll: "Shop all",
-    shopAccessories: "Shop all",
-    findMyPhone: "Find my accessories",
+    tagline: "Find the tech that fits your life. Delivered across Bangladesh.",
+    heroTitle: "Find the tech that fits your life.",
+    heroSub: "Explore curated audio, charging essentials, and smart wearables with transparent specs and honest guidance.",
+    findMyAccessories: "Launch Tech Finder",
+    shopAll: "Browse Showroom",
+    shopAccessories: "Explore Collection",
+    findMyPhone: "Find by Device",
+    
+    // Smart Tech Finder
+    finderBadge: "Interactive Matcher",
+    finderTitle: "Smart Tech Finder",
+    finderSubtitle: "Answer 4 quick questions to discover authentic technology tailored to your lifestyle and budget in BDT.",
+    finderStepBudget: "1. Budget Range",
+    finderStepUse: "2. Intended Use",
+    finderStepCategory: "3. Preferred Gear",
+    finderStepPriority: "4. Key Priority",
+    finderWhyFits: "Why this fits your life",
+    finderNoMatch: "No exact match found within this specific combination. Here are our closest verified alternatives:",
+    finderCompareShortlist: "Compare Matches",
+    finderReset: "Restart Questionnaire",
+    
+    // Product Comparison
+    compareTitle: "Product Comparison Matrix",
+    compareSubtitle: "Side-by-side technical specifications, honest stock status, warranty and total package cost.",
+    compareAdd: "Add to Compare",
+    compareRemove: "Remove",
+    compareDiffOnly: "Show Only Differences",
+    compareClearAll: "Clear Comparison",
+    compareTotalCost: "Combined Package Total",
+    compareUpToFour: "You can compare up to 4 products at once",
+    compareEmpty: "No products selected for comparison. Click 'Add to Compare' on any product card.",
+    compareBarTitle: "Compare Shortlist",
+    
+    // Configurable Tech Kits
+    kitsBadge: "Configurable Bundles",
+    kitsTitle: "Engineered Tech Kits",
+    kitsSubtitle: "Tailored multi-device bundles for Students, Professionals, Creators, and Gamers with guaranteed compatibility and verified savings.",
+    kitCustomize: "Customize Gear",
+    kitAddAll: "Add Configured Kit to Bag",
+    kitSavingsUnlocked: "Free Nationwide Delivery Included (৳2,000+)",
     
     // Nav
     navShop: "Shop",
@@ -119,13 +152,46 @@ export const translations = {
   },
   bn: {
     brandName: "টেক নেস্ট",
-    tagline: "আপনার ডিভাইসের জন্য সেরা টেক গ্যাজেট ও এক্সেসরিজ।",
-    heroTitle: "আপনার ডিভাইসের জন্য সঠিক টেক আপগ্রেড।",
-    heroSub: "প্রতিদিনের ব্যবহারের জন্য কেস, চার্জার এবং অডিও খুঁজুন।",
-    findMyAccessories: "আমার অ্যাক্সেসরিজ খুঁজুন",
-    shopAll: "সবগুলো দেখুন",
-    shopAccessories: "সবগুলো দেখুন",
-    findMyPhone: "আমার অ্যাক্সেসরিজ খুঁজুন",
+    tagline: "আপনার জীবনের সাথে মানানসই সেরা প্রযুক্তি খুঁজুন।",
+    heroTitle: "আপনার জীবনের সাথে মানানসই সেরা প্রযুক্তি খুঁজুন।",
+    heroSub: "স্বচ্ছ স্পেসিফিকেশন ও নিখুঁত যাচাইকৃত অডিও, ফাস্ট চার্জার এবং স্মার্টওয়াচ এক্সপ্লোর করুন।",
+    findMyAccessories: "টেক ফাইন্ডার চালু করুন",
+    shopAll: "শোরুম ঘুরে দেখুন",
+    shopAccessories: "কালেকশন দেখুন",
+    findMyPhone: "ডিভাইস ভিত্তিক ফিট",
+    
+    // Smart Tech Finder
+    finderBadge: "ইন্টারেক্টিভ গ্যাজেট ম্যাচিং",
+    finderTitle: "স্মার্ট টেক ফাইন্ডার",
+    finderSubtitle: "আপনার বাজেট (টাকা) এবং ব্যবহারের ধরনের উপর ভিত্তি করে সেরা টেক গ্যাজেট খুঁজে নিন।",
+    finderStepBudget: "১. বাজেট রেঞ্জ",
+    finderStepUse: "২. ব্যবহারের ধরন",
+    finderStepCategory: "৩. পছন্দের গ্যাজেট",
+    finderStepPriority: "৪. প্রধান প্রয়োজনীয়তা",
+    finderWhyFits: "কেন এটি আপনার জন্য সেরা মানানসই",
+    finderNoMatch: "এই নির্দিষ্ট ফিল্টারে সরাসরি ম্যাচ পাওয়া যায়নি। নিচে সবচেয়ে কাছাকাছি যাচাইকৃত পণ্য দেওয়া হলো:",
+    finderCompareShortlist: "বাছাইকৃত পণ্য তুলনা করুন",
+    finderReset: "প্রশ্নাবলী পুনরায় শুরু করুন",
+    
+    // Product Comparison
+    compareTitle: "প্রোডাক্ট তুলনা ম্যাট্রিক্স",
+    compareSubtitle: "পাশাপাশি টেকনিক্যাল স্পেসিফিকেশন, সঠিক স্টক, ওয়ারেন্টি ও মোট প্যাকেজ মূল্য তুলনা করুন।",
+    compareAdd: "তুলনায় যুক্ত করুন",
+    compareRemove: "সরান",
+    compareDiffOnly: "শুধু অমিলগুলো দেখান",
+    compareClearAll: "তুলনা তালিকা খালি করুন",
+    compareTotalCost: "সম্মিলিত প্যাকেজ মূল্য",
+    compareUpToFour: "একসাথে সর্বোচ্চ ৪টি পণ্য তুলনা করা যাবে",
+    compareEmpty: "তুলনার জন্য কোনো পণ্য নির্বাচিত হয়নি। যেকোনো পণ্যের 'তুলনায় যুক্ত করুন' বাটনে ক্লিক করুন।",
+    compareBarTitle: "তুলনা তালিকা",
+    
+    // Configurable Tech Kits
+    kitsBadge: "কনফিগারযোগ্য বান্ডিল",
+    kitsTitle: "স্মার্ট টেক কিটস",
+    kitsSubtitle: "ছাত্র, পেশাদার, ক্রিয়েটর ও গেমারদের জন্য কাস্টমাইজযোগ্য কম্বো প্যাকেজ — নিশ্চিত কম্প্যাটিবিলিটি ও সাশ্রয়।",
+    kitCustomize: "গ্যাজেট কাস্টমাইজ করুন",
+    kitAddAll: "সম্পূর্ণ কিট ব্যাগে যুক্ত করুন",
+    kitSavingsUnlocked: "সারা বাংলাদেশে ফ্রি ডেলিভারি আনলকড (২,০০০৳+)",
     
     // Nav
     navShop: "শপ",

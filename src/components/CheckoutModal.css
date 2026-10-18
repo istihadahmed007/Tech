@@ -1,16 +1,16 @@
 /* ==========================================================================
-   Glacial Tech — Amazon Checkout Stylesheet
-   Guarantees 100% solid, non-transparent rendering with rock-solid CSS Grid.
-   Eliminates all overlapping, collapsing, and backdrop bleed-through issues.
+   Tech Nest — Modern Responsive Checkout Stylesheet
+   Design System: Clean white/light-gray canvas (#FFFFFF / #F8FAFC),
+   dark navy typography (#0F172A), and electric-blue accent (#145CFF).
    ========================================================================== */
 
 /* Full-Page Checkout Container (when visited as a dedicated page) */
 .checkout-page-container {
   width: 100%;
   min-height: calc(100vh - 80px);
-  background-color: #EAEDED !important;
-  color: #0F1111;
-  font-family: var(--font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  background-color: #F8FAFC !important;
+  color: #0F172A;
+  font-family: var(--font-family, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   padding: 20px 16px 60px;
   box-sizing: border-box;
 }
@@ -19,9 +19,9 @@
 .checkout-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 17, 17, 0.72) !important;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  background-color: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 99999;
   display: flex;
   align-items: flex-start;
@@ -38,18 +38,18 @@
   }
 }
 
-/* Modal Dialog Card — 100% OPAQUE Amazon Neutral Gray */
+/* Modal Dialog Card — 100% OPAQUE Clean Slate Card */
 .checkout-modal-card {
   position: relative;
   width: 100%;
   max-width: 1180px;
-  background-color: #EAEDED !important;
-  border: 1px solid #D5D9D9;
-  border-radius: 12px;
-  box-shadow: 0 25px 65px -10px rgba(0, 0, 0, 0.45);
+  background-color: #F8FAFC !important;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 25px 65px -10px rgba(15, 23, 42, 0.25);
   overflow: hidden;
   margin: auto;
-  color: #0F1111;
+  color: #0F172A;
   box-sizing: border-box;
   animation: fadeIn 180ms ease;
 }
@@ -60,17 +60,17 @@
   top: 0;
   z-index: 30;
   background-color: #FFFFFF !important;
-  border-bottom: 1px solid #D5D9D9;
-  padding: 14px 20px;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 @media (min-width: 640px) {
   .checkout-header {
-    padding: 14px 28px;
+    padding: 16px 28px;
   }
 }
 
@@ -86,7 +86,6 @@
   height: 38px;
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
   transition: transform 0.2s ease;
 }
 
@@ -96,29 +95,29 @@
 
 @media (min-width: 640px) {
   .checkout-header-logo-img {
-    height: 48px;
+    height: 44px;
   }
 }
 
 .checkout-header-brand {
-  font-size: 22px;
-  font-weight: 900;
+  font-size: 20px;
+  font-weight: 800;
   letter-spacing: -0.02em;
-  color: #0F1111;
+  color: #0F172A;
 }
 
 .checkout-header-brand span {
-  color: #0284C7;
+  color: #145CFF;
 }
 
 .checkout-header-tag {
   font-size: 11px;
   font-weight: 700;
-  background: #F0F2F2;
-  border: 1px solid #D5D9D9;
-  padding: 2px 7px;
-  border-radius: 4px;
-  color: #565959;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #145CFF;
 }
 
 .checkout-close-btn {
@@ -129,23 +128,23 @@
   border: none;
   font-size: 13px;
   font-weight: 600;
-  color: #007185;
+  color: #145CFF;
   cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
   transition: all 150ms ease;
 }
 
 .checkout-close-btn:hover {
-  color: #C45500;
-  background: #F7FAFA;
+  color: #0D4BD9;
+  background: #EFF6FF;
 }
 
 /* Free Shipping Banner */
 .checkout-free-ship-banner {
-  background-color: #007600;
+  background-color: #145CFF;
   color: #FFFFFF;
-  padding: 10px 24px;
+  padding: 11px 24px;
   font-size: 13px;
   font-weight: 700;
   display: flex;
@@ -154,19 +153,19 @@
 }
 
 .checkout-free-ship-banner.is-under {
-  background-color: #FFF4E5;
-  color: #C45500;
-  border-bottom: 1px solid #F5D8A0;
+  background-color: #FEF3C7;
+  color: #92400E;
+  border-bottom: 1px solid #FDE68A;
 }
 
 /* Error Banner */
 .checkout-error-alert {
   margin: 16px 20px 0;
   padding: 12px 16px;
-  background-color: #FFF4F4;
-  border: 1px solid #DE3618;
-  border-radius: 8px;
-  color: #C40000;
+  background-color: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  border-radius: 10px;
+  color: #B91C1C;
   font-size: 13px;
   display: flex;
   align-items: flex-start;
@@ -175,7 +174,7 @@
 
 /* Content Container & Form */
 .checkout-body {
-  padding: 18px 16px;
+  padding: 20px 16px;
   box-sizing: border-box;
 }
 
@@ -230,23 +229,23 @@
 @media (min-width: 1024px) {
   .checkout-summary-col {
     position: sticky;
-    top: 70px;
+    top: 80px;
   }
 }
 
-/* Cards (Solid White, Amazon Border) */
+/* Cards (Solid White, Clean Border) */
 .checkout-card {
   background-color: #FFFFFF !important;
-  border: 1px solid #D5D9D9 !important;
-  border-radius: 8px !important;
-  padding: 18px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
   box-sizing: border-box !important;
 }
 
 @media (min-width: 640px) {
   .checkout-card {
-    padding: 22px 24px !important;
+    padding: 24px 26px !important;
   }
 }
 
@@ -255,9 +254,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 12px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid #E7E7E7;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #F1F5F9;
 }
 
 .checkout-step-badge-wrap {
@@ -270,7 +269,7 @@
   width: 26px;
   height: 26px;
   border-radius: 9999px;
-  background-color: #0F1111;
+  background-color: #0F172A;
   color: #FFFFFF;
   font-size: 13px;
   font-weight: 700;
@@ -282,9 +281,10 @@
 
 .checkout-step-title {
   font-size: 17px;
-  font-weight: 700;
-  color: #0F1111;
+  font-weight: 800;
+  color: #0F172A;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 /* Form Inputs Grid */
@@ -304,27 +304,27 @@
 .checkout-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   width: 100%;
 }
 
 .checkout-label {
   font-size: 12px;
   font-weight: 700;
-  color: #0F1111;
+  color: #0F172A;
 }
 
 .checkout-label-req {
-  color: #DE3618;
+  color: #EF4444;
 }
 
 .checkout-input {
   width: 100%;
-  padding: 9px 12px;
-  border: 1px solid #888C8C;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
   font-size: 13px;
-  color: #0F1111;
+  color: #0F172A;
   background-color: #FFFFFF;
   box-sizing: border-box;
   outline: none;
@@ -332,19 +332,19 @@
 }
 
 .checkout-input:focus {
-  border-color: #168FC2;
-  box-shadow: 0 0 0 3px rgba(22, 143, 194, 0.18);
+  border-color: #145CFF;
+  box-shadow: 0 0 0 3px rgba(20, 92, 255, 0.15);
 }
 
 .checkout-textarea {
-  min-height: 64px;
+  min-height: 70px;
   resize: vertical;
 }
 
 /* Payment Option Radio Cards */
 .checkout-payment-option {
-  border: 2px solid #D5D9D9;
-  border-radius: 8px;
+  border: 2px solid #E2E8F0;
+  border-radius: 10px;
   padding: 16px;
   cursor: pointer;
   background-color: #FFFFFF;
@@ -354,13 +354,13 @@
 }
 
 .checkout-payment-option:hover {
-  border-color: #888C8C;
+  border-color: #94A3B8;
 }
 
 .checkout-payment-option.is-active {
-  border-color: #168FC2 !important;
-  background-color: #F4FAFD !important;
-  box-shadow: 0 1px 4px rgba(22, 143, 194, 0.12);
+  border-color: #145CFF !important;
+  background-color: #F8FAFF !important;
+  box-shadow: 0 2px 8px rgba(20, 92, 255, 0.08);
 }
 
 .checkout-radio-flex {
@@ -370,9 +370,9 @@
 }
 
 .checkout-radio-input {
-  width: 17px;
-  height: 17px;
-  accent-color: #168FC2;
+  width: 18px;
+  height: 18px;
+  accent-color: #145CFF;
   cursor: pointer;
   margin-top: 2px;
 }
@@ -380,16 +380,16 @@
 .checkout-method-name {
   font-size: 14px;
   font-weight: 700;
-  color: #0F1111;
+  color: #0F172A;
 }
 
 .checkout-method-badge {
   display: inline-block;
-  background: #FFF4E5;
-  color: #C45500;
-  border: 1px solid #F5D8A0;
-  border-radius: 4px;
-  padding: 2px 7px;
+  background: #EFF6FF;
+  color: #145CFF;
+  border: 1px solid #BFDBFE;
+  border-radius: 6px;
+  padding: 2px 8px;
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
@@ -398,8 +398,8 @@
 
 .checkout-method-desc {
   font-size: 12px;
-  color: #565959;
-  line-height: 1.45;
+  color: #475569;
+  line-height: 1.5;
   margin-top: 4px;
   margin-bottom: 8px;
 }
@@ -413,25 +413,25 @@
 
 .checkout-brand-chip {
   padding: 3px 8px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
   color: #FFFFFF;
 }
 
-/* Ice Blue Tech Nest Place Order Button */
+/* Electric Blue Tech Nest Place Order Button */
 .checkout-btn-order {
   width: 100%;
-  background-color: #168FC2 !important;
-  border: 1px solid #168FC2 !important;
-  border-radius: 8px !important;
+  background-color: #145CFF !important;
+  border: 1px solid #145CFF !important;
+  border-radius: 10px !important;
   padding: 14px 20px !important;
   font-size: 15px !important;
   font-weight: 700 !important;
   color: #FFFFFF !important;
   cursor: pointer !important;
   text-align: center !important;
-  box-shadow: 0 2px 8px rgba(22, 143, 194, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(20, 92, 255, 0.25) !important;
   transition: all 150ms ease !important;
   display: flex !important;
   align-items: center !important;
@@ -440,13 +440,13 @@
 }
 
 .checkout-btn-order:hover:not(:disabled) {
-  background-color: #0F7CA6 !important;
-  border-color: #0F7CA6 !important;
-  box-shadow: 0 4px 12px rgba(22, 143, 194, 0.35) !important;
+  background-color: #0D4BD9 !important;
+  border-color: #0D4BD9 !important;
+  box-shadow: 0 6px 18px rgba(20, 92, 255, 0.35) !important;
 }
 
 .checkout-btn-order:active:not(:disabled) {
-  background-color: #0B678E !important;
+  background-color: #0A3BA8 !important;
 }
 
 .checkout-btn-order:disabled {
@@ -458,10 +458,10 @@
 .checkout-price-breakdown {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   font-size: 13px;
-  color: #0F1111;
-  margin-top: 14px;
+  color: #0F172A;
+  margin-top: 16px;
 }
 
 .checkout-price-row {
@@ -473,20 +473,20 @@
 .checkout-price-row.total-row {
   font-size: 18px;
   font-weight: 800;
-  color: #B12704;
-  border-top: 1px solid #E7E7E7;
-  padding-top: 12px;
+  color: #0F172A;
+  border-top: 1px solid #E2E8F0;
+  padding-top: 14px;
   margin-top: 6px;
 }
 
 /* Trust Guarantee Card */
 .checkout-trust-card {
   background-color: #FFFFFF !important;
-  border: 1px solid #D5D9D9 !important;
-  border-radius: 8px !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 10px !important;
   padding: 16px !important;
   font-size: 12px !important;
-  color: #565959 !important;
+  color: #475569 !important;
 }
 
 .checkout-trust-card ul {
@@ -502,7 +502,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #F0F2F2;
+  border-bottom: 1px solid #F1F5F9;
 }
 
 .checkout-item-preview-row:last-child {
@@ -510,12 +510,13 @@
 }
 
 .checkout-item-preview-thumb {
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
-  border: 1px solid #E7E7E7;
-  border-radius: 4px;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
   padding: 2px;
   background: #FFFFFF;
   flex-shrink: 0;
 }
+

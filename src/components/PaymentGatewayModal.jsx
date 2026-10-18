@@ -179,25 +179,25 @@ export default function PaymentGatewayModal({
       aria-labelledby="gateway-dialog-heading"
     >
       <div 
-        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-7 bg-[#FFFFFF] border border-[#DCEAF1] shadow-2xl animate-fadeIn text-[#102A43]"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl p-6 sm:p-7 bg-[#FFFFFF] border border-[#E2E8F0] shadow-2xl animate-fadeIn text-[#0F172A]"
         onClick={(e) => e.stopPropagation()}
         style={{
-          boxShadow: '0 25px 60px -15px rgba(16, 38, 61, 0.20)'
+          boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.20)'
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#DCEAF1] mb-4">
+        <div className="flex items-center justify-between pb-4 border-b border-[#F1F5F9] mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-[#168FC2] text-white flex items-center justify-center font-bold shadow-md shadow-sky-500/20 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[#145CFF] text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20 shrink-0">
               <Lock size={19} />
             </div>
             <div>
-              <h2 id="gateway-dialog-heading" className="font-extrabold text-base text-[#102A43] leading-tight">
+              <h2 id="gateway-dialog-heading" className="font-extrabold text-base text-[#0F172A] leading-tight">
                 Secure Online Payment
               </h2>
-              <p className="text-[11px] text-[#62788A] flex items-center gap-1">
+              <p className="text-[11px] text-[#475569] flex items-center gap-1">
                 <ShieldCheck size={12} className="text-emerald-600" />
-                <span>UddoktaPay & Paymently Verified Gateway</span>
+                <span>UddoktaPay &amp; Paymently Verified Gateway</span>
               </p>
             </div>
           </div>
@@ -215,18 +215,18 @@ export default function PaymentGatewayModal({
         </div>
 
         {/* Order Details Card */}
-        <div className="p-3.5 rounded-2xl bg-[#F0F7FF] border border-[#D0E4F7] mb-4 text-xs space-y-1.5">
+        <div className="p-3.5 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] mb-4 text-xs space-y-1.5">
           <div className="flex justify-between items-center">
-            <span className="text-[#62788A] font-medium">Order Number:</span>
-            <span className="font-mono font-bold text-[#168FC2]">{sessionInfo.orderId}</span>
+            <span className="text-[#475569] font-medium">Order Number:</span>
+            <span className="font-mono font-bold text-[#145CFF]">{sessionInfo.orderId}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-[#62788A] font-medium">Payable Total:</span>
-            <span className="font-extrabold text-base text-[#102A43]">
+            <span className="text-[#475569] font-medium">Payable Total:</span>
+            <span className="font-extrabold text-base text-[#0F172A]">
               {currencySymbol}{sessionInfo.amount?.toLocaleString()} BDT
             </span>
           </div>
-          <div className="flex items-center gap-1.5 pt-1 text-[11px] text-[#62788A] border-t border-[#D0E4F7]/60">
+          <div className="flex items-center gap-1.5 pt-1 text-[11px] text-[#475569] border-t border-[#BFDBFE]/60">
             <span>Accepted:</span>
             <span className="font-semibold text-pink-700">bKash</span>
             <span>•</span>
@@ -244,7 +244,7 @@ export default function PaymentGatewayModal({
             type="button"
             onClick={() => setActiveTab('gateway')}
             className={`py-2 px-1 rounded-lg text-center transition-all ${
-              activeTab === 'gateway' ? 'bg-white text-[#168FC2] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'gateway' ? 'bg-white text-[#145CFF] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Portal
@@ -253,7 +253,7 @@ export default function PaymentGatewayModal({
             type="button"
             onClick={() => setActiveTab('qr')}
             className={`py-2 px-1 rounded-lg text-center transition-all ${
-              activeTab === 'qr' ? 'bg-white text-[#168FC2] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'qr' ? 'bg-white text-[#145CFF] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Scan QR
@@ -262,7 +262,7 @@ export default function PaymentGatewayModal({
             type="button"
             onClick={() => setActiveTab('trxid')}
             className={`py-2 px-1 rounded-lg text-center transition-all ${
-              activeTab === 'trxid' ? 'bg-white text-[#168FC2] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'trxid' ? 'bg-white text-[#145CFF] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Submit TrxID
@@ -271,7 +271,7 @@ export default function PaymentGatewayModal({
             type="button"
             onClick={() => setActiveTab('simulate')}
             className={`py-2 px-1 rounded-lg text-center transition-all ${
-              activeTab === 'simulate' ? 'bg-white text-[#168FC2] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
+              activeTab === 'simulate' ? 'bg-white text-[#145CFF] shadow-xs font-bold' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Test Mode
@@ -281,12 +281,12 @@ export default function PaymentGatewayModal({
         {/* Tab 1: Paymently / UddoktaPay Portal */}
         {activeTab === 'gateway' && (
           <div className="space-y-4 animate-fadeIn">
-            <div className="p-4 rounded-2xl bg-white border border-[#DCEAF1] space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#102A43]">
-                <Smartphone size={16} className="text-[#168FC2]" />
+            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#0F172A]">
+                <Smartphone size={16} className="text-[#145CFF]" />
                 <span>Pay via Official Paymently Portal</span>
               </div>
-              <p className="text-xs text-[#62788A] leading-relaxed">
+              <p className="text-xs text-[#475569] leading-relaxed">
                 Click below to complete your payment on the secure Paymently / UddoktaPay portal using your bKash, Nagad, Rocket account or Bank Card.
               </p>
 
@@ -295,7 +295,7 @@ export default function PaymentGatewayModal({
                   href={paymentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 px-4 rounded-xl bg-[#168FC2] hover:bg-[#0F7CA6] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+                  className="flex-1 py-3 px-4 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
                 >
                   <span>Open Payment Portal</span>
                   <ExternalLink size={14} />
@@ -303,7 +303,7 @@ export default function PaymentGatewayModal({
                 <button
                   type="button"
                   onClick={handleCopyLink}
-                  className="py-3 px-3.5 rounded-xl border border-[#DCEAF1] bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                  className="py-3 px-3.5 rounded-xl border border-[#E2E8F0] bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                   title="Copy payment link"
                 >
                   {copiedLink ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
@@ -323,19 +323,19 @@ export default function PaymentGatewayModal({
         {/* Tab 2: Scan & Pay QR Code */}
         {activeTab === 'qr' && (
           <div className="space-y-4 animate-fadeIn text-center">
-            <div className="p-4 rounded-2xl bg-white border border-[#DCEAF1] flex flex-col items-center">
-              <div className="w-48 h-48 p-2.5 rounded-2xl bg-white border border-slate-200 shadow-inner flex items-center justify-center mb-3">
+            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] flex flex-col items-center">
+              <div className="w-48 h-48 p-2.5 rounded-xl bg-white border border-slate-200 shadow-inner flex items-center justify-center mb-3">
                 <img
                   src={qrUrl}
                   alt="Virtual Tutor Paymently QR Code"
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#102A43] mb-1">
-                <QrCode size={15} className="text-[#168FC2]" />
+              <div className="flex items-center gap-1.5 text-xs font-bold text-[#0F172A] mb-1">
+                <QrCode size={15} className="text-[#145CFF]" />
                 <span>Scan with bKash or Nagad App</span>
               </div>
-              <p className="text-[11px] text-[#62788A] max-w-xs leading-relaxed">
+              <p className="text-[11px] text-[#475569] max-w-xs leading-relaxed">
                 Open your bKash/Nagad app, select &ldquo;QR Payment&rdquo;, scan this code and pay <strong>{currencySymbol}{sessionInfo.amount?.toLocaleString()}</strong>.
               </p>
             </div>
@@ -343,7 +343,7 @@ export default function PaymentGatewayModal({
             <button
               type="button"
               onClick={() => setActiveTab('trxid')}
-              className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#102A43] font-bold text-xs transition-colors"
+              className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#0F172A] font-bold text-xs transition-colors"
             >
               I have paid — Enter TrxID
             </button>
@@ -355,7 +355,7 @@ export default function PaymentGatewayModal({
           <form onSubmit={handleVerifyTrxId} className="space-y-3.5 animate-fadeIn">
             <div className="space-y-2.5">
               <div>
-                <label className="block text-xs font-bold text-[#102A43] mb-1">
+                <label className="block text-xs font-bold text-[#0F172A] mb-1">
                   Transaction ID (TrxID) *
                 </label>
                 <input
@@ -364,12 +364,12 @@ export default function PaymentGatewayModal({
                   placeholder="e.g. BK72918349 or 10-character TrxID"
                   value={trxId}
                   onChange={(e) => setTrxId(e.target.value.toUpperCase())}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCEAF1] focus:border-[#168FC2] focus:ring-2 focus:ring-[#168FC2]/20 outline-none text-xs font-mono font-bold"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] focus:border-[#145CFF] focus:ring-2 focus:ring-[#145CFF]/20 outline-none text-xs font-mono font-bold"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#102A43] mb-1">
+                <label className="block text-xs font-bold text-[#0F172A] mb-1">
                   Sender Mobile Number (Optional)
                 </label>
                 <input
@@ -377,7 +377,7 @@ export default function PaymentGatewayModal({
                   placeholder="e.g. 017XXXXXXXX"
                   value={senderPhone}
                   onChange={(e) => setSenderPhone(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#DCEAF1] focus:border-[#168FC2] focus:ring-2 focus:ring-[#168FC2]/20 outline-none text-xs"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] focus:border-[#145CFF] focus:ring-2 focus:ring-[#145CFF]/20 outline-none text-xs"
                 />
               </div>
             </div>
@@ -402,7 +402,7 @@ export default function PaymentGatewayModal({
               ) : (
                 <>
                   <CheckCircle size={15} />
-                  <span>Verify & Confirm Order</span>
+                  <span>Verify &amp; Confirm Order</span>
                 </>
               )}
             </button>
@@ -412,7 +412,7 @@ export default function PaymentGatewayModal({
         {/* Tab 4: Developer Test Mode Simulation */}
         {activeTab === 'simulate' && (
           <div className="space-y-3.5 animate-fadeIn">
-            <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-200/80 text-amber-900 text-xs space-y-1">
+            <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-200/80 text-amber-900 text-xs space-y-1">
               <strong className="block font-bold">Developer Sandbox Mode</strong>
               <p className="text-[11px] leading-relaxed text-amber-800">
                 Instantly simulate a completed or declined transaction to test order generation, invoice printing, and stock allocation without spending real money.

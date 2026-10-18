@@ -12,17 +12,18 @@ export default function Hero({
 }) {
   const SLIDES = [
     {
-      id: 'audio',
+      id: 'finder',
       productType: 'audio',
-      tabLabel: lang === 'bn' ? 'অডিও ও ইয়ারবাডস' : 'Audio Gear',
-      eyebrow: lang === 'bn' ? 'অথেনটিক সাউন্ড কালেকশন' : 'AUTHENTIC SOUND COLLECTION',
-      badge: lang === 'bn' ? 'টপ অডিও' : 'Top Audio',
-      title: lang === 'bn' ? 'উন্নত সাউন্ড ও কলিং\nপ্রো-টিডব্লিউএস ইয়ারবাডস' : 'Premium Studio Sound.\nPro TWS & ANC Earbuds.',
+      tabLabel: lang === 'bn' ? 'স্মার্ট ম্যাচিং' : 'Smart Finder',
+      eyebrow: lang === 'bn' ? 'টেক নেস্ট সিগনেচার এক্সপেরিয়েন্স' : 'FIND THE TECH THAT FITS YOUR LIFE',
+      badge: lang === 'bn' ? 'সিগনেচার' : 'Signature',
+      title: lang === 'bn' ? 'আপনার জীবনের সাথে\nমানানসই প্রযুক্তি খুঁজুন' : 'Find the Tech That\nFits Your Life.',
       subtitle: lang === 'bn' 
-        ? 'হাইড্রোফোবিক বিল্ড, অ্যাক্টিভ নয়েজ ক্যান্সেলেশন ও ক্রিস্টাল ক্লিয়ার কলিং মাইক্রোফোন।'
-        : 'Wireless earbuds, gaming headsets & sports neckbands with real acoustic performance.',
+        ? 'বাজেট, ব্যবহার এবং অগ্রাধিকারের ভিত্তিতে যাচাইকৃত অডিও, ফাস্ট চার্জার ও স্মার্টওয়াচ ম্যাচ করুন।'
+        : 'Smart discovery questionnaire, honest side-by-side spec comparison, and verified nationwide delivery.',
       category: 'earbuds',
-      ctaText: lang === 'bn' ? 'অডিও কালেকশন কিনুন' : 'Shop Audio Collection',
+      ctaText: lang === 'bn' ? 'টেক ফাইন্ডার শুরু করুন' : 'Launch Tech Finder',
+      isFinderCta: true,
       image: '/assets/hero-audio-headphones.jpg',
       imageAlt: 'Premium studio wireless headphones and crystal TWS earbuds'
     },
@@ -35,9 +36,9 @@ export default function Hero({
       title: lang === 'bn' ? 'ফাস্ট চার্জিং ক্যাবল\n১২০W ম্যাক্স আউটপুট' : 'Fast Charging Cables.\n120W Max High-Speed.',
       subtitle: lang === 'bn'
         ? 'ব্রেইডেড ৪-ইন-১ ক্যাবল, গোল্ড-প্লেটেড কানেক্টর ও ওটিজি অ্যাডাপ্টার।'
-        : 'High-density braided cables, OTG adapters & fast wall chargers for all devices.',
+        : 'High-density braided cables, OTG adapters & fast wall chargers with verified specs.',
       category: 'chargers',
-      ctaText: lang === 'bn' ? 'চার্জিং সামগ্রী কিনুন' : 'Shop Charging Gear',
+      ctaText: lang === 'bn' ? 'চার্জিং সামগ্রী দেখুন' : 'Explore Charging',
       image: '/assets/cat-charging.jpg',
       imageAlt: 'Fast charging GaN adapters and multi-tip braided cables'
     },
@@ -52,7 +53,7 @@ export default function Hero({
         ? 'এইচডি ডিসপ্লে, ওয়্যারলেস চার্জিং, ব্লুটুথ কলিং ও ফিটনেস ট্র্যাকিং।'
         : 'Ultra display, interchangeable strap sets, cellular SIM calling & health tracking.',
       category: 'wearables',
-      ctaText: lang === 'bn' ? 'স্মার্টওয়াচ কিনুন' : 'Shop Smartwatches',
+      ctaText: lang === 'bn' ? 'স্মার্টওয়াচ দেখুন' : 'Explore Smartwatches',
       image: '/assets/cat-wearables.jpg',
       imageAlt: 'Ultra smartwatch with interchangeable straps'
     }
@@ -119,8 +120,12 @@ export default function Hero({
                 <button
                   type="button"
                   onClick={() => {
-                    if (onSelectCategory && currentSlide.category) onSelectCategory(currentSlide.category);
-                    if (onShopClick) onShopClick();
+                    if (currentSlide.isFinderCta && onFindPhoneClick) {
+                      onFindPhoneClick();
+                    } else {
+                      if (onSelectCategory && currentSlide.category) onSelectCategory(currentSlide.category);
+                      if (onShopClick) onShopClick();
+                    }
                   }}
                   className="hero-btn-primary"
                   title={currentSlide.ctaText}
@@ -222,17 +227,17 @@ export default function Hero({
             }}
           >
             <div className="hero-promo-card-info">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#168FC2] uppercase tracking-wider mb-1">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#145CFF] uppercase tracking-wider mb-1">
                 <Zap size={12} className="shrink-0" />
                 <span>{lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charge Hub'}</span>
               </div>
-              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#168FC2] transition-colors line-clamp-2">
+              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#145CFF] transition-colors line-clamp-2">
                 {lang === 'bn' ? '১০০% অরিজিনাল ক্যাবল ও অ্যাডাপ্টার' : 'GaN Chargers & 120W Cables'}
               </h3>
               <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
                 {lang === 'bn' ? 'শুরু মাত্র ৳১৫০ থেকে' : 'Starting from ৳150 with warranty'}
               </p>
-              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#168FC2] mt-2 group-hover:underline">
+              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#145CFF] mt-2 group-hover:underline">
                 <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
                 <ChevronRight size={13} className="shrink-0" />
               </div>
@@ -264,17 +269,17 @@ export default function Hero({
             }}
           >
             <div className="hero-promo-card-info">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#168FC2] uppercase tracking-wider mb-1">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#145CFF] uppercase tracking-wider mb-1">
                 <Sparkles size={12} className="shrink-0" />
                 <span>{lang === 'bn' ? 'স্মার্ট গ্যাজেট' : 'Ultra Gear'}</span>
               </div>
-              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#168FC2] transition-colors line-clamp-2">
+              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#145CFF] transition-colors line-clamp-2">
                 {lang === 'bn' ? 'সিম সাপোর্টেড স্মার্টওয়াচ' : 'SIM Smartwatches & Combos'}
               </h3>
               <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
                 {lang === 'bn' ? '৮+১ মাল্টি-স্ট্র্যাপ সংস্করণ' : '8+1 Interchangeable Straps'}
               </p>
-              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#168FC2] mt-2 group-hover:underline">
+              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#145CFF] mt-2 group-hover:underline">
                 <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
                 <ChevronRight size={13} className="shrink-0" />
               </div>

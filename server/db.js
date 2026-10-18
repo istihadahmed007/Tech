@@ -534,10 +534,11 @@ function seedInitialCatalog(db) {
   const passwordHash = `scrypt:${salt}:${derivedKey}`;
 
   db.prepare(`
-    INSERT INTO users (id, email, phone, name, password_hash, role, addresses_json, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO users (id, email, phone, name, password_hash, role, permissions_json, addresses_json, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(email) DO UPDATE SET
       role = 'admin',
+      permissions_json = '["*"]',
       updated_at = excluded.updated_at
   `).run(
     'usr_admin_default',
@@ -546,10 +547,34 @@ function seedInitialCatalog(db) {
     'Store Administrator',
     passwordHash,
     'admin',
+    '["*"]',
     '[]',
     now,
     now
   );
+
+  const envAdminEmail = process.env.ADMIN_EMAIL ? process.env.ADMIN_EMAIL.trim().toLowerCase() : null;
+  if (envAdminEmail && envAdminEmail !== 'admin@techtrove.local') {
+    db.prepare(`
+      INSERT INTO users (id, email, phone, name, password_hash, role, permissions_json, addresses_json, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(email) DO UPDATE SET
+        role = 'admin',
+        permissions_json = '["*"]',
+        updated_at = excluded.updated_at
+    `).run(
+      'usr_admin_env',
+      envAdminEmail,
+      '01700000000',
+      'Primary Administrator',
+      passwordHash,
+      'admin',
+      '["*"]',
+      '[]',
+      now,
+      now
+    );
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -910,6 +935,7 @@ export function deleteProduct(id) {
     db.prepare('DELETE FROM inventory_adjustments WHERE product_id = ?').run(id);
     db.prepare('DELETE FROM inventory_reservations WHERE product_id = ?').run(id);
     db.prepare('DELETE FROM reviews WHERE product_id = ?').run(id);
+    db.prepare('DELETE FROM promotions WHERE product_id = ?').run(id);
     db.prepare('DELETE FROM products WHERE id = ?').run(id);
     db.exec('COMMIT;');
     return true;

@@ -30,7 +30,8 @@ import {
   HelpCircle,
   Award,
   CheckSquare,
-  Square
+  Square,
+  Scale
 } from 'lucide-react';
 import './ProductDetailPage.css';
 import { safeFetchJson } from '../utils/api';
@@ -45,6 +46,8 @@ export default function ProductDetailPage({
   onBuyNow,
   wishlistIds = [],
   onToggleWishlist,
+  onToggleCompare,
+  comparisonIds = [],
   onBackToHome,
   onSelectCategory,
   onSelectProduct,
@@ -845,6 +848,26 @@ export default function ProductDetailPage({
               <Heart size={15} fill={isWishlisted ? "currentColor" : "none"} />
               <span>{isWishlisted ? (lang === 'bn' ? 'উইশলিস্টে সেভ করা আছে' : 'Saved to Wishlist') : (lang === 'bn' ? 'উইশলিস্টে যোগ করুন' : 'Add to Wishlist')}</span>
             </button>
+
+            {/* Compare Button inside Buy Box */}
+            {onToggleCompare && (
+              <button
+                type="button"
+                onClick={() => onToggleCompare(product)}
+                className={`w-full mt-2 py-2.5 px-4 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  comparisonIds.includes(product.id)
+                    ? 'bg-[#145CFF] text-white border-[#145CFF]'
+                    : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:border-[#145CFF]'
+                }`}
+              >
+                <Scale size={15} />
+                <span>
+                  {comparisonIds.includes(product.id)
+                    ? (lang === 'bn' ? 'তুলনায় যুক্ত আছে' : 'In Product Comparison')
+                    : (lang === 'bn' ? 'তুলনায় যোগ করুন' : 'Add to Compare')}
+                </span>
+              </button>
+            )}
           </div>
         </div>
       </section>

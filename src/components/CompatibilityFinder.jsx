@@ -24,12 +24,7 @@ export default function CompatibilityFinder({
   return (
     <div 
       id="compatibility-finder"
-      className="w-full rounded-2xl p-3.5 sm:p-5 border border-[#DCEAF1] shadow-2xs mb-8"
-      style={{
-        background: 'rgba(255, 255, 255, 0.94)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)'
-      }}
+      className="w-full rounded-2xl p-4 sm:p-5 bg-white border border-[#E2E8F0] shadow-sm mb-8"
     >
       <form 
         onSubmit={handleApply}
@@ -37,14 +32,14 @@ export default function CompatibilityFinder({
       >
         {/* Left: Section Title */}
         <div className="w-full md:w-auto shrink-0 pl-1 sm:pl-2">
-          <h2 className="text-base sm:text-lg font-bold text-[#102A43] tracking-tight">
+          <h2 className="text-base sm:text-lg font-bold text-[#0F172A] tracking-tight">
             {t.finderTitle || (lang === 'bn' ? 'ডিভাইস ফিট ফাইন্ডার' : 'Find the right fit')}
           </h2>
         </div>
 
         {/* Center: Brand Selector */}
         <div className="relative w-full md:flex-1 max-w-xs">
-          <div className="relative flex items-center bg-white rounded-xl border border-[#DCEAF1] px-3.5 py-2.5 shadow-2xs hover:border-[#168FC2] transition-colors">
+          <div className="relative flex items-center bg-white rounded-xl border border-[#CBD5E1] px-3.5 py-2.5 shadow-2xs hover:border-[#145CFF] focus-within:border-[#145CFF] transition-colors">
             <Smartphone size={16} className="text-slate-400 mr-2 shrink-0" />
             <select
               aria-label={t.selectBrand || "Select Phone Brand"}
@@ -68,7 +63,7 @@ export default function CompatibilityFinder({
 
         {/* Center: Model Selector */}
         <div className="relative w-full md:flex-1 max-w-xs">
-          <div className="relative flex items-center bg-white rounded-xl border border-[#DCEAF1] px-3.5 py-2.5 shadow-2xs hover:border-[#168FC2] transition-colors">
+          <div className="relative flex items-center bg-white rounded-xl border border-[#CBD5E1] px-3.5 py-2.5 shadow-2xs hover:border-[#145CFF] focus-within:border-[#145CFF] transition-colors">
             <Smartphone size={16} className="text-slate-400 mr-2 shrink-0" />
             <select
               aria-label={t.selectModel || "Select Phone Model"}
@@ -89,7 +84,7 @@ export default function CompatibilityFinder({
         {/* Right: Submit Button */}
         <button
           type="submit"
-          className="w-full md:w-auto px-6 py-2.5 rounded-full bg-[#168FC2] hover:bg-[#0F7CA6] active:scale-[0.98] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition-all whitespace-nowrap shrink-0"
+          className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] active:scale-[0.98] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm transition-all whitespace-nowrap shrink-0"
         >
           <span>{t.findAccessories || (lang === 'bn' ? 'এক্সেসরিজ খুঁজুন' : 'Find accessories')}</span>
           <ChevronRight size={16} className="stroke-[2.5]" />
@@ -98,9 +93,9 @@ export default function CompatibilityFinder({
 
       {/* Active Filter Notification Pill (when filtered) */}
       {selectedPhone && (
-        <div className="mt-2.5 pt-2 border-t border-[#DCEAF1] flex items-center justify-between text-xs px-2">
-          <span className="text-[#62788A]">
-            {(t.showingCompatibleFor || (lang === 'bn' ? 'উপযুক্ত পণ্য দেখাচ্ছে:' : 'Showing accessories tailored for:'))} <strong className="text-[#168FC2]">{selectedPhone}</strong>
+        <div className="mt-2.5 pt-2 border-t border-[#F1F5F9] flex items-center justify-between text-xs px-2">
+          <span className="text-[#475569]">
+            {(t.showingCompatibleFor || (lang === 'bn' ? 'উপযুক্ত পণ্য দেখাচ্ছে:' : 'Showing accessories tailored for:'))} <strong className="text-[#145CFF]">{selectedPhone}</strong>
           </span>
           <button
             onClick={onClearFilter}

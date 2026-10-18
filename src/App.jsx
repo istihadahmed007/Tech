@@ -8,6 +8,7 @@ import FeaturedCategories from './components/FeaturedCategories';
 import DailyDiscover from './components/DailyDiscover';
 import BrandSection from './components/BrandSection';
 import ReviewsSection from './components/ReviewsSection';
+import FaqSection from './components/FaqSection';
 import NewsletterSection from './components/NewsletterSection';
 import CompatibilityFinder from './components/CompatibilityFinder';
 import CategoryNav from './components/CategoryNav';
@@ -25,6 +26,11 @@ import AccountModal from './components/AccountModal';
 import AdminDashboard from './components/AdminDashboard';
 import SupportModal from './components/SupportModal';
 import BundleDeals from './components/BundleDeals';
+import SmartTechFinder from './components/SmartTechFinder';
+import ComparisonBar from './components/ComparisonBar';
+import ProductComparisonModal from './components/ProductComparisonModal';
+import TechKits from './components/TechKits';
+import RecentlyViewedSection from './components/RecentlyViewedSection';
 import Footer from './components/Footer';
 
 import { INITIAL_PRODUCTS } from './data/catalog';
@@ -65,6 +71,26 @@ export default function App() {
   const [wishlistIds, setWishlistIds] = useState(() => {
     try {
       const saved = localStorage.getItem('accessories_wishlist');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  // Comparison Matrix State (Persisted in localStorage)
+  const [comparisonIds, setComparisonIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tech_comparison_ids');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  // Recently Viewed State (Persisted in localStorage)
+  const [recentIds, setRecentIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tech_recent_ids');
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
@@ -174,6 +200,20 @@ export default function App() {
     } catch (e) {}
   }, [wishlistIds]);
 
+  // Sync comparison to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('tech_comparison_ids', JSON.stringify(comparisonIds));
+    } catch (e) {}
+  }, [comparisonIds]);
+
+  // Sync recently viewed to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('tech_recent_ids', JSON.stringify(recentIds));
+    } catch (e) {}
+  }, [recentIds]);
+
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -193,6 +233,10 @@ export default function App() {
     if (prod) {
       setSelectedProduct(prod);
       setActiveModal(null);
+      // Track recently viewed
+      if (prod.id) {
+        setRecentIds(prev => [prod.id, ...prev.filter(id => id !== prod.id)].slice(0, 10));
+      }
       if (pushHistory) {
         window.history.pushState({ productId: prod.id }, '', `/product/${prod.id}`);
       }
@@ -206,6 +250,33 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [products]);
+
+  // Comparison Handlers
+  const handleToggleCompare = useCallback((product) => {
+    if (!product || !product.id) return;
+    setComparisonIds(prev => {
+      if (prev.includes(product.id)) {
+        showToast(lang === 'bn' ? `${product.title} তুলনা থেকে সরানো হয়েছে` : `Removed ${product.title} from comparison`);
+        return prev.filter(id => id !== product.id);
+      } else {
+        if (prev.length >= 4) {
+          showToast(lang === 'bn' ? 'একসাথে সর্বোচ্চ ৪টি পণ্য তুলনা করা যাবে' : 'Maximum 4 products can be compared at once');
+          return prev;
+        }
+        showToast(lang === 'bn' ? `${product.title} তুলনায় যুক্ত হয়েছে` : `Added ${product.title} to comparison`);
+        return [...prev, product.id];
+      }
+    });
+  }, [lang, showToast]);
+
+  const handleRemoveFromCompare = useCallback((productId) => {
+    setComparisonIds(prev => prev.filter(id => id !== productId));
+  }, []);
+
+  const handleClearComparison = useCallback(() => {
+    setComparisonIds([]);
+    showToast(lang === 'bn' ? 'তুলনা তালিকা খালি করা হয়েছে' : 'Cleared comparison list');
+  }, [lang, showToast]);
 
   // Dedicated Amazon-Style Cart Page Navigation (Full page, zero overlapping)
   const navigateToCart = useCallback((pushHistory = true) => {
@@ -238,6 +309,77 @@ export default function App() {
     trackCheckoutStarted(itemsToCheckout && itemsToCheckout.length > 0 ? itemsToCheckout : cart);
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [cart]);
+
+  const handleAddAllComparedToBag = useCallback((comparedProducts) => {
+    if (!comparedProducts || comparedProducts.length === 0) return;
+    setCart((prevCart) => {
+      let nextCart = [...prevCart];
+      for (const prod of comparedProducts) {
+        const defaultVariant = prod.variants ? prod.variants[0] : null;
+        const variantId = defaultVariant?.id || 'default';
+        const existingIdx = nextCart.findIndex(
+          item => item.id === prod.id && (item.variant?.id || 'default') === variantId
+        );
+        if (existingIdx > -1) {
+          nextCart[existingIdx] = {
+            ...nextCart[existingIdx],
+            quantity: nextCart[existingIdx].quantity + 1
+          };
+        } else {
+          nextCart.push({
+            id: prod.id,
+            sku: prod.sku || prod.id,
+            title: prod.title,
+            titleBn: prod.titleBn,
+            price: prod.price,
+            image: prod.image,
+            category: prod.category,
+            variant: defaultVariant,
+            quantity: 1
+          });
+        }
+      }
+      return nextCart;
+    });
+    showToast(lang === 'bn' ? 'সকল তুলনা পণ্য ব্যাগে যুক্ত করা হয়েছে!' : 'All compared products added to bag!');
+    setActiveModal(null);
+    navigateToCart(true);
+  }, [lang, navigateToCart, showToast]);
+
+  const handleAddKitToBag = useCallback((kitProducts, kitName) => {
+    if (!kitProducts || kitProducts.length === 0) return;
+    setCart((prevCart) => {
+      let nextCart = [...prevCart];
+      for (const prod of kitProducts) {
+        const defaultVariant = prod.variants ? prod.variants[0] : null;
+        const variantId = defaultVariant?.id || 'default';
+        const existingIdx = nextCart.findIndex(
+          item => item.id === prod.id && (item.variant?.id || 'default') === variantId
+        );
+        if (existingIdx > -1) {
+          nextCart[existingIdx] = {
+            ...nextCart[existingIdx],
+            quantity: nextCart[existingIdx].quantity + 1
+          };
+        } else {
+          nextCart.push({
+            id: prod.id,
+            sku: prod.sku || prod.id,
+            title: prod.title,
+            titleBn: prod.titleBn,
+            price: prod.price,
+            image: prod.image,
+            category: prod.category,
+            variant: defaultVariant,
+            quantity: 1
+          });
+        }
+      }
+      return nextCart;
+    });
+    showToast(lang === 'bn' ? `🎉 ${kitName} ব্যাগে যুক্ত হয়েছে!` : `🎉 ${kitName} added to bag!`);
+    navigateToCart(true);
+  }, [lang, navigateToCart, showToast]);
 
   // Navigate back to Home / Catalog
   const navigateToHome = useCallback((pushHistory = true) => {
@@ -702,8 +844,10 @@ export default function App() {
         currentUser={currentUser}
         cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
         wishlistCount={wishlistIds.length}
+        comparisonCount={comparisonIds.length}
         onOpenCart={() => navigateToCart(true)}
         onOpenWishlist={() => setActiveModal('wishlist')}
+        onOpenComparison={() => setActiveModal('comparison')}
         onOpenSupport={() => setActiveModal('support')}
         onOpenAccount={() => setActiveModal('account')}
         onOpenTracking={(id) => {
@@ -721,9 +865,17 @@ export default function App() {
         onScrollToFinder={() => {
           if (selectedProduct || isCartView) {
             navigateToHome(false);
-            setTimeout(() => scrollToSection('compatibility-finder'), 50);
+            setTimeout(() => scrollToSection('smart-tech-finder'), 50);
           } else {
-            scrollToSection('compatibility-finder');
+            scrollToSection('smart-tech-finder');
+          }
+        }}
+        onScrollToKits={() => {
+          if (selectedProduct || isCartView) {
+            navigateToHome(false);
+            setTimeout(() => scrollToSection('tech-kits-section'), 50);
+          } else {
+            scrollToSection('tech-kits-section');
           }
         }}
         onGoHome={() => navigateToHome(true)}
@@ -752,6 +904,8 @@ export default function App() {
             onBuyNow={handleBuyNow}
             wishlistIds={wishlistIds}
             onToggleWishlist={handleToggleWishlist}
+            onToggleCompare={handleToggleCompare}
+            comparisonIds={comparisonIds}
             onBackToHome={() => navigateToHome(true)}
             onSelectCategory={navigateToCategory}
             onSelectProduct={(p) => navigateToProduct(p, true)}
@@ -812,6 +966,19 @@ export default function App() {
               lang={lang}
             />
 
+            {/* 2.5 Smart Tech Finder Interactive Lifestyle Matching */}
+            <div id="smart-tech-finder">
+              <SmartTechFinder
+                products={products}
+                onSelectProduct={(p) => navigateToProduct(p, true)}
+                onAddToCart={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+                onToggleCompare={handleToggleCompare}
+                comparisonIds={comparisonIds}
+                lang={lang}
+                t={t}
+              />
+            </div>
+
             {/* 3. Flash Sale Section With Countdown Clock */}
             <FlashSale
               products={products}
@@ -834,6 +1001,16 @@ export default function App() {
                 scrollToSection('products-section');
               }}
               lang={lang}
+            />
+
+            {/* 4.5 Configurable Tech Kits for Lifestyle & Workflows */}
+            <TechKits
+              products={products}
+              onAddKitToBag={handleAddKitToBag}
+              onSelectProduct={(p) => navigateToProduct(p, true)}
+              currencySymbol="৳"
+              lang={lang}
+              t={t}
             />
 
             {/* 5. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
@@ -859,6 +1036,8 @@ export default function App() {
               onOpenDetail={(p) => navigateToProduct(p, true)}
               wishlistIds={wishlistIds}
               onToggleWishlist={handleToggleWishlist}
+              onToggleCompare={handleToggleCompare}
+              comparisonIds={comparisonIds}
               t={t}
               lang={lang}
             />
@@ -871,6 +1050,8 @@ export default function App() {
               onOpenDetail={(p) => navigateToProduct(p, true)}
               wishlistIds={wishlistIds}
               onToggleWishlist={handleToggleWishlist}
+              onToggleCompare={handleToggleCompare}
+              comparisonIds={comparisonIds}
               selectedPhone={selectedPhone}
               t={t}
               lang={lang}
@@ -887,11 +1068,29 @@ export default function App() {
               lang={lang}
             />
 
+            {/* 8.5 Recently Viewed Products Showcase */}
+            <RecentlyViewedSection
+              recentIds={recentIds}
+              products={products}
+              onSelectProduct={(p) => navigateToProduct(p, true)}
+              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+              onToggleCompare={handleToggleCompare}
+              comparisonIds={comparisonIds}
+              lang={lang}
+              t={t}
+            />
+
             {/* 9. Verified Customer Reviews & Shopping Benefits */}
             <ReviewsSection
               onOpenSupport={() => setActiveModal('support')}
               lang={lang}
               t={t}
+            />
+
+            {/* 9.5 Verified Shopping & Policy FAQs */}
+            <FaqSection
+              onOpenSupport={() => setActiveModal('support')}
+              lang={lang}
             />
 
             {/* 10. Newsletter Signup */}
@@ -1033,6 +1232,38 @@ export default function App() {
         onClose={() => setActiveModal(null)}
         t={t}
         lang={lang}
+      />
+
+      {/* 10. Side-by-Side Product Comparison Modal */}
+      {activeModal === 'comparison' && (
+        <ProductComparisonModal
+          isOpen={true}
+          onClose={() => setActiveModal(null)}
+          comparisonIds={comparisonIds}
+          products={products}
+          onRemoveItem={handleRemoveFromCompare}
+          onClearAll={handleClearComparison}
+          onAddToCart={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+          onAddAllToBag={handleAddAllComparedToBag}
+          onSelectProduct={(p) => {
+            setActiveModal(null);
+            navigateToProduct(p, true);
+          }}
+          currencySymbol="৳"
+          lang={lang}
+          t={t}
+        />
+      )}
+
+      {/* Floating Persistent Comparison Drawer */}
+      <ComparisonBar
+        comparisonIds={comparisonIds}
+        products={products}
+        onOpenModal={() => setActiveModal('comparison')}
+        onRemoveItem={handleRemoveFromCompare}
+        onClearAll={handleClearComparison}
+        lang={lang}
+        t={t}
       />
 
       {/* Concise Customer Footer */}

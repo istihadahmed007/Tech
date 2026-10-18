@@ -39,12 +39,12 @@ export default function FlashSale({
   if (flashProducts.length === 0) return null;
 
   return (
-    <section id="flash-sale-section" className="w-full my-6 sm:my-8 flash-sale-wrapper p-4 sm:p-6 bg-white border border-[#DCEAF1] rounded-xl sm:rounded-2xl shadow-xs">
+    <section id="flash-sale-section" className="w-full my-6 sm:my-8 flash-sale-wrapper p-4 sm:p-6 bg-white border border-[#E2E8F0] rounded-xl sm:rounded-2xl shadow-xs">
       {/* Section Header: Shopee Fire Logo + Countdown Timer */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-[#168FC2]">
-            <Zap size={22} className="fill-[#168FC2] stroke-[2.5]" />
+          <div className="flex items-center gap-1.5 text-[#145CFF]">
+            <Zap size={22} className="fill-[#145CFF] stroke-[2.5]" />
             <span className="text-xl sm:text-2xl font-black tracking-tight uppercase">
               {lang === 'bn' ? 'ফ্ল্যাশ সেল' : 'FLASH SALE'}
             </span>
@@ -64,7 +64,7 @@ export default function FlashSale({
           <button
             type="button"
             onClick={onViewAllFlashDeals}
-            className="text-xs sm:text-sm font-bold text-[#168FC2] hover:underline flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+            className="text-xs sm:text-sm font-bold text-[#145CFF] hover:underline flex items-center gap-1 self-start sm:self-auto cursor-pointer"
           >
             <span>{lang === 'bn' ? 'সবগুলো দেখুন' : 'See All Deals'}</span>
             <ChevronRight size={16} />
@@ -81,7 +81,7 @@ export default function FlashSale({
             <div
               key={product.id}
               onClick={() => onOpenDetail && onOpenDetail(product)}
-              className="group relative flex flex-col justify-between bg-white rounded-lg border border-[#DCEAF1] hover:border-[#168FC2] p-2.5 transition-all cursor-pointer hover:shadow-md"
+              className="group relative flex flex-col justify-between bg-white rounded-lg border border-[#E2E8F0] hover:border-[#145CFF] p-2.5 transition-all cursor-pointer hover:shadow-md"
             >
               {/* Discount Tag */}
               <div className="shopee-discount-badge">
@@ -100,12 +100,12 @@ export default function FlashSale({
 
               {/* Price & Progress */}
               <div className="space-y-1.5 mt-auto">
-                <h4 className="text-xs font-semibold text-[#102A43] truncate group-hover:text-[#168FC2]">
+                <h4 className="text-xs font-semibold text-[#0F172A] truncate group-hover:text-[#145CFF]">
                   {lang === 'bn' ? (product.titleBn || product.title) : product.title}
                 </h4>
 
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-sm sm:text-base font-extrabold text-[#168FC2]">
+                  <span className="text-sm sm:text-base font-extrabold text-[#145CFF]">
                     {currencySymbol}{product.price.toLocaleString()}
                   </span>
                   <span className="text-[10px] text-slate-400 line-through">

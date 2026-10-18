@@ -11,27 +11,27 @@ export default function Footer({
   lang 
 }) {
   return (
-    <footer className="w-full mt-16 sm:mt-24 border-t border-[#DCEAF1] bg-white/92 backdrop-blur-md shadow-xs">
+    <footer className="w-full mt-16 sm:mt-24 border-t border-[#E2E8F0] bg-white shadow-xs">
       <div className="container pt-12 sm:pt-16 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#DCEAF1]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#E2E8F0]">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-3.5">
             <div className="flex items-center">
               <BrandLogo height={48} className="h-12 sm:h-14 w-auto" />
             </div>
-            <p className="text-xs text-[#62788A] leading-relaxed max-w-sm">
+            <p className="text-xs text-slate-500 leading-relaxed max-w-sm">
               {t.footerAbout}
             </p>
-            <div className="text-xs text-[#62788A] space-y-2 pt-1">
+            <div className="text-xs text-slate-500 space-y-2 pt-1">
               <div className="flex items-center gap-2">
-                <MapPin size={14} className="text-[#168FC2] shrink-0" />
-                <span>Dhaka, Bangladesh • Store location pending production configuration</span>
+                <MapPin size={14} className="text-[#145CFF] shrink-0" />
+                <span>Dhaka, Bangladesh • Fast Nationwide Courier</span>
               </div>
               <div className="flex items-center gap-2">
-                <HelpCircle size={14} className="text-[#168FC2] shrink-0" />
+                <HelpCircle size={14} className="text-[#145CFF] shrink-0" />
                 <button 
                   onClick={onOpenSupport}
-                  className="footer-link-btn text-[#168FC2] font-medium hover:underline"
+                  className="footer-link-btn text-[#145CFF] font-medium hover:underline"
                 >
                   Contact support & store inquiries
                 </button>
@@ -41,7 +41,7 @@ export default function Footer({
 
           {/* Quick Shop Links */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#102A43]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
               Categories
             </h4>
             <ul className="footer-nav-list">
@@ -82,7 +82,7 @@ export default function Footer({
 
           {/* Support & Policies */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#102A43]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
               Assistance
             </h4>
             <ul className="footer-nav-list">
@@ -123,20 +123,20 @@ export default function Footer({
 
           {/* Customer Trust & Logistics */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#102A43]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
               {lang === 'bn' ? 'নিরাপত্তা ও ডেলিভারি' : 'Trust & Delivery'}
             </h4>
-            <ul className="footer-nav-list text-xs text-[#62788A] space-y-1.5">
+            <ul className="footer-nav-list text-xs text-slate-500 space-y-1.5">
               <li className="flex items-center gap-1.5">
                 <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
                 <span>{lang === 'bn' ? '১০০% অরিজিনাল গ্যাজেট' : '100% Genuine BD Imports'}</span>
               </li>
               <li className="flex items-center gap-1.5">
-                <Sparkles size={14} className="text-[#168FC2] shrink-0" />
+                <Sparkles size={14} className="text-[#145CFF] shrink-0" />
                 <span>{lang === 'bn' ? '৭ দিনের রিপ্লেসমেন্ট পলিসি' : '7-Day Replacement Policy'}</span>
               </li>
               <li>
-                <span className="text-[#62788A] text-[11px]">
+                <span className="text-slate-500 text-[11px]">
                   {lang === 'bn' ? 'সারা বাংলাদেশে ক্যাশ অন ডেলিভারি' : 'Cash on Delivery Across Bangladesh'}
                 </span>
               </li>
@@ -145,12 +145,12 @@ export default function Footer({
         </div>
 
         {/* Bottom Strip & Payment Methods */}
-        <div className="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#62788A]">
+        <div className="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>{t.copyright}</p>
 
           {/* Payment Badges */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-semibold text-[#102A43] mr-1">Accepted Payments:</span>
+            <span className="text-[11px] font-semibold text-[#0F172A] mr-1">Accepted Payments:</span>
             <span className="px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-[11px] shadow-2xs">
               Cash on Delivery
             </span>
@@ -160,7 +160,7 @@ export default function Footer({
             <span className="px-2.5 py-1 rounded-md bg-orange-50 border border-orange-200 text-orange-700 font-bold text-[11px] shadow-2xs">
               Nagad
             </span>
-            <span className="px-2.5 py-1 rounded-md bg-[#DDF4FC] border border-[#B8E7F8] text-[#168FC2] font-bold text-[11px] shadow-2xs">
+            <span className="px-2.5 py-1 rounded-md bg-[#EFF6FF] border border-[#BFDBFE] text-[#145CFF] font-bold text-[11px] shadow-2xs">
               Visa / Mastercard
             </span>
             <span className="px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-600 font-medium text-[11px] flex items-center gap-1">

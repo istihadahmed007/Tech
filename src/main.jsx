@@ -26,33 +26,33 @@ class ErrorBoundary extends React.Component {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#F4FAFD',
-          color: '#102A43',
+          backgroundColor: '#F8FAFC',
+          color: '#0F172A',
           fontFamily: 'Inter, system-ui, sans-serif',
           padding: '24px',
           textAlign: 'center'
         }}>
           <div style={{
             background: 'white',
-            border: '1px solid #DCEAF1',
+            border: '1px solid #E2E8F0',
             borderRadius: '16px',
             padding: '32px',
             maxWidth: '480px',
-            boxShadow: '0 10px 25px -5px rgba(22, 143, 194, 0.1)'
+            boxShadow: '0 10px 25px -5px rgba(20, 92, 255, 0.1)'
           }}>
-            <h1 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px', color: '#102A43' }}>
+            <h1 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px', color: '#0F172A' }}>
               Something went wrong loading the storefront
             </h1>
-            <p style={{ color: '#62788A', fontSize: '14px', marginBottom: '20px' }}>
+            <p style={{ color: '#475569', fontSize: '14px', marginBottom: '20px' }}>
               {this.state.error?.message || 'An unexpected rendering error occurred.'}
             </p>
             <button
               onClick={() => window.location.reload()}
               style={{
-                background: '#168FC2',
+                background: '#145CFF',
                 color: 'white',
                 border: 'none',
-                borderRadius: '9999px',
+                borderRadius: '12px',
                 padding: '10px 24px',
                 fontWeight: 600,
                 cursor: 'pointer'

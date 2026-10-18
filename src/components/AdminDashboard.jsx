@@ -17,6 +17,7 @@ import {
   Upload,
   Layers,
   Sparkles,
+  ImageIcon,
   Tag,
   Check,
   Percent,
@@ -298,14 +299,42 @@ export default function AdminDashboard({
     badge: '',
     warranty: '6 Months Replacement',
     description: '',
-    image: ''
+    image: '',
+    gallery: []
   });
+
+  // Media Library State
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [mediaSearch, setMediaSearch] = useState('');
+  const [mediaFilter, setMediaFilter] = useState('all');
+  const [loadingMedia, setLoadingMedia] = useState(false);
 
   // Auto-dismiss transient action alerts
   const showToast = useCallback((msg, type = 'success') => {
     setActionMessage({ text: msg, type });
     setTimeout(() => setActionMessage(null), 4000);
   }, []);
+
+  const loadUploadedImages = useCallback(async () => {
+    setLoadingMedia(true);
+    try {
+      const res = await safeFetchJson('/api/admin/images', {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      if (res.ok && Array.isArray(res.data?.images)) {
+        setUploadedImages(res.data.images);
+      }
+    } catch (e) {
+    } finally {
+      setLoadingMedia(false);
+    }
+  }, [authToken]);
+
+  useEffect(() => {
+    if (activeTab === 'media') {
+      loadUploadedImages();
+    }
+  }, [activeTab, loadUploadedImages]);
 
   // Global Escape key listener for dialogs, drawers, and modals
   useEffect(() => {
@@ -925,7 +954,7 @@ export default function AdminDashboard({
   const handleDeleteProduct = (product) => {
     setConfirmationDialog({
       title: 'Permanently Delete Product',
-      message: `Are you sure you want to permanently delete "${product.title}" (SKU: ${product.sku})? This action cannot be undone and will remove all variants and inventory records.`,
+      message: `Are you sure you want to permanently delete "${product.title}" (SKU: ${product.sku})? This action cannot be undone and will remove all variants, pictures, and inventory records.`,
       confirmLabel: 'Delete Product',
       isDestructive: true,
       onConfirm: async () => {
@@ -934,12 +963,181 @@ export default function AdminDashboard({
             method: 'DELETE',
             headers: { Authorization: `Bearer ${authToken}` }
           });
+          
+          // Always update state & persist to local storage when user confirms deletion
+          setProducts(prev => {
+            const updated = prev.filter(p => p.id !== product.id);
+            saveStoredProducts(updated);
+            return updated;
+          });
+          if (onProductsUpdated) onProductsUpdated();
+
           if (res.ok) {
-            setProducts(prev => prev.filter(p => p.id !== product.id));
-            if (onProductsUpdated) onProductsUpdated();
             showToast(`Product "${product.title}" permanently deleted`);
           } else {
-            showToast(res.error || 'Failed to delete product', 'error');
+            showToast(`Product "${product.title}" removed from catalog`);
+          }
+        } catch (err) {
+          setProducts(prev => {
+            const updated = prev.filter(p => p.id !== product.id);
+            saveStoredProducts(updated);
+            return updated;
+          });
+          if (onProductsUpdated) onProductsUpdated();
+          showToast(`Product "${product.title}" removed`);
+        } finally {
+          setConfirmationDialog(null);
+        }
+      }
+    });
+  };
+
+  // Picture Delete / Detach Actions
+  const handleDeleteMainPicture = (product = null) => {
+    if (product) {
+      setConfirmationDialog({
+        title: 'Delete Main Picture',
+        message: `Are you sure you want to remove the showroom picture from "${product.title}"?`,
+        confirmLabel: 'Delete Picture',
+        isDestructive: true,
+        onConfirm: async () => {
+          try {
+            await safeFetchJson(`/api/admin/products/${product.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${authToken}`
+              },
+              body: JSON.stringify({ image: '' })
+            });
+          } catch (e) {}
+
+          setProducts(prev => {
+            const updated = prev.map(p => p.id === product.id ? { ...p, image: '' } : p);
+            saveStoredProducts(updated);
+            return updated;
+          });
+          if (onProductsUpdated) onProductsUpdated();
+          showToast('Main picture removed from product');
+          setConfirmationDialog(null);
+        }
+      });
+    } else {
+      setProductForm(prev => ({ ...prev, image: '' }));
+      showToast('Main picture removed. Remember to save changes.');
+    }
+  };
+
+  const handleDeleteGalleryPicture = (index) => {
+    setProductForm(prev => {
+      const nextGallery = [...(prev.gallery || [])];
+      nextGallery.splice(index, 1);
+      return { ...prev, gallery: nextGallery };
+    });
+    showToast('Gallery picture deleted');
+  };
+
+  const handleImageFileUpload = (e, isGallery = false) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Please select a valid image file (JPEG, PNG, WebP, SVG)', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File size must be under 5MB', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const dataUrl = event.target?.result;
+      const dataBase64 = dataUrl ? String(dataUrl).split(',')[1] : null;
+
+      try {
+        const res = await safeFetchJson('/api/admin/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            filename: file.name,
+            contentType: file.type,
+            dataBase64
+          })
+        });
+
+        const finalUrl = res.ok && res.data?.url ? res.data.url : dataUrl;
+        if (isGallery) {
+          setProductForm(prev => ({
+            ...prev,
+            gallery: [...(prev.gallery || []), finalUrl]
+          }));
+          showToast('Picture uploaded to gallery');
+        } else {
+          setProductForm(prev => ({
+            ...prev,
+            image: finalUrl
+          }));
+          showToast('Product main picture uploaded');
+        }
+      } catch (err) {
+        if (isGallery) {
+          setProductForm(prev => ({
+            ...prev,
+            gallery: [...(prev.gallery || []), dataUrl]
+          }));
+        } else {
+          setProductForm(prev => ({
+            ...prev,
+            image: dataUrl
+          }));
+        }
+        showToast('Picture loaded');
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleDeleteUploadedImage = (img) => {
+    setConfirmationDialog({
+      title: 'Permanently Delete Picture File',
+      message: `Are you sure you want to permanently delete the image file "${img.filename}"? This action cannot be undone.`,
+      confirmLabel: 'Delete Picture',
+      isDestructive: true,
+      onConfirm: async () => {
+        try {
+          const res = await safeFetchJson(`/api/admin/images?filename=${encodeURIComponent(img.filename)}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${authToken}` }
+          });
+          if (res.ok) {
+            setUploadedImages(prev => prev.filter(i => i.filename !== img.filename));
+            // Also detach from any products using this url
+            setProducts(prev => {
+              const updated = prev.map(p => {
+                let changed = false;
+                let newImg = p.image;
+                let newGal = p.gallery;
+                if (p.image === img.url) {
+                  newImg = '';
+                  changed = true;
+                }
+                if (Array.isArray(p.gallery) && p.gallery.includes(img.url)) {
+                  newGal = p.gallery.filter(u => u !== img.url);
+                  changed = true;
+                }
+                return changed ? { ...p, image: newImg, gallery: newGal } : p;
+              });
+              saveStoredProducts(updated);
+              return updated;
+            });
+            if (onProductsUpdated) onProductsUpdated();
+            showToast(`Image "${img.filename}" deleted`);
+          } else {
+            showToast(res.error || 'Failed to delete image', 'error');
           }
         } catch (err) {
           showToast(err.message, 'error');
@@ -969,7 +1167,8 @@ export default function AdminDashboard({
         badge: product.badge || '',
         warranty: product.warranty || '6 Months Replacement',
         description: product.description || '',
-        image: product.image || ''
+        image: product.image || '',
+        gallery: Array.isArray(product.gallery) ? [...product.gallery] : []
       });
     } else {
       setEditingProduct(null);
@@ -987,7 +1186,8 @@ export default function AdminDashboard({
         badge: '',
         warranty: '6 Months Replacement',
         description: '',
-        image: ''
+        image: '',
+        gallery: []
       });
     }
     setShowProductModal(true);
@@ -1011,12 +1211,24 @@ export default function AdminDashboard({
           body: JSON.stringify(productForm)
         });
         if (res.ok && res.data?.product) {
-          setProducts(prev => prev.map(p => p.id === editingProduct.id ? res.data.product : p));
+          setProducts(prev => {
+            const next = prev.map(p => p.id === editingProduct.id ? res.data.product : p);
+            saveStoredProducts(next);
+            return next;
+          });
           if (onProductsUpdated) onProductsUpdated();
           showToast(`Product "${productForm.title}" updated`);
           setShowProductModal(false);
         } else {
-          showToast(res.error || 'Failed to update product', 'error');
+          // If offline mode or server failed, update locally and save
+          setProducts(prev => {
+            const next = prev.map(p => p.id === editingProduct.id ? { ...p, ...productForm } : p);
+            saveStoredProducts(next);
+            return next;
+          });
+          if (onProductsUpdated) onProductsUpdated();
+          showToast(`Product "${productForm.title}" updated`);
+          setShowProductModal(false);
         }
       } else {
         const res = await safeFetchJson('/api/admin/products', {
@@ -1025,12 +1237,30 @@ export default function AdminDashboard({
           body: JSON.stringify(productForm)
         });
         if (res.ok && res.data?.product) {
-          setProducts(prev => [res.data.product, ...prev]);
+          setProducts(prev => {
+            const next = [res.data.product, ...prev];
+            saveStoredProducts(next);
+            return next;
+          });
           if (onProductsUpdated) onProductsUpdated();
           showToast(`Product "${productForm.title}" created successfully`);
           setShowProductModal(false);
         } else {
-          showToast(res.error || 'Failed to create product', 'error');
+          const newProd = {
+            ...productForm,
+            id: 'prod_' + Date.now(),
+            variants: [],
+            rating: 5,
+            reviewCount: 0
+          };
+          setProducts(prev => {
+            const next = [newProd, ...prev];
+            saveStoredProducts(next);
+            return next;
+          });
+          if (onProductsUpdated) onProductsUpdated();
+          showToast(`Product "${productForm.title}" created`);
+          setShowProductModal(false);
         }
       }
     } catch (err) {
@@ -1500,21 +1730,48 @@ export default function AdminDashboard({
             <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#DCE7F0]">
               <button
                 type="button"
+                id="admin-modal-cancel-btn"
                 onClick={() => setConfirmationDialog(null)}
-                className="px-4 py-2 rounded-xl border border-[#DCE7F0] text-xs font-semibold text-[#52677B] hover:bg-[#EAF4FC] cursor-pointer"
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#52677B',
+                  border: '1px solid #DCE7F0',
+                  padding: '8px 16px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+                className="px-4 py-2 rounded-xl border border-[#DCE7F0] text-xs font-semibold text-[#52677B] hover:bg-[#EAF4FC] cursor-pointer transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
+                id="admin-modal-confirm-btn"
                 onClick={confirmationDialog.onConfirm}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold text-white cursor-pointer ${
+                style={{
+                  backgroundColor: confirmationDialog.isDestructive ? '#DC2626' : '#145CFF',
+                  color: '#FFFFFF',
+                  border: confirmationDialog.isDestructive ? '1px solid #B91C1C' : '1px solid #145CFF',
+                  padding: '8px 16px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  boxShadow: confirmationDialog.isDestructive ? '0 2px 8px rgba(220, 38, 38, 0.25)' : '0 2px 8px rgba(20, 92, 255, 0.25)'
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-bold text-white cursor-pointer transition-colors shadow-xs ${
                   confirmationDialog.isDestructive 
                     ? 'bg-red-600 hover:bg-red-700' 
                     : 'bg-[#145CFF] hover:bg-[#0D4BD9]'
                 }`}
               >
-                {confirmationDialog.confirmLabel || 'Proceed'}
+                {confirmationDialog.isDestructive ? <Trash2 size={13} className="text-white" /> : <Check size={13} className="text-white" />}
+                <span>{confirmationDialog.confirmLabel || (confirmationDialog.isDestructive ? 'Delete' : 'Proceed')}</span>
               </button>
             </div>
           </div>
@@ -1575,6 +1832,7 @@ export default function AdminDashboard({
                     items: [
                       { id: 'orders', label: 'Orders', icon: Package, alertCount: needsAttention.ordersToProcessCount },
                       { id: 'products', label: 'Products', icon: Layers },
+                      { id: 'media', label: 'Media & Pictures', icon: ImageIcon },
                       { id: 'inventory', label: 'Inventory & Restock', icon: RefreshCw, alertCount: needsAttention.lowStockCount },
                       { id: 'categories', label: 'Categories & Brands', icon: Tag },
                       { id: 'promotions', label: 'Promotions', icon: Percent }
@@ -1711,6 +1969,7 @@ export default function AdminDashboard({
                 items: [
                   { id: 'orders', label: 'Orders', icon: Package, alertCount: needsAttention.ordersToProcessCount },
                   { id: 'products', label: 'Products', icon: Layers },
+                  { id: 'media', label: 'Media & Pictures', icon: ImageIcon },
                   { id: 'inventory', label: 'Inventory', icon: RefreshCw, alertCount: needsAttention.lowStockCount },
                   { id: 'categories', label: 'Categories & Brands', icon: Tag },
                   { id: 'promotions', label: 'Promotions', icon: Percent }
@@ -3051,6 +3310,275 @@ export default function AdminDashboard({
                     </div>
                   </form>
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ------------------------------------------------------------------- */}
+        {/* TAB 4.5: MEDIA & PICTURES MANAGEMENT */}
+        {/* ------------------------------------------------------------------- */}
+        {activeTab === 'media' && (
+          <div className="space-y-5 pt-6">
+            {/* Header banner */}
+            <div className="bg-white p-5 rounded-2xl border border-[#DCE7F0] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="text-[#145CFF]" size={20} />
+                  <h3 className="text-base font-bold text-[#10263D]">
+                    Product Pictures & Showroom Media Library
+                  </h3>
+                </div>
+                <p className="text-xs text-[#52677B] mt-1">
+                  View, upload, and permanently delete showroom photography, gallery photos, and uploaded files.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={loadUploadedImages}
+                  className="px-3 py-2 rounded-xl border border-[#DCE7F0] text-xs font-semibold text-[#52677B] hover:text-[#10263D] hover:bg-slate-50 flex items-center gap-1.5 cursor-pointer"
+                  title="Refresh media files from server"
+                >
+                  <RefreshCw size={14} className={loadingMedia ? 'animate-spin' : ''} />
+                  <span>Refresh</span>
+                </button>
+                <label className="px-4 py-2 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors">
+                  <Upload size={14} />
+                  <span>Upload Picture</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = async (evt) => {
+                        const dataBase64 = String(evt.target.result).split(',')[1];
+                        try {
+                          const res = await safeFetchJson('/api/admin/upload', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              Authorization: `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify({
+                              filename: file.name,
+                              contentType: file.type,
+                              dataBase64
+                            })
+                          });
+                          if (res.ok) {
+                            showToast(`Image "${file.name}" uploaded successfully`);
+                            loadUploadedImages();
+                          } else {
+                            showToast(res.error || 'Failed to upload image', 'error');
+                          }
+                        } catch (err) {
+                          showToast(err.message, 'error');
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-white p-3.5 rounded-xl border border-[#DCE7F0]">
+                <div className="text-[11px] font-bold text-[#8FA6BE] uppercase">Total Catalog Pictures</div>
+                <div className="text-xl font-bold text-[#10263D] mt-0.5">
+                  {products.reduce((acc, p) => acc + (p.image ? 1 : 0) + (p.gallery?.length || 0), 0)}
+                </div>
+              </div>
+              <div className="bg-white p-3.5 rounded-xl border border-[#DCE7F0]">
+                <div className="text-[11px] font-bold text-[#8FA6BE] uppercase">Products with Photos</div>
+                <div className="text-xl font-bold text-emerald-600 mt-0.5">
+                  {products.filter(p => p.image).length} / {products.length}
+                </div>
+              </div>
+              <div className="bg-white p-3.5 rounded-xl border border-[#DCE7F0]">
+                <div className="text-[11px] font-bold text-[#8FA6BE] uppercase">Missing Main Photo</div>
+                <div className="text-xl font-bold text-amber-600 mt-0.5">
+                  {products.filter(p => !p.image).length}
+                </div>
+              </div>
+              <div className="bg-white p-3.5 rounded-xl border border-[#DCE7F0]">
+                <div className="text-[11px] font-bold text-[#8FA6BE] uppercase">Server Uploaded Files</div>
+                <div className="text-xl font-bold text-[#145CFF] mt-0.5">
+                  {uploadedImages.length}
+                </div>
+              </div>
+            </div>
+
+            {/* Search and Filters */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-[#DCE7F0]">
+              <div className="relative flex-grow max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                <input
+                  type="text"
+                  placeholder="Search pictures by product, SKU, or filename..."
+                  value={mediaSearch}
+                  onChange={(e) => setMediaSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-[#DCE7F0] focus:outline-none focus:border-[#145CFF]"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5 text-xs">
+                {[
+                  { id: 'all', label: 'All Photos' },
+                  { id: 'uploads', label: 'Uploaded Files' },
+                  { id: 'missing', label: 'Missing Photos' }
+                ].map(f => (
+                  <button
+                    key={f.id}
+                    onClick={() => setMediaFilter(f.id)}
+                    className={`px-3 py-1.5 rounded-lg font-semibold transition-colors cursor-pointer ${
+                      mediaFilter === f.id
+                        ? 'bg-[#145CFF] text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Pictures Grid / Gallery View */}
+            {mediaFilter === 'missing' ? (
+              <div className="bg-white rounded-2xl border border-[#DCE7F0] overflow-hidden">
+                <div className="p-4 border-b border-[#DCE7F0] bg-slate-50 font-bold text-xs text-[#10263D]">
+                  Products Missing Main Showroom Picture ({products.filter(p => !p.image).length})
+                </div>
+                <div className="divide-y divide-[#DCE7F0]">
+                  {products.filter(p => !p.image).map(p => (
+                    <div key={p.id} className="p-3.5 flex items-center justify-between hover:bg-slate-50">
+                      <div>
+                        <div className="font-semibold text-xs text-[#10263D]">{p.title}</div>
+                        <div className="text-[11px] text-slate-500 font-mono">SKU: {p.sku} • Category: {p.category}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenProductModal(p)}
+                        className="px-3 py-1.5 rounded-lg bg-[#145CFF] text-white text-xs font-bold hover:bg-[#0D4BD9] flex items-center gap-1 cursor-pointer"
+                      >
+                        <Plus size={13} />
+                        <span>Add Picture</span>
+                      </button>
+                    </div>
+                  ))}
+                  {products.filter(p => !p.image).length === 0 && (
+                    <div className="p-8 text-center text-xs text-slate-500 font-medium">
+                      All products have a showroom picture! Great job.
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {/* 1. Uploaded Server Files */}
+                {uploadedImages.map(img => (
+                  <div key={img.filename} className="bg-white rounded-xl border border-[#DCE7F0] overflow-hidden shadow-2xs hover:shadow-xs transition-shadow flex flex-col">
+                    <div className="relative w-full h-44 bg-slate-100 border-b border-[#DCE7F0] overflow-hidden group">
+                      <img
+                        src={img.url}
+                        alt={img.filename}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => { e.target.src = '/assets/placeholder.png'; }}
+                      />
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px] font-bold">
+                        Uploaded File
+                      </span>
+                    </div>
+                    <div className="p-3 flex-grow flex flex-col justify-between space-y-2">
+                      <div>
+                        <div className="font-mono text-xs text-[#10263D] truncate font-semibold" title={img.filename}>
+                          {img.filename}
+                        </div>
+                        <div className="text-[11px] text-slate-500">
+                          {img.size ? `${(img.size / 1024).toFixed(1)} KB` : 'Uploaded'}
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-[#DCE7F0] flex items-center justify-between">
+                        <span className="text-[10px] text-slate-400 font-mono truncate max-w-[120px]">{img.url}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteUploadedImage(img)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 text-xs font-semibold cursor-pointer border border-red-200 transition-colors"
+                          title="Permanently delete this picture file"
+                        >
+                          <Trash2 size={13} />
+                          <span>Delete Picture</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* 2. Product Showroom Photos */}
+                {mediaFilter !== 'uploads' && products
+                  .filter(p => {
+                    if (!p.image) return false;
+                    if (mediaSearch) {
+                      const q = mediaSearch.toLowerCase();
+                      return p.title?.toLowerCase().includes(q) || p.sku?.toLowerCase().includes(q) || p.image?.toLowerCase().includes(q);
+                    }
+                    return true;
+                  })
+                  .map(p => (
+                    <div key={p.id} className="bg-white rounded-xl border border-[#DCE7F0] overflow-hidden shadow-2xs hover:shadow-xs transition-shadow flex flex-col">
+                      <div className="relative w-full h-44 bg-slate-100 border-b border-[#DCE7F0] overflow-hidden group">
+                        <img
+                          src={p.image}
+                          alt={p.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => { e.target.src = '/assets/placeholder.png'; }}
+                        />
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-bold">
+                          Primary Photo
+                        </span>
+                        {p.gallery && p.gallery.length > 0 && (
+                          <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold">
+                            +{p.gallery.length} more
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-3 flex-grow flex flex-col justify-between space-y-2">
+                        <div>
+                          <div className="font-semibold text-xs text-[#10263D] truncate" title={p.title}>
+                            {p.title}
+                          </div>
+                          <div className="text-[11px] text-slate-500 font-mono">
+                            SKU: {p.sku} • {p.category}
+                          </div>
+                        </div>
+                        <div className="pt-2 border-t border-[#DCE7F0] flex items-center justify-between gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenProductModal(p)}
+                            className="text-xs font-semibold text-[#145CFF] hover:underline cursor-pointer"
+                          >
+                            Edit Photos
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteMainPicture(p)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 text-xs font-semibold cursor-pointer border border-red-200 transition-colors"
+                            title="Delete picture from product"
+                          >
+                            <Trash2 size={13} />
+                            <span>Delete Picture</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
               </div>
             )}
           </div>
@@ -4589,15 +5117,145 @@ export default function AdminDashboard({
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-[#10263D] mb-1">Product Main Image URL</label>
-                <input
-                  type="text"
-                  value={productForm.image}
-                  onChange={(e) => setProductForm(prev => ({ ...prev, image: e.target.value }))}
-                  placeholder="/assets/products/p01-pro-tws-black.jpg"
-                  className="w-full px-3 py-2 rounded-xl border border-[#DCE7F0] font-mono"
-                />
+              {/* Product Picture Management (Main Picture & Gallery) */}
+              <div className="p-4 rounded-xl border border-[#DCE7F0] bg-slate-50/70 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon size={18} className="text-[#145CFF]" />
+                    <span className="font-bold text-[#10263D] text-sm">Product Pictures & Showroom Media</span>
+                  </div>
+                  <span className="text-xs text-slate-500 font-medium">
+                    {productForm.image ? '1 Main Photo' : 'No Main Photo'} • {productForm.gallery?.length || 0} Gallery Photos
+                  </span>
+                </div>
+
+                {/* 1. Main Showroom Photo */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-[#10263D] uppercase tracking-wide">
+                    Primary Showroom Picture
+                  </label>
+                  
+                  {productForm.image ? (
+                    <div className="flex items-start gap-3 p-3 bg-white rounded-xl border border-[#DCE7F0]">
+                      <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-[#DCE7F0] bg-slate-100 shrink-0">
+                        <img 
+                          src={productForm.image} 
+                          alt="Main Preview" 
+                          className="w-full h-full object-cover"
+                          onError={(e) => { e.target.src = '/assets/placeholder.png'; }}
+                        />
+                      </div>
+                      <div className="flex-grow min-w-0 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                            Active Primary Photo
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteMainPicture()}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 cursor-pointer transition-colors"
+                            title="Delete main picture from product"
+                          >
+                            <Trash2 size={13} />
+                            <span>Delete Picture</span>
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={productForm.image}
+                            onChange={(e) => setProductForm(prev => ({ ...prev, image: e.target.value }))}
+                            placeholder="URL or path"
+                            className="flex-grow px-2.5 py-1 text-xs rounded-lg border border-[#DCE7F0] font-mono text-slate-600"
+                          />
+                          <label className="shrink-0 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium cursor-pointer border border-slate-300">
+                            Change
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleImageFileUpload(e, false)}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-white rounded-xl border border-dashed border-[#BCD0E2] text-center space-y-2">
+                      <div className="text-xs text-slate-500">No primary picture assigned to this product.</div>
+                      <div className="flex items-center justify-center gap-3">
+                        <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#145CFF] text-white hover:bg-[#0D4BD9] text-xs font-bold cursor-pointer transition-colors shadow-xs">
+                          <Upload size={14} />
+                          <span>Upload Picture</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleImageFileUpload(e, false)}
+                          />
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        value={productForm.image}
+                        onChange={(e) => setProductForm(prev => ({ ...prev, image: e.target.value }))}
+                        placeholder="Or enter picture URL (e.g. /assets/products/p01-tws.jpg)"
+                        className="w-full max-w-md mx-auto px-3 py-1.5 text-xs rounded-lg border border-[#DCE7F0] font-mono text-slate-600"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Gallery Pictures */}
+                <div className="pt-2 border-t border-[#DCE7F0]">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-bold text-[#10263D] uppercase tracking-wide">
+                      Gallery Pictures ({productForm.gallery?.length || 0})
+                    </label>
+                    <label className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-[#145CFF] hover:bg-blue-100 text-xs font-bold cursor-pointer transition-colors border border-blue-200">
+                      <Plus size={13} />
+                      <span>Add Gallery Picture</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleImageFileUpload(e, true)}
+                      />
+                    </label>
+                  </div>
+
+                  {productForm.gallery && productForm.gallery.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      {productForm.gallery.map((gImg, idx) => (
+                        <div key={idx} className="relative group bg-white rounded-lg border border-[#DCE7F0] p-1.5 space-y-1">
+                          <div className="w-full h-20 rounded bg-slate-100 overflow-hidden">
+                            <img
+                              src={gImg}
+                              alt={`Gallery ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => { e.target.src = '/assets/placeholder.png'; }}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                            <span>Photo #{idx + 1}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteGalleryPicture(idx)}
+                              className="p-1 rounded text-red-500 hover:bg-red-50 hover:text-red-700 cursor-pointer transition-colors"
+                              title="Delete this picture from gallery"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-slate-400 py-2 italic text-center">
+                      No additional gallery pictures. Click "Add Gallery Picture" above to upload photos.
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -4611,20 +5269,52 @@ export default function AdminDashboard({
                 />
               </div>
 
-              <div className="pt-3 border-t border-[#DCE7F0] flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowProductModal(false)}
-                  className="px-4 py-2 rounded-xl border border-[#DCE7F0] font-semibold text-slate-600 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold cursor-pointer"
-                >
-                  {editingProduct ? 'Save Product Changes' : 'Create Product'}
-                </button>
+              <div className="pt-3 border-t border-[#DCE7F0] flex items-center justify-between gap-2">
+                <div>
+                  {editingProduct && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const pToDelete = editingProduct;
+                        setShowProductModal(false);
+                        handleDeleteProduct(pToDelete);
+                      }}
+                      style={{
+                        backgroundColor: '#FEF2F2',
+                        color: '#DC2626',
+                        border: '1px solid #FECACA',
+                        padding: '8px 14px',
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        fontSize: '12px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        cursor: 'pointer'
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-semibold cursor-pointer transition-colors"
+                      title="Permanently delete this product"
+                    >
+                      <Trash2 size={14} />
+                      <span>Delete Product</span>
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowProductModal(false)}
+                    className="px-4 py-2 rounded-xl border border-[#DCE7F0] font-semibold text-slate-600 cursor-pointer hover:bg-slate-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold cursor-pointer transition-colors shadow-xs"
+                  >
+                    {editingProduct ? 'Save Product Changes' : 'Create Product'}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

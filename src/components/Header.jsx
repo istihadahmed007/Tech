@@ -13,7 +13,8 @@ import {
   Package,
   ChevronDown,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Scale
 } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 
@@ -25,14 +26,17 @@ export default function Header({
   currentUser,
   cartCount = 0, 
   wishlistCount = 0, 
+  comparisonCount = 0,
   onOpenCart, 
   onOpenWishlist, 
+  onOpenComparison,
   onOpenSupport,
   onOpenAccount,
   onOpenTracking,
   searchQuery = '', 
   setSearchQuery,
   onScrollToFinder,
+  onScrollToKits,
   onGoHome,
   onGoToShop,
   onSelectCategory,
@@ -233,12 +237,13 @@ export default function Header({
         </div>
 
         {/* Right Actions: Wishlist, Customer Account & Shopping Cart */}
-        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+        {/* Right Actions: Wishlist, Comparison, Customer Account & Shopping Bag */}
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Mobile Search Button */}
           <button 
             type="button"
             onClick={() => setSearchOpen(!searchOpen)}
-            className="lg:hidden p-2 rounded-full hover:bg-slate-100 text-slate-700"
+            className="lg:hidden p-2 rounded-xl hover:bg-slate-100 text-slate-700 transition-colors cursor-pointer"
             aria-label="Toggle Search"
           >
             <Search size={20} />
@@ -248,14 +253,30 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenWishlist}
-            className="relative p-2 rounded-full hover:bg-slate-100 text-slate-700 hover:text-[#168FC2] transition-colors cursor-pointer"
+            className="relative p-2 rounded-xl hover:bg-slate-100 text-[#0F172A] hover:text-[#145CFF] transition-colors cursor-pointer"
             aria-label="Wishlist"
             title="Saved items"
           >
-            <Heart size={21} />
+            <Heart size={20} />
             {wishlistCount > 0 && (
-              <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-[#168FC2] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+              <span className="absolute top-0.5 right-0.5 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                 {wishlistCount}
+              </span>
+            )}
+          </button>
+
+          {/* Comparison Matrix Trigger Button */}
+          <button
+            type="button"
+            onClick={onOpenComparison}
+            className="relative p-2 rounded-xl hover:bg-slate-100 text-[#0F172A] hover:text-[#145CFF] transition-colors cursor-pointer"
+            aria-label="Product Comparison Matrix"
+            title="Side-by-side comparison"
+          >
+            <Scale size={20} />
+            {comparisonCount > 0 && (
+              <span className="absolute top-0.5 right-0.5 min-w-4 h-4 px-1 rounded-full bg-[#145CFF] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+                {comparisonCount}
               </span>
             )}
           </button>
@@ -264,33 +285,33 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenAccount}
-            className="p-1.5 sm:px-3 sm:py-1.5 rounded-full hover:bg-slate-100 text-slate-700 hover:text-[#168FC2] transition-colors flex items-center gap-1.5 cursor-pointer border border-transparent hover:border-slate-200"
+            className="p-1.5 sm:px-3 sm:py-1.5 rounded-xl hover:bg-slate-100 text-[#0F172A] transition-colors flex items-center gap-2 cursor-pointer border border-transparent hover:border-slate-200"
             aria-label="Customer Account"
             title={currentUser ? `Account: ${currentUser.name}` : "Sign In / Register"}
           >
-            <User size={20} />
+            <User size={19} className="text-[#0F172A]" />
             <div className="hidden md:flex flex-col text-left">
-              <span className="text-[10px] text-slate-400 leading-none">
+              <span className="text-[10px] text-slate-500 leading-none">
                 {currentUser ? (lang === 'bn' ? 'আমার প্রোফাইল' : 'Hello,') : (lang === 'bn' ? 'সাইন ইন' : 'Sign In')}
               </span>
-              <span className="text-xs font-bold text-[#102A43] leading-tight max-w-[90px] truncate">
+              <span className="text-xs font-bold text-[#0F172A] leading-tight max-w-[95px] truncate">
                 {currentUser ? currentUser.name.split(' ')[0] : (lang === 'bn' ? 'অ্যাকাউন্ট' : 'Account')}
               </span>
             </div>
           </button>
 
-          {/* Shopee-Style Shopping Cart Button */}
+          {/* Modern Electric-Blue Shopping Bag Button */}
           <button
             type="button"
             onClick={onOpenCart}
-            className="relative flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-[#DDF4FC] hover:bg-[#B8E7F8] text-[#168FC2] border border-[#B8E7F8] transition-all cursor-pointer shadow-xs active:scale-95"
+            className="relative flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold transition-all cursor-pointer shadow-xs active:scale-95"
             aria-label="Shopping Cart"
             title="View Shopping Cart"
           >
             <div className="relative">
-              <ShoppingBag size={20} />
+              <ShoppingBag size={18} />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-[#168FC2] text-white text-[10px] font-extrabold flex items-center justify-center shadow-xs">
+                <span className="absolute -top-2 -right-2.5 min-w-4 h-4 px-1 rounded-full bg-white text-[#145CFF] text-[10px] font-extrabold flex items-center justify-center shadow-xs border border-[#145CFF]/20">
                   {cartCount}
                 </span>
               )}
@@ -304,7 +325,7 @@ export default function Header({
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-full hover:bg-slate-100 text-slate-700 cursor-pointer"
+            className="lg:hidden p-2 rounded-xl hover:bg-slate-100 text-[#0F172A] cursor-pointer transition-colors"
             aria-label="Toggle mobile navigation menu"
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -312,52 +333,42 @@ export default function Header({
         </div>
       </div>
 
-      {/* Subheader: Shopee-Style Category Navigation Strip */}
-      <div className="border-t border-[#DCEAF1] bg-white hidden lg:block">
+      {/* Subheader: Clean Tech Categories Navigation Strip */}
+      <div className="border-t border-[#E2E8F0] bg-white hidden lg:block">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-          <nav className="flex items-center gap-1 sm:gap-2 py-1.5 text-xs font-semibold text-[#102A43] overflow-x-auto scrollbar-none">
+          <nav className="flex items-center gap-1 sm:gap-1.5 py-1.5 text-xs font-semibold text-[#0F172A] overflow-x-auto scrollbar-none">
+            {/* Categories */}
             <button
               type="button"
               onClick={() => {
                 if (onSelectCategory) onSelectCategory(null);
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] transition-colors cursor-pointer"
             >
-              {lang === 'bn' ? 'সব পণ্য' : 'All Accessories'}
+              {lang === 'bn' ? 'সকল পণ্য' : 'All Products'}
             </button>
 
             <button
               type="button"
               onClick={() => {
-                if (onSelectCategory) onSelectCategory('earbuds');
+                if (onSelectCategory) onSelectCategory('audio');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] transition-colors cursor-pointer"
             >
-              {lang === 'bn' ? 'ইয়ারবাডস ও হেডফোন' : 'Earbuds & Audio'}
+              {lang === 'bn' ? 'অডিও ও ইয়ারবাডস' : 'Audio & Earbuds'}
             </button>
 
             <button
               type="button"
               onClick={() => {
-                if (onSelectCategory) onSelectCategory('chargers');
+                if (onSelectCategory) onSelectCategory('charging');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] transition-colors cursor-pointer"
             >
-              {lang === 'bn' ? 'ফাস্ট চার্জার ও অ্যাডাপ্টার' : 'Chargers & Adapters'}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                if (onSelectCategory) onSelectCategory('cables');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
-            >
-              {lang === 'bn' ? 'ইউএসবি ক্যাবল' : 'USB Cables'}
+              {lang === 'bn' ? 'ফাস্ট চার্জার ও ক্যাবল' : 'Fast Chargers & Cables'}
             </button>
 
             <button
@@ -366,43 +377,52 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('wearables');
                 if (onGoToShop) onGoToShop();
               }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] transition-colors cursor-pointer"
             >
               {lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches'}
             </button>
 
+            <span className="text-slate-300 mx-1">|</span>
+
+            {/* Signature Shopping Features */}
             <button
               type="button"
-              onClick={() => {
-                if (onSelectCategory) onSelectCategory('cases');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
+              onClick={onScrollToFinder}
+              className="px-2.5 py-1 rounded-lg text-[#145CFF] hover:bg-blue-50 font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              {lang === 'bn' ? 'কেস ও প্রোটেক্টর' : 'Cases & Protectors'}
+              <Sparkles size={13} />
+              <span>{lang === 'bn' ? 'স্মার্ট টেক ফাইন্ডার' : 'Smart Tech Finder'}</span>
             </button>
 
             <button
               type="button"
-              onClick={() => {
-                if (onSelectCategory) onSelectCategory('power-banks');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="px-3 py-1.5 rounded-md hover:bg-[#DDF4FC] hover:text-[#168FC2] transition-colors cursor-pointer"
+              onClick={onScrollToKits}
+              className="px-2.5 py-1 rounded-lg text-[#475569] hover:text-[#0F172A] hover:bg-slate-100 font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              {lang === 'bn' ? 'পাওয়ার ব্যাংক' : 'Power Banks'}
+              <Package size={13} className="text-[#145CFF]" />
+              <span>{lang === 'bn' ? 'টেক কিটস' : 'Tech Kits'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onOpenComparison}
+              className="px-2.5 py-1 rounded-lg text-[#475569] hover:text-[#0F172A] hover:bg-slate-100 font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Scale size={13} className="text-[#475569]" />
+              <span>{lang === 'bn' ? 'প্রোডাক্ট তুলনা' : 'Compare'}</span>
+              {comparisonCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-[#145CFF] text-white text-[10px] font-bold flex items-center justify-center">
+                  {comparisonCount}
+                </span>
+              )}
             </button>
           </nav>
 
           <div className="flex items-center gap-3 text-xs font-semibold py-1">
-            <button
-              type="button"
-              onClick={onScrollToFinder}
-              className="text-[#102A43] hover:text-[#168FC2] flex items-center gap-1 transition-colors cursor-pointer"
-            >
-              <Sparkles size={13} className="text-[#168FC2]" />
-              <span>{lang === 'bn' ? 'ফোন মডেল সার্চ' : 'Device Compatibility Fit'}</span>
-            </button>
+            <span className="text-emerald-700 font-bold flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px]">
+              <ShieldCheck size={13} />
+              <span>{lang === 'bn' ? '১০০% অরিজিনাল গ্যাজেট' : '100% Genuine Tech'}</span>
+            </span>
           </div>
         </div>
       </div>
@@ -448,7 +468,7 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory(null);
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#DDF4FC] hover:text-[#168FC2]"
+              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-[#EFF6FF] hover:text-[#145CFF] text-[#0F172A] transition-colors"
             >
               {lang === 'bn' ? 'সব পণ্য' : 'All Products'}
             </button>
@@ -456,21 +476,21 @@ export default function Header({
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
-                if (onSelectCategory) onSelectCategory('earbuds');
+                if (onSelectCategory) onSelectCategory('audio');
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#DDF4FC] hover:text-[#168FC2]"
+              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-[#EFF6FF] hover:text-[#145CFF] text-[#0F172A] transition-colors"
             >
-              {lang === 'bn' ? 'ইয়ারবাডস' : 'Earbuds & Audio'}
+              {lang === 'bn' ? 'অডিও ও ইয়ারবাডস' : 'Audio & Earbuds'}
             </button>
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
-                if (onSelectCategory) onSelectCategory('chargers');
+                if (onSelectCategory) onSelectCategory('charging');
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#DDF4FC] hover:text-[#168FC2]"
+              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-[#EFF6FF] hover:text-[#145CFF] text-[#0F172A] transition-colors"
             >
               {lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Chargers & Cables'}
             </button>
@@ -481,22 +501,22 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('wearables');
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded bg-slate-50 text-left hover:bg-[#DDF4FC] hover:text-[#168FC2]"
+              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-[#EFF6FF] hover:text-[#145CFF] text-[#0F172A] transition-colors"
             >
               {lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches'}
             </button>
           </div>
 
-          <div className="pt-2 border-t border-slate-100 flex flex-col gap-2 text-xs font-medium text-slate-700">
+          <div className="pt-2 border-t border-slate-100 flex flex-col gap-1.5 text-xs font-medium text-slate-700">
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 if (onOpenTracking) onOpenTracking('');
               }}
-              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded"
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg text-[#0F172A] transition-colors"
             >
-              <Package size={15} className="text-[#168FC2]" />
+              <Package size={15} className="text-[#145CFF]" />
               <span>{lang === 'bn' ? 'অর্ডার ট্র্যাকিং' : 'Track Order Status'}</span>
             </button>
             <button
@@ -505,9 +525,9 @@ export default function Header({
                 setMobileMenuOpen(false);
                 if (onOpenSupport) onOpenSupport();
               }}
-              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded"
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg text-[#0F172A] transition-colors"
             >
-              <HelpCircle size={15} className="text-[#168FC2]" />
+              <HelpCircle size={15} className="text-[#145CFF]" />
               <span>{lang === 'bn' ? 'কাস্টমার সাপোর্ট' : 'Support & Warranty'}</span>
             </button>
             <button
@@ -516,9 +536,9 @@ export default function Header({
                 setMobileMenuOpen(false);
                 if (onOpenAccount) onOpenAccount();
               }}
-              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded font-semibold text-[#102A43]"
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg font-semibold text-[#0F172A] transition-colors"
             >
-              <User size={15} className="text-[#168FC2]" />
+              <User size={15} className="text-[#145CFF]" />
               <span>{currentUser ? `Profile (${currentUser.name})` : (lang === 'bn' ? 'সাইন ইন / রেজিস্টার' : 'Sign In / Register')}</span>
             </button>
           </div>

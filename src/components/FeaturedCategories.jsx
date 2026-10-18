@@ -67,10 +67,10 @@ export default function FeaturedCategories({
   ];
 
   return (
-    <section className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-white rounded-xl sm:rounded-2xl border border-[#DCEAF1] shadow-xs">
+    <section className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-white rounded-xl sm:rounded-2xl border border-[#E2E8F0] shadow-xs">
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
         <div>
-          <h2 className="text-lg sm:text-xl font-extrabold text-[#102A43] tracking-tight uppercase">
+          <h2 className="text-lg sm:text-xl font-extrabold text-[#0F172A] tracking-tight uppercase">
             {lang === 'bn' ? 'ক্যাটাগরি সমূহ' : 'CATEGORIES'}
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -81,7 +81,7 @@ export default function FeaturedCategories({
         <button
           type="button"
           onClick={onShopAll}
-          className="text-xs sm:text-sm font-bold text-[#168FC2] hover:underline flex items-center gap-1 cursor-pointer"
+          className="text-xs sm:text-sm font-bold text-[#145CFF] hover:underline flex items-center gap-1 cursor-pointer"
         >
           <span>{lang === 'bn' ? 'সব পণ্য' : 'View All'}</span>
           <ChevronRight size={15} />
@@ -98,8 +98,8 @@ export default function FeaturedCategories({
               onClick={() => onSelectCategory(isSelected ? null : cat.id)}
               className={`p-3 rounded-lg border text-center cursor-pointer transition-all flex flex-col items-center justify-between group ${
                 isSelected 
-                  ? 'border-[#168FC2] bg-[#DDF4FC] shadow-xs ring-1 ring-[#168FC2]' 
-                  : 'border-slate-100 hover:border-[#B8E7F8] hover:shadow-xs bg-slate-50/50 hover:bg-white'
+                  ? 'border-[#145CFF] bg-[#EFF6FF] shadow-xs ring-1 ring-[#145CFF]' 
+                  : 'border-slate-100 hover:border-[#93C5FD] hover:shadow-xs bg-slate-50/50 hover:bg-white'
               }`}
             >
               <div className="w-16 h-16 rounded-md overflow-hidden p-1 bg-white mb-2 flex items-center justify-center border border-slate-100">
@@ -111,7 +111,7 @@ export default function FeaturedCategories({
                 />
               </div>
 
-              <span className="text-[11px] sm:text-xs font-bold text-[#102A43] group-hover:text-[#168FC2] transition-colors line-clamp-1">
+              <span className="text-[11px] sm:text-xs font-bold text-[#0F172A] group-hover:text-[#145CFF] transition-colors line-clamp-1">
                 {cat.name}
               </span>
 
