@@ -1,301 +1,260 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft, Pause, Play, Zap, Sparkles } from 'lucide-react';
+import { 
+  ChevronRight, 
+  ChevronLeft, 
+  Sun, 
+  BatteryCharging, 
+  ShieldCheck, 
+  Camera, 
+  Clock, 
+  Navigation,
+  Play
+} from 'lucide-react';
 
 export default function Hero({ 
   onShopClick, 
-  onFindPhoneClick, 
   onSelectCategory,
-  onSelectPhone,
+  onSelectProduct,
+  onOpenDetail,
+  featuredWatchProduct,
+  products = [],
   t = {}, 
-  lang = 'en',
-  selectedCategory = null
+  lang = 'en'
 }) {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
   const SLIDES = [
     {
-      id: 'finder',
-      productType: 'audio',
-      tabLabel: lang === 'bn' ? 'স্মার্ট ম্যাচিং' : 'Smart Finder',
-      eyebrow: lang === 'bn' ? 'টেক নেস্ট সিগনেচার এক্সপেরিয়েন্স' : 'FIND THE TECH THAT FITS YOUR LIFE',
-      badge: lang === 'bn' ? 'সিগনেচার' : 'Signature',
-      title: lang === 'bn' ? 'আপনার জীবনের সাথে\nমানানসই প্রযুক্তি খুঁজুন' : 'Find the Tech That\nFits Your Life.',
-      subtitle: lang === 'bn' 
-        ? 'বাজেট, ব্যবহার এবং অগ্রাধিকারের ভিত্তিতে যাচাইকৃত অডিও, ফাস্ট চার্জার ও স্মার্টওয়াচ ম্যাচ করুন।'
-        : 'Smart discovery questionnaire, honest side-by-side spec comparison, and verified nationwide delivery.',
-      category: 'earbuds',
-      ctaText: lang === 'bn' ? 'টেক ফাইন্ডার শুরু করুন' : 'Launch Tech Finder',
-      isFinderCta: true,
-      image: '/assets/hero-audio-headphones.jpg',
-      imageAlt: 'Premium studio wireless headphones and crystal TWS earbuds'
+      id: 'watch-5-pro',
+      theme: 'dark',
+      headline: 'Watch 5 Pro',
+      subtitle: 'Pro-Level Outdoor Sports | Superior hardness and durability',
+      features: [
+        { icon: Sun, text: '3000 nits Brightness' },
+        { icon: BatteryCharging, text: 'Up to 10-Day Battery Life' },
+        { icon: ShieldCheck, text: 'IP6X Water & Dustproof Rating' }
+      ],
+      primaryCta: 'Buy Watch 5 Pro',
+      secondaryCta: 'Learn More',
+      image: '/assets/hero-watch5-banner.jpg',
+      targetCategory: 'wearables',
+      featuredSku: 'P13-T800-ULTRA2-SLV'
     },
     {
-      id: 'charging',
-      productType: 'charging',
-      tabLabel: lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Fast Charging',
-      eyebrow: lang === 'bn' ? 'টার্বো পাওয়ার সল্যুশন' : 'TURBO POWER & CABLES',
-      badge: lang === 'bn' ? 'সুপার ফাস্ট' : 'Super Fast',
-      title: lang === 'bn' ? 'ফাস্ট চার্জিং ক্যাবল\n১২০W ম্যাক্স আউটপুট' : 'Fast Charging Cables.\n120W Max High-Speed.',
-      subtitle: lang === 'bn'
-        ? 'ব্রেইডেড ৪-ইন-১ ক্যাবল, গোল্ড-প্লেটেড কানেক্টর ও ওটিজি অ্যাডাপ্টার।'
-        : 'High-density braided cables, OTG adapters & fast wall chargers with verified specs.',
-      category: 'chargers',
-      ctaText: lang === 'bn' ? 'চার্জিং সামগ্রী দেখুন' : 'Explore Charging',
-      image: '/assets/cat-charging.jpg',
-      imageAlt: 'Fast charging GaN adapters and multi-tip braided cables'
-    },
-    {
-      id: 'wearables',
-      productType: 'wearables',
-      tabLabel: lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches',
-      eyebrow: lang === 'bn' ? 'স্মার্ট ওয়েয়ারবেলস' : 'ULTRA SMARTWEAR',
-      badge: lang === 'bn' ? 'ট্রেন্ডিং' : 'Trending',
-      title: lang === 'bn' ? 'সিম সাপোর্টেড স্মার্টওয়াচ\n৮+১ স্ট্র্যাপ কম্বো সেট' : 'Cellular Smartwatches.\n8+1 Strap Combo Sets.',
-      subtitle: lang === 'bn'
-        ? 'এইচডি ডিসপ্লে, ওয়্যারলেস চার্জিং, ব্লুটুথ কলিং ও ফিটনেস ট্র্যাকিং।'
-        : 'Ultra display, interchangeable strap sets, cellular SIM calling & health tracking.',
-      category: 'wearables',
-      ctaText: lang === 'bn' ? 'স্মার্টওয়াচ দেখুন' : 'Explore Smartwatches',
-      image: '/assets/cat-wearables.jpg',
-      imageAlt: 'Ultra smartwatch with interchangeable straps'
+      id: 'zypher-x1',
+      theme: 'light',
+      headline: 'Zypher X1',
+      subtitle: 'Leading the Way in Aerial Photography and Performance',
+      features: [
+        { icon: Camera, text: '4K HDR Camera' },
+        { icon: Clock, text: 'Extended Flight Time' },
+        { icon: Navigation, text: 'Advanced Navigation' }
+      ],
+      primaryCta: 'Buy Zypher X1',
+      secondaryCta: 'Watch Video',
+      image: '/assets/hero-zypher-drone.jpg',
+      targetCategory: 'drones',
+      watermarkText: 'Zypher X1'
     }
   ];
 
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const currentSlide = SLIDES[activeSlideIndex];
-
-  // Auto-rotation timer (every 6 seconds when not paused)
+  // Auto rotate slides every 7 seconds when not hovered
   useEffect(() => {
     if (isPaused) return;
-    const timer = setInterval(() => {
-      setActiveSlideIndex(prev => (prev + 1) % SLIDES.length);
-    }, 6000);
-    return () => clearInterval(timer);
+    const interval = setInterval(() => {
+      setActiveSlide(prev => (prev + 1) % SLIDES.length);
+    }, 7000);
+    return () => clearInterval(interval);
   }, [isPaused, SLIDES.length]);
 
-  const handlePrev = (e) => {
-    e.stopPropagation();
-    setActiveSlideIndex(prev => (prev === 0 ? SLIDES.length - 1 : prev - 1));
+  const slide = SLIDES[activeSlide];
+
+  const handlePrimaryClick = () => {
+    if (slide.id === 'watch-5-pro') {
+      const targetProd = products.find(p => p.sku === slide.featuredSku || p.category === 'wearables');
+      if (targetProd && onOpenDetail) {
+        onOpenDetail(targetProd);
+        return;
+      }
+      if (onSelectCategory) onSelectCategory('wearables');
+      if (onShopClick) onShopClick();
+    } else {
+      if (onSelectCategory) onSelectCategory(slide.targetCategory);
+      if (onShopClick) onShopClick();
+    }
   };
 
-  const handleNext = (e) => {
-    e.stopPropagation();
-    setActiveSlideIndex(prev => (prev + 1) % SLIDES.length);
+  const handleSecondaryClick = () => {
+    if (slide.id === 'watch-5-pro') {
+      const targetProd = products.find(p => p.sku === slide.featuredSku || p.category === 'wearables');
+      if (targetProd && onOpenDetail) {
+        onOpenDetail(targetProd);
+        return;
+      }
+    }
+    if (onSelectCategory) onSelectCategory(slide.targetCategory);
+    if (onShopClick) onShopClick();
   };
 
   return (
-    <section className="hero-shopee-container" aria-label="Featured Promotions and Collections">
-      <div className="hero-layout-grid">
-        
-        {/* Left & Center Columns: Carousel Slider Card */}
-        <div 
-          className="hero-slider-card group"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {/* Main Slider Content (Left: Text, Center: Image) */}
-          <div className="hero-slider-body">
-            
-            {/* Left Content Panel (approx 25-26% of overall hero) */}
-            <div className="hero-text-panel">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="hero-badge-pill">
-                  {currentSlide.badge}
-                </span>
-                <span className="hero-eyebrow-text">
-                  {currentSlide.eyebrow}
-                </span>
-              </div>
-
-              <h1 className="hero-headline">
-                {currentSlide.title}
-              </h1>
-
-              <p className="hero-description">
-                {currentSlide.subtitle}
-              </p>
-
-              {/* CTA Buttons: Primary Action + Secondary Browse All */}
-              <div className="hero-cta-group">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (currentSlide.isFinderCta && onFindPhoneClick) {
-                      onFindPhoneClick();
-                    } else {
-                      if (onSelectCategory && currentSlide.category) onSelectCategory(currentSlide.category);
-                      if (onShopClick) onShopClick();
-                    }
-                  }}
-                  className="hero-btn-primary"
-                  title={currentSlide.ctaText}
-                >
-                  <span>{currentSlide.ctaText}</span>
-                  <ChevronRight size={15} className="stroke-[2.5]" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={onShopClick}
-                  className="hero-btn-secondary"
-                  title={lang === 'bn' ? 'সব পণ্য ব্রাউজ করুন' : 'Browse All Gear'}
-                >
-                  <span>{lang === 'bn' ? 'সব পণ্য' : 'Browse All'}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Center Main Product Image Showcase (approx 44% of overall hero) */}
-            <div className="hero-image-showcase">
-              <img
-                key={currentSlide.image}
-                src={currentSlide.image}
-                alt={currentSlide.title.replace('\n', ' ')}
-                className="hero-main-img"
-                loading="eager"
+    <section 
+      className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 select-none"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      aria-label="Hero Spotlight Banner"
+    >
+      <div 
+        className={`relative w-full rounded-[22px] sm:rounded-[26px] overflow-hidden transition-all duration-500 shadow-sm ${
+          slide.theme === 'dark' 
+            ? 'bg-[#0b1329] text-white min-h-[440px] sm:min-h-[480px] lg:min-h-[500px]' 
+            : 'bg-[#f4f6fa] text-slate-900 min-h-[440px] sm:min-h-[480px] lg:min-h-[500px]'
+        }`}
+      >
+        {/* Background Visual Elements */}
+        {slide.theme === 'dark' ? (
+          <>
+            {/* Background Image for Watch 5 Pro */}
+            <div className="absolute inset-0 z-0">
+              <img 
+                src={slide.image} 
+                alt="Watch 5 Pro Banner"
+                className="w-full h-full object-cover object-center opacity-85"
               />
+              {/* Radial & Linear gradient overlays for legibility */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0b1329]/95 via-[#0b1329]/75 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0b1329] via-transparent to-transparent opacity-80" />
             </div>
-          </div>
-
-          {/* Slider Bottom Control Bar: Tabs & Nav */}
-          <div className="hero-slider-bottom-bar">
-            {/* Category Slide Indicators */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              {SLIDES.map((slide, idx) => (
-                <button
-                  key={slide.id}
-                  type="button"
-                  onClick={() => {
-                    setActiveSlideIndex(idx);
-                    setIsPaused(true);
-                  }}
-                  className={`hero-slide-tab ${idx === activeSlideIndex ? 'is-active' : ''}`}
-                >
-                  {slide.tabLabel}
-                </button>
-              ))}
+          </>
+        ) : (
+          <>
+            {/* Background Studio Visual for Zypher X1 */}
+            <div className="absolute inset-0 z-0 flex items-center justify-end overflow-hidden">
+              {/* Subtle watermark text in background (Screenshot 2) */}
+              <div className="absolute left-10 bottom-6 text-[110px] lg:text-[150px] font-black text-slate-200/50 select-none pointer-events-none tracking-tighter">
+                {slide.watermarkText}
+              </div>
+              <div className="w-full lg:w-[62%] h-full flex items-center justify-end relative pr-4 lg:pr-12">
+                <img 
+                  src={slide.image} 
+                  alt="Zypher X1 Pro Drone"
+                  className="max-h-[380px] sm:max-h-[440px] w-auto object-contain z-10 drop-shadow-2xl"
+                />
+              </div>
             </div>
+          </>
+        )}
 
-            {/* Prev / Next & Pause Controls */}
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={handlePrev}
-                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-700 cursor-pointer shadow-2xs"
-                aria-label="Previous Slide"
-              >
-                <ChevronLeft size={15} />
-              </button>
-              <button
-                type="button"
-                onClick={handleNext}
-                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-700 cursor-pointer shadow-2xs"
-                aria-label="Next Slide"
-              >
-                <ChevronRight size={15} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsPaused(p => !p)}
-                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer shadow-2xs ml-1"
-                title={isPaused ? "Play slide rotation" : "Pause slide rotation"}
-                aria-label={isPaused ? "Play slide rotation" : "Pause slide rotation"}
-              >
-                {isPaused ? <Play size={11} /> : <Pause size={11} />}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Promotional Cards Stack (approx 30% of overall hero) */}
-        <div className="hero-promo-stack">
+        {/* Hero Foreground Content Overlay */}
+        <div className="relative z-10 max-w-2xl px-6 sm:px-12 lg:px-16 py-12 sm:py-16 flex flex-col justify-center min-h-[440px] sm:min-h-[480px] lg:min-h-[500px]">
           
-          {/* Card 1: Fast Charge Hub */}
-          <div 
-            onClick={() => {
-              if (onSelectCategory) onSelectCategory('chargers');
-              if (onShopClick) onShopClick();
-            }}
-            className="hero-promo-card group"
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                if (onSelectCategory) onSelectCategory('chargers');
-                if (onShopClick) onShopClick();
-              }
-            }}
-          >
-            <div className="hero-promo-card-info">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#145CFF] uppercase tracking-wider mb-1">
-                <Zap size={12} className="shrink-0" />
-                <span>{lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charge Hub'}</span>
-              </div>
-              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#145CFF] transition-colors line-clamp-2">
-                {lang === 'bn' ? '১০০% অরিজিনাল ক্যাবল ও অ্যাডাপ্টার' : 'GaN Chargers & 120W Cables'}
-              </h3>
-              <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
-                {lang === 'bn' ? 'শুরু মাত্র ৳১৫০ থেকে' : 'Starting from ৳150 with warranty'}
-              </p>
-              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#145CFF] mt-2 group-hover:underline">
-                <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
-                <ChevronRight size={13} className="shrink-0" />
-              </div>
-            </div>
-            <div className="hero-promo-card-thumb">
-              <img 
-                src="/assets/cat-charging.jpg" 
-                alt="GaN Chargers & Cables" 
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform" 
-                loading="eager"
-              />
-            </div>
+          {/* Main Headline */}
+          <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 leading-[1.08] ${
+            slide.theme === 'dark' ? 'text-white' : 'text-slate-900'
+          }`}>
+            {slide.headline}
+          </h1>
+
+          {/* Supporting Subtitle */}
+          <p className={`text-sm sm:text-base lg:text-lg font-normal mb-6 max-w-xl leading-relaxed ${
+            slide.theme === 'dark' ? 'text-slate-200' : 'text-slate-600'
+          }`}>
+            {slide.subtitle}
+          </p>
+
+          {/* Feature Specs Pills Row */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-8">
+            {slide.features.map((feat, idx) => {
+              const IconComp = feat.icon;
+              return (
+                <div 
+                  key={idx}
+                  className={`flex items-center gap-1.5 text-xs sm:text-[13px] font-medium px-3 py-1.5 rounded-full backdrop-blur-md ${
+                    slide.theme === 'dark' 
+                      ? 'bg-white/10 text-white border border-white/15' 
+                      : 'bg-white/80 text-slate-800 border border-slate-200/80 shadow-2xs'
+                  }`}
+                >
+                  <IconComp size={14} className={slide.theme === 'dark' ? 'text-blue-400' : 'text-[#0066FF]'} />
+                  <span>{feat.text}</span>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Card 2: Ultra Gear Smartwatches */}
-          <div 
-            onClick={() => {
-              if (onSelectCategory) onSelectCategory('wearables');
-              if (onShopClick) onShopClick();
-            }}
-            className="hero-promo-card group"
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                if (onSelectCategory) onSelectCategory('wearables');
-                if (onShopClick) onShopClick();
-              }
-            }}
-          >
-            <div className="hero-promo-card-info">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#145CFF] uppercase tracking-wider mb-1">
-                <Sparkles size={12} className="shrink-0" />
-                <span>{lang === 'bn' ? 'স্মার্ট গ্যাজেট' : 'Ultra Gear'}</span>
-              </div>
-              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#145CFF] transition-colors line-clamp-2">
-                {lang === 'bn' ? 'সিম সাপোর্টেড স্মার্টওয়াচ' : 'SIM Smartwatches & Combos'}
-              </h3>
-              <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
-                {lang === 'bn' ? '৮+১ মাল্টি-স্ট্র্যাপ সংস্করণ' : '8+1 Interchangeable Straps'}
-              </p>
-              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#145CFF] mt-2 group-hover:underline">
-                <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
-                <ChevronRight size={13} className="shrink-0" />
-              </div>
-            </div>
-            <div className="hero-promo-card-thumb">
-              <img 
-                src="/assets/cat-wearables.jpg" 
-                alt="SIM Smartwatches & Combos" 
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform" 
-                loading="eager"
-              />
-            </div>
-          </div>
+          {/* CTA Action Buttons */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            {/* Primary Solid Blue CTA */}
+            <button
+              type="button"
+              onClick={handlePrimaryClick}
+              className="px-6 sm:px-8 py-3 rounded-xl bg-[#0066FF] hover:bg-blue-600 active:bg-blue-700 text-white font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer transform hover:-translate-y-0.5"
+            >
+              {slide.primaryCta}
+            </button>
 
+            {/* Secondary Outlined CTA */}
+            <button
+              type="button"
+              onClick={handleSecondaryClick}
+              className={`px-6 sm:px-7 py-3 rounded-xl font-medium text-sm transition-all duration-200 cursor-pointer border ${
+                slide.theme === 'dark'
+                  ? 'border-white/40 hover:border-white text-white hover:bg-white/10'
+                  : 'border-slate-300 hover:border-slate-800 text-slate-800 hover:bg-slate-100'
+              }`}
+            >
+              {slide.secondaryCta}
+            </button>
+          </div>
         </div>
 
+        {/* Slide Carousel Navigation Controls */}
+        <div className="absolute bottom-5 right-6 sm:right-10 z-20 flex items-center gap-2">
+          {/* Previous Slide Button */}
+          <button
+            type="button"
+            onClick={() => setActiveSlide(prev => (prev === 0 ? SLIDES.length - 1 : prev - 1))}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+              slide.theme === 'dark'
+                ? 'bg-white/20 hover:bg-white/30 text-white'
+                : 'bg-white hover:bg-slate-100 text-slate-700 shadow-sm border border-slate-200'
+            }`}
+            aria-label="Previous Slide"
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          {/* Slide Indicator Dots */}
+          <div className="flex items-center gap-1.5 px-2">
+            {SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setActiveSlide(idx)}
+                className={`transition-all rounded-full cursor-pointer ${
+                  idx === activeSlide
+                    ? 'w-6 h-2 bg-[#0066FF]'
+                    : slide.theme === 'dark' ? 'w-2 h-2 bg-white/40' : 'w-2 h-2 bg-slate-300'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Next Slide Button */}
+          <button
+            type="button"
+            onClick={() => setActiveSlide(prev => (prev + 1) % SLIDES.length)}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+              slide.theme === 'dark'
+                ? 'bg-white/20 hover:bg-white/30 text-white'
+                : 'bg-white hover:bg-slate-100 text-slate-700 shadow-sm border border-slate-200'
+            }`}
+            aria-label="Next Slide"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
       </div>
     </section>
   );
