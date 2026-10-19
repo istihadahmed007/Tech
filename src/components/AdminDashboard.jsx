@@ -1513,7 +1513,7 @@ export default function AdminDashboard({
           {/* Brand Emblem */}
           <div className="flex flex-col items-center text-center space-y-3">
             <img 
-              src="/assets/tech-nest-logo-horizontal.png" 
+              src="/assets/tech-nest-logo-horizontal.png?v=20261019_v2" 
               alt="Tech Nest" 
               className="h-12 w-auto object-contain"
             />
@@ -1930,7 +1930,7 @@ export default function AdminDashboard({
             {!sidebarCollapsed ? (
               <div className="flex items-center gap-2">
                 <img 
-                  src="/assets/tech-nest-logo-horizontal.png" 
+                  src="/assets/tech-nest-logo-horizontal.png?v=20261019_v2" 
                   alt="Tech Nest" 
                   className="h-8 w-auto object-contain"
                 />
