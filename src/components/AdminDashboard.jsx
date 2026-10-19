@@ -1513,10 +1513,10 @@ export default function AdminDashboard({
           {/* Brand Emblem */}
           <div className="flex flex-col items-center text-center space-y-3">
             <img 
-              src="/assets/tech-nest-logo-horizontal.png?v=20261019_v3" 
+              src="/assets/tech-nest-logo-horizontal.png?v=20261019_v6" 
               alt="Tech Nest" 
               className="h-11 w-auto object-contain"
-              style={{ aspectRatio: '1389 / 304' }}
+              style={{ aspectRatio: '2349 / 478' }}
             />
             <div className="space-y-1">
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#10263D]">
@@ -1931,10 +1931,10 @@ export default function AdminDashboard({
             {!sidebarCollapsed ? (
               <div className="flex items-center gap-2">
                 <img 
-                  src="/assets/tech-nest-logo-horizontal.png?v=20261019_v3" 
+                  src="/assets/tech-nest-logo-horizontal.png?v=20261019_v6" 
                   alt="Tech Nest" 
                   className="h-8 w-auto object-contain"
-                  style={{ aspectRatio: '1389 / 304' }}
+                  style={{ aspectRatio: '2349 / 478' }}
                 />
                 <span className="text-[10px] font-bold bg-[#EAF4FC] text-[#145CFF] px-2 py-0.5 rounded-full">
                   Admin

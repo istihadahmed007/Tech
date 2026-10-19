@@ -1,164 +1,210 @@
 import os
 import math
 import base64
-from PIL import Image, ImageFilter, ImageDraw, ImageEnhance
+from PIL import Image, ImageFilter, ImageDraw, ImageFont
 
+repo_dir = r'c:/Users/Tonmoy/Documents/Tech'
 source_path = r'C:/Users/Tonmoy/.gemini/antigravity-ide/brain/2ab18308-912f-4ff9-aa90-7d0bf2e99d3a/.user_uploaded/media_1792387526193.jpg'
-dest_dir = r'c:/Users/Tonmoy/Documents/Tech/public/assets'
-public_dir = r'c:/Users/Tonmoy/Documents/Tech/public'
+font_path = os.path.join(repo_dir, 'scripts', 'fonts', 'Orbitron-900.ttf')
+dest_dir = os.path.join(repo_dir, 'public', 'assets')
+public_dir = os.path.join(repo_dir, 'public')
+dist_assets_dir = os.path.join(repo_dir, 'dist', 'assets')
+dist_dir = os.path.join(repo_dir, 'dist')
+
 os.makedirs(dest_dir, exist_ok=True)
+os.makedirs(dist_assets_dir, exist_ok=True)
 
 # 1. Load original high-res image
 raw_img = Image.open(source_path).convert('RGB')
 w, h = raw_img.size
 print(f"Original image loaded: {w}x{h}")
 
-# Save raw original in assets
+# Save original reference
 raw_img.save(os.path.join(dest_dir, 'tech-nest-logo-raw.jpg'), quality=98)
 raw_img.save(os.path.join(dest_dir, 'tech-nest-user-logo-original.png'), optimize=True)
 
-# 2. Extract Tight Crops
-# Emblem: tight crop of circular circuit nest
-e_crop = raw_img.crop((308, 38, 720, 430)) # ~412 x 392
-# Wordmark: tight crop of 3D TECH NEST lettering
-w_crop = raw_img.crop((280, 460, 764, 534)) # ~484 x 74
+# 2. Extract and reconstruct clean circuit nest emblem
+emblem_crop = raw_img.crop((310, 35, 715, 435))
+ew, eh = emblem_crop.size
+bg_r, bg_g, bg_b = 10, 30, 60
 
-# Background baseline color (deep cosmic navy)
-bg_r, bg_g, bg_b = 8, 20, 44
+mask_e = Image.new('L', (ew, eh), 0)
+for y in range(eh):
+    for x in range(ew):
+        r, g, b = emblem_crop.getpixel((x, y))
+        diff = max(0, g - bg_g) * 1.5 + max(0, b - bg_b) * 0.8 + max(0, r - bg_r) * 0.4
+        if diff > 40:
+            mask_e.putpixel((x, y), min(255, int((diff - 40) * 3.5)))
 
-def clean_extract_alpha(img, min_diff=14, max_diff=48, gamma=1.0):
-    cw, ch = img.size
-    rgba = Image.new('RGBA', (cw, ch), (0, 0, 0, 0))
-    for y in range(ch):
-        for x in range(cw):
-            r, g, b = img.getpixel((x, y))
-            diff = ((r - bg_r)**2 + (g - bg_g)**2 + (b - bg_b)**2)**0.5
-            
-            if diff < min_diff:
-                rgba.putpixel((x, y), (0, 0, 0, 0))
+clean_mask_e = mask_e.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.MaxFilter(3)).filter(ImageFilter.GaussianBlur(0.8))
+
+clean_emblem = Image.new('RGBA', (ew, eh), (0, 0, 0, 0))
+for y in range(eh):
+    for x in range(ew):
+        a = clean_mask_e.getpixel((x, y))
+        if a > 0:
+            r, g, b = emblem_crop.getpixel((x, y))
+            lum = r * 0.299 + g * 0.587 + b * 0.114
+            if lum > 170:
+                cr = int(180 + (lum - 170) * 0.88)
+                cg = 255
+                cb = 255
+            elif lum > 90:
+                t = (lum - 90) / 80.0
+                cr = int(0 + t * 180)
+                cg = int(190 + t * 65)
+                cb = 255
             else:
-                alpha_factor = min(1.0, (diff - min_diff) / (max_diff - min_diff))
-                alpha = int(255 * (alpha_factor ** gamma))
-                
-                # Enhance vibrancy for neon cyan
-                nr = min(255, int(r * 1.05))
-                ng = min(255, int(g * 1.10))
-                nb = min(255, int(b * 1.12))
-                rgba.putpixel((x, y), (nr, ng, nb, alpha))
-    return rgba
+                t = lum / 90.0
+                cr = int(0 + t * 0)
+                cg = int(80 + t * 110)
+                cb = int(180 + t * 75)
+            clean_emblem.putpixel((x, y), (cr, cg, cb, a))
 
-e_clean = clean_extract_alpha(e_crop, min_diff=16, max_diff=52)
-w_clean = clean_extract_alpha(w_crop, min_diff=14, max_diff=46)
+bbox_e = clean_emblem.getbbox()
+clean_emblem = clean_emblem.crop(bbox_e)
 
-# Unsharp mask for crystal-sharp edges (removes JPEG compression softness)
-e_clean = e_clean.filter(ImageFilter.UnsharpMask(radius=1.2, percent=140, threshold=1))
-w_clean = w_clean.filter(ImageFilter.UnsharpMask(radius=1.0, percent=150, threshold=1))
+# 3. Master Horizontal Logo (Light Header / Default)
+# Render at 4x scale for vector-smooth anti-aliasing and downsample with Lanczos
+SCALE = 4
+TARGET_H = 240 * SCALE # 960px
+e_h = TARGET_H
+e_w = int(clean_emblem.width * (e_h / clean_emblem.height))
+emblem_scaled = clean_emblem.resize((e_w, e_h), Image.Resampling.LANCZOS)
 
-# Helper: Add crisp drop shadow and ambient occlusion in deep navy (#051428)
-# This guarantees maximum contrast and legibility on both light/white and dark backgrounds!
-def add_crisp_contrast_shadow(rgba_img, shadow_blur=1.8, shadow_offset=(0, 2), shadow_opacity=0.88):
-    cw, ch = rgba_img.size
-    alpha = rgba_img.split()[3]
-    
-    # Slight expansion of mask for rim definition
-    rim_mask = alpha.filter(ImageFilter.MaxFilter(size=3))
-    shadow_mask = rim_mask.filter(ImageFilter.GaussianBlur(radius=shadow_blur))
-    
-    sr, sg, sb = 5, 20, 40
-    shadow = Image.new('RGBA', (cw, ch), (0, 0, 0, 0))
-    for y in range(ch):
-        for x in range(cw):
-            a = shadow_mask.getpixel((x, y))
-            if a > 0:
-                shadow.putpixel((x, y), (sr, sg, sb, int(a * shadow_opacity)))
-                
-    result = Image.new('RGBA', (cw, ch), (0, 0, 0, 0))
-    result.paste(shadow, shadow_offset, shadow)
-    result.paste(rgba_img, (0, 0), rgba_img)
-    return result
+# Subtle ambient shadow for emblem
+emblem_grounded = Image.new('RGBA', (e_w + 16 * SCALE, e_h + 16 * SCALE), (0, 0, 0, 0))
+s_mask = emblem_scaled.split()[3].filter(ImageFilter.GaussianBlur(3.0 * SCALE))
+s_color = Image.new('RGBA', (e_w, e_h), (11, 27, 54, 75))
+emblem_grounded.paste(s_color, (8 * SCALE, 10 * SCALE), s_mask)
+emblem_grounded.paste(emblem_scaled, (8 * SCALE, 8 * SCALE), emblem_scaled)
 
-e_final = add_crisp_contrast_shadow(e_clean, shadow_blur=1.8, shadow_offset=(0, 1), shadow_opacity=0.85)
-w_final = add_crisp_contrast_shadow(w_clean, shadow_blur=1.8, shadow_offset=(0, 2), shadow_opacity=0.90)
+font = ImageFont.truetype(font_path, 135 * SCALE)
+tmp_draw = ImageDraw.Draw(Image.new('RGBA', (1, 1)))
+bbox_tech = tmp_draw.textbbox((0, 0), 'TECH', font=font)
+w_tech = bbox_tech[2] - bbox_tech[0]
+bbox_nest = tmp_draw.textbbox((0, 0), 'NEST', font=font)
+w_nest = bbox_nest[2] - bbox_nest[0]
 
-# 3. Assemble Master Horizontal Logo (Transparent Background, High Resolution)
-# Canvas Height: 320px
-# Emblem: 300x300 (full height)
-# Wordmark: 160px height (bold, clearly readable capital 3D lettering)
-E_H = 300
-E_W = int(e_final.width * (E_H / e_final.height))
-e_scaled = e_final.resize((E_W, E_H), Image.Resampling.LANCZOS)
+word_gap = 26 * SCALE
+gap_from_emblem = 36 * SCALE
 
-W_H = 160
-W_W = int(w_final.width * (W_H / w_final.height))
-w_scaled = w_final.resize((W_W, W_H), Image.Resampling.LANCZOS)
+cw = emblem_grounded.width + gap_from_emblem + w_tech + word_gap + w_nest + 30 * SCALE
+ch = TARGET_H + 24 * SCALE
 
-gap = 26
-total_w = E_W + gap + W_W + 10
-total_h = 320
+c_light = Image.new('RGBA', (cw, ch), (0, 0, 0, 0))
+c_light.paste(emblem_grounded, (0, 4 * SCALE), emblem_grounded)
 
-h_canvas = Image.new('RGBA', (total_w, total_h), (0, 0, 0, 0))
-h_canvas.paste(e_scaled, (10, 10), e_scaled)
-w_y = (total_h - W_H) // 2 + 2
-h_canvas.paste(w_scaled, (10 + E_W + gap, w_y), w_scaled)
+draw_light = ImageDraw.Draw(c_light)
+tx = emblem_grounded.width + gap_from_emblem
+text_h = max(bbox_tech[3] - bbox_tech[1], bbox_nest[3] - bbox_nest[1])
+ty = (ch - text_h) // 2 - bbox_tech[1] // 2
 
-# Tight crop to remove any outer empty space
-bbox = h_canvas.getbbox()
-pad = 2
-crop_box = (
-    max(0, bbox[0] - pad),
-    max(0, bbox[1] - pad),
-    min(total_w, bbox[2] + pad),
-    min(total_h, bbox[3] + pad)
-)
-h_master = h_canvas.crop(crop_box)
-hw, hh = h_master.size
-print(f"Master horizontal logo size: {hw}x{hh} (Aspect Ratio: {hw/hh:.3f})")
+# 3D shadow layers
+for offset in range(4 * SCALE, 0, -1):
+    draw_light.text((tx + offset, ty + offset), 'TECH', font=font, fill=(11, 27, 54, 160))
+    draw_light.text((tx + w_tech + word_gap + offset, ty + offset), 'NEST', font=font, fill=(10, 50, 140, 160))
 
-# Save primary horizontal logo PNGs
-h_master.save(os.path.join(dest_dir, 'tech-nest-logo-horizontal.png'), optimize=True)
-h_master.save(os.path.join(dest_dir, 'tech-nest-logo.png'), optimize=True)
-h_master.save(os.path.join(dest_dir, 'tech-nest-logo-transparent.png'), optimize=True)
+# Cyan accent border (anti-aliased via super-sampling)
+outline_r = 2 * SCALE
+for dx in range(-outline_r, outline_r + 1, SCALE):
+    for dy in range(-outline_r, outline_r + 1, SCALE):
+        if dx != 0 or dy != 0:
+            draw_light.text((tx + dx, ty + dy), 'TECH', font=font, fill=(0, 216, 255, 140))
+            draw_light.text((tx + w_tech + word_gap + dx, ty + dy), 'NEST', font=font, fill=(0, 216, 255, 140))
 
-# 4. Generate Master Horizontal SVG with exact viewBox and embedded crystal-clear asset
+# Main face
+draw_light.text((tx, ty), 'TECH', font=font, fill=(11, 27, 54, 255))
+draw_light.text((tx + w_tech + word_gap, ty), 'NEST', font=font, fill=(20, 92, 255, 255))
+
+final_4x = c_light.crop(c_light.getbbox())
+# 2x Retina master logo
+master_horizontal = final_4x.resize((final_4x.width // 2, final_4x.height // 2), Image.Resampling.LANCZOS)
+mw, mh = master_horizontal.size
+print(f"Master horizontal logo size: {mw}x{mh} (Aspect Ratio: {mw/mh:.3f})")
+
+# Save horizontal logos
+for d in [dest_dir, dist_assets_dir]:
+    master_horizontal.save(os.path.join(d, 'tech-nest-logo-horizontal.png'), optimize=True)
+    master_horizontal.save(os.path.join(d, 'tech-nest-logo.png'), optimize=True)
+    master_horizontal.save(os.path.join(d, 'tech-nest-logo-transparent.png'), optimize=True)
+
+# 4. Master Dark / Badge Logo (For dark containers)
+c_dark = Image.new('RGBA', (cw, ch), (0, 0, 0, 0))
+# On dark, paste vibrant glowing emblem
+c_dark.paste(emblem_scaled, (8 * SCALE, 8 * SCALE), emblem_scaled)
+
+draw_dark = ImageDraw.Draw(c_dark)
+# Luminous glow for dark
+for offset in range(3 * SCALE, 0, -1):
+    draw_dark.text((tx + offset, ty + offset), 'TECH', font=font, fill=(0, 216, 255, 80))
+    draw_dark.text((tx + w_tech + word_gap + offset, ty + offset), 'NEST', font=font, fill=(0, 216, 255, 120))
+
+for dx in range(-outline_r, outline_r + 1, SCALE):
+    for dy in range(-outline_r, outline_r + 1, SCALE):
+        if dx != 0 or dy != 0:
+            draw_dark.text((tx + dx, ty + dy), 'TECH', font=font, fill=(0, 216, 255, 180))
+            draw_dark.text((tx + w_tech + word_gap + dx, ty + dy), 'NEST', font=font, fill=(0, 216, 255, 200))
+
+# TECH in pure white, NEST in electric cyan
+draw_dark.text((tx, ty), 'TECH', font=font, fill=(255, 255, 255, 255))
+draw_dark.text((tx + w_tech + word_gap, ty), 'NEST', font=font, fill=(0, 216, 255, 255))
+
+final_dark_4x = c_dark.crop(c_dark.getbbox())
+master_dark = final_dark_4x.resize((final_dark_4x.width // 2, final_dark_4x.height // 2), Image.Resampling.LANCZOS)
+
+for d in [dest_dir, dist_assets_dir]:
+    master_dark.save(os.path.join(d, 'tech-nest-logo-dark.png'), optimize=True)
+    master_dark.save(os.path.join(d, 'tech-nest-logo-badge.png'), optimize=True)
+
+# 5. Master Horizontal SVG with exact viewBox
 with open(os.path.join(dest_dir, 'tech-nest-logo-horizontal.png'), 'rb') as f:
     h_b64 = base64.b64encode(f.read()).decode('utf-8')
 
-svg_horizontal = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {hw} {hh}" width="{hw}" height="{hh}">
+svg_horizontal = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {mw} {mh}" width="{mw}" height="{mh}">
   <title>Tech Nest — Authentic Mobile Accessories</title>
-  <image href="data:image/png;base64,{h_b64}" width="{hw}" height="{hh}" preserveAspectRatio="xMidYMid meet" />
+  <image href="data:image/png;base64,{h_b64}" width="{mw}" height="{mh}" preserveAspectRatio="xMidYMid meet" />
 </svg>'''
 
-with open(os.path.join(dest_dir, 'tech-nest-logo-horizontal.svg'), 'w', encoding='utf-8') as f:
-    f.write(svg_horizontal)
-with open(os.path.join(dest_dir, 'tech-nest-logo.svg'), 'w', encoding='utf-8') as f:
-    f.write(svg_horizontal)
+for d in [dest_dir, dist_assets_dir]:
+    with open(os.path.join(d, 'tech-nest-logo-horizontal.svg'), 'w', encoding='utf-8') as f:
+        f.write(svg_horizontal)
+    with open(os.path.join(d, 'tech-nest-logo.svg'), 'w', encoding='utf-8') as f:
+        f.write(svg_horizontal)
 print("Saved tech-nest-logo-horizontal.svg and tech-nest-logo.svg")
 
-# 5. Generate Square App Icon & Favicon (512x512)
-# Square transparent icon
+# 6. Generate Square App Icon & Favicons (512x512)
 icon_size = 512
-icon_canvas = Image.new('RGBA', (icon_size, icon_size), (0, 0, 0, 0))
-e_icon = e_final.resize((480, int(480 * (e_final.height / e_final.width))), Image.Resampling.LANCZOS)
-off_x = (icon_size - e_icon.width) // 2
-off_y = (icon_size - e_icon.height) // 2
-icon_canvas.paste(e_icon, (off_x, off_y), e_icon)
-icon_canvas.save(os.path.join(dest_dir, 'tech-nest-icon-transparent.png'), optimize=True)
-icon_canvas.save(os.path.join(dest_dir, 'tech-nest-icon.png'), optimize=True)
-
-# App icon with cosmic dark squircle badge
+# High-end cosmic dark squircle badge
 app_icon = Image.new('RGB', (icon_size, icon_size), (8, 20, 42))
-app_icon.paste(raw_img.crop((304, 25, 724, 445)).resize((460, 460), Image.Resampling.LANCZOS), (26, 26))
+raw_emblem_sq = raw_img.crop((304, 25, 724, 445)).resize((460, 460), Image.Resampling.LANCZOS)
+app_icon.paste(raw_emblem_sq, (26, 26))
+
 imask = Image.new('L', (icon_size, icon_size), 0)
 draw_im = ImageDraw.Draw(imask)
 draw_im.rounded_rectangle([12, 12, 500, 500], radius=110, fill=255)
 final_app_icon = app_icon.convert('RGBA')
 final_app_icon.putalpha(imask)
-draw_app = ImageDraw.Draw(final_app_icon)
-draw_app.rounded_rectangle([12, 12, 500, 500], radius=110, outline=(34, 211, 238, 160), width=5)
-draw_app.rounded_rectangle([15, 15, 497, 497], radius=107, outline=(56, 189, 248, 80), width=2)
-final_app_icon.save(os.path.join(dest_dir, 'tech-nest-app-icon.png'), optimize=True)
 
-# SVG square icon
+draw_app = ImageDraw.Draw(final_app_icon)
+draw_app.rounded_rectangle([12, 12, 500, 500], radius=110, outline=(34, 211, 238, 180), width=5)
+draw_app.rounded_rectangle([15, 15, 497, 497], radius=107, outline=(56, 189, 248, 90), width=2)
+
+for d in [dest_dir, dist_assets_dir]:
+    final_app_icon.save(os.path.join(d, 'tech-nest-app-icon.png'), optimize=True)
+    final_app_icon.save(os.path.join(d, 'tech-nest-icon.png'), optimize=True)
+
+# Transparent icon
+icon_trans = Image.new('RGBA', (icon_size, icon_size), (0, 0, 0, 0))
+e_trans = clean_emblem.resize((460, int(460 * (clean_emblem.height / clean_emblem.width))), Image.Resampling.LANCZOS)
+off_x = (icon_size - e_trans.width) // 2
+off_y = (icon_size - e_trans.height) // 2
+icon_trans.paste(e_trans, (off_x, off_y), e_trans)
+
+for d in [dest_dir, dist_assets_dir]:
+    icon_trans.save(os.path.join(d, 'tech-nest-icon-transparent.png'), optimize=True)
+
+# SVG icon
 with open(os.path.join(dest_dir, 'tech-nest-icon.png'), 'rb') as f:
     icon_b64 = base64.b64encode(f.read()).decode('utf-8')
 
@@ -167,33 +213,30 @@ svg_icon = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {icon_size} 
   <image href="data:image/png;base64,{icon_b64}" width="{icon_size}" height="{icon_size}" preserveAspectRatio="xMidYMid meet" />
 </svg>'''
 
-with open(os.path.join(dest_dir, 'tech-nest-icon.svg'), 'w', encoding='utf-8') as f:
-    f.write(svg_icon)
-with open(os.path.join(public_dir, 'favicon.svg'), 'w', encoding='utf-8') as f:
-    f.write(svg_icon)
+for d in [dest_dir, dist_assets_dir]:
+    with open(os.path.join(d, 'tech-nest-icon.svg'), 'w', encoding='utf-8') as f:
+        f.write(svg_icon)
 
-# 6. Generate Multi-Resolution Favicons (Crisp at 16, 32, 48, 192)
-fav_192 = icon_canvas.resize((192, 192), Image.Resampling.LANCZOS)
-fav_192.save(os.path.join(public_dir, 'favicon.png'), optimize=True)
+for p in [public_dir, dist_dir]:
+    with open(os.path.join(p, 'favicon.svg'), 'w', encoding='utf-8') as f:
+        f.write(svg_icon)
+
+# 7. Generate Multi-Resolution Favicons (16, 32, 48, 64, 192)
+fav_192 = final_app_icon.resize((192, 192), Image.Resampling.LANCZOS)
+for p in [public_dir, dist_dir]:
+    fav_192.save(os.path.join(p, 'favicon.png'), optimize=True)
 
 fav_ico_images = [
-    icon_canvas.resize((s, s), Image.Resampling.LANCZOS)
+    final_app_icon.resize((s, s), Image.Resampling.LANCZOS)
     for s in [16, 32, 48, 64]
 ]
-fav_ico_images[1].save(
-    os.path.join(public_dir, 'favicon.ico'),
-    format='ICO',
-    sizes=[(16, 16), (32, 32), (48, 48), (64, 64)],
-    append_images=fav_ico_images
-)
-print("Saved favicon.png (192x192), favicon.ico, and favicon.svg")
+for p in [public_dir, dist_dir]:
+    fav_ico_images[1].save(
+        os.path.join(p, 'favicon.ico'),
+        format='ICO',
+        sizes=[(16, 16), (32, 32), (48, 48), (64, 64)],
+        append_images=fav_ico_images
+    )
 
-# 7. Generate Full Vertical Stacked Logo (Original Layout)
-v_crop = raw_img.crop((260, 20, 764, 550)) # 504x530
-vw, vh = v_crop.size
-v_clean = clean_extract_alpha(v_crop, min_diff=15, max_diff=50)
-v_backed = add_crisp_contrast_shadow(v_clean, shadow_blur=2.0, shadow_offset=(0, 2))
-v_backed.save(os.path.join(dest_dir, 'tech-nest-logo-vertical.png'), optimize=True)
-print("Saved tech-nest-logo-vertical.png")
-
-print(f"All brand assets successfully updated! Master Aspect Ratio: {hw} / {hh}")
+print("Saved all favicons (favicon.ico, favicon.png, favicon.svg)")
+print(f"Brand assets generation complete! Master size: {mw}x{mh}, Aspect Ratio: {mw/mh:.3f}")

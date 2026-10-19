@@ -5,7 +5,7 @@ import React from 'react';
  * Renders the authentic futuristic glowing cyan Circuit Nest emblem
  * and 3D "TECH NEST" wordmark.
  */
-const LOGO_VERSION = '20261019_v3';
+const LOGO_VERSION = '20261019_v6';
 
 export default function BrandLogo({ 
   variant = 'horizontal', 
@@ -14,8 +14,8 @@ export default function BrandLogo({
   alt = "Tech Nest — Authentic Mobile Accessories" 
 }) {
   let baseSrc = '/assets/tech-nest-logo-horizontal.png';
-  let aspectRatio = '1389 / 304';
-  let ratioNumber = 1389 / 304;
+  let aspectRatio = '2349 / 478';
+  let ratioNumber = 2349 / 478;
 
   if (variant === 'icon') {
     baseSrc = '/assets/tech-nest-icon.png';
@@ -27,8 +27,8 @@ export default function BrandLogo({
     ratioNumber = 1;
   } else if (variant === 'badge' || variant === 'dark') {
     baseSrc = '/assets/tech-nest-logo-dark.png';
-    aspectRatio = '1020 / 260';
-    ratioNumber = 1020 / 260;
+    aspectRatio = '2349 / 478';
+    ratioNumber = 2349 / 478;
   } else if (variant === 'vertical' || variant === 'stacked') {
     baseSrc = '/assets/tech-nest-logo-vertical.png';
     aspectRatio = '504 / 530';
