@@ -102,12 +102,12 @@ test('1. Product edits and restocking persist with audit trail', () => {
 
   // Edit product title and price
   updateProduct(prodId, {
-    title: 'Tech Nest Magnetic Power Bank 10K',
+    title: 'Tech Vartual Tutor Magnetic Power Bank 10K',
     price: 3500
   });
 
   const updated = getProductById(prodId);
-  assert.equal(updated.title, 'Tech Nest Magnetic Power Bank 10K');
+  assert.equal(updated.title, 'Tech Vartual Tutor Magnetic Power Bank 10K');
   assert.equal(updated.price, 3500);
 
   // Restock inventory with audit record

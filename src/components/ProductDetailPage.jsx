@@ -73,7 +73,7 @@ export default function ProductDetailPage({
             onClick={onBackToHome}
             className="w-full py-3 px-6 rounded-xl bg-[#168FC2] hover:bg-[#0F7CA6] text-white font-semibold text-sm transition-colors shadow-sm"
           >
-            {lang === 'bn' ? 'টেক নেস্ট ক্যাটালগে ফিরুন' : 'Return to Tech Nest Catalog'}
+            {lang === 'bn' ? 'টেক ভার্চুয়াল টিউটর ক্যাটালগে ফিরুন' : 'Return to Tech Vartual Tutor Catalog'}
           </button>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function ProductDetailPage({
     // Update document title for SEO
     const originalTitle = document.title;
     const titleText = lang === 'bn' ? (product.titleBn || product.title) : product.title;
-    document.title = `${titleText} — Tech Nest`;
+    document.title = `${titleText} — Tech Vartual Tutor`;
 
     return () => {
       document.title = originalTitle;
@@ -341,7 +341,7 @@ export default function ProductDetailPage({
   }[product.category] || product.category;
 
   // Brand Name
-  const brandName = product.brand || 'Tech Nest';
+  const brandName = product.brand || 'Tech Vartual Tutor';
 
   return (
     <div className="pdp-page">
@@ -820,11 +820,11 @@ export default function ProductDetailPage({
             <div className="pdp-trust-breakdown">
               <div className="pdp-trust-row">
                 <span className="pdp-trust-label">{lang === 'bn' ? 'শিপমেন্ট:' : 'Ships from'}</span>
-                <span className="pdp-trust-val">Tech Nest Logistics</span>
+                <span className="pdp-trust-val">Tech Vartual Tutor Logistics</span>
               </div>
               <div className="pdp-trust-row">
                 <span className="pdp-trust-label">{lang === 'bn' ? 'বিক্রেতা:' : 'Sold by'}</span>
-                <span className="pdp-trust-val">Tech Nest Official</span>
+                <span className="pdp-trust-val">Tech Vartual Tutor Official</span>
               </div>
               <div className="pdp-trust-row">
                 <span className="pdp-trust-label">{lang === 'bn' ? 'রিটার্ন:' : 'Returns'}</span>
@@ -999,7 +999,7 @@ export default function ProductDetailPage({
               <div className="pdp-overview-cards">
                 <div className="pdp-overview-card">
                   <Award size={20} style={{ color: '#168FC2' }} />
-                  <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#102A43', margin: 0 }}>Official Tech Nest Standard</h4>
+                  <h4 style={{ fontWeight: 700, fontSize: '14px', color: '#102A43', margin: 0 }}>Official Tech Vartual Tutor Standard</h4>
                   <p style={{ fontSize: '13px', color: '#62788A', margin: 0, lineHeight: 1.5 }}>Inspected and packaged with verified authentic connectors and accessories.</p>
                 </div>
 
@@ -1541,7 +1541,7 @@ export default function ProductDetailPage({
               "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
               "seller": {
                 "@type": "Organization",
-                "name": "Tech Nest"
+                "name": "Tech Vartual Tutor"
               }
             },
             "aggregateRating": {

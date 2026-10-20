@@ -235,9 +235,9 @@ export function handleServerRequest(req, res) {
   res.end(`
     <!DOCTYPE html>
     <html>
-      <head><title>Tech Nest Accessories API</title></head>
+      <head><title>Tech Vartual Tutor Accessories API</title></head>
       <body style="font-family: sans-serif; padding: 2rem; background: #F0F9FF; color: #10263D;">
-        <h1>Tech Nest Accessories Backend</h1>
+        <h1>Tech Vartual Tutor Accessories Backend</h1>
         <p>Production server is active. Build client bundle using <code>npm run build</code> to serve storefront.</p>
         <p><a href="/api/health">Check API Health</a></p>
       </body>
@@ -272,21 +272,21 @@ const isRunningTests = process.env.NODE_ENV === 'test' ||
 if (!isRunningTests) {
   if (typeof PhusionPassenger !== 'undefined' || process.env.PORT === 'passenger') {
     server.listen('passenger', () => {
-      console.log('[Production Server] Tech Nest listening on Passenger');
+      console.log('[Production Server] Tech Vartual Tutor listening on Passenger');
     });
   } else if (typeof PORT === 'number') {
     if (process.env.HOST) {
       server.listen(PORT, process.env.HOST, () => {
-        console.log(`[Production Server] Tech Nest Storefront & API listening on http://${process.env.HOST}:${PORT}`);
+        console.log(`[Production Server] Tech Vartual Tutor Storefront & API listening on http://${process.env.HOST}:${PORT}`);
       });
     } else {
       server.listen(PORT, () => {
-        console.log(`[Production Server] Tech Nest Storefront & API listening on port ${PORT}`);
+        console.log(`[Production Server] Tech Vartual Tutor Storefront & API listening on port ${PORT}`);
       });
     }
   } else {
     server.listen(PORT, () => {
-      console.log(`[Production Server] Tech Nest Storefront & API listening on socket ${PORT}`);
+      console.log(`[Production Server] Tech Vartual Tutor Storefront & API listening on socket ${PORT}`);
     });
   }
 }

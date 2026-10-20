@@ -46,7 +46,7 @@ except Exception:
 
 draw.text((400, 460), "IMAGE PENDING VERIFICATION", fill=(16, 42, 67), font=font_bold, anchor="mm")
 draw.text((400, 495), "Authentic studio photography in review", fill=(98, 120, 138), font=font_sub, anchor="mm")
-draw.text((400, 720), "TECH NEST • VERIFIED CATALOG", fill=(148, 163, 184), font=font_tiny, anchor="mm")
+draw.text((400, 720), "TECH VARTUAL TUTOR • VERIFIED CATALOG", fill=(148, 163, 184), font=font_tiny, anchor="mm")
 
 img.save('public/assets/product-placeholder.png', 'PNG', optimize=True)
 print('Generated public/assets/product-placeholder.png successfully')

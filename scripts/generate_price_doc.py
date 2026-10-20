@@ -37,21 +37,21 @@ for r in excel.get('mixed_pictures', []):
         mixed_map[f'{pref}:{name}'] = r
 
 lines = []
-lines.append("# Tech Nest — Comprehensive Bangladesh Market Price Verification Report\n")
+lines.append("# Tech Vartual Tutor — Comprehensive Bangladesh Market Price Verification Report\n")
 lines.append("**Repository:** `https://github.com/istihadahmed007/Tech`  ")
 lines.append("**Research Date:** 15–17 October 2026  ")
 lines.append("**Source Data:** `Bangladesh Product Catalog (1).xlsx`, `price_evidence.json` (Sources S01–S51), `catalog_excel_dump.json`  ")
 lines.append("**Currency:** Bangladeshi Taka (BDT / ৳)\n")
 lines.append("---\n")
 lines.append("## 1. Executive Summary & Verification Methodology\n")
-lines.append("Every product in the Tech Nest catalog was cross-checked against 51 verified Bangladesh marketplace quotations, authorised retail listings, and local electronics distributors (including Daraz Bangladesh, Star Tech, Ryans, Apple Gadgets BD, Techland, Rokomari, Foodpanda Shops, BDSailor, BDStall, and Ofuronto).")
+lines.append("Every product in the Tech Vartual Tutor catalog was cross-checked against 51 verified Bangladesh marketplace quotations, authorised retail listings, and local electronics distributors (including Daraz Bangladesh, Star Tech, Ryans, Apple Gadgets BD, Techland, Rokomari, Foodpanda Shops, BDSailor, BDStall, and Ofuronto).")
 lines.append("\n**Pricing Governance Hierarchy:**")
 lines.append("1. **Exact-Model Quotes:** Verified retail listings for identical manufacturer brand and model.")
 lines.append("2. **Comparable-Model Quotes:** Benchmark pricing from identical hardware batches or closest known models when exact brand labels differ.")
 lines.append("3. **Provisional Estimates:** Identified products requiring supplier verification before final retail pricing is published.\n")
 lines.append("---\n")
 lines.append("## 2. Product-by-Product Price Verification Table\n")
-lines.append("| ID | Ref | Product Name & Model | Current Price | Verified BD Market Band | Recommended Tech Nest Price | Confidence | Primary Evidence Sources | Key Market Observations |")
+lines.append("| ID | Ref | Product Name & Model | Current Price | Verified BD Market Band | Recommended Tech Vartual Tutor Price | Confidence | Primary Evidence Sources | Key Market Observations |")
 lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
 
 for p in cat['products']:

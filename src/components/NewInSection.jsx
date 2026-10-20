@@ -13,128 +13,89 @@ export default function NewInSection({
 }) {
   const [addedId, setAddedId] = useState(null);
 
-  // 4 items matching Screenshot 2:
-  // Card 1: Over-ear Headphones (pale warm gray) with "• Featured" badge top-right
-  // Card 2: Pro Camera Drone (pale gray-blue)
-  // Card 3: Action Camera with flip screen (pale peach) with "Save ৳300" badge top-left
-  // Card 4: White Gaming Controller (pale light-gray)
-  const newInItems = [
-    {
-      id: 'featured-audio-luxury',
-      sku: 'P16-ANK-NY200-SLV',
-      title: 'AuraLux Studio Pro Wireless Over-Ear Headphones',
-      price: 2450,
-      originalPrice: 3200,
-      rating: 4.9,
-      reviewCount: 128,
-      badge: '• Featured',
-      badgePos: 'right',
-      badgeClass: 'bg-white text-slate-800 border border-slate-200',
-      tint: 'bg-[#f5f2ee]',
-      image: '/assets/featured-mclaren-headphones.jpg',
-      category: 'audio'
-    },
-    {
-      id: 'featured-drone-pro',
-      sku: 'P14-VOL-DRONE-PRO',
-      title: 'Volaris 4K Gimbal Pro Aerial Drone with Dual Sensors',
-      price: 6850,
-      originalPrice: 8500,
-      rating: 4.8,
-      reviewCount: 76,
-      tint: 'bg-[#f0f3f6]',
-      image: '/assets/featured-lavic-drone.jpg',
-      category: 'drones'
-    },
-    {
-      id: 'featured-action-cam',
-      sku: 'P18-ACTION-X8-PRO',
-      title: 'Action X8 Pro Dual-Screen 4K Waterproof Action Camera',
-      price: 3650,
-      originalPrice: 4200,
-      rating: 4.7,
-      reviewCount: 92,
-      badge: `Save ${currencySymbol}300`,
-      badgePos: 'left',
-      badgeClass: 'bg-[#0066FF] text-white',
-      tint: 'bg-[#faedea]',
-      image: '/assets/action-camera-thumb.jpg',
-      category: 'cameras'
-    },
-    {
-      id: 'featured-game-controller',
-      sku: 'P03-ORBIT-CTRL-WHT',
-      title: 'Orbit Pro Wireless Ergonomic Gaming Controller',
-      price: 1850,
-      originalPrice: 2400,
-      rating: 4.9,
-      reviewCount: 145,
-      tint: 'bg-[#f1f3f5]',
-      image: '/assets/game-controller-thumb.jpg',
-      category: 'accessories'
+  // Select 4 authentic newest products from the verified catalog:
+  // 1. P16: ANKEER NK-NY200 Studio Wireless Headphones (Audio)
+  // 2. P13: T800 Ultra 2 Smartwatch (Wearables)
+  // 3. P04: Ultrapods Pro Crystal TWS Earbuds (Audio)
+  // 4. P20: RECRSI 4-in-1 65W Fast Charging Braided Cable (Charging)
+  const displayItems = React.useMemo(() => {
+    if (!products || products.length === 0) return [];
+    
+    const preferredSkus = [
+      'P16-ANK-NY200-SLV',
+      'P13-T800-ULTRA2-SLV',
+      'P04-ULTRAPODS-PRO-ALL',
+      'P20-RECRSI-4IN1'
+    ];
+
+    const matched = [];
+    preferredSkus.forEach((sku) => {
+      const p = products.find(item => item.sku === sku || item.id === sku.toLowerCase());
+      if (p) matched.push(p);
+    });
+
+    // Fill up to 4 with other authentic products if any SKU is missing
+    if (matched.length < 4) {
+      for (const p of products) {
+        if (!matched.some(m => m.id === p.id)) {
+          matched.push(p);
+          if (matched.length === 4) break;
+        }
+      }
     }
-  ];
+
+    const cardTints = ['bg-[#f5f2ee]', 'bg-[#f0f3f6]', 'bg-[#faedea]', 'bg-[#f1f3f5]'];
+
+    return matched.slice(0, 4).map((p, idx) => ({
+      ...p,
+      tint: cardTints[idx % cardTints.length],
+      badge: p.originalPrice && p.originalPrice > p.price
+        ? `Save ${currencySymbol}${p.originalPrice - p.price}`
+        : (idx === 0 ? '• Featured' : null),
+      badgePos: idx === 0 ? 'right' : 'left',
+      badgeClass: idx === 0 
+        ? 'bg-white text-slate-800 border border-slate-200' 
+        : 'bg-[#0066FF] text-white'
+    }));
+  }, [products, currencySymbol]);
 
   const handleAdd = (e, item) => {
     e.stopPropagation();
-    // Find matching real product or create a clean cart object
-    const realProd = products.find(p => p.sku === item.sku || p.id === item.id) || {
-      id: item.id,
-      sku: item.sku,
-      title: item.title,
-      price: item.price,
-      image: item.image,
-      category: item.category,
-      stock: 25
-    };
-    if (onQuickAdd) onQuickAdd(realProd);
+    if (onQuickAdd) onQuickAdd(item);
     setAddedId(item.id);
     setTimeout(() => setAddedId(null), 1200);
   };
 
   const handleCardClick = (item) => {
-    const realProd = products.find(p => p.sku === item.sku || p.id === item.id) || {
-      id: item.id,
-      sku: item.sku,
-      title: item.title,
-      price: item.price,
-      originalPrice: item.originalPrice,
-      image: item.image,
-      category: item.category,
-      rating: item.rating,
-      reviewCount: item.reviewCount,
-      stock: 25,
-      description: 'High-performance next-generation electronics engineered for seamless connectivity and durability.'
-    };
-    if (onOpenDetail) onOpenDetail(realProd);
+    if (onOpenDetail) onOpenDetail(item);
   };
 
   return (
     <section className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12" aria-label="New In Collection">
-      {/* Section Header (Screenshot 2) */}
+      {/* Section Header (matching reference layout) */}
       <div className="flex items-center justify-between gap-4 mb-6 sm:mb-8 pb-3 border-b border-slate-100">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            New In
+            {lang === 'bn' ? 'নতুন কালেকশন' : 'New In'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Find something that hits the right note
+            {lang === 'bn' ? 'আমাদের সর্বশেষ অথেনটিক টেক গ্যাজেট ও আপগ্রেড' : 'Find something that hits the right note'}
           </p>
         </div>
 
-        {/* Right Action: Shop All New Button (Screenshot 2) */}
+        {/* Right Action: Shop All New Button */}
         <button
           type="button"
           onClick={onShopAll}
           className="px-5 sm:px-6 py-2.5 rounded-xl bg-[#0066FF] hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-xs sm:text-sm transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer select-none"
         >
-          Shop All New
+          {lang === 'bn' ? 'সব দেখুন' : 'Shop All New'}
         </button>
       </div>
 
-      {/* 4-Column Product Grid (Screenshot 2) */}
+      {/* 4-Column Product Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-        {newInItems.map((item) => {
+        {displayItems.map((item) => {
           const isWishlisted = wishlistIds.includes(item.id);
           const hasDiscount = item.originalPrice && item.originalPrice > item.price;
 
@@ -144,82 +105,116 @@ export default function NewInSection({
               onClick={() => handleCardClick(item)}
               className="group flex flex-col justify-between bg-white rounded-2xl border border-slate-200/80 hover:border-blue-400 hover:shadow-md transition-all duration-200 cursor-pointer p-3 sm:p-4 relative"
             >
-              {/* Product Media Pedestal with soft tint */}
+              {/* Product Media Container with Pedestal Background */}
               <div className={`relative w-full aspect-square rounded-xl ${item.tint} flex items-center justify-center p-4 mb-3 overflow-hidden`}>
                 
-                {/* Badge if present */}
+                {/* Badges */}
                 {item.badge && (
                   <div className={`absolute top-2.5 ${item.badgePos === 'right' ? 'right-2.5' : 'left-2.5'} z-10`}>
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-2xs ${item.badgeClass}`}>
+                    <span className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-bold tracking-tight shadow-2xs ${item.badgeClass}`}>
                       {item.badge}
                     </span>
                   </div>
                 )}
 
-                {/* Wishlist Button */}
+                {/* Wishlist Heart Icon */}
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (onToggleWishlist) onToggleWishlist(item);
                   }}
-                  className={`absolute top-2.5 ${item.badgePos === 'right' ? 'left-2.5' : 'right-2.5'} z-10 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-500 hover:text-rose-600 flex items-center justify-center shadow-2xs transition-colors cursor-pointer`}
-                  title="Save to wishlist"
+                  className={`absolute top-2.5 ${item.badgePos === 'right' ? 'left-2.5' : 'right-2.5'} p-2 rounded-full bg-white/90 hover:bg-white text-slate-400 hover:text-rose-500 transition-colors shadow-2xs z-10 cursor-pointer ${
+                    isWishlisted ? '!text-rose-500 fill-rose-500' : ''
+                  }`}
+                  aria-label="Save to Wishlist"
                 >
-                  <Heart size={14} fill={isWishlisted ? "currentColor" : "none"} className={isWishlisted ? "text-rose-600" : ""} />
+                  <Heart size={15} className={isWishlisted ? 'fill-rose-500 text-rose-500' : ''} />
                 </button>
 
-                {/* Product Image */}
+                {/* Product Photograph */}
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
+                  className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.src = '/assets/product-placeholder.png';
+                  }}
                 />
               </div>
 
-              {/* Product Content Details */}
+              {/* Product Info */}
               <div className="flex flex-col flex-1 justify-between">
                 <div>
-                  {/* Rating Stars */}
-                  <div className="flex items-center gap-1 mb-1.5">
-                    <div className="flex items-center text-amber-400">
-                      <Star size={12} className="fill-amber-400" />
-                    </div>
-                    <span className="text-[11px] font-bold text-slate-800">{item.rating}</span>
-                    <span className="text-[10px] text-slate-400">({item.reviewCount})</span>
+                  {/* Category & Verified Note */}
+                  <div className="flex items-center justify-between text-[11px] font-medium text-slate-500 mb-1">
+                    <span className="capitalize">{item.category}</span>
+                    <span className="text-emerald-700 font-semibold">{item.stock > 0 ? (lang === 'bn' ? 'স্টকে আছে' : 'In Stock') : (lang === 'bn' ? 'স্টক শেষ' : 'Sold Out')}</span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xs sm:text-sm font-semibold text-slate-900 group-hover:text-[#0066FF] transition-colors line-clamp-2 min-h-[2.5rem] mb-2 leading-snug">
-                    {item.title}
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#0066FF] transition-colors line-clamp-2 leading-snug mb-2">
+                    {lang === 'bn' ? (item.titleBn || item.title) : item.title}
                   </h3>
+
+                  {/* Star Rating */}
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="flex items-center text-amber-400">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          size={12} 
+                          className={i < Math.floor(item.rating || 4.5) ? 'fill-amber-400 text-amber-400' : 'text-slate-200 fill-slate-200'} 
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-700 ml-0.5">
+                      {item.rating || '4.8'}
+                    </span>
+                    <span className="text-[11px] text-slate-600">
+                      ({item.reviewsCount || item.reviewCount || 42})
+                    </span>
+                  </div>
                 </div>
 
-                {/* Price and Cart Action */}
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-sm sm:text-base font-extrabold text-slate-900">
-                      {currencySymbol}{item.price.toLocaleString()}
-                    </span>
-                    {hasDiscount && (
-                      <span className="text-[11px] text-slate-400 line-through">
-                        {currencySymbol}{item.originalPrice.toLocaleString()}
+                {/* Bottom Row: Price & Add to Bag Button */}
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 mt-1">
+                  <div className="flex flex-col">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-sm sm:text-base font-extrabold text-slate-900">
+                        {currencySymbol}{item.price.toLocaleString()}
                       </span>
-                    )}
+                      {hasDiscount && (
+                        <span className="text-xs text-slate-600 line-through">
+                          {currencySymbol}{item.originalPrice.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
+                  {/* Restrained Blue Action Button */}
                   <button
                     type="button"
                     onClick={(e) => handleAdd(e, item)}
-                    className={`p-2 rounded-xl flex items-center justify-center font-bold text-xs transition-all cursor-pointer ${
+                    className={`p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-150 cursor-pointer ${
                       addedId === item.id
                         ? 'bg-emerald-600 text-white'
-                        : 'bg-[#0066FF] hover:bg-blue-700 text-white shadow-xs'
+                        : 'bg-[#0066FF] hover:bg-blue-700 active:bg-blue-800 text-white shadow-2xs'
                     }`}
-                    title={`Add ${item.title} to cart`}
+                    title="Add to shopping bag"
                   >
-                    {addedId === item.id ? <Check size={14} /> : <ShoppingBag size={14} />}
+                    {addedId === item.id ? (
+                      <>
+                        <Check size={14} className="stroke-[3]" />
+                        <span className="hidden sm:inline">Added</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag size={14} />
+                        <span className="hidden sm:inline">Add</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

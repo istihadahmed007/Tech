@@ -497,8 +497,8 @@ export default function CartPage({
             {/* Disclaimer */}
             <p className="amazon-cart-disclaimer">
               {lang === 'bn'
-                ? 'Tech Nest-এ পণ্যের মূল্য ও স্টক পরিবর্তনশীল হতে পারে। কার্ট সাময়িক সংরক্ষণের স্থান এবং সর্বশেষ মূল্য ও প্রাপ্যতা প্রদর্শন করে।'
-                : 'The price and availability of items at Tech Nest are subject to change. The Cart is a temporary place to store a list of your items and reflects each item\'s most recent price.'}
+                ? 'Tech Vartual Tutor-এ পণ্যের মূল্য ও স্টক পরিবর্তনশীল হতে পারে। কার্ট সাময়িক সংরক্ষণের স্থান এবং সর্বশেষ মূল্য ও প্রাপ্যতা প্রদর্শন করে।'
+                : 'The price and availability of items at Tech Vartual Tutor are subject to change. The Cart is a temporary place to store a list of your items and reflects each item\'s most recent price.'}
             </p>
 
             {/* Saved For Later Section */}

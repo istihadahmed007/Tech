@@ -5,9 +5,9 @@ import {
   Sun, 
   BatteryCharging, 
   ShieldCheck, 
-  Camera, 
+  Headphones, 
   Clock, 
-  Navigation,
+  Zap,
   Play
 } from 'lucide-react';
 
@@ -26,36 +26,45 @@ export default function Hero({
 
   const SLIDES = [
     {
-      id: 'watch-5-pro',
+      id: 't800-ultra2-smartwatch',
       theme: 'dark',
-      headline: 'Watch 5 Pro',
-      subtitle: 'Pro-Level Outdoor Sports | Superior hardness and durability',
+      headline: 'T800 Ultra 2',
+      headlineBn: 'টি৮০০ আল্ট্রা ২ স্মার্টওয়াচ',
+      subtitle: '49mm Infinite HD Display | Bluetooth Calling & Health Tracking',
+      subtitleBn: '৪৯ মিমি ইনফিনিট এইচডি ডিসপ্লে • ব্লুটুথ কলিং ও ফিটনেস ট্র্যাকিং',
       features: [
-        { icon: Sun, text: '3000 nits Brightness' },
-        { icon: BatteryCharging, text: 'Up to 10-Day Battery Life' },
-        { icon: ShieldCheck, text: 'IP6X Water & Dustproof Rating' }
+        { icon: Sun, text: 'HD Vivid Color Display' },
+        { icon: BatteryCharging, text: 'Multi-Day Battery Life' },
+        { icon: ShieldCheck, text: 'Durable Alloy Casing' }
       ],
-      primaryCta: 'Buy Watch 5 Pro',
-      secondaryCta: 'Learn More',
-      image: '/assets/hero-watch5-banner.jpg',
+      primaryCta: 'Buy T800 Ultra 2',
+      primaryCtaBn: 'এখনই কিনুন',
+      secondaryCta: 'Explore Wearables',
+      secondaryCtaBn: 'আরও দেখুন',
+      image: '/assets/hero-products-showcase.jpg',
       targetCategory: 'wearables',
       featuredSku: 'P13-T800-ULTRA2-SLV'
     },
     {
-      id: 'zypher-x1',
+      id: 'ankeer-studio-wireless',
       theme: 'light',
-      headline: 'Zypher X1',
-      subtitle: 'Leading the Way in Aerial Photography and Performance',
+      headline: 'Studio Wireless ANC',
+      headlineBn: 'স্টুডিও ওয়্যারলেস হেডফোন',
+      subtitle: 'Active Noise Cancellation | 40mm Hi-Fi Bass & 30-Hour Playtime',
+      subtitleBn: 'অ্যাক্টিভ নয়েজ ক্যান্সেলেশন • ৪০মিমি ডিপ বেস ও ৩০ ঘণ্টা প্লে-টাইম',
       features: [
-        { icon: Camera, text: '4K HDR Camera' },
-        { icon: Clock, text: 'Extended Flight Time' },
-        { icon: Navigation, text: 'Advanced Navigation' }
+        { icon: Headphones, text: 'Active Noise Cancellation' },
+        { icon: Clock, text: '30-Hour Extended Battery' },
+        { icon: Zap, text: 'Fast USB-C Charging' }
       ],
-      primaryCta: 'Buy Zypher X1',
-      secondaryCta: 'Watch Video',
-      image: '/assets/hero-zypher-drone.jpg',
-      targetCategory: 'drones',
-      watermarkText: 'Zypher X1'
+      primaryCta: 'Buy Studio ANC',
+      primaryCtaBn: 'এখনই কিনুন',
+      secondaryCta: 'Explore Audio',
+      secondaryCtaBn: 'অডিও কালেকশন',
+      image: '/assets/hero-audio-headphones.jpg',
+      targetCategory: 'audio',
+      featuredSku: 'P16-ANK-NY200-SLV',
+      watermarkText: 'STUDIO ANC'
     }
   ];
 
@@ -71,23 +80,8 @@ export default function Hero({
   const slide = SLIDES[activeSlide];
 
   const handlePrimaryClick = () => {
-    if (slide.id === 'watch-5-pro') {
-      const targetProd = products.find(p => p.sku === slide.featuredSku || p.category === 'wearables');
-      if (targetProd && onOpenDetail) {
-        onOpenDetail(targetProd);
-        return;
-      }
-      if (onSelectCategory) onSelectCategory('wearables');
-      if (onShopClick) onShopClick();
-    } else {
-      if (onSelectCategory) onSelectCategory(slide.targetCategory);
-      if (onShopClick) onShopClick();
-    }
-  };
-
-  const handleSecondaryClick = () => {
-    if (slide.id === 'watch-5-pro') {
-      const targetProd = products.find(p => p.sku === slide.featuredSku || p.category === 'wearables');
+    if (slide.featuredSku && products && products.length > 0) {
+      const targetProd = products.find(p => p.sku === slide.featuredSku || p.category === slide.targetCategory);
       if (targetProd && onOpenDetail) {
         onOpenDetail(targetProd);
         return;
@@ -97,163 +91,165 @@ export default function Hero({
     if (onShopClick) onShopClick();
   };
 
+  const handleSecondaryClick = () => {
+    if (onSelectCategory) onSelectCategory(slide.targetCategory);
+    if (onShopClick) onShopClick();
+  };
+
   return (
     <section 
-      className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 select-none"
+      className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 pb-4 sm:pb-6" 
+      aria-label="Flagship Showcase"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      aria-label="Hero Spotlight Banner"
     >
-      <div 
-        className={`relative w-full rounded-[22px] sm:rounded-[26px] overflow-hidden transition-all duration-500 shadow-sm ${
-          slide.theme === 'dark' 
-            ? 'bg-[#0b1329] text-white min-h-[440px] sm:min-h-[480px] lg:min-h-[500px]' 
-            : 'bg-[#f4f6fa] text-slate-900 min-h-[440px] sm:min-h-[480px] lg:min-h-[500px]'
-        }`}
-      >
-        {/* Background Visual Elements */}
+      <div className={`relative w-full rounded-2xl sm:rounded-3xl overflow-hidden transition-colors duration-700 min-h-[460px] sm:min-h-[520px] md:min-h-[560px] flex items-center shadow-sm ${
+        slide.theme === 'dark' ? 'bg-[#0B1528] text-white' : 'bg-[#eef2f5] text-slate-900'
+      }`}>
+        
+        {/* Subtle Background Ambience */}
         {slide.theme === 'dark' ? (
-          <>
-            {/* Background Image for Watch 5 Pro */}
-            <div className="absolute inset-0 z-0">
-              <img 
-                src={slide.image} 
-                alt="Watch 5 Pro Banner"
-                className="w-full h-full object-cover object-center opacity-85"
-              />
-              {/* Radial & Linear gradient overlays for legibility */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0b1329]/95 via-[#0b1329]/75 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0b1329] via-transparent to-transparent opacity-80" />
-            </div>
-          </>
+          <div className="absolute inset-0 bg-radial from-blue-900/30 via-slate-950 to-[#070E1B] pointer-events-none" />
         ) : (
-          <>
-            {/* Background Studio Visual for Zypher X1 */}
-            <div className="absolute inset-0 z-0 flex items-center justify-end overflow-hidden">
-              {/* Subtle watermark text in background (Screenshot 2) */}
-              <div className="absolute left-10 bottom-6 text-[110px] lg:text-[150px] font-black text-slate-200/50 select-none pointer-events-none tracking-tighter">
-                {slide.watermarkText}
-              </div>
-              <div className="w-full lg:w-[62%] h-full flex items-center justify-end relative pr-4 lg:pr-12">
-                <img 
-                  src={slide.image} 
-                  alt="Zypher X1 Pro Drone"
-                  className="max-h-[380px] sm:max-h-[440px] w-auto object-contain z-10 drop-shadow-2xl"
-                />
-              </div>
-            </div>
-          </>
+          <div className="absolute inset-0 bg-radial from-white/90 via-[#f0f4f8] to-[#e4e9f0] pointer-events-none" />
         )}
 
-        {/* Hero Foreground Content Overlay */}
-        <div className="relative z-10 max-w-2xl px-6 sm:px-12 lg:px-16 py-12 sm:py-16 flex flex-col justify-center min-h-[440px] sm:min-h-[480px] lg:min-h-[500px]">
+        {/* Watermark Branding */}
+        {slide.watermarkText && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none opacity-[0.06] text-6xl sm:text-8xl md:text-9xl font-black uppercase tracking-tighter text-slate-900 whitespace-nowrap">
+            {slide.watermarkText}
+          </div>
+        )}
+
+        {/* Content Container */}
+        <div className="relative z-10 w-full max-w-[1240px] mx-auto px-6 sm:px-12 md:px-16 py-12 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
           
-          {/* Main Headline */}
-          <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-3 leading-[1.08] ${
-            slide.theme === 'dark' ? 'text-white' : 'text-slate-900'
-          }`}>
-            {slide.headline}
-          </h1>
+          {/* Left Column: Typography, Bullets, Dual CTAs */}
+          <div className="w-full md:max-w-xl text-left">
+            
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-3 sm:mb-4">
+              {lang === 'bn' ? (slide.headlineBn || slide.headline) : slide.headline}
+            </h1>
 
-          {/* Supporting Subtitle */}
-          <p className={`text-sm sm:text-base lg:text-lg font-normal mb-6 max-w-xl leading-relaxed ${
-            slide.theme === 'dark' ? 'text-slate-200' : 'text-slate-600'
-          }`}>
-            {slide.subtitle}
-          </p>
+            {/* Subtitle / Product Proposition */}
+            <p className={`text-sm sm:text-base md:text-lg font-normal mb-6 sm:mb-8 leading-relaxed max-w-lg ${
+              slide.theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+            }`}>
+              {lang === 'bn' ? (slide.subtitleBn || slide.subtitle) : slide.subtitle}
+            </p>
 
-          {/* Feature Specs Pills Row */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-8">
-            {slide.features.map((feat, idx) => {
-              const IconComp = feat.icon;
-              return (
-                <div 
-                  key={idx}
-                  className={`flex items-center gap-1.5 text-xs sm:text-[13px] font-medium px-3 py-1.5 rounded-full backdrop-blur-md ${
-                    slide.theme === 'dark' 
-                      ? 'bg-white/10 text-white border border-white/15' 
-                      : 'bg-white/80 text-slate-800 border border-slate-200/80 shadow-2xs'
-                  }`}
-                >
-                  <IconComp size={14} className={slide.theme === 'dark' ? 'text-blue-400' : 'text-[#0066FF]'} />
-                  <span>{feat.text}</span>
-                </div>
-              );
-            })}
+            {/* 3 Bullet Features with Small Icons */}
+            <div className="space-y-2.5 sm:space-y-3 mb-8 sm:mb-10">
+              {slide.features.map((feat, i) => {
+                const IconComponent = feat.icon;
+                return (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+                      slide.theme === 'dark' ? 'bg-white/10 text-blue-400' : 'bg-slate-200/80 text-blue-600'
+                    }`}>
+                      <IconComponent size={13} className="stroke-[2.5]" />
+                    </div>
+                    <span className={`text-xs sm:text-sm font-medium ${
+                      slide.theme === 'dark' ? 'text-slate-200' : 'text-slate-700'
+                    }`}>
+                      {feat.text}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Dual Action CTAs */}
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+              {/* Primary Blue Button */}
+              <button
+                type="button"
+                onClick={handlePrimaryClick}
+                className="px-6 sm:px-7 py-3 rounded-full bg-[#0066FF] hover:bg-blue-600 active:bg-blue-700 text-white font-semibold text-xs sm:text-sm transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 cursor-pointer select-none"
+              >
+                <span>{lang === 'bn' ? (slide.primaryCtaBn || slide.primaryCta) : slide.primaryCta}</span>
+                <ChevronRight size={15} className="stroke-[2.5]" />
+              </button>
+
+              {/* Secondary Button */}
+              <button
+                type="button"
+                onClick={handleSecondaryClick}
+                className={`px-5 sm:px-6 py-3 rounded-full font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer select-none ${
+                  slide.theme === 'dark'
+                    ? 'bg-transparent hover:bg-white/10 text-white border border-white/20'
+                    : 'bg-transparent hover:bg-slate-200/60 text-slate-800 border border-slate-300'
+                }`}
+              >
+                <span>{lang === 'bn' ? (slide.secondaryCtaBn || slide.secondaryCta) : slide.secondaryCta}</span>
+                <ChevronRight size={15} className="stroke-[2]" />
+              </button>
+            </div>
           </div>
 
-          {/* CTA Action Buttons */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            {/* Primary Solid Blue CTA */}
-            <button
-              type="button"
-              onClick={handlePrimaryClick}
-              className="px-6 sm:px-8 py-3 rounded-xl bg-[#0066FF] hover:bg-blue-600 active:bg-blue-700 text-white font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer transform hover:-translate-y-0.5"
-            >
-              {slide.primaryCta}
-            </button>
-
-            {/* Secondary Outlined CTA */}
-            <button
-              type="button"
-              onClick={handleSecondaryClick}
-              className={`px-6 sm:px-7 py-3 rounded-xl font-medium text-sm transition-all duration-200 cursor-pointer border ${
-                slide.theme === 'dark'
-                  ? 'border-white/40 hover:border-white text-white hover:bg-white/10'
-                  : 'border-slate-300 hover:border-slate-800 text-slate-800 hover:bg-slate-100'
-              }`}
-            >
-              {slide.secondaryCta}
-            </button>
+          {/* Right Column: High-Res Studio Showcase */}
+          <div className="w-full md:flex-1 flex justify-center items-center relative">
+            <div className="relative w-full max-w-[480px] sm:max-w-[540px] md:max-w-[580px] aspect-4/3 flex items-center justify-center">
+              <img
+                src={slide.image}
+                alt={slide.headline}
+                loading="eager"
+                fetchPriority="high"
+                className="w-full h-full object-contain rounded-2xl drop-shadow-2xl transition-transform duration-700 hover:scale-103"
+                onError={(e) => {
+                  e.currentTarget.src = '/assets/product-placeholder.png';
+                }}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Slide Carousel Navigation Controls */}
-        <div className="absolute bottom-5 right-6 sm:right-10 z-20 flex items-center gap-2">
-          {/* Previous Slide Button */}
-          <button
-            type="button"
-            onClick={() => setActiveSlide(prev => (prev === 0 ? SLIDES.length - 1 : prev - 1))}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-              slide.theme === 'dark'
-                ? 'bg-white/20 hover:bg-white/30 text-white'
-                : 'bg-white hover:bg-slate-100 text-slate-700 shadow-sm border border-slate-200'
-            }`}
-            aria-label="Previous Slide"
-          >
-            <ChevronLeft size={16} />
-          </button>
+        {/* Left Arrow */}
+        <button
+          type="button"
+          onClick={() => setActiveSlide((prev) => (prev - 1 + SLIDES.length) % SLIDES.length)}
+          className={`absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 cursor-pointer shadow-sm ${
+            slide.theme === 'dark'
+              ? 'bg-white/10 hover:bg-white/20 text-white'
+              : 'bg-white/80 hover:bg-white text-slate-800'
+          }`}
+          aria-label="Previous Slide"
+        >
+          <ChevronLeft size={18} />
+        </button>
 
-          {/* Slide Indicator Dots */}
-          <div className="flex items-center gap-1.5 px-2">
-            {SLIDES.map((_, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setActiveSlide(idx)}
-                className={`transition-all rounded-full cursor-pointer ${
-                  idx === activeSlide
-                    ? 'w-6 h-2 bg-[#0066FF]'
-                    : slide.theme === 'dark' ? 'w-2 h-2 bg-white/40' : 'w-2 h-2 bg-slate-300'
-                }`}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            ))}
-          </div>
+        {/* Right Arrow */}
+        <button
+          type="button"
+          onClick={() => setActiveSlide((prev) => (prev + 1) % SLIDES.length)}
+          className={`absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 z-20 cursor-pointer shadow-sm ${
+            slide.theme === 'dark'
+              ? 'bg-white/10 hover:bg-white/20 text-white'
+              : 'bg-white/80 hover:bg-white text-slate-800'
+          }`}
+          aria-label="Next Slide"
+        >
+          <ChevronRight size={18} />
+        </button>
 
-          {/* Next Slide Button */}
-          <button
-            type="button"
-            onClick={() => setActiveSlide(prev => (prev + 1) % SLIDES.length)}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-              slide.theme === 'dark'
-                ? 'bg-white/20 hover:bg-white/30 text-white'
-                : 'bg-white hover:bg-slate-100 text-slate-700 shadow-sm border border-slate-200'
-            }`}
-            aria-label="Next Slide"
-          >
-            <ChevronRight size={16} />
-          </button>
+        {/* Center Bottom Pill Indicator Dots */}
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+          {SLIDES.map((_, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setActiveSlide(idx)}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                activeSlide === idx
+                  ? 'w-7 bg-[#0066FF]'
+                  : slide.theme === 'dark'
+                    ? 'w-2 bg-white/30 hover:bg-white/50'
+                    : 'w-2 bg-slate-300 hover:bg-slate-400'
+              }`}
+              aria-label={`Slide ${idx + 1}`}
+            />
+          ))}
         </div>
       </div>
     </section>

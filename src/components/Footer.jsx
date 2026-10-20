@@ -17,12 +17,7 @@ export default function Footer({
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-3.5">
             <div className="flex items-center">
-              <div className="flex items-baseline select-none">
-                <span className="text-2xl font-extrabold tracking-tight text-slate-900">
-                  Tech Vartual Tutor
-                </span>
-                <span className="w-2 h-2 rounded-full bg-[#0066FF] ml-0.5 inline-block" />
-              </div>
+              <BrandLogo variant="horizontal" height={36} className="h-9 w-auto" alt="Tech Vartual Tutor" />
             </div>
             <p className="text-xs text-slate-500 leading-relaxed max-w-sm">
               {t.footerAbout}

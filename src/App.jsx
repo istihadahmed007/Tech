@@ -416,18 +416,18 @@ export default function App() {
         setIsCheckoutView(false);
         setSelectedProduct(null);
         setActiveModal(null);
-        document.title = 'Staff Console — Tech Nest';
+        document.title = 'Staff Console — Tech Vartual Tutor';
         return;
       }
 
-      // 1. Dedicated Amazon Cart Page routing (/cart, #cart, or ?view=cart)
+      // 1. Dedicated Cart Page routing (/cart, #cart, or ?view=cart)
       if (pathname === '/cart' || pathname === '/cart/' || hash === '#cart' || hash.startsWith('#cart?') || search.includes('view=cart')) {
         setIsCartView(true);
         setIsCheckoutView(false);
         setIsAdminView(false);
         setSelectedProduct(null);
         setActiveModal(null);
-        document.title = 'Amazon.com Shopping Cart — Tech Nest';
+        document.title = 'Shopping Cart — Tech Vartual Tutor';
         return;
       }
 
@@ -438,7 +438,7 @@ export default function App() {
         setIsAdminView(false);
         setSelectedProduct(null);
         setActiveModal(null);
-        document.title = 'Amazon.com Checkout — Tech Nest';
+        document.title = 'Secure Checkout — Tech Vartual Tutor';
         return;
       }
 
@@ -1162,7 +1162,7 @@ export default function App() {
 
       {/* Concise Customer Footer */}
       <Footer
-        storeName={import.meta.env.VITE_STORE_NAME || "Tech Nest"}
+        storeName={import.meta.env.VITE_STORE_NAME || "Tech Vartual Tutor"}
         onOpenSupport={() => setActiveModal('support')}
         onOpenTracking={() => {
           setTrackingOrderId('');

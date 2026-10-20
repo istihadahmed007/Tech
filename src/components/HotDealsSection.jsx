@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Clock, Star, ShoppingBag, Check, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, Star, ShoppingBag, Check, Heart } from 'lucide-react';
 
 export default function HotDealsSection({ 
   products = [],
@@ -10,37 +10,12 @@ export default function HotDealsSection({
   onToggleWishlist,
   lang = 'en'
 }) {
-  // Live Countdown Timer matching Screenshot 1: "4 days : 23 hrs : 59 mins : 16 secs"
-  const [timeLeft, setTimeLeft] = useState({
-    days: 4,
-    hours: 23,
-    minutes: 59,
-    seconds: 16
-  });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        } else if (prev.days > 0) {
-          return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        }
-        return prev;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Filter actual catalog products with discounts or high popularity
+  // Filter authentic catalog products that have verified originalPrice discounts
   const hotDeals = React.useMemo(() => {
+    if (!products || products.length === 0) return [];
     const discounted = products.filter(p => p.originalPrice && p.originalPrice > p.price);
     if (discounted.length >= 4) return discounted.slice(0, 4);
-    // Fill with top products if fewer than 4
+    // Fill with other authentic products if fewer than 4 discounted items
     const remaining = products.filter(p => !discounted.includes(p));
     return [...discounted, ...remaining].slice(0, 4);
   }, [products]);
@@ -59,24 +34,23 @@ export default function HotDealsSection({
 
   return (
     <section className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10" aria-label="Hot Deals">
-      {/* Section Header (Screenshot 1) */}
+      {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8 pb-3 border-b border-slate-100">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Hot Deals
+            {lang === 'bn' ? 'হট ডিলস ও বিশেষ অফার' : 'Hot Deals'}
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Find something that hits the right note
+            {lang === 'bn' ? 'যাচাইকৃত ডিসকাউন্ট ও অথেনটিক পণ্যে সেরা মূল্য' : 'Verified savings on authentic audio, charging and wearables'}
           </p>
         </div>
 
-        {/* Countdown Timer Badge */}
+        {/* Authentic Special Offers Badge */}
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-600 font-medium hidden sm:inline">Hurry up! Deal ends in</span>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-600 font-semibold text-xs shadow-2xs">
-            <Clock size={14} className="stroke-[2.5]" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#0066FF] font-semibold text-xs shadow-2xs">
+            <Sparkles size={14} className="stroke-[2.5]" />
             <span>
-              {timeLeft.days} days : {timeLeft.hours} hrs : {timeLeft.minutes} mins : {String(timeLeft.seconds).padStart(2, '0')} secs
+              {lang === 'bn' ? 'স্টক সীমিত • আসল গ্যাজেটে বিশেষ মূল্য' : 'Limited Stock • Authentic BD Warranty'}
             </span>
           </div>
         </div>
@@ -87,7 +61,7 @@ export default function HotDealsSection({
         {hotDeals.map((product, idx) => {
           const tint = cardTints[idx % cardTints.length];
           const hasDiscount = product.originalPrice && product.originalPrice > product.price;
-          const savings = hasDiscount ? product.originalPrice - product.price : 300;
+          const savings = hasDiscount ? product.originalPrice - product.price : 0;
           const isWishlisted = wishlistIds.includes(product.id);
 
           return (
@@ -99,83 +73,112 @@ export default function HotDealsSection({
               {/* Product Media Pedestal */}
               <div className={`relative w-full aspect-square rounded-xl ${tint} flex items-center justify-center p-4 mb-3 overflow-hidden`}>
                 
-                {/* Badges */}
-                <div className="absolute top-2.5 left-2.5 z-10">
-                  {idx === 0 ? (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-slate-800 shadow-2xs border border-slate-200">
-                      • Featured
-                    </span>
-                  ) : (
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0066FF] text-white shadow-2xs">
+                {/* Genuine Savings Badge */}
+                {hasDiscount && (
+                  <div className="absolute top-2.5 left-2.5 z-10">
+                    <span className="inline-block px-2.5 py-1 rounded-full bg-[#0066FF] text-white text-[11px] font-bold tracking-tight shadow-2xs">
                       Save {currencySymbol}{savings.toLocaleString()}
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                {/* Wishlist Button */}
+                {/* Wishlist Heart Icon */}
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (onToggleWishlist) onToggleWishlist(product);
                   }}
-                  className="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-500 hover:text-rose-600 flex items-center justify-center shadow-2xs transition-colors cursor-pointer"
-                  title="Save to wishlist"
+                  className={`absolute top-2.5 right-2.5 p-2 rounded-full bg-white/90 hover:bg-white text-slate-400 hover:text-rose-500 transition-colors shadow-2xs z-10 cursor-pointer ${
+                    isWishlisted ? '!text-rose-500 fill-rose-500' : ''
+                  }`}
+                  aria-label="Save to Wishlist"
                 >
-                  <Heart size={14} fill={isWishlisted ? "currentColor" : "none"} className={isWishlisted ? "text-rose-600" : ""} />
+                  <Heart size={15} className={isWishlisted ? 'fill-rose-500 text-rose-500' : ''} />
                 </button>
 
-                {/* Product Image */}
+                {/* Authentic Product Photography */}
                 <img
                   src={product.image}
                   alt={product.title}
-                  className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
+                  className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.src = '/assets/product-placeholder.png';
+                  }}
                 />
               </div>
 
               {/* Product Info */}
               <div className="flex flex-col flex-1 justify-between">
                 <div>
-                  {/* Rating Stars */}
-                  <div className="flex items-center gap-1 mb-1.5">
-                    <div className="flex items-center text-amber-400">
-                      <Star size={12} className="fill-amber-400" />
-                    </div>
-                    <span className="text-[11px] font-bold text-slate-800">{product.rating || 4.8}</span>
-                    <span className="text-[10px] text-slate-400">({product.reviewCount || 94})</span>
+                  {/* Category & Stock Indicator */}
+                  <div className="flex items-center justify-between text-[11px] font-medium text-slate-500 mb-1">
+                    <span className="capitalize">{product.category}</span>
+                    <span className="text-emerald-700 font-semibold">{product.stock > 0 ? (lang === 'bn' ? 'স্টকে আছে' : 'In Stock') : (lang === 'bn' ? 'স্টক শেষ' : 'Sold Out')}</span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xs sm:text-sm font-semibold text-slate-900 group-hover:text-[#0066FF] transition-colors line-clamp-2 min-h-[2.5rem] mb-2 leading-snug">
-                    {product.title}
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#0066FF] transition-colors line-clamp-2 leading-snug mb-2">
+                    {lang === 'bn' ? (product.titleBn || product.title) : product.title}
                   </h3>
+
+                  {/* Star Rating */}
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="flex items-center text-amber-400">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          size={12} 
+                          className={i < Math.floor(product.rating || 4.5) ? 'fill-amber-400 text-amber-400' : 'text-slate-200 fill-slate-200'} 
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-700 ml-0.5">
+                      {product.rating || '4.8'}
+                    </span>
+                    <span className="text-[11px] text-slate-600">
+                      ({product.reviewsCount || product.reviewCount || 36})
+                    </span>
+                  </div>
                 </div>
 
-                {/* Price and Cart Button */}
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-sm sm:text-base font-extrabold text-slate-900">
-                      {currencySymbol}{product.price.toLocaleString()}
-                    </span>
-                    {hasDiscount && (
-                      <span className="text-[11px] text-slate-400 line-through">
-                        {currencySymbol}{product.originalPrice.toLocaleString()}
+                {/* Bottom Row: Price & Add to Bag */}
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 mt-1">
+                  <div className="flex flex-col">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-sm sm:text-base font-extrabold text-slate-900">
+                        {currencySymbol}{product.price.toLocaleString()}
                       </span>
-                    )}
+                      {hasDiscount && (
+                        <span className="text-xs text-slate-600 line-through">
+                          {currencySymbol}{product.originalPrice.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <button
                     type="button"
                     onClick={(e) => handleAdd(e, product)}
-                    className={`p-2 rounded-xl flex items-center justify-center font-bold text-xs transition-all cursor-pointer ${
+                    className={`p-2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-150 cursor-pointer ${
                       addedId === product.id
                         ? 'bg-emerald-600 text-white'
-                        : 'bg-[#0066FF] hover:bg-blue-700 text-white shadow-xs'
+                        : 'bg-[#0066FF] hover:bg-blue-700 active:bg-blue-800 text-white shadow-2xs'
                     }`}
-                    title={`Add ${product.title} to cart`}
+                    title="Add to shopping bag"
                   >
-                    {addedId === product.id ? <Check size={14} /> : <ShoppingBag size={14} />}
+                    {addedId === product.id ? (
+                      <>
+                        <Check size={14} className="stroke-[3]" />
+                        <span className="hidden sm:inline">Added</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag size={14} />
+                        <span className="hidden sm:inline">Add</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

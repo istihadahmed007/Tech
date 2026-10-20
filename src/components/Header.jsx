@@ -113,14 +113,9 @@ export default function Header({
             }
           }}
           className="flex items-center gap-2 group shrink-0 select-none py-1"
-          title="Tech Vartual Tutor — Electronics Store"
+          title="Tech Vartual Tutor — Authentic Mobile Accessories"
         >
-          <div className="flex items-baseline">
-            <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
-              Tech Vartual Tutor
-            </span>
-            <span className="w-2 h-2 rounded-full bg-[#0066FF] ml-0.5 inline-block" />
-          </div>
+          <BrandLogo variant="horizontal" height={38} className="h-8 sm:h-9 md:h-10 w-auto" alt="Tech Vartual Tutor" />
         </a>
 
         {/* Center: Integrated Category Selector & Search Bar */}

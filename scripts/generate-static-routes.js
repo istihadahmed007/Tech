@@ -23,7 +23,7 @@ export function generateStaticRoutes() {
   // Generate /product/index.html redirect fallback
   const productFallbackHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Products — Tech Nest</title>'
+    '<title>Products — Tech Vartual Tutor</title>'
   );
   fs.writeFileSync(path.join(productDir, 'index.html'), productFallbackHtml, 'utf-8');
 
@@ -34,7 +34,7 @@ export function generateStaticRoutes() {
   }
   const cartHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Shopping Cart — Tech Nest</title>'
+    '<title>Shopping Cart — Tech Vartual Tutor</title>'
   );
   fs.writeFileSync(path.join(cartDir, 'index.html'), cartHtml, 'utf-8');
 
@@ -45,7 +45,7 @@ export function generateStaticRoutes() {
   }
   const checkoutHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Secure Checkout — Tech Nest</title>'
+    '<title>Secure Checkout — Tech Vartual Tutor</title>'
   );
   fs.writeFileSync(path.join(checkoutDir, 'index.html'), checkoutHtml, 'utf-8');
 
@@ -56,7 +56,7 @@ export function generateStaticRoutes() {
   }
   const adminHtml = baseHtml.replace(
     /<title>.*?<\/title>/i,
-    '<title>Staff Console — Tech Nest</title>'
+    '<title>Staff Console — Tech Vartual Tutor</title>'
   );
   fs.writeFileSync(path.join(adminDir, 'index.html'), adminHtml, 'utf-8');
 
@@ -69,7 +69,7 @@ export function generateStaticRoutes() {
       fs.mkdirSync(destDir, { recursive: true });
     }
 
-    const title = `${prod.title} — Tech Nest`;
+    const title = `${prod.title} — Tech Vartual Tutor`;
     const desc = (prod.description || 'Premium accessories engineered for peak performance in Bangladesh.')
       .replace(/"/g, '&quot;')
       .slice(0, 160);

@@ -1,11 +1,11 @@
 import React from 'react';
 import { 
   Watch, 
-  Radio, 
   Headphones, 
+  Zap, 
+  Smartphone, 
   Cable, 
-  Camera, 
-  Volume2 
+  LayoutGrid 
 } from 'lucide-react';
 
 export default function CategoryIconRow({ 
@@ -22,34 +22,34 @@ export default function CategoryIconRow({
       icon: Watch
     },
     {
-      id: 'drones',
-      label: 'Drone',
-      labelBn: 'ড্রোন',
-      icon: Radio
-    },
-    {
       id: 'audio',
       label: 'Headphones',
-      labelBn: 'হেডফোন',
+      labelBn: 'হেডফোন ও অডিও',
       icon: Headphones
     },
     {
       id: 'charging',
-      label: 'Accessories',
-      labelBn: 'এক্সেসরিজ',
+      label: 'Fast Charging',
+      labelBn: 'ফাস্ট চার্জিং',
+      icon: Zap
+    },
+    {
+      id: 'cases',
+      label: 'Cases & Covers',
+      labelBn: 'কেস ও কভার',
+      icon: Smartphone
+    },
+    {
+      id: 'adapters',
+      label: 'Cables & OTG',
+      labelBn: 'ক্যাবল ও ওটিজি',
       icon: Cable
     },
     {
-      id: 'cameras',
-      label: 'Cameras',
-      labelBn: 'ক্যামেরা',
-      icon: Camera
-    },
-    {
-      id: 'speakers',
-      label: 'Speakers',
-      labelBn: 'স্পিকার',
-      icon: Volume2
+      id: 'all',
+      label: 'All Gear',
+      labelBn: 'সব গ্যাজেট',
+      icon: LayoutGrid
     }
   ];
 
@@ -58,7 +58,7 @@ export default function CategoryIconRow({
       <div className="flex items-center justify-between gap-3 sm:gap-6 overflow-x-auto scrollbar-none pb-2 sm:pb-0">
         {CATEGORIES.map((cat) => {
           const IconComp = cat.icon;
-          const isSelected = selectedCategory === cat.id;
+          const isSelected = selectedCategory === cat.id || (cat.id === 'all' && !selectedCategory);
 
           return (
             <button
@@ -66,7 +66,7 @@ export default function CategoryIconRow({
               type="button"
               onClick={() => {
                 if (onSelectCategory) {
-                  onSelectCategory(cat.id === 'drones' || cat.id === 'cameras' || cat.id === 'speakers' ? 'audio' : cat.id);
+                  onSelectCategory(cat.id === 'all' ? null : cat.id);
                 }
                 if (onNavigateSection) {
                   onNavigateSection('products-section');
@@ -74,7 +74,7 @@ export default function CategoryIconRow({
               }}
               className="flex flex-col items-center group cursor-pointer shrink-0 min-w-[90px] sm:min-w-[110px]"
             >
-              {/* Rounded-Square Light-Gray Icon Container (Screenshot 1 Section C) */}
+              {/* Rounded-Square Light-Gray Icon Container (matching reference) */}
               <div 
                 className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-sm ${
                   isSelected

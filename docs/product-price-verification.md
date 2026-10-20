@@ -1,4 +1,4 @@
-# Tech Nest — Comprehensive Bangladesh Market Price Verification Report
+# Tech Vartual Tutor — Comprehensive Bangladesh Market Price Verification Report
 
 **Repository:** `https://github.com/istihadahmed007/Tech`  
 **Research Date:** 15–17 October 2026  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary & Verification Methodology
 
-Every product in the Tech Nest catalog was cross-checked against 51 verified Bangladesh marketplace quotations, authorised retail listings, and local electronics distributors (including Daraz Bangladesh, Star Tech, Ryans, Apple Gadgets BD, Techland, Rokomari, Foodpanda Shops, BDSailor, BDStall, and Ofuronto).
+Every product in the Tech Vartual Tutor catalog was cross-checked against 51 verified Bangladesh marketplace quotations, authorised retail listings, and local electronics distributors (including Daraz Bangladesh, Star Tech, Ryans, Apple Gadgets BD, Techland, Rokomari, Foodpanda Shops, BDSailor, BDStall, and Ofuronto).
 
 **Pricing Governance Hierarchy:**
 1. **Exact-Model Quotes:** Verified retail listings for identical manufacturer brand and model.
@@ -20,7 +20,7 @@ Every product in the Tech Nest catalog was cross-checked against 51 verified Ban
 
 ## 2. Product-by-Product Price Verification Table
 
-| ID | Ref | Product Name & Model | Current Price | Verified BD Market Band | Recommended Tech Nest Price | Confidence | Primary Evidence Sources | Key Market Observations |
+| ID | Ref | Product Name & Model | Current Price | Verified BD Market Band | Recommended Tech Vartual Tutor Price | Confidence | Primary Evidence Sources | Key Market Observations |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `h2-anc-pro-tws` | P01 | **Pro-Style White Wireless Earbuds** (`Pro-Style TWS (H2 Sticker)`) | ৳1,190 | ৳650 – ৳1200 | **৳1,190** | **Medium** | [S01](https://bdsailor.com/?bd=9810015674134), [S02](https://nagarshopbd.com/) | Apple-style packaging does not establish authenticity. H2 and ANC are sticker claims. This price is for comparable co... |
 | `remax-rc155a-120w-cable` | P02 | **REMAX-Labelled RC-155a Fast Charging Cable** (`RC-155a`) | ৳150 | ৳130 | **৳150** | **Provisional** | [S03](https://bikroy.com/pirgacha/cell-phones-tablets-accessories/remax-120w-fast-charging-data-cable-rc-155a-BBQ38MV2LtjFEFDi9RuuPyTR.html) | 120W and original REMAX status are unverified. The seller listing conflicts on connector type, so confirm the actual ... |
