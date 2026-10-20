@@ -42,13 +42,12 @@ test('Sandbox Payment Activation: correctly configures and returns SandboxPaymen
   delete process.env.ENABLE_SANDBOX_PAYMENT;
 });
 
-test('UddoktaPay & Paymently Integration: resolves provider and initiates payment session with QR and link', async () => {
+test('UddoktaPay Integration: resolves provider and records manual TrxID as pending reference', async () => {
+  process.env.PAYMENT_GATEWAY_PROVIDER = 'uddoktapay';
+  process.env.PAYMENTLY_URL = 'https://merchant.gateway.io/pay';
   const provider = getPaymentProvider('uddoktapay');
   assert.ok(provider);
-  assert.ok(provider.paymentLink.includes('paymently.io'));
-  process.env.PAYMENT_GATEWAY_PROVIDER = 'uddoktapay';
   assert.equal(provider.isConfigured(), true);
-  delete process.env.PAYMENT_GATEWAY_PROVIDER;
 
   const mockOrder = {
     id: 'ORD-VT-101',
@@ -58,16 +57,19 @@ test('UddoktaPay & Paymently Integration: resolves provider and initiates paymen
   const session = await provider.initiatePayment(mockOrder, 'http://localhost:3000');
   assert.equal(session.success, true);
   assert.equal(session.provider, 'uddoktapay');
-  assert.ok(session.paymentLink.includes('paymently.io'));
-  assert.equal(session.qrCodeUrl, '/payment-link-BDT-2026-09-11.svg');
+  assert.equal(session.paymentLink, 'https://merchant.gateway.io/pay');
 
-  // Verify with valid manual TrxID
+  // Customer manual TrxID must be recorded as pending reference, not auto-verified as paid
   const verifyResult = await provider.verifyPayment({
     order: mockOrder,
     trxId: 'BK728192019'
   });
-  assert.equal(verifyResult.verified, true);
+  assert.equal(verifyResult.verified, false, 'Manual TrxID must not auto-authorize payment without gateway API confirmation');
+  assert.equal(verifyResult.pendingVerification, true);
   assert.equal(verifyResult.transactionId, 'BK728192019');
+
+  delete process.env.PAYMENT_GATEWAY_PROVIDER;
+  delete process.env.PAYMENTLY_URL;
 });
 
 test('Order Status Model: accurately distinguishes demo_received, unpaid, and paid states', () => {

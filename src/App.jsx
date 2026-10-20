@@ -5,7 +5,6 @@ import Hero from './components/Hero';
 import QuickShortcuts from './components/QuickShortcuts';
 import FlashSale from './components/FlashSale';
 import FeaturedCategories from './components/FeaturedCategories';
-import AgentDock from './components/AgentDock';
 import BrandSection from './components/BrandSection';
 import ReviewsSection from './components/ReviewsSection';
 import FaqSection from './components/FaqSection';
@@ -1313,18 +1312,6 @@ export default function App() {
         />
       )}
 
-      {/* Floating Persistent Agent Cart & Compare Dock */}
-      {!isCheckoutView && (
-        <AgentDock
-          cart={cart}
-          comparisonIds={comparisonIds}
-          onOpenCart={() => navigateToCart(true)}
-          onOpenCheckout={() => navigateToCheckout()}
-          onOpenComparison={() => setActiveModal('comparison')}
-          currencySymbol="৳"
-          lang={lang}
-        />
-      )}
 
       {/* Concise Customer Footer */}
       <Footer

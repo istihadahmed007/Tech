@@ -24,6 +24,7 @@ import {
   getInventoryAdjustments,
   createOrderWithReservation,
   finalizeOrderPayment,
+  recordPendingPaymentReference,
   cancelOrderAndReleaseReservation,
   releaseExpiredReservations,
   findOrderById,
@@ -826,6 +827,23 @@ export async function handleApiRequest(req, res) {
           paymentStatus: finalizedOrder.paymentStatus,
           transactionId: verificationResult.transactionId,
           ...(isAuthorized ? { order: finalizedOrder } : {})
+        });
+      } else if (verificationResult.pendingVerification && verificationResult.transactionId) {
+        const updatedOrder = recordPendingPaymentReference(order.id, {
+          transactionId: verificationResult.transactionId,
+          senderPhone: verificationResult.senderPhone,
+          provider: provider.name || 'online_gateway'
+        });
+
+        return sendJson(200, {
+          success: true,
+          verified: false,
+          pendingVerification: true,
+          orderId: order.id,
+          paymentStatus: 'pending',
+          transactionId: verificationResult.transactionId,
+          message: 'Transaction reference recorded. Order is pending verification by store staff.',
+          ...(isAuthorized ? { order: updatedOrder } : {})
         });
       } else {
         cancelOrderAndReleaseReservation(order.id, verificationResult.reason || 'Payment verification failed');

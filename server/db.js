@@ -1243,6 +1243,38 @@ export function finalizeOrderPayment({ orderId, provider, transactionId, payment
   }
 }
 
+export function recordPendingPaymentReference(orderId, { transactionId, senderPhone, provider }) {
+  const db = getDatabase();
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
+  if (!order) throw new Error(`Order ${orderId} not found`);
+
+  const now = new Date().toISOString();
+  let paymentDetails = {};
+  try { paymentDetails = JSON.parse(order.payment_details_json || '{}'); } catch (e) {}
+  paymentDetails.pendingTrxId = transactionId;
+  paymentDetails.senderPhone = senderPhone || null;
+  paymentDetails.submittedAt = now;
+  paymentDetails.provider = provider || 'online_manual';
+
+  let timeline = [];
+  try { timeline = JSON.parse(order.timeline_json || '[]'); } catch (e) {}
+  timeline.push({
+    status: 'TrxID Submitted (Pending Verification)',
+    timestamp: now,
+    note: `Customer submitted transaction ID: ${transactionId}. Awaiting merchant verification.`
+  });
+
+  db.prepare(`
+    UPDATE orders SET
+      payment_details_json = ?,
+      timeline_json = ?,
+      updated_at = ?
+    WHERE id = ?
+  `).run(JSON.stringify(paymentDetails), JSON.stringify(timeline), now, orderId);
+
+  return findOrderById(orderId);
+}
+
 export function cancelOrderAndReleaseReservation(orderId, reason = 'Payment cancelled') {
   const db = getDatabase();
   db.exec('BEGIN IMMEDIATE;');

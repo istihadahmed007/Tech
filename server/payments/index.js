@@ -1,11 +1,11 @@
 import { SSLCommerzProvider } from './sslcommerz.js';
 import { BkashProvider } from './bkash.js';
-import { UddoktaPayProvider, OFFICIAL_PAYMENTLY_URL, OFFICIAL_QR_CODE_URL } from './uddoktapay.js';
+import { UddoktaPayProvider } from './uddoktapay.js';
 import { SandboxPaymentProvider } from './sandbox.js';
 import { PAYMENT_PROVIDERS } from './types.js';
 
 export * from './types.js';
-export { UddoktaPayProvider, OFFICIAL_PAYMENTLY_URL, OFFICIAL_QR_CODE_URL };
+export { UddoktaPayProvider };
 
 export function getPublicOrigin(req = null) {
   const configured = process.env.APP_URL || process.env.PUBLIC_URL || process.env.BASE_URL;

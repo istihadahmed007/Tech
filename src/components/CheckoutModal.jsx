@@ -24,8 +24,6 @@ import { safeFetchJson } from '../utils/api';
 import { trackCheckoutStarted } from '../utils/analytics';
 import './CheckoutModal.css';
 
-export const OFFICIAL_PAYMENTLY_URL = "https://vartualtutor.paymently.io/paymentlink/default/BDT";
-export const OFFICIAL_QR_CODE_URL = "/payment-link-BDT-2026-09-11.svg";
 
 export default function CheckoutModal({ 
   isOpen = true, 
@@ -251,122 +249,42 @@ export default function CheckoutModal({
         body: JSON.stringify(orderPayload)
       });
 
-      let createdOrder = null;
-      let guestToken = null;
-
-      if (response.ok && response.data?.success && response.data.order) {
-        createdOrder = response.data.order;
-        guestToken = response.data.guestToken;
-      } else {
-        // 2. Seamless client-side fallback for static deployments or offline
-        const clientOrderId = 'AGY-' + Math.floor(100000 + Math.random() * 900000);
-        guestToken = 'gt_' + Date.now().toString(36) + Math.random().toString(36).slice(2);
-        createdOrder = {
-          id: clientOrderId,
-          customer: { ...customer, phone: cleanPhone },
-          items: cart.map(i => ({
-            id: i.id,
-            title: i.title,
-            price: i.price,
-            quantity: i.quantity,
-            variant: i.variant?.name || 'Default',
-            image: i.image
-          })),
-          subtotal: finalSubtotal,
-          deliveryFee,
-          total: grandTotal,
-          paymentMethod,
-          paymentStatus: 'unpaid',
-          orderStatus: 'pending',
-          createdAt: new Date().toISOString(),
-          guestToken
-        };
-
-        try {
-          const existing = JSON.parse(localStorage.getItem('accessories_orders') || '[]');
-          existing.unshift(createdOrder);
-          localStorage.setItem('accessories_orders', JSON.stringify(existing));
-        } catch (e) {}
+      if (!response.ok || !response.data?.success || !response.data.order) {
+        setErrorMessage(response.error || 'Failed to place order with backend server. Please verify your details.');
+        return;
       }
 
-      // 3. Routing based on selected payment method
+      const createdOrder = response.data.order;
+      const guestToken = response.data.guestToken;
+
+      // 2. Routing based on selected payment method
       if (paymentMethod === 'cod') {
         if (onClose) onClose();
         onOrderSuccess(createdOrder, guestToken);
       } else {
-        // Online payment: initiate gateway session with Paymently
-        let initData = null;
-
-        if (response.ok && response.data?.success) {
-          const initRes = await safeFetchJson('/api/payment/initiate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              orderId: createdOrder.id
-            })
-          });
-
-          if (initRes.ok && initRes.data?.success) {
-            initData = initRes.data;
-          }
-        }
-
-        // Guaranteed fallback to verified Paymently gateway portal
-        if (!initData) {
-          initData = {
-            success: true,
-            provider: 'paymently',
-            isPaymently: true,
-            paymentLink: OFFICIAL_PAYMENTLY_URL,
-            redirectUrl: OFFICIAL_PAYMENTLY_URL,
-            qrCodeUrl: OFFICIAL_QR_CODE_URL,
+        // Online payment: initiate authentic payment session
+        const initRes = await safeFetchJson('/api/payment/initiate', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            ...(guestToken ? { 'x-guest-token': guestToken } : {})
+          },
+          body: JSON.stringify({
             orderId: createdOrder.id,
-            amount: grandTotal
-          };
+            guestToken
+          })
+        });
+
+        if (!initRes.ok || !initRes.data?.success) {
+          setErrorMessage(initRes.error || 'Online payment is currently unavailable. Please select Cash on Delivery or contact store support.');
+          return;
         }
 
         if (onClose) onClose();
-        onInitiateOnlinePayment(createdOrder, initData);
+        onInitiateOnlinePayment(createdOrder, initRes.data);
       }
     } catch (err) {
-      console.warn('[Checkout Fallback]', err);
-      const clientOrderId = 'AGY-' + Math.floor(100000 + Math.random() * 900000);
-      const fallbackOrder = {
-        id: clientOrderId,
-        customer: { ...customer, phone: cleanPhone },
-        items: cart.map(i => ({
-          id: i.id,
-          title: i.title,
-          price: i.price,
-          quantity: i.quantity,
-          variant: i.variant?.name || 'Default'
-        })),
-        subtotal: finalSubtotal,
-        deliveryFee,
-        total: grandTotal,
-        paymentMethod,
-        paymentStatus: 'unpaid',
-        orderStatus: 'pending',
-        createdAt: new Date().toISOString(),
-        guestToken: 'gt_' + Date.now().toString(36)
-      };
-
-      if (paymentMethod === 'cod') {
-        if (onClose) onClose();
-        onOrderSuccess(fallbackOrder, fallbackOrder.guestToken);
-      } else {
-        if (onClose) onClose();
-        onInitiateOnlinePayment(fallbackOrder, {
-          success: true,
-          provider: 'paymently',
-          isPaymently: true,
-          paymentLink: OFFICIAL_PAYMENTLY_URL,
-          redirectUrl: OFFICIAL_PAYMENTLY_URL,
-          qrCodeUrl: OFFICIAL_QR_CODE_URL,
-          orderId: clientOrderId,
-          amount: grandTotal
-        });
-      }
+      setErrorMessage(err.message || 'Unable to connect to order server. Please check your network connection.');
     } finally {
       setIsSubmitting(false);
     }
