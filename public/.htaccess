@@ -1,5 +1,10 @@
-# Tech Nest - Apache / LiteSpeed SPA & API Gateway Configuration
-# Enables clean Single Page Application (SPA) routing while protecting backend API routes
+PassengerAppRoot /home/u419193925/domains/tech.vartualtutor.com/server_app
+PassengerAppType node
+PassengerNodejs /opt/alt/alt-nodejs22/root/bin/node
+PassengerStartupFile server.js
+PassengerBaseURI /
+PassengerRestartDir /home/u419193925/domains/tech.vartualtutor.com/server_app/tmp
+SetEnv LSNODE_CONSOLE_LOG console.log
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -11,18 +16,11 @@
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # 2. Proxy /api/ requests to local Node.js backend if mod_proxy is available
-  <IfModule mod_proxy.c>
-    RewriteCond %{REQUEST_URI} ^/api/
-    RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
-  </IfModule>
-
-  # 3. API Safety Guard: NEVER serve index.html for /api/* requests!
-  # If mod_proxy is not enabled or Node.js is restarting, return 503 Service Unavailable instead of HTML 200
+  # 2. Never rewrite /api requests to index.html; let Passenger / Node handle /api/
   RewriteCond %{REQUEST_URI} ^/api/
-  RewriteRule ^ - [R=503,L]
+  RewriteRule ^ - [L]
 
-  # 4. SPA Fallback: Rewrite non-API deep links to index.html for client-side routing
+  # 3. SPA Fallback: Rewrite non-API deep links to index.html for client-side routing
   RewriteCond %{REQUEST_URI} !^/api/
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

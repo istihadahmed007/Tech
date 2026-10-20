@@ -1,5 +1,10 @@
-# Tech Nest - Apache / LiteSpeed SPA & Node.js API Gateway Configuration
-# Enables clean Single Page Application (SPA) routing and protects API endpoints
+PassengerAppRoot /home/u419193925/domains/tech.vartualtutor.com/server_app
+PassengerAppType node
+PassengerNodejs /opt/alt/alt-nodejs22/root/bin/node
+PassengerStartupFile server.js
+PassengerBaseURI /
+PassengerRestartDir /home/u419193925/domains/tech.vartualtutor.com/server_app/tmp
+SetEnv LSNODE_CONSOLE_LOG console.log
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -11,21 +16,23 @@
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # 2. Check if requested static file or directory exists inside dist/ (for repos deployed to public_html root)
+  # 2. Never rewrite /api requests to index.html; let Passenger / Node handle /api/
+  RewriteCond %{REQUEST_URI} ^/api/
+  RewriteRule ^ - [L]
+
+  # 3. Check if requested static file or directory exists inside dist/ (if served from repo root)
   RewriteCond %{DOCUMENT_ROOT}/dist/$1 -f [OR]
   RewriteCond %{DOCUMENT_ROOT}/dist/$1 -d
   RewriteRule ^(.*)$ dist/$1 [L]
 
-  # 3. Proxy /api/ requests to local Node.js backend (compatible with Apache mod_proxy, LiteSpeed, and cPanel/hPanel)
-  RewriteCond %{REQUEST_URI} ^/api/
-  RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
-
-  # 5. SPA Fallback: Rewrite non-API deep links to dist/index.html if available, otherwise index.html
+  # 4. SPA Fallback: Rewrite non-API deep links to dist/index.html or index.html
   RewriteCond %{REQUEST_URI} !^/api/
   RewriteCond %{DOCUMENT_ROOT}/dist/index.html -f
   RewriteRule . /dist/index.html [L]
 
   RewriteCond %{REQUEST_URI} !^/api/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
 </IfModule>
 

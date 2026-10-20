@@ -1250,7 +1250,8 @@ export async function handleApiRequest(req, res) {
 
       const body = await parseBody();
       const expectedEmail = process.env.ADMIN_EMAIL ? process.env.ADMIN_EMAIL.trim().toLowerCase() : null;
-      const providedUsername = body.username ? String(body.username).trim() : '';
+      const rawUserField = body.username || body.email || '';
+      const providedUsername = String(rawUserField).trim();
       const providedEmail = providedUsername.toLowerCase();
       const password = body.password ? String(body.password) : '';
 
