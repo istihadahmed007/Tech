@@ -8,7 +8,7 @@
 .checkout-page-container {
   width: 100%;
   min-height: calc(100vh - 80px);
-  background-color: #12141C !important;
+  background-color: #FFFFFF !important;
   color: #F8FAFC;
   font-family: var(--font-family, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   padding: 20px 16px 60px;
@@ -43,8 +43,8 @@
   position: relative;
   width: 100%;
   max-width: 1180px;
-  background-color: #12141C !important;
-  border: 1px solid #1E2230;
+  background-color: #FFFFFF !important;
+  border: 1px solid #DCE8F3;
   border-radius: 16px;
   box-shadow: 0 25px 65px -10px rgba(15, 23, 42, 0.25);
   overflow: hidden;
@@ -60,7 +60,7 @@
   top: 0;
   z-index: 30;
   background-color: #FFFFFF !important;
-  border-bottom: 1px solid #1E2230;
+  border-bottom: 1px solid #DCE8F3;
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -269,7 +269,7 @@
   width: 26px;
   height: 26px;
   border-radius: 9999px;
-  background-color: #0B0D14;
+  background-color: #F8FBFE;
   color: #FFFFFF;
   font-size: 13px;
   font-weight: 700;
@@ -325,7 +325,7 @@
   border-radius: 8px;
   font-size: 13px;
   color: #F8FAFC;
-  background-color: #12141C;
+  background-color: #FFFFFF;
   box-sizing: border-box;
   outline: none;
   transition: border-color 150ms ease, box-shadow 150ms ease;
@@ -347,7 +347,7 @@
   border-radius: 10px;
   padding: 16px;
   cursor: pointer;
-  background-color: #12141C;
+  background-color: #FFFFFF;
   margin-bottom: 12px;
   transition: all 150ms ease;
   display: block;
@@ -474,7 +474,7 @@
   font-size: 18px;
   font-weight: 800;
   color: #F8FAFC;
-  border-top: 1px solid #1E2230;
+  border-top: 1px solid #DCE8F3;
   padding-top: 14px;
   margin-top: 6px;
 }
@@ -513,10 +513,10 @@
   width: 52px;
   height: 52px;
   object-fit: contain;
-  border: 1px solid #1E2230;
+  border: 1px solid #DCE8F3;
   border-radius: 6px;
   padding: 2px;
-  background: #12141C;
+  background: #FFFFFF;
   flex-shrink: 0;
 }
 

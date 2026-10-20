@@ -38,16 +38,16 @@ export default function ReviewsSection({
           return (
             <div
               key={idx}
-              className="p-4 sm:p-5 rounded-2xl bg-[#12141C] border border-[#1E2230] shadow-lg flex items-start gap-3.5 hover:border-cyan-500/30 transition-all duration-200"
+              className="p-4 sm:p-5 rounded-2xl bg-[#FFFFFF] border border-[#DCE8F3] shadow-sm flex items-start gap-3.5 hover:border-[#1684E8]/40 hover:bg-[#F8FBFE] transition-all duration-200"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#0B0D14] text-cyan-400 flex items-center justify-center shrink-0 border border-cyan-500/20">
+              <div className="w-10 h-10 rounded-xl bg-[#EBF5FF] text-[#1684E8] flex items-center justify-center shrink-0 border border-[#DCE8F3]">
                 <Icon size={18} />
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-bold font-mono text-zinc-100 leading-tight">
+                <h4 className="text-xs sm:text-sm font-bold font-mono text-[#10263D] leading-tight">
                   {b.title}
                 </h4>
-                <p className="text-[11px] text-zinc-400 mt-1 leading-relaxed">
+                <p className="text-[11px] text-[#526981] mt-1 leading-relaxed">
                   {b.desc}
                 </p>
               </div>

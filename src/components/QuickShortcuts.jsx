@@ -113,7 +113,7 @@ export default function QuickShortcuts({
   ];
 
   return (
-    <section className="w-full my-4 sm:my-6 p-4 sm:p-6 bg-[#12141C] rounded-xl sm:rounded-2xl border border-[#1E2230] shadow-md">
+    <section className="w-full my-4 sm:my-6 p-4 sm:p-6 bg-[#FFFFFF] rounded-xl sm:rounded-2xl border border-[#DCE8F3] shadow-sm">
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 sm:gap-4">
         {shortcuts.map((sc) => {
           const Icon = sc.icon;
@@ -121,7 +121,7 @@ export default function QuickShortcuts({
             <div
               key={sc.id}
               onClick={sc.onClick}
-              className="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-[#161924] transition-all cursor-pointer group text-center"
+              className="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-[#EAF5FF] transition-all cursor-pointer group text-center"
               role="button"
               tabIndex="0"
               onKeyDown={(e) => {
@@ -137,7 +137,7 @@ export default function QuickShortcuts({
               >
                 <Icon size={20} style={{ color: sc.iconColor }} />
               </div>
-              <span className="text-[11px] sm:text-xs font-mono font-medium text-zinc-300 group-hover:text-cyan-400 transition-colors line-clamp-1 leading-snug">
+              <span className="text-[11px] sm:text-xs font-mono font-medium text-[#10263D] group-hover:text-[#1684E8] transition-colors line-clamp-1 leading-snug">
                 {sc.label}
               </span>
             </div>

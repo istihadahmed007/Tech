@@ -103,7 +103,7 @@ export default function ProductCard({
 
         {isOutOfStock && (
           <div className="absolute inset-0 m-auto flex items-center justify-center">
-            <span className="bg-slate-900/80 text-white font-mono text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider backdrop-blur-xs">
+            <span className="bg-[#10263D]/85 text-white font-mono text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider backdrop-blur-xs">
               Sold Out
             </span>
           </div>

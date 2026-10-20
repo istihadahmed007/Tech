@@ -214,7 +214,7 @@ export default function TechKits({
   return (
     <section 
       id="tech-kits-section"
-      className="w-full my-8 sm:my-12 p-5 sm:p-8 lg:p-10 rounded-3xl bg-[#12141C] border border-[#1E2230] shadow-2xl relative overflow-hidden text-slate-100"
+      className="w-full my-8 sm:my-12 p-5 sm:p-8 lg:p-10 rounded-3xl bg-[#FFFFFF] border border-[#DCE8F3] shadow-sm relative overflow-hidden text-[#10263D]"
       aria-label="Engineered Tech Kits"
     >
       {/* Background Cybernetic Specular Accents */}
@@ -229,16 +229,16 @@ export default function TechKits({
 
       <div className="relative z-10 max-w-6xl mx-auto">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#1E2230]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#DCE8F3]">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 font-mono text-xs font-bold mb-3 border border-cyan-500/30">
               <span className="agent-pulse-dot" />
               <span>{t.kitsBadge || (lang === 'bn' ? 'কনফিগারযোগ্য বান্ডিল' : 'ENGINEERED TECH KITS')}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#10263D] tracking-tight">
               {t.kitsTitle || (lang === 'bn' ? 'স্মার্ট টেক কিটস' : 'Engineered Tech Kits & Bundles')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1.5 font-normal max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#526981] mt-1.5 font-normal max-w-2xl leading-relaxed">
               {t.kitsSubtitle || (lang === 'bn'
                 ? 'ছাত্র, পেশাদার, ক্রিয়েটর ও গেমারদের জন্য কাস্টমাইজযোগ্য কম্বো প্যাকেজ — নিশ্চিত কম্প্যাটিবিলিটি ও সাশ্রয়।'
                 : 'Configurable multi-device packages with verified hardware compatibility and automated ৳2,000 Free Nationwide Delivery optimization.')}
@@ -246,7 +246,7 @@ export default function TechKits({
           </div>
 
           {/* Nationwide Free Shipping Telemetry Badge */}
-          <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#161924] border border-emerald-500/30 font-mono text-xs font-bold text-emerald-400 shrink-0 shadow-xs">
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#EBF5FF] border border-emerald-500/30 font-mono text-xs font-bold text-emerald-700 shrink-0 shadow-xs">
             <Truck size={16} className="text-emerald-400" />
             <span>FREE NATIONWIDE DELIVERY @ ৳2,000+</span>
           </div>
@@ -264,11 +264,11 @@ export default function TechKits({
                 onClick={() => setActiveKitId(kit.id)}
                 className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
                   isActive 
-                    ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]' 
-                    : 'bg-[#161924] text-slate-300 border-[#1E2230] hover:border-cyan-500/30 hover:text-white'
+                    ? 'bg-[#1684E8] text-white font-bold border-[#1684E8] shadow-sm' 
+                    : 'bg-[#FFFFFF] text-[#526981] border-[#DCE8F3] hover:bg-[#EAF5FF] hover:text-[#10263D]'
                 }`}
               >
-                <div className={`p-2.5 rounded-xl shrink-0 ${isActive ? 'bg-slate-950 text-cyan-400' : 'bg-[#12141C] text-slate-300'}`}>
+                <div className={`p-2.5 rounded-xl shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-[#EBF5FF] text-[#1684E8]'}`}>
                   <IconComp size={20} />
                 </div>
                 <div className="min-w-0">
@@ -286,21 +286,21 @@ export default function TechKits({
 
         {/* Active Kit Configuration Panel */}
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#161924] p-4 sm:p-5 rounded-2xl border border-[#1E2230]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8FBFE] p-4 sm:p-5 rounded-2xl border border-[#DCE8F3]">
             <div>
-              <span className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-wider block mb-1">
+              <span className="font-mono text-xs font-bold text-[#1684E8] uppercase tracking-wider block mb-1">
                 ACTIVE CONFIGURATION PROFILE
               </span>
-              <h3 className="text-lg sm:text-xl font-bold text-white">
+              <h3 className="text-lg sm:text-xl font-bold text-[#10263D]">
                 {activeKit.title}
               </h3>
-              <p className="text-xs text-slate-300 mt-1">
+              <p className="text-xs text-[#526981] mt-1">
                 {activeKit.description}
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-300 bg-[#12141C] px-3 py-2 rounded-xl border border-[#1E2230] shrink-0">
-              <Sliders size={14} className="text-cyan-400" />
+            <div className="flex items-center gap-2 text-xs font-mono text-[#526981] bg-[#FFFFFF] px-3 py-2 rounded-xl border border-[#DCE8F3] shrink-0">
+              <Sliders size={14} className="text-[#1684E8]" />
               <span>{activeKit.slots.length} CONFIGURABLE SLOTS</span>
             </div>
           </div>
@@ -315,12 +315,12 @@ export default function TechKits({
               return (
                 <div 
                   key={slotIdx}
-                  className="bg-[#161924] rounded-2xl border border-[#1E2230] p-4 sm:p-5 flex flex-col justify-between"
+                  className="bg-[#F8FBFE] rounded-2xl border border-[#DCE8F3] p-4 sm:p-5 flex flex-col justify-between"
                 >
                   <div>
                     {/* Slot Header */}
-                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#1E2230]">
-                      <span className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-wider">
+                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#DCE8F3]">
+                      <span className="font-mono text-xs font-bold text-[#1684E8] uppercase tracking-wider">
                         {slot.slotName}
                       </span>
                       {grade && (
@@ -332,20 +332,20 @@ export default function TechKits({
 
                     {/* Active Selected Product Display */}
                     {currentProd && (
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-[#12141C] border border-[#1E2230] mb-4">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-[#FFFFFF] border border-[#DCE8F3] mb-4">
                         <img 
                           src={currentProd.image} 
                           alt={currentProd.title} 
-                          className="w-14 h-14 object-contain rounded-lg bg-[#090A0F] p-1 border border-[#1E2230] shrink-0" 
+                          className="w-14 h-14 object-contain rounded-lg bg-[#F5F9FD] p-1 border border-[#DCE8F3] shrink-0" 
                         />
                         <div className="min-w-0 flex-1">
-                          <span className="font-mono text-[10px] text-slate-400 block">
+                          <span className="font-mono text-[10px] text-[#526981] block">
                             {formatCleanSku(currentProd)}
                           </span>
-                          <h4 className="text-xs font-bold text-white truncate" title={currentProd.title}>
+                          <h4 className="text-xs font-bold text-[#10263D] truncate" title={currentProd.title}>
                             {currentProd.title}
                           </h4>
-                          <span className="font-mono text-xs font-black text-cyan-400 mt-1 block">
+                          <span className="font-mono text-xs font-black text-[#1684E8] mt-1 block">
                             {currencySymbol}{currentProd.price.toLocaleString()}
                           </span>
                         </div>
@@ -354,7 +354,7 @@ export default function TechKits({
 
                     {/* Selector Options */}
                     <div>
-                      <span className="font-mono text-[11px] font-bold text-slate-400 block mb-2">
+                      <span className="font-mono text-[11px] font-bold text-[#526981] block mb-2">
                         {lang === 'bn' ? 'বিকল্প পরিবর্তন করুন:' : 'SWAP COMPANION GEAR:'}
                       </span>
                       <div className="space-y-1.5">
@@ -372,10 +372,10 @@ export default function TechKits({
                               disabled={isOptOutOfStock}
                               className={`w-full text-left p-2.5 rounded-xl text-xs flex items-center justify-between border transition-all cursor-pointer font-mono ${
                                 isSelected
-                                  ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-bold shadow-xs'
+                                  ? 'bg-[#EBF5FF] text-[#1684E8] border-2 border-[#1684E8] font-bold shadow-xs'
                                   : isOptOutOfStock
-                                    ? 'bg-[#12141C] text-slate-600 border-[#1E2230] cursor-not-allowed'
-                                    : 'bg-[#12141C] text-slate-300 border-[#1E2230] hover:border-cyan-500/40 hover:text-white'
+                                    ? 'bg-[#F5F9FD] text-slate-400 border-[#DCE8F3] cursor-not-allowed'
+                                    : 'bg-[#FFFFFF] text-[#526981] border-[#DCE8F3] hover:bg-[#EAF5FF] hover:text-[#10263D]'
                               }`}
                             >
                               <span className="truncate pr-2 text-[11px]">
@@ -385,7 +385,7 @@ export default function TechKits({
                                 {isOptOutOfStock ? (
                                   <span className="text-[10px] font-bold text-rose-500">SOLD OUT</span>
                                 ) : (
-                                  <span className={isSelected ? 'text-slate-950 font-bold' : 'text-cyan-400'}>
+                                  <span className={isSelected ? 'text-[#1684E8] font-bold' : 'text-[#526981]'}>
                                     {currencySymbol}{optProd.price.toLocaleString()}
                                   </span>
                                 )}
@@ -404,17 +404,17 @@ export default function TechKits({
 
           {/* AGENT FREE DELIVERY OPTIMIZER BANNER (Requirement 4) */}
           {deliveryShortfall > 0 ? (
-            <div className="p-4 sm:p-5 rounded-2xl bg-cyan-950/30 border border-cyan-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs shadow-md">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#EBF5FF] border border-[#DCE8F3] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs shadow-xs">
               <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shrink-0">
+                <div className="p-2 rounded-xl bg-[#FFFFFF] text-[#1684E8] border border-[#DCE8F3] shrink-0">
                   <Zap size={18} />
                 </div>
                 <div>
-                  <span className="font-mono text-xs font-bold text-cyan-300 uppercase tracking-wider block mb-1 flex items-center gap-1.5">
+                  <span className="font-mono text-xs font-bold text-[#1684E8] uppercase tracking-wider block mb-1 flex items-center gap-1.5">
                     <span className="agent-pulse-dot" />
                     <span>AGENT FREE DELIVERY OPTIMIZER</span>
                   </span>
-                  <p className="text-slate-300 font-sans leading-relaxed text-xs sm:text-sm">
+                  <p className="text-[#526981] font-sans leading-relaxed text-xs sm:text-sm">
                     {lang === 'bn' 
                       ? `টিপ: আপনি ফ্রি ডেলিভারি (২,০০০৳) থেকে মাত্র ৳${deliveryShortfall.toLocaleString()} দূরে আছেন (৳১২০ কুরিয়ার ফি সাশ্রয় হবে)। REMAX RC-155a ফাস্ট ক্যাবল (৳১৫০) অটো-যুক্ত করে ফ্রি ডেলিভারি আনলক করুন।`
                       : `Agent Tip: You are ৳${deliveryShortfall.toLocaleString()} away from Free Nationwide Delivery (saves ৳120 courier fee). Auto-add a REMAX RC-155a Fast Cable (৳150) or upgrade your gear to unlock free shipping.`
@@ -426,14 +426,14 @@ export default function TechKits({
               <button
                 type="button"
                 onClick={handleAutoOptimize}
-                className="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs whitespace-nowrap transition-all shadow-[0_0_15px_rgba(6,182,212,0.35)] shrink-0 cursor-pointer active:scale-95"
+                className="px-4 py-2.5 rounded-xl bg-[#1684E8] hover:bg-[#1270C5] text-white font-mono font-bold text-xs whitespace-nowrap transition-all shadow-sm shrink-0 cursor-pointer active:scale-95"
               >
                 [+ AUTO-OPTIMIZE FOR FREE DELIVERY]
               </button>
             </div>
           ) : (
-            <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 flex items-center justify-between gap-3 text-xs shadow-md">
-              <div className="flex items-center gap-2.5 font-mono text-emerald-400 font-bold">
+            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-3 text-xs shadow-xs">
+              <div className="flex items-center gap-2.5 font-mono text-emerald-700 font-bold">
                 <Truck size={18} />
                 <span>🎉 FREE NATIONWIDE COURIER DELIVERY UNLOCKED (SAVED ৳120 COURIER FEE)</span>
               </div>
@@ -444,21 +444,21 @@ export default function TechKits({
           )}
 
           {/* Kit Summary & Add to Cart in Obsidian Theme */}
-          <div className="p-4 sm:p-6 rounded-2xl bg-[#161924] border border-[#1E2230] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-4 sm:p-6 rounded-2xl bg-[#F8FBFE] border border-[#DCE8F3] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="font-mono text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <span className="font-mono text-xs font-bold text-[#526981] uppercase tracking-wider">
                   {lang === 'bn' ? 'কনফিগার করা কিট মোট:' : 'CONFIGURED KIT TOTAL:'}
                 </span>
                 {kitSavings > 0 && (
-                  <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                  <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EBF5FF] text-[#1684E8] border border-blue-200">
                     {lang === 'bn' ? `৳${kitSavings.toLocaleString()} সাশ্রয়` : `SAVE ৳${kitSavings.toLocaleString()}`}
                   </span>
                 )}
               </div>
 
               <div className="flex items-baseline gap-2.5">
-                <span className="font-mono text-2xl sm:text-3xl font-black text-white">
+                <span className="font-mono text-2xl sm:text-3xl font-black text-[#10263D]">
                   {currencySymbol}{kitTotal.toLocaleString()}
                 </span>
                 {kitOriginalTotal > kitTotal && (
@@ -467,7 +467,7 @@ export default function TechKits({
                   </span>
                 )}
                 {qualifiesFreeShipping && (
-                  <span className="font-mono text-xs font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+                  <span className="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
                     FREE NATIONWIDE DELIVERY
                   </span>
                 )}
@@ -479,7 +479,7 @@ export default function TechKits({
                 type="button"
                 onClick={handleAddKit}
                 disabled={hasOutOfStockItem}
-                className={`bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs sm:text-sm font-bold py-3 px-8 rounded-xl flex items-center justify-center gap-2 w-full sm:w-auto shadow-[0_0_20px_rgba(6,182,212,0.35)] transition-all cursor-pointer active:scale-95 ${
+                className={`btn-soft-blue text-white font-mono text-xs sm:text-sm font-bold py-3 px-8 rounded-xl flex items-center justify-center gap-2 w-full sm:w-auto shadow-md transition-all cursor-pointer active:scale-95 ${
                   hasOutOfStockItem ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >

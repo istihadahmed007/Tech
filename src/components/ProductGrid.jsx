@@ -19,6 +19,7 @@ export default function ProductGrid({
   comparisonIds = [],
   catalogTab: externalTab,
   onSelectCatalogTab,
+  onDisplayedIdsChange,
   t = {},
   lang = 'en'
 }) {
@@ -121,6 +122,13 @@ export default function ProductGrid({
   const displayedProducts = (showAllProducts || isFilteringActive || filteredProducts.length <= 10)
     ? filteredProducts 
     : filteredProducts.slice(0, 10);
+
+  useEffect(() => {
+    if (onDisplayedIdsChange) {
+      const ids = displayedProducts.map(p => p.id);
+      onDisplayedIdsChange(ids);
+    }
+  }, [displayedProducts, onDisplayedIdsChange]);
 
   return (
     <section id="products-section" className="product-grid-overlap max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">

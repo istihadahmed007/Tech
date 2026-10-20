@@ -24,6 +24,7 @@ import { getHardwareGrade, formatCleanSku } from '../utils/hardwareGrade';
 
 export default function SmartTechFinder({
   products = [],
+  excludeProductIds = [],
   currencySymbol = "৳",
   onQuickAdd,
   onOpenDetail,
@@ -100,6 +101,24 @@ export default function SmartTechFinder({
 
     let pool = products.filter(p => p.stock > 0);
 
+    // Deduplicate candidate pool by unique ID / SKU
+    const seenPoolIds = new Set();
+    pool = pool.filter(p => {
+      const key = p.id || p.sku;
+      if (!key || seenPoolIds.has(key)) return false;
+      seenPoolIds.add(key);
+      return true;
+    });
+
+    // Cross-section separation: prioritize eligible products not already shown in primary standalone grid
+    if (excludeProductIds && excludeProductIds.length > 0) {
+      const excludeSet = new Set(excludeProductIds);
+      const nonExcludedPool = pool.filter(p => !excludeSet.has(p.id));
+      if (nonExcludedPool.length >= 3) {
+        pool = nonExcludedPool;
+      }
+    }
+
     const scored = pool.map(p => {
       let score = 55;
       const whyReasons = [];
@@ -175,7 +194,7 @@ export default function SmartTechFinder({
       matches: hasExact ? exactMatches.slice(0, 3) : scored.slice(0, 3),
       isExact: hasExact
     };
-  }, [products, budget, useCase, category, priority, lang, currencySymbol]);
+  }, [products, excludeProductIds, budget, useCase, category, priority, lang, currencySymbol]);
 
   const handleReset = () => {
     setCurrentStep(0);
@@ -193,7 +212,7 @@ export default function SmartTechFinder({
   return (
     <section 
       id="smart-tech-finder" 
-      className="w-full my-8 sm:my-12 p-5 sm:p-8 lg:p-10 rounded-3xl bg-[#12141C] border border-[#1E2230] relative overflow-hidden shadow-2xl text-slate-100"
+      className="w-full my-8 sm:my-12 p-5 sm:p-8 lg:p-10 rounded-3xl bg-[#FFFFFF] border border-[#DCE8F3] relative overflow-hidden shadow-sm text-[#10263D]"
       aria-label="Smart Tech Finder AI Diagnostic Engine"
     >
       {/* Background Cybernetic Specular Accents */}
@@ -208,16 +227,16 @@ export default function SmartTechFinder({
 
       <div className="relative z-10 max-w-6xl mx-auto">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#1E2230]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#DCE8F3]">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-mono font-bold mb-3 border border-cyan-500/30">
               <span className="agent-pulse-dot" />
               <span>{t.finderBadge || (lang === 'bn' ? 'লাইভ এজেন্ট ম্যাচিং ইঞ্জিন' : 'AI Diagnostic Matcher')}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#10263D] tracking-tight">
               {t.finderTitle || (lang === 'bn' ? 'স্মার্ট টেক ফাইন্ডার' : 'Smart Tech Finder')}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1.5 font-normal max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#526981] mt-1.5 font-normal max-w-2xl leading-relaxed">
               {t.finderSubtitle || (lang === 'bn' 
                 ? 'আপনার বাজেট (টাকা) এবং ব্যবহারের ধরনের উপর ভিত্তি করে সেরা টেক গ্যাজেট খুঁজুন।' 
                 : 'Active hardware diagnosis across 26 verified SKUs in BDT — with simulated telemetry reasoning and free nationwide delivery optimization.')}
@@ -229,13 +248,13 @@ export default function SmartTechFinder({
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#161924] border border-[#1E2230] text-xs font-mono font-bold text-slate-200 hover:text-cyan-400 hover:border-cyan-500/40 transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#F8FBFE] border border-[#DCE8F3] text-xs font-mono font-bold text-[#10263D] hover:text-cyan-400 hover:border-cyan-500/40 transition-all cursor-pointer"
               >
                 <RotateCcw size={14} />
                 <span>{t.finderReset || (lang === 'bn' ? 'পুনরায় শুরু করুন' : 'RESTART')}</span>
               </button>
             )}
-            <div className="px-3.5 py-1.5 rounded-xl bg-[#161924] border border-[#1E2230] font-mono text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+            <div className="px-3.5 py-1.5 rounded-xl bg-[#F8FBFE] border border-[#DCE8F3] font-mono text-xs font-bold text-emerald-400 flex items-center gap-1.5">
               <ShieldCheck size={14} />
               <span>100% VERIFIED CATALOG</span>
             </div>
@@ -258,10 +277,10 @@ export default function SmartTechFinder({
                   onClick={() => handleStepAdvance(tab.step)}
                   className={`py-2.5 sm:py-3 px-2 sm:px-4 rounded-xl text-xs sm:text-sm font-mono font-bold transition-all text-center cursor-pointer ${
                     currentStep === tab.step 
-                      ? 'bg-cyan-500/15 border border-cyan-400 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)]' 
+                      ? 'bg-[#1684E8] text-white border border-[#1684E8] shadow-xs' 
                       : currentStep > tab.step
-                        ? 'bg-[#161924] text-emerald-400 border border-emerald-500/30'
-                        : 'bg-[#161924]/60 text-slate-500 border border-[#1E2230]'
+                        ? 'bg-[#EBF5FF] text-[#1684E8] border border-[#DCE8F3]'
+                        : 'bg-[#F4F8FC] text-slate-500 border border-[#DCE8F3]'
                   }`}
                 >
                   {tab.label}
@@ -271,7 +290,7 @@ export default function SmartTechFinder({
 
             {/* LIVE AGENT REASONING LOG OVERLAY (350ms-500ms simulation) */}
             {isAnalyzing ? (
-              <div className="p-6 sm:p-8 rounded-2xl bg-[#0B0D14] border border-cyan-500/40 shadow-2xl my-4 text-left animate-fadeIn">
+              <div className="p-6 sm:p-8 rounded-2xl bg-[#F8FBFE] border border-cyan-500/40 shadow-2xl my-4 text-left animate-fadeIn">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="agent-pulse-dot" />
                   <span className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -279,7 +298,7 @@ export default function SmartTechFinder({
                     <span>Agent Diagnostic Reasoning Engine Active...</span>
                   </span>
                 </div>
-                <div className="font-mono text-xs space-y-1.5 bg-[#090A0F] p-4 rounded-xl border border-[#1E2230]">
+                <div className="font-mono text-xs space-y-1.5 bg-[#F5F9FD] p-4 rounded-xl border border-[#DCE8F3]">
                   <p className="text-cyan-400">&gt; Scanning verified catalog across active SKUs...</p>
                   {logStep >= 2 && (
                     <p className="text-emerald-400">&gt; Filtering for budget tier &amp; wattage compatibility constraints...</p>
@@ -293,11 +312,11 @@ export default function SmartTechFinder({
               <div>
                 {/* STEP 0: BUDGET */}
                 {currentStep === 0 && (
-                  <div className="bg-[#161924] p-5 sm:p-7 rounded-2xl border border-[#1E2230]">
-                    <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                  <div className="bg-[#F8FBFE] p-5 sm:p-7 rounded-2xl border border-[#DCE8F3]">
+                    <h3 className="text-base sm:text-lg font-bold text-[#10263D] mb-1">
                       {lang === 'bn' ? 'আপনার আনুমানিক বাজেট কত?' : 'What is your target budget range?'}
                     </h3>
-                    <p className="font-mono text-xs text-slate-400 mb-5">
+                    <p className="font-mono text-xs text-[#526981] mb-5">
                       {lang === 'bn' ? 'বাংলাদেশি টাকায় (৳) আপনার বাজেটের সাথে যাচাইকৃত পণ্য ম্যাচ করা হবে।' : 'Filter verified items within target price ceilings in BDT.'}
                     </p>
 
@@ -309,15 +328,15 @@ export default function SmartTechFinder({
                           onClick={() => setBudget(opt.id)}
                           className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                             budget === opt.id 
-                              ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400' 
-                              : 'bg-[#12141C] border-[#1E2230] hover:border-slate-600'
+                              ? 'bg-[#EBF5FF] border-2 border-[#1684E8] shadow-sm text-[#1684E8]' 
+                              : 'bg-[#FFFFFF] border-[#DCE8F3] hover:bg-[#EAF5FF] text-[#10263D]'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1.5">
-                            <span className="font-mono text-sm font-black text-white">{opt.label}</span>
-                            {budget === opt.id && <Check size={16} className="text-cyan-400 stroke-[3]" />}
+                            <span className={`font-mono text-sm font-black ${budget === opt.id ? 'text-[#1684E8]' : 'text-[#10263D]'}`}>{opt.label}</span>
+                            {budget === opt.id && <Check size={16} className="text-[#1684E8] stroke-[3]" />}
                           </div>
-                          <span className="font-mono text-xs text-slate-400 block">{opt.sub}</span>
+                          <span className="font-mono text-xs text-[#526981] block">{opt.sub}</span>
                         </button>
                       ))}
                     </div>
@@ -326,7 +345,7 @@ export default function SmartTechFinder({
                       <button
                         type="button"
                         onClick={() => handleStepAdvance(1)}
-                        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                        className="bg-[#1684E8] hover:bg-[#1270C5] text-white font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm"
                       >
                         <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'NEXT STEP'}</span>
                         <ArrowRight size={15} />
@@ -337,11 +356,11 @@ export default function SmartTechFinder({
 
                 {/* STEP 1: USE CASE */}
                 {currentStep === 1 && (
-                  <div className="bg-[#161924] p-5 sm:p-7 rounded-2xl border border-[#1E2230]">
-                    <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                  <div className="bg-[#F8FBFE] p-5 sm:p-7 rounded-2xl border border-[#DCE8F3]">
+                    <h3 className="text-base sm:text-lg font-bold text-[#10263D] mb-1">
                       {lang === 'bn' ? 'আপনি প্রধানত কোথায় এবং কীভাবে ব্যবহার করবেন?' : 'Where and how will you use this gear?'}
                     </h3>
-                    <p className="font-mono text-xs text-slate-400 mb-5">
+                    <p className="font-mono text-xs text-[#526981] mb-5">
                       {lang === 'bn' ? 'আপনার রুটিন অনুযায়ী পারফেক্ট ক্যাবল ও অডিও ম্যাচ করা হবে।' : 'Match hardware specs to your daily commute, office, or active usage.'}
                     </p>
 
@@ -355,15 +374,15 @@ export default function SmartTechFinder({
                             onClick={() => setUseCase(use.id)}
                             className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                               useCase === use.id 
-                                ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400' 
-                                : 'bg-[#12141C] border-[#1E2230] hover:border-slate-600'
+                                ? 'bg-[#EBF5FF] border-2 border-[#1684E8] shadow-sm text-[#1684E8]' 
+                                : 'bg-[#FFFFFF] border-[#DCE8F3] hover:bg-[#EAF5FF] text-[#10263D]'
                             }`}
                           >
-                            <div className={`p-2.5 rounded-xl w-fit mb-3 ${useCase === use.id ? 'bg-cyan-500 text-slate-950' : 'bg-[#1E2230] text-cyan-400'}`}>
+                            <div className={`p-2.5 rounded-xl w-fit mb-3 ${useCase === use.id ? 'bg-[#1684E8] text-white' : 'bg-[#EBF5FF] text-[#1684E8] border border-[#DCE8F3]'}`}>
                               <Icon size={18} />
                             </div>
-                            <span className="text-sm font-bold text-white block mb-1">{use.label}</span>
-                            <span className="text-xs text-slate-400 block leading-snug">{use.desc}</span>
+                            <span className={`text-sm font-bold block mb-1 ${useCase === use.id ? 'text-[#1684E8]' : 'text-[#10263D]'}`}>{use.label}</span>
+                            <span className="text-xs text-[#526981] block leading-snug">{use.desc}</span>
                           </button>
                         );
                       })}
@@ -373,14 +392,14 @@ export default function SmartTechFinder({
                       <button
                         type="button"
                         onClick={() => handleStepAdvance(0)}
-                        className="font-mono text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+                        className="font-mono text-xs font-bold text-[#526981] hover:text-[#10263D] cursor-pointer"
                       >
                         {lang === 'bn' ? '← ব্যাকে যান' : '← BACK'}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleStepAdvance(2)}
-                        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                        className="bg-[#1684E8] hover:bg-[#1270C5] text-white font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm"
                       >
                         <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'NEXT STEP'}</span>
                         <ArrowRight size={15} />
@@ -391,11 +410,11 @@ export default function SmartTechFinder({
 
                 {/* STEP 2: GEAR TYPE */}
                 {currentStep === 2 && (
-                  <div className="bg-[#161924] p-5 sm:p-7 rounded-2xl border border-[#1E2230]">
-                    <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                  <div className="bg-[#F8FBFE] p-5 sm:p-7 rounded-2xl border border-[#DCE8F3]">
+                    <h3 className="text-base sm:text-lg font-bold text-[#10263D] mb-1">
                       {lang === 'bn' ? 'কোন ক্যাটাগরির গ্যাজেট খুঁজছেন?' : 'Which category of gear do you need?'}
                     </h3>
-                    <p className="font-mono text-xs text-slate-400 mb-5">
+                    <p className="font-mono text-xs text-[#526981] mb-5">
                       {lang === 'bn' ? 'নির্দিষ্ট ক্যাটাগরি অথবা সার্বিক ম্যাচিং নির্বাচন করুন।' : 'Narrow your focus or keep open recommendations across verified accessories.'}
                     </p>
 
@@ -409,15 +428,15 @@ export default function SmartTechFinder({
                             onClick={() => setCategory(c.id)}
                             className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                               category === c.id 
-                                ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400' 
-                                : 'bg-[#12141C] border-[#1E2230] hover:border-slate-600'
+                                ? 'bg-[#EBF5FF] border-2 border-[#1684E8] shadow-sm text-[#1684E8]' 
+                                : 'bg-[#FFFFFF] border-[#DCE8F3] hover:bg-[#EAF5FF] text-[#10263D]'
                             }`}
                           >
-                            <div className={`p-2.5 rounded-xl w-fit mb-3 ${category === c.id ? 'bg-cyan-500 text-slate-950' : 'bg-[#1E2230] text-cyan-400'}`}>
+                            <div className={`p-2.5 rounded-xl w-fit mb-3 ${category === c.id ? 'bg-[#1684E8] text-white' : 'bg-[#EBF5FF] text-[#1684E8] border border-[#DCE8F3]'}`}>
                               <IconComp size={18} />
                             </div>
-                            <span className="text-sm font-bold text-white block mb-1">{c.label}</span>
-                            <span className="text-xs text-slate-400 block leading-snug">{c.sub}</span>
+                            <span className={`text-sm font-bold block mb-1 ${category === c.id ? 'text-[#1684E8]' : 'text-[#10263D]'}`}>{c.label}</span>
+                            <span className="text-xs text-[#526981] block leading-snug">{c.sub}</span>
                           </button>
                         );
                       })}
@@ -427,14 +446,14 @@ export default function SmartTechFinder({
                       <button
                         type="button"
                         onClick={() => handleStepAdvance(1)}
-                        className="font-mono text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+                        className="font-mono text-xs font-bold text-[#526981] hover:text-[#10263D] cursor-pointer"
                       >
                         {lang === 'bn' ? '← ব্যাকে যান' : '← BACK'}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleStepAdvance(3)}
-                        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                        className="bg-[#1684E8] hover:bg-[#1270C5] text-white font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm"
                       >
                         <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'NEXT STEP'}</span>
                         <ArrowRight size={15} />
@@ -445,11 +464,11 @@ export default function SmartTechFinder({
 
                 {/* STEP 3: PRIORITY */}
                 {currentStep === 3 && (
-                  <div className="bg-[#161924] p-5 sm:p-7 rounded-2xl border border-[#1E2230]">
-                    <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                  <div className="bg-[#F8FBFE] p-5 sm:p-7 rounded-2xl border border-[#DCE8F3]">
+                    <h3 className="text-base sm:text-lg font-bold text-[#10263D] mb-1">
                       {lang === 'bn' ? 'আপনার সবচেয়ে গুরুত্বপূর্ণ প্রয়োজনীয়তা কোনটি?' : 'What is your absolute top priority?'}
                     </h3>
-                    <p className="font-mono text-xs text-slate-400 mb-5">
+                    <p className="font-mono text-xs text-[#526981] mb-5">
                       {lang === 'bn' ? 'যে ফিচারের ওপর আপোষ করতে চান না।' : 'The technical capability that anchors your final selection.'}
                     </p>
 
@@ -461,15 +480,15 @@ export default function SmartTechFinder({
                           onClick={() => setPriority(p.id)}
                           className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                             priority === p.id 
-                              ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400' 
-                              : 'bg-[#12141C] border-[#1E2230] hover:border-slate-600'
+                              ? 'bg-[#EBF5FF] border-2 border-[#1684E8] shadow-sm text-[#1684E8]' 
+                              : 'bg-[#FFFFFF] border-[#DCE8F3] hover:bg-[#EAF5FF] text-[#10263D]'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-sm font-bold text-white">{p.label}</span>
-                            {priority === p.id && <Check size={16} className="text-cyan-400 stroke-[3]" />}
+                            <span className={`text-sm font-bold ${priority === p.id ? 'text-[#1684E8]' : 'text-[#10263D]'}`}>{p.label}</span>
+                            {priority === p.id && <Check size={16} className="text-[#1684E8] stroke-[3]" />}
                           </div>
-                          <span className="text-xs text-slate-400 leading-relaxed block">{p.detail}</span>
+                          <span className="text-xs text-[#526981] leading-relaxed block">{p.detail}</span>
                         </button>
                       ))}
                     </div>
@@ -478,14 +497,14 @@ export default function SmartTechFinder({
                       <button
                         type="button"
                         onClick={() => handleStepAdvance(2)}
-                        className="font-mono text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+                        className="font-mono text-xs font-bold text-[#526981] hover:text-[#10263D] cursor-pointer"
                       >
                         {lang === 'bn' ? '← ব্যাকে যান' : '← BACK'}
                       </button>
                       <button
                         type="button"
                         onClick={handleSeeMatches}
-                        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs py-3 px-7 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+                        className="bg-[#1684E8] hover:bg-[#1270C5] text-white font-mono font-bold text-xs py-3 px-7 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm"
                       >
                         <Cpu size={16} />
                         <span>{lang === 'bn' ? 'ম্যাচিং প্রোডাক্ট দেখুন' : 'RUN AI DIAGNOSTIC MATCH'}</span>
@@ -502,13 +521,13 @@ export default function SmartTechFinder({
         {showResults && !isAnalyzing && (
           <div>
             {!recommendations.isExact && (
-              <div className="mb-6 p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 flex items-start gap-3">
-                <AlertCircle size={20} className="text-cyan-400 shrink-0 mt-0.5" />
+              <div className="mb-6 p-4 rounded-2xl bg-[#EBF5FF] border border-[#DCE8F3] flex items-start gap-3">
+                <AlertCircle size={20} className="text-[#1684E8] shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-cyan-300 font-mono">
+                  <h4 className="text-xs sm:text-sm font-bold text-[#1684E8] font-mono">
                     {lang === 'bn' ? 'সরাসরি বাজেট ফিল্টারে কোনো নকল পণ্য তৈরি করা হয়নি' : 'VERIFIED CATALOG INTEGRITY NOTICE'}
                   </h4>
-                  <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                  <p className="text-xs text-[#526981] mt-0.5 leading-relaxed">
                     {t.finderNoMatch || (lang === 'bn'
                       ? 'এই নির্দিষ্ট ফিল্টারে সরাসরি ম্যাচ পাওয়া যায়নি। নিচে সবচেয়ে কাছাকাছি যাচাইকৃত খাঁটি অপশনগুলো দেওয়া হলো:'
                       : 'No products in our verified catalog meet this exact price combination. We never invent fake products. Here are our closest verified authentic options:')}
@@ -526,10 +545,10 @@ export default function SmartTechFinder({
                 return (
                   <div
                     key={product.id}
-                    className="bg-[#12141C] rounded-2xl border border-[#1E2230] hover:border-cyan-500/40 hover:shadow-[0_4px_24px_-2px_rgba(6,182,212,0.2)] transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                    className="bg-[#FFFFFF] rounded-2xl border border-[#DCE8F3] hover:border-cyan-500/40 hover:shadow-[0_4px_24px_-2px_rgba(6,182,212,0.2)] transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                   >
                     {/* Top Media & Badges */}
-                    <div className="relative aspect-[4/3] bg-[#090A0F] p-4 flex items-center justify-center border-b border-[#1E2230]">
+                    <div className="relative aspect-[4/3] bg-[#F5F9FD] p-4 flex items-center justify-center border-b border-[#DCE8F3]">
                       <img
                         src={product.image}
                         alt={lang === 'bn' ? product.titleBn : product.title}
@@ -538,7 +557,7 @@ export default function SmartTechFinder({
                       />
                       
                       {/* Top-Left: Agent Match Score Badge */}
-                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full font-mono text-[10px] font-black bg-cyan-500 text-slate-950 shadow-md flex items-center gap-1">
+                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full font-mono text-[10px] font-black bg-[#1684E8] text-white shadow-xs flex items-center gap-1">
                         <Sparkles size={11} />
                         <span>[{score}% MATCH FOR SETUP]</span>
                       </span>
@@ -553,28 +572,28 @@ export default function SmartTechFinder({
                     <div className="p-5 flex flex-col flex-grow justify-between">
                       <div>
                         <div className="flex items-center gap-2 mb-2 text-xs">
-                          <span className="font-bold text-white font-mono">{product.brand}</span>
+                          <span className="font-bold text-[#10263D] font-mono">{product.brand}</span>
                           <span className="text-slate-500">•</span>
-                          <span className="font-mono text-slate-400">{formatCleanSku(product)}</span>
+                          <span className="font-mono text-[#526981]">{formatCleanSku(product)}</span>
                         </div>
 
                         <h3 
                           onClick={() => onOpenDetail(product)}
-                          className="text-sm sm:text-base font-bold text-white hover:text-cyan-400 transition-colors cursor-pointer line-clamp-2 min-h-[2.8rem] mb-3"
+                          className="text-sm sm:text-base font-bold text-[#10263D] hover:text-[#1684E8] transition-colors cursor-pointer line-clamp-2 min-h-[2.8rem] mb-3"
                         >
                           {lang === 'bn' ? product.titleBn : product.title}
                         </h3>
 
                         {/* Agent Telemetry Reasoning Log */}
-                        <div className="p-3.5 rounded-xl bg-[#090A0F] border border-[#1E2230] mb-4">
-                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5 mb-2">
-                            <Check size={13} className="text-cyan-400 stroke-[3]" />
+                        <div className="p-3.5 rounded-xl bg-[#F5F9FD] border border-[#DCE8F3] mb-4">
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#1684E8] flex items-center gap-1.5 mb-2">
+                            <Check size={13} className="text-[#1684E8] stroke-[3]" />
                             <span>AI TELEMETRY RATIONALE:</span>
                           </span>
-                          <ul className="space-y-1 font-mono text-[11px] text-slate-300">
+                          <ul className="space-y-1 font-mono text-[11px] text-[#526981]">
                             {whyReasons.map((reason, idx) => (
                               <li key={idx} className="flex items-start gap-1.5">
-                                <span className="text-cyan-400 shrink-0">&gt;</span>
+                                <span className="text-[#1684E8] shrink-0">&gt;</span>
                                 <span>{reason}</span>
                               </li>
                             ))}
@@ -583,10 +602,10 @@ export default function SmartTechFinder({
                       </div>
 
                       {/* Bottom Pricing & Actions */}
-                      <div className="pt-3 border-t border-[#1E2230]">
+                      <div className="pt-3 border-t border-[#DCE8F3]">
                         <div className="flex items-baseline justify-between mb-3">
                           <div>
-                            <span className="font-mono text-xl font-black text-white">
+                            <span className="font-mono text-xl font-black text-[#1684E8]">
                               {currencySymbol}{product.price.toLocaleString()}
                             </span>
                             {product.originalPrice && product.originalPrice > product.price && (
@@ -604,7 +623,7 @@ export default function SmartTechFinder({
                           <button
                             type="button"
                             onClick={() => onQuickAdd(product, product.variants?.[0], 1)}
-                            className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono flex items-center justify-center gap-1.5 text-xs py-2.5 w-full font-bold rounded-xl transition-all cursor-pointer shadow-md active:scale-95"
+                            className="bg-[#1684E8] hover:bg-[#1270C5] text-white font-mono flex items-center justify-center gap-1.5 text-xs py-2.5 w-full font-bold rounded-xl transition-all cursor-pointer shadow-sm active:scale-95"
                           >
                             <ShoppingBag size={14} />
                             <span>{lang === 'bn' ? 'ব্যাগে যুক্ত' : 'ADD TO BAG'}</span>
@@ -615,8 +634,8 @@ export default function SmartTechFinder({
                             onClick={() => onToggleCompare && onToggleCompare(product)}
                             className={`flex items-center justify-center gap-1.5 text-xs py-2.5 rounded-xl border font-mono font-bold transition-all cursor-pointer ${
                               isCompared 
-                                ? 'bg-cyan-500 text-slate-950 border-cyan-400' 
-                                : 'bg-[#161924] text-slate-300 border-[#1E2230] hover:border-cyan-500/40 hover:text-white'
+                                ? 'bg-[#EBF5FF] text-[#1684E8] border-[#1684E8]' 
+                                : 'bg-[#FFFFFF] text-[#526981] border-[#DCE8F3] hover:border-[#1684E8] hover:text-[#1684E8]'
                             }`}
                           >
                             <Scale size={14} />
@@ -631,16 +650,16 @@ export default function SmartTechFinder({
             </div>
 
             {/* Bottom Actions Banner */}
-            <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-[#161924] border border-[#1E2230] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-[#F8FBFE] border border-[#DCE8F3] flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
                   <Scale size={20} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">
+                  <h4 className="text-sm font-bold text-[#10263D]">
                     {lang === 'bn' ? 'বাছাইকৃত পণ্যগুলোর পাশাপাশি স্পেক্স দেখতে চান?' : 'Want to inspect side-by-side technical differences?'}
                   </h4>
-                  <p className="font-mono text-xs text-slate-400">
+                  <p className="font-mono text-xs text-[#526981]">
                     {lang === 'bn' ? '৪টি পর্যন্ত পণ্য যোগ করে তুলনা ম্যাট্রিক্স দেখুন।' : 'Shortlist up to 4 items and inspect chipsets, wattages, and battery specs.'}
                   </p>
                 </div>
@@ -650,7 +669,7 @@ export default function SmartTechFinder({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-4 py-2.5 rounded-xl bg-[#12141C] border border-[#1E2230] font-mono text-xs font-bold text-slate-300 hover:text-white hover:border-slate-500 transition-all cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#DCE8F3] font-mono text-xs font-bold text-[#526981] hover:text-[#10263D] hover:bg-[#EAF5FF] transition-all cursor-pointer"
                 >
                   {lang === 'bn' ? 'ফিল্টার পরিবর্তন' : 'ADJUST ANSWERS'}
                 </button>
@@ -658,7 +677,7 @@ export default function SmartTechFinder({
                   <button
                     type="button"
                     onClick={onOpenComparison}
-                    className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs py-2.5 px-5 rounded-xl flex items-center gap-1.5 font-bold transition-all cursor-pointer shadow-md"
+                    className="bg-[#1684E8] hover:bg-[#1270C5] text-white font-mono text-xs py-2.5 px-5 rounded-xl flex items-center gap-1.5 font-bold transition-all cursor-pointer shadow-sm"
                   >
                     <span>{t.finderCompareShortlist || (lang === 'bn' ? 'তুলনা দেখুন' : 'OPEN SPEC MATRIX')}</span>
                     <ChevronRight size={15} />

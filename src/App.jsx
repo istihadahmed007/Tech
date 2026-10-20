@@ -34,6 +34,7 @@ import RecentlyViewedSection from './components/RecentlyViewedSection';
 import Footer from './components/Footer';
 
 import { INITIAL_PRODUCTS } from './data/catalog';
+import { normalizeCatalog } from './utils/catalogNormalizer';
 import { translations } from './i18n/translations';
 import { Truck, Award, ShieldCheck, RotateCcw } from 'lucide-react';
 import { 
@@ -48,7 +49,8 @@ export default function App() {
   const t = translations[lang] || translations.en;
 
   // Authoritative Database Catalog State
-  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState(() => normalizeCatalog(INITIAL_PRODUCTS));
+  const [displayedGridIds, setDisplayedGridIds] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPhone, setSelectedPhone] = useState(null);
@@ -151,7 +153,7 @@ export default function App() {
     try {
       const res = await safeFetchJson('/api/products');
       if (res.ok && Array.isArray(res.data?.products) && res.data.products.length > 0) {
-        setProducts(res.data.products);
+        setProducts(normalizeCatalog(res.data.products));
       }
     } catch (err) {
       console.warn('Using local fallback catalog:', err.message);
@@ -1030,6 +1032,7 @@ export default function App() {
               comparisonIds={comparisonIds}
               catalogTab={catalogTab}
               onSelectCatalogTab={setCatalogTab}
+              onDisplayedIdsChange={setDisplayedGridIds}
               t={t}
               lang={lang}
             />
@@ -1078,10 +1081,15 @@ export default function App() {
             <div id="smart-tech-finder" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <SmartTechFinder
                 products={products}
+                excludeProductIds={displayedGridIds}
                 onSelectProduct={(p) => navigateToProduct(p, true)}
+                onOpenDetail={(p) => navigateToProduct(p, true)}
                 onAddToCart={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+                onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
                 onToggleCompare={handleToggleCompare}
                 comparisonIds={comparisonIds}
+                onOpenComparison={() => setActiveModal('comparison')}
+                currencySymbol="৳"
                 lang={lang}
                 t={t}
               />
@@ -1114,9 +1122,17 @@ export default function App() {
                 recentIds={recentIds}
                 products={products}
                 onSelectProduct={(p) => navigateToProduct(p, true)}
+                onOpenDetail={(p) => navigateToProduct(p, true)}
                 onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+                onToggleWishlist={handleToggleWishlist}
+                wishlistIds={wishlistIds}
                 onToggleCompare={handleToggleCompare}
                 comparisonIds={comparisonIds}
+                onClearRecents={() => {
+                  setRecentIds([]);
+                  localStorage.removeItem('tech_recent_ids');
+                }}
+                currencySymbol="৳"
                 lang={lang}
                 t={t}
               />

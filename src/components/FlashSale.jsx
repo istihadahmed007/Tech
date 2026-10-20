@@ -40,12 +40,12 @@ export default function FlashSale({
   if (flashProducts.length === 0) return null;
 
   return (
-    <section id="flash-sale-section" className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-[#12141C] border border-[#1E2230] rounded-2xl shadow-xl text-slate-100" aria-label="Limited Flash Sale Deals">
+    <section id="flash-sale-section" className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-[#FFFFFF] border border-[#DCE8F3] rounded-2xl shadow-sm text-[#10263D]" aria-label="Limited Flash Sale Deals">
       {/* Section Header: Live Monospace Countdown Timer */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-[#1E2230]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-[#DCE8F3]">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-cyan-400">
-            <Zap size={20} className="fill-cyan-400 stroke-[2.5]" />
+          <div className="flex items-center gap-2 text-[#1684E8]">
+            <Zap size={20} className="fill-[#1684E8] stroke-[2.5]" />
             <span className="text-lg sm:text-xl font-black tracking-tight uppercase font-mono">
               {lang === 'bn' ? 'ফ্ল্যাশ সেল' : 'LIMITED FLASH DISPATCH'}
             </span>
@@ -53,11 +53,11 @@ export default function FlashSale({
 
           {/* Monospace Countdown Clock */}
           <div className="flex items-center gap-1 font-mono text-xs">
-            <span className="px-2 py-1 rounded bg-[#090A0F] border border-[#1E2230] text-cyan-400 font-bold">{hours}</span>
-            <span className="font-bold text-slate-500">:</span>
-            <span className="px-2 py-1 rounded bg-[#090A0F] border border-[#1E2230] text-cyan-400 font-bold">{minutes}</span>
-            <span className="font-bold text-slate-500">:</span>
-            <span className="px-2 py-1 rounded bg-[#090A0F] border border-[#1E2230] text-cyan-400 font-bold">{seconds}</span>
+            <span className="px-2 py-1 rounded bg-[#EBF5FF] border border-[#DCE8F3] text-[#1684E8] font-bold">{hours}</span>
+            <span className="font-bold text-[#526981]">:</span>
+            <span className="px-2 py-1 rounded bg-[#EBF5FF] border border-[#DCE8F3] text-[#1684E8] font-bold">{minutes}</span>
+            <span className="font-bold text-[#526981]">:</span>
+            <span className="px-2 py-1 rounded bg-[#EBF5FF] border border-[#DCE8F3] text-[#1684E8] font-bold">{seconds}</span>
           </div>
         </div>
 
@@ -65,7 +65,7 @@ export default function FlashSale({
           <button
             type="button"
             onClick={onViewAllFlashDeals}
-            className="font-mono text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+            className="font-mono text-xs font-bold text-[#1684E8] hover:text-[#1270C5] flex items-center gap-1 self-start sm:self-auto cursor-pointer"
           >
             <span>{lang === 'bn' ? 'সবগুলো দেখুন' : 'VIEW ALL DEALS'}</span>
             <ChevronRight size={14} />
@@ -83,10 +83,10 @@ export default function FlashSale({
             <div
               key={product.id}
               onClick={() => onOpenDetail && onOpenDetail(product)}
-              className="group relative flex flex-col justify-between bg-[#161924] rounded-xl border border-[#1E2230] hover:border-cyan-500/40 p-2.5 transition-all cursor-pointer hover:shadow-[0_4px_20px_-2px_rgba(6,182,212,0.15)]"
+              className="group relative flex flex-col justify-between bg-[#FFFFFF] rounded-xl border border-[#DCE8F3] hover:border-[#1684E8]/40 p-2.5 transition-all cursor-pointer shadow-xs hover:shadow-md"
             >
               {/* Discount Tag */}
-              <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 z-10">
+              <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold bg-[#EBF5FF] text-[#1684E8] border border-blue-200 z-10">
                 -{discountPercent}%
               </div>
 
@@ -98,7 +98,7 @@ export default function FlashSale({
               </div>
 
               {/* Square Image 1:1 */}
-              <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-[#090A0F] mb-2 flex items-center justify-center p-2 border border-[#1E2230]">
+              <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-[#F5F9FD] mb-2 flex items-center justify-center p-2 border border-[#DCE8F3]">
                 <img
                   src={product.image}
                   alt={product.title}
@@ -110,28 +110,28 @@ export default function FlashSale({
               {/* Product Info */}
               <div className="flex flex-col flex-grow justify-between">
                 <div>
-                  <h4 className="font-bold text-xs text-white line-clamp-1 group-hover:text-cyan-400 transition-colors mb-1">
+                  <h4 className="font-bold text-xs text-[#10263D] line-clamp-1 group-hover:text-[#1684E8] transition-colors mb-1">
                     {lang === 'bn' ? (product.titleBn || product.title) : product.title}
                   </h4>
 
                   <div className="flex items-baseline gap-1.5 mb-2">
-                    <span className="font-mono text-sm font-black text-white">
+                    <span className="font-mono text-sm font-black text-[#1684E8]">
                       {currencySymbol}{product.price.toLocaleString()}
                     </span>
-                    <span className="font-mono text-[10px] text-slate-500 line-through">
+                    <span className="font-mono text-[10px] text-slate-400 line-through">
                       {currencySymbol}{product.originalPrice.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
                 {/* Stock Telemetry Bar */}
-                <div className="w-full bg-[#090A0F] h-1.5 rounded-full overflow-hidden border border-[#1E2230] mb-1.5">
+                <div className="w-full bg-[#EBF5FF] h-1.5 rounded-full overflow-hidden border border-[#DCE8F3] mb-1.5">
                   <div 
-                    className="h-full bg-cyan-500 rounded-full" 
+                    className="h-full bg-[#1684E8] rounded-full" 
                     style={{ width: `${Math.min(100, Math.max(20, (product.stock / 20) * 100))}%` }} 
                   />
                 </div>
-                <span className="font-mono text-[9px] text-slate-400 text-right block">
+                <span className="font-mono text-[9px] text-[#526981] text-right block">
                   STOCK: {product.stock}
                 </span>
               </div>
