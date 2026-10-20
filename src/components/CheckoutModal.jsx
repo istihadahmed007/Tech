@@ -250,7 +250,11 @@ export default function CheckoutModal({
       });
 
       if (!response.ok || !response.data?.success || !response.data.order) {
-        setErrorMessage(response.error || 'Failed to place order with backend server. Please verify your details.');
+        if (response.isHtml) {
+          setErrorMessage(`The store backend is currently unreachable (${response.status || 'Offline'}). If you are the store administrator, please ensure your Node.js application is running in your hosting control panel. Otherwise, please try again in a few moments.`);
+        } else {
+          setErrorMessage(response.error || 'Failed to place order with backend server. Please verify your details.');
+        }
         return;
       }
 
@@ -276,7 +280,11 @@ export default function CheckoutModal({
         });
 
         if (!initRes.ok || !initRes.data?.success) {
-          setErrorMessage(initRes.error || 'Online payment is currently unavailable. Please select Cash on Delivery or contact store support.');
+          if (initRes.isHtml) {
+            setErrorMessage('The online payment gateway service is temporarily unreachable. Please select Cash on Delivery or contact store support.');
+          } else {
+            setErrorMessage(initRes.error || 'Online payment is currently unavailable. Please select Cash on Delivery or contact store support.');
+          }
           return;
         }
 

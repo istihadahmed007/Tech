@@ -16,16 +16,9 @@
   RewriteCond %{DOCUMENT_ROOT}/dist/$1 -d
   RewriteRule ^(.*)$ dist/$1 [L]
 
-  # 3. Proxy /api/ requests to local Node.js backend if mod_proxy is available
-  <IfModule mod_proxy.c>
-    RewriteCond %{REQUEST_URI} ^/api/
-    RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
-  </IfModule>
-
-  # 4. API Safety Guard: NEVER serve index.html for /api/* requests!
-  # If mod_proxy is not enabled or Node.js is restarting, return 503 Service Unavailable instead of HTML 200
+  # 3. Proxy /api/ requests to local Node.js backend (compatible with Apache mod_proxy, LiteSpeed, and cPanel/hPanel)
   RewriteCond %{REQUEST_URI} ^/api/
-  RewriteRule ^ - [R=503,L]
+  RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
 
   # 5. SPA Fallback: Rewrite non-API deep links to dist/index.html if available, otherwise index.html
   RewriteCond %{REQUEST_URI} !^/api/
