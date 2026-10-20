@@ -30,7 +30,7 @@ export default function ReviewsSection({
   ];
 
   return (
-    <section id="benefits-section" className="w-full my-6 sm:my-8">
+    <section id="benefits-section" className="w-full my-6 sm:my-8" aria-label="Customer Benefits">
       {/* 4 Shopping Benefits Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mb-6">
         {benefits.map((b, idx) => {
@@ -38,16 +38,16 @@ export default function ReviewsSection({
           return (
             <div
               key={idx}
-              className="p-4 sm:p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs flex items-start gap-3.5 hover:border-[#BFDBFE] transition-colors"
+              className="p-4 sm:p-5 rounded-2xl bg-[#12141C] border border-[#1E2230] shadow-lg flex items-start gap-3.5 hover:border-cyan-500/30 transition-all duration-200"
             >
-              <div className="w-10 h-10 rounded-lg bg-[#EFF6FF] text-[#145CFF] flex items-center justify-center shrink-0 border border-[#DBEAFE]">
-                <Icon size={20} />
+              <div className="w-10 h-10 rounded-xl bg-[#0B0D14] text-cyan-400 flex items-center justify-center shrink-0 border border-cyan-500/20">
+                <Icon size={18} />
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-bold text-[#0F172A] leading-tight">
+                <h4 className="text-xs sm:text-sm font-bold font-mono text-zinc-100 leading-tight">
                   {b.title}
                 </h4>
-                <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                <p className="text-[11px] text-zinc-400 mt-1 leading-relaxed">
                   {b.desc}
                 </p>
               </div>

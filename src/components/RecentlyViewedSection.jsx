@@ -28,19 +28,19 @@ export default function RecentlyViewedSection({
   return (
     <section 
       aria-label="Recently Viewed Products"
-      className="w-full my-8 sm:my-12 p-4 sm:p-6 bg-white rounded-2xl border border-[#E2E8F0] shadow-xs"
+      className="w-full my-8 sm:my-12 p-4 sm:p-6 bg-[#12141C] rounded-2xl border border-[#1E2230] shadow-xl"
     >
-      <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-[#EFF6FF] text-[#145CFF] border border-[#BFDBFE]">
+      <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#1E2230]">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
             <History size={16} />
           </div>
           <div>
-            <h3 className="text-base font-bold text-[#0F172A]">
-              {lang === 'bn' ? 'সম্প্রতি দেখা পণ্যসমূহ' : 'Recently Viewed Products'}
+            <h3 className="text-sm sm:text-base font-bold font-mono text-white tracking-wide uppercase">
+              {lang === 'bn' ? 'সম্প্রতি দেখা পণ্যসমূহ' : 'RECENTLY INSPECTED HARDWARE'}
             </h3>
-            <span className="text-[11px] text-slate-500 block">
-              {lang === 'bn' ? 'আপনার ব্রাউজিং হিস্টোরির ভিত্তিতে' : 'Based on your recent showroom exploration'}
+            <span className="text-[11px] font-mono text-zinc-400 block">
+              {lang === 'bn' ? 'আপনার ব্রাউজিং হিস্টোরির ভিত্তিতে' : 'Preserved cache from your current session'}
             </span>
           </div>
         </div>
@@ -49,10 +49,10 @@ export default function RecentlyViewedSection({
           <button
             type="button"
             onClick={onClearRecents}
-            className="text-xs text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1 cursor-pointer"
+            className="text-xs font-mono text-zinc-400 hover:text-rose-400 transition-colors flex items-center gap-1 cursor-pointer"
           >
             <Trash2 size={13} />
-            <span>{lang === 'bn' ? 'মুছে ফেলুন' : 'Clear History'}</span>
+            <span>{lang === 'bn' ? 'মুছে ফেলুন' : 'Clear Cache'}</span>
           </button>
         )}
       </div>

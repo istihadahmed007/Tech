@@ -21,8 +21,9 @@ export default function QuickShortcuts({
       id: 'new_arrivals',
       label: lang === 'bn' ? 'নতুন কালেকশন' : 'New Arrivals',
       icon: Sparkles,
-      bgColor: '#EFF6FF',
-      iconColor: '#145CFF',
+      bgColor: 'rgba(6, 182, 212, 0.12)',
+      iconColor: '#22D3EE',
+      borderColor: 'rgba(6, 182, 212, 0.3)',
       onClick: () => {
         if (onSetSortBy) onSetSortBy('newest');
         if (onNavigateSection) onNavigateSection('products-section');
@@ -32,8 +33,9 @@ export default function QuickShortcuts({
       id: 'best_sellers',
       label: lang === 'bn' ? 'বেস্ট সেলার' : 'Best Sellers',
       icon: Award,
-      bgColor: '#FEF3C7',
-      iconColor: '#D97706',
+      bgColor: 'rgba(245, 158, 11, 0.12)',
+      iconColor: '#FBBF24',
+      borderColor: 'rgba(245, 158, 11, 0.3)',
       onClick: () => {
         if (onSetSortBy) onSetSortBy('rating');
         if (onNavigateSection) onNavigateSection('products-section');
@@ -43,8 +45,9 @@ export default function QuickShortcuts({
       id: 'flash_sale',
       label: lang === 'bn' ? 'ফ্ল্যাশ সেল' : 'Flash Sale',
       icon: Zap,
-      bgColor: '#EFF6FF',
-      iconColor: '#145CFF',
+      bgColor: 'rgba(239, 68, 68, 0.12)',
+      iconColor: '#F87171',
+      borderColor: 'rgba(239, 68, 68, 0.3)',
       onClick: () => {
         if (onNavigateSection) onNavigateSection('flash-sale-section');
       }
@@ -53,8 +56,9 @@ export default function QuickShortcuts({
       id: 'earbuds',
       label: lang === 'bn' ? 'ইয়ারবাডস' : 'TWS Earbuds',
       icon: Headphones,
-      bgColor: '#E0F2FE',
-      iconColor: '#0284C7',
+      bgColor: 'rgba(6, 182, 212, 0.12)',
+      iconColor: '#22D3EE',
+      borderColor: 'rgba(6, 182, 212, 0.3)',
       onClick: () => {
         if (onSelectCategory) onSelectCategory('earbuds');
         if (onNavigateSection) onNavigateSection('products-section');
@@ -64,8 +68,9 @@ export default function QuickShortcuts({
       id: 'chargers',
       label: lang === 'bn' ? 'ফাস্ট চার্জার' : 'Fast Chargers',
       icon: BatteryCharging,
-      bgColor: '#ECFDF5',
-      iconColor: '#059669',
+      bgColor: 'rgba(16, 185, 129, 0.12)',
+      iconColor: '#34D399',
+      borderColor: 'rgba(16, 185, 129, 0.3)',
       onClick: () => {
         if (onSelectCategory) onSelectCategory('chargers');
         if (onNavigateSection) onNavigateSection('products-section');
@@ -75,8 +80,9 @@ export default function QuickShortcuts({
       id: 'smartwatches',
       label: lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches',
       icon: Watch,
-      bgColor: '#F3E8FF',
-      iconColor: '#7C3AED',
+      bgColor: 'rgba(168, 85, 247, 0.12)',
+      iconColor: '#C084FC',
+      borderColor: 'rgba(168, 85, 247, 0.3)',
       onClick: () => {
         if (onSelectCategory) onSelectCategory('wearables');
         if (onNavigateSection) onNavigateSection('products-section');
@@ -86,8 +92,9 @@ export default function QuickShortcuts({
       id: 'free_delivery',
       label: lang === 'bn' ? 'ফ্রি ডেলিভারি' : 'Free Delivery',
       icon: Truck,
-      bgColor: '#E0E7FF',
-      iconColor: '#4338CA',
+      bgColor: 'rgba(16, 185, 129, 0.12)',
+      iconColor: '#34D399',
+      borderColor: 'rgba(16, 185, 129, 0.3)',
       onClick: () => {
         if (onNavigateSection) onNavigateSection('bundles-section');
       }
@@ -96,8 +103,9 @@ export default function QuickShortcuts({
       id: 'authentic',
       label: lang === 'bn' ? '১০০% অরিজিনাল' : '100% Genuine',
       icon: ShieldCheck,
-      bgColor: '#F1F5F9',
-      iconColor: '#334155',
+      bgColor: 'rgba(6, 182, 212, 0.12)',
+      iconColor: '#22D3EE',
+      borderColor: 'rgba(6, 182, 212, 0.3)',
       onClick: () => {
         if (onNavigateSection) onNavigateSection('benefits-section');
       }
@@ -124,12 +132,12 @@ export default function QuickShortcuts({
               }}
             >
               <div 
-                className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-2 transition-transform duration-200 group-hover:scale-110 shadow-xs border border-white/5"
-                style={{ backgroundColor: sc.bgColor }}
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-2 transition-transform duration-200 group-hover:scale-110 shadow-xs border"
+                style={{ backgroundColor: sc.bgColor, borderColor: sc.borderColor }}
               >
                 <Icon size={20} style={{ color: sc.iconColor }} />
               </div>
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors line-clamp-1 leading-snug">
+              <span className="text-[11px] sm:text-xs font-mono font-medium text-zinc-300 group-hover:text-cyan-400 transition-colors line-clamp-1 leading-snug">
                 {sc.label}
               </span>
             </div>

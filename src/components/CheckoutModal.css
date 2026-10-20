@@ -8,8 +8,8 @@
 .checkout-page-container {
   width: 100%;
   min-height: calc(100vh - 80px);
-  background-color: #F8FAFC !important;
-  color: #0F172A;
+  background-color: #12141C !important;
+  color: #F8FAFC;
   font-family: var(--font-family, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   padding: 20px 16px 60px;
   box-sizing: border-box;
@@ -43,13 +43,13 @@
   position: relative;
   width: 100%;
   max-width: 1180px;
-  background-color: #F8FAFC !important;
-  border: 1px solid #E2E8F0;
+  background-color: #12141C !important;
+  border: 1px solid #1E2230;
   border-radius: 16px;
   box-shadow: 0 25px 65px -10px rgba(15, 23, 42, 0.25);
   overflow: hidden;
   margin: auto;
-  color: #0F172A;
+  color: #F8FAFC;
   box-sizing: border-box;
   animation: fadeIn 180ms ease;
 }
@@ -60,7 +60,7 @@
   top: 0;
   z-index: 30;
   background-color: #FFFFFF !important;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid #1E2230;
   padding: 16px 20px;
   display: flex;
   align-items: center;
@@ -103,11 +103,11 @@
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #0F172A;
+  color: #F8FAFC;
 }
 
 .checkout-header-brand span {
-  color: #145CFF;
+  color: #22D3EE;
 }
 
 .checkout-header-tag {
@@ -117,7 +117,7 @@
   border: 1px solid #BFDBFE;
   padding: 3px 8px;
   border-radius: 6px;
-  color: #145CFF;
+  color: #22D3EE;
 }
 
 .checkout-close-btn {
@@ -128,7 +128,7 @@
   border: none;
   font-size: 13px;
   font-weight: 600;
-  color: #145CFF;
+  color: #22D3EE;
   cursor: pointer;
   padding: 6px 12px;
   border-radius: 8px;
@@ -142,7 +142,7 @@
 
 /* Free Shipping Banner */
 .checkout-free-ship-banner {
-  background-color: #145CFF;
+  background-color: #22D3EE;
   color: #FFFFFF;
   padding: 11px 24px;
   font-size: 13px;
@@ -269,7 +269,7 @@
   width: 26px;
   height: 26px;
   border-radius: 9999px;
-  background-color: #0F172A;
+  background-color: #0B0D14;
   color: #FFFFFF;
   font-size: 13px;
   font-weight: 700;
@@ -282,7 +282,7 @@
 .checkout-step-title {
   font-size: 17px;
   font-weight: 800;
-  color: #0F172A;
+  color: #F8FAFC;
   margin: 0;
   letter-spacing: -0.01em;
 }
@@ -311,7 +311,7 @@
 .checkout-label {
   font-size: 12px;
   font-weight: 700;
-  color: #0F172A;
+  color: #F8FAFC;
 }
 
 .checkout-label-req {
@@ -324,15 +324,15 @@
   border: 1px solid #CBD5E1;
   border-radius: 8px;
   font-size: 13px;
-  color: #0F172A;
-  background-color: #FFFFFF;
+  color: #F8FAFC;
+  background-color: #12141C;
   box-sizing: border-box;
   outline: none;
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
 .checkout-input:focus {
-  border-color: #145CFF;
+  border-color: #22D3EE;
   box-shadow: 0 0 0 3px rgba(20, 92, 255, 0.15);
 }
 
@@ -347,7 +347,7 @@
   border-radius: 10px;
   padding: 16px;
   cursor: pointer;
-  background-color: #FFFFFF;
+  background-color: #12141C;
   margin-bottom: 12px;
   transition: all 150ms ease;
   display: block;
@@ -372,7 +372,7 @@
 .checkout-radio-input {
   width: 18px;
   height: 18px;
-  accent-color: #145CFF;
+  accent-color: #22D3EE;
   cursor: pointer;
   margin-top: 2px;
 }
@@ -380,13 +380,13 @@
 .checkout-method-name {
   font-size: 14px;
   font-weight: 700;
-  color: #0F172A;
+  color: #F8FAFC;
 }
 
 .checkout-method-badge {
   display: inline-block;
   background: #EFF6FF;
-  color: #145CFF;
+  color: #22D3EE;
   border: 1px solid #BFDBFE;
   border-radius: 6px;
   padding: 2px 8px;
@@ -398,7 +398,7 @@
 
 .checkout-method-desc {
   font-size: 12px;
-  color: #475569;
+  color: #94A3B8;
   line-height: 1.5;
   margin-top: 4px;
   margin-bottom: 8px;
@@ -460,7 +460,7 @@
   flex-direction: column;
   gap: 10px;
   font-size: 13px;
-  color: #0F172A;
+  color: #F8FAFC;
   margin-top: 16px;
 }
 
@@ -473,8 +473,8 @@
 .checkout-price-row.total-row {
   font-size: 18px;
   font-weight: 800;
-  color: #0F172A;
-  border-top: 1px solid #E2E8F0;
+  color: #F8FAFC;
+  border-top: 1px solid #1E2230;
   padding-top: 14px;
   margin-top: 6px;
 }
@@ -513,10 +513,10 @@
   width: 52px;
   height: 52px;
   object-fit: contain;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #1E2230;
   border-radius: 6px;
   padding: 2px;
-  background: #FFFFFF;
+  background: #12141C;
   flex-shrink: 0;
 }
 

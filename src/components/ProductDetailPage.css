@@ -9,7 +9,7 @@
   width: 100%;
   min-height: 100vh;
   background-color: transparent;
-  color: #102A43;
+  color: #F8FAFC;
   font-family: var(--font-family, 'Inter', 'Noto Sans Bengali', -apple-system, sans-serif);
   padding-bottom: 72px;
   overflow-x: hidden;
@@ -50,10 +50,10 @@
   margin-top: 14px;
   margin-bottom: 8px;
   padding: 10px 18px;
-  background: rgba(255, 255, 255, 0.94);
+  background: #12141C;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid #DCEAF1;
+  border: 1px solid #1E2230;
   border-radius: 14px;
   display: flex;
   flex-wrap: wrap;
@@ -61,7 +61,7 @@
   justify-content: space-between;
   gap: 12px;
   font-size: 13px;
-  color: #62788A;
+  color: #94A3B8;
   box-shadow: 0 4px 14px -2px rgba(16, 38, 61, 0.04);
 }
 
@@ -79,7 +79,7 @@
   padding: 0;
   font-size: 13px;
   font-weight: 500;
-  color: #62788A;
+  color: #94A3B8;
   cursor: pointer;
   transition: color 150ms ease;
   display: inline-flex;
@@ -87,18 +87,18 @@
 }
 
 .pdp-breadcrumb-link:hover {
-  color: #168FC2;
+  color: #06B6D4;
 }
 
 .pdp-breadcrumb-separator {
-  color: #8FA6BE;
+  color: #64748B;
   display: inline-flex;
   align-items: center;
 }
 
 .pdp-breadcrumb-active {
   font-weight: 600;
-  color: #102A43;
+  color: #F8FAFC;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -124,9 +124,9 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 9999px;
-  background: #FFFFFF;
-  border: 1px solid #DCEAF1;
-  color: #102A43;
+  background: #12141C;
+  border: 1px solid #1E2230;
+  color: #F8FAFC;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -135,8 +135,8 @@
 }
 
 .pdp-btn-pill-subtle:hover {
-  border-color: #168FC2;
-  color: #168FC2;
+  border-color: #06B6D4;
+  color: #06B6D4;
 }
 
 .pdp-btn-pill-primary-subtle {
@@ -145,9 +145,9 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 9999px;
-  background: #EAF4FC;
+  background: #0B0D14;
   border: 1px solid rgba(22, 143, 194, 0.15);
-  color: #168FC2;
+  color: #06B6D4;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -218,10 +218,10 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: rgba(255, 255, 255, 0.94);
+  background: #12141C;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid #DCEAF1;
+  border: 1px solid #1E2230;
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -253,9 +253,9 @@
   width: 36px;
   height: 36px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #DCEAF1;
-  color: #62788A;
+  background: #12141C;
+  border: 1px solid #1E2230;
+  color: #94A3B8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -265,7 +265,7 @@
 }
 
 .pdp-stage-wishlist-btn:hover {
-  background: #FFFFFF;
+  background: #12141C;
   color: #E11D48;
   transform: scale(1.06);
 }
@@ -284,9 +284,9 @@
   width: 34px;
   height: 34px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #DCEAF1;
-  color: #102A43;
+  background: #12141C;
+  border: 1px solid #1E2230;
+  color: #F8FAFC;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,9 +296,9 @@
 }
 
 .pdp-stage-fullscreen-btn:hover {
-  background: #FFFFFF;
-  color: #168FC2;
-  border-color: #168FC2;
+  background: #12141C;
+  color: #06B6D4;
+  border-color: #06B6D4;
 }
 
 .pdp-stage-image-container {
@@ -324,12 +324,12 @@
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #DCEAF1;
+  background: #12141C;
+  border: 1px solid #1E2230;
   border-radius: 9999px;
   padding: 3px 12px;
   font-size: 11px;
-  color: #62788A;
+  color: #94A3B8;
   pointer-events: none;
   display: none;
 }
@@ -373,7 +373,7 @@
   width: 60px;
   height: 60px;
   border-radius: 12px;
-  background: #FFFFFF;
+  background: #12141C;
   border: 2px solid #DCEAF1;
   padding: 4px;
   cursor: pointer;
@@ -397,7 +397,7 @@
 }
 
 .pdp-thumb-btn.selected {
-  border-color: #168FC2;
+  border-color: #06B6D4;
   box-shadow: 0 0 0 2px rgba(22, 143, 194, 0.2);
 }
 
@@ -416,10 +416,10 @@
   flex-direction: column;
   gap: 18px;
   width: 100%;
-  background: rgba(255, 255, 255, 0.94);
+  background: #12141C;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid #DCEAF1;
+  border: 1px solid #1E2230;
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 4px 18px -2px rgba(16, 38, 61, 0.04);
@@ -444,8 +444,8 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #168FC2;
-  background: #EAF4FC;
+  color: #06B6D4;
+  background: #0B0D14;
   padding: 3px 10px;
   border-radius: 6px;
 }
@@ -455,7 +455,7 @@
   font-weight: 600;
   color: #334155;
   background: #F1F5F9;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #1E2230;
   padding: 3px 8px;
   border-radius: 6px;
 }
@@ -463,9 +463,9 @@
 .pdp-sku-tag {
   font-size: 12px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  color: #62788A;
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
+  color: #94A3B8;
+  background: #0B0D14;
+  border: 1px solid #1E2230;
   padding: 3px 8px;
   border-radius: 6px;
 }
@@ -475,7 +475,7 @@
   font-size: 22px;
   line-height: 1.28;
   font-weight: 800;
-  color: #102A43;
+  color: #F8FAFC;
   letter-spacing: -0.02em;
   margin: 0;
   word-break: break-word;
@@ -508,7 +508,7 @@
   gap: 8px;
   margin-top: 8px;
   font-size: 13px;
-  color: #62788A;
+  color: #94A3B8;
 }
 
 .pdp-rating-stars {
@@ -523,7 +523,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: #168FC2;
+  color: #06B6D4;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -536,7 +536,7 @@
 .pdp-divider {
   width: 100%;
   height: 1px;
-  background-color: #DCEAF1;
+  background-color: #1E2230;
   margin: 0;
 }
 
@@ -558,7 +558,7 @@
   font-size: 26px;
   line-height: 1;
   font-weight: 900;
-  color: #168FC2;
+  color: #06B6D4;
   letter-spacing: -0.02em;
 }
 
@@ -585,7 +585,7 @@
   font-size: 12px;
   font-weight: 800;
   background: #DDF4FC;
-  color: #168FC2;
+  color: #06B6D4;
   border: 1px solid #FFDCD4;
   padding: 3px 8px;
   border-radius: 4px;
@@ -593,14 +593,14 @@
 
 .pdp-vat-note {
   font-size: 12px;
-  color: #62788A;
+  color: #94A3B8;
   margin: 0;
 }
 
 /* Color & Finish Selection */
 .pdp-variants-card {
-  background: #FFFFFF;
-  border: 1px solid #DCEAF1;
+  background: #12141C;
+  border: 1px solid #1E2230;
   border-radius: 14px;
   padding: 14px 16px;
   box-shadow: 0 1px 3px rgba(16, 38, 61, 0.04);
@@ -612,7 +612,7 @@
   align-items: center;
   font-size: 13px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   margin-bottom: 10px;
 }
 
@@ -628,9 +628,9 @@
   gap: 8px;
   padding: 6px 14px;
   border-radius: 9999px;
-  border: 1px solid #DCEAF1;
-  background: #FFFFFF;
-  color: #62788A;
+  border: 1px solid #1E2230;
+  background: #12141C;
+  color: #94A3B8;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -639,13 +639,13 @@
 
 .pdp-variant-pill:hover {
   border-color: #94A3B8;
-  color: #102A43;
+  color: #F8FAFC;
 }
 
 .pdp-variant-pill.selected {
-  border-color: #168FC2;
-  background: #EAF4FC;
-  color: #102A43;
+  border-color: #06B6D4;
+  background: #0B0D14;
+  color: #F8FAFC;
   font-weight: 700;
   box-shadow: 0 0 0 2px rgba(22, 143, 194, 0.25);
 }
@@ -660,8 +660,8 @@
 
 /* Authenticity Verification Callout */
 .pdp-auth-box {
-  background: #FFFBEB;
-  border: 1px solid #FDE68A;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 14px;
   padding: 14px 16px;
   display: flex;
@@ -685,7 +685,7 @@
 .pdp-auth-desc {
   font-size: 13px;
   line-height: 1.5;
-  color: #62788A;
+  color: #94A3B8;
   margin: 0;
 }
 
@@ -706,7 +706,7 @@
 .pdp-section-subtitle {
   font-size: 14px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0;
@@ -727,11 +727,11 @@
   gap: 8px;
   font-size: 14px;
   line-height: 1.55;
-  color: #62788A;
+  color: #94A3B8;
 }
 
 .pdp-bullet-dot {
-  color: #168FC2;
+  color: #06B6D4;
   font-weight: 700;
   font-size: 16px;
   line-height: 1;
@@ -751,11 +751,11 @@
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  background: #FFFFFF;
-  border: 1px solid #DCEAF1;
+  background: #12141C;
+  border: 1px solid #1E2230;
   border-radius: 12px;
   font-size: 13px;
-  color: #102A43;
+  color: #F8FAFC;
   font-weight: 600;
 }
 
@@ -775,10 +775,10 @@
 }
 
 .pdp-buybox-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: #12141C;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid #DCEAF1;
+  border: 1px solid #1E2230;
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -790,7 +790,7 @@
 .pdp-buybox-price {
   font-size: 26px;
   font-weight: 800;
-  color: #102A43;
+  color: #F8FAFC;
   line-height: 1;
   display: flex;
   align-items: baseline;
@@ -810,9 +810,9 @@
   flex-direction: column;
   gap: 8px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #DCEAF1;
+  border-bottom: 1px solid #1E2230;
   font-size: 13px;
-  color: #62788A;
+  color: #94A3B8;
 }
 
 .pdp-delivery-row {
@@ -823,7 +823,7 @@
 
 .pdp-delivery-title {
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   display: block;
 }
 
@@ -877,14 +877,14 @@
   gap: 12px;
   font-size: 13px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
 }
 
 .pdp-qty-stepper {
   display: flex;
   align-items: center;
-  background: #F8FAFC;
-  border: 1px solid #DCEAF1;
+  background: #0B0D14;
+  border: 1px solid #1E2230;
   border-radius: 10px;
   padding: 2px;
 }
@@ -895,7 +895,7 @@
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: #62788A;
+  color: #94A3B8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -904,8 +904,8 @@
 }
 
 .pdp-qty-btn:hover:not(:disabled) {
-  background: #FFFFFF;
-  color: #168FC2;
+  background: #12141C;
+  color: #06B6D4;
   box-shadow: 0 1px 2px rgba(16, 38, 61, 0.05);
 }
 
@@ -919,7 +919,7 @@
   text-align: center;
   font-size: 14px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   border: none;
   background: transparent;
   outline: none;
@@ -937,8 +937,8 @@
   min-height: 48px;
   padding: 12px 20px;
   border-radius: 12px;
-  background: #EFF6FF;
-  color: #145CFF;
+  background: rgba(6, 182, 212, 0.1);
+  color: #06B6D4;
   font-size: 15px;
   font-weight: 700;
   border: 1.5px solid #145CFF;
@@ -1003,9 +1003,9 @@
   min-height: 42px;
   padding: 10px 16px;
   border-radius: 12px;
-  background: #FFFFFF;
-  border: 1px solid #DCEAF1;
-  color: #62788A;
+  background: #12141C;
+  border: 1px solid #1E2230;
+  color: #94A3B8;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -1017,7 +1017,7 @@
 }
 
 .pdp-btn-wishlist:hover {
-  background: #F8FAFC;
+  background: #0B0D14;
   color: #E11D48;
   border-color: #FECDD3;
 }
@@ -1034,9 +1034,9 @@
   flex-direction: column;
   gap: 6px;
   padding-top: 12px;
-  border-top: 1px solid #DCEAF1;
+  border-top: 1px solid #1E2230;
   font-size: 12px;
-  color: #62788A;
+  color: #94A3B8;
 }
 
 .pdp-trust-row {
@@ -1046,11 +1046,11 @@
 }
 
 .pdp-trust-label {
-  color: #8FA6BE;
+  color: #64748B;
 }
 
 .pdp-trust-val {
-  color: #102A43;
+  color: #F8FAFC;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -1062,8 +1062,8 @@
    ========================================================================== */
 .pdp-bundle-card {
   margin-top: 36px;
-  background: #FFFFFF;
-  border: 1px solid #DCEAF1;
+  background: #12141C;
+  border: 1px solid #1E2230;
   border-radius: 20px;
   padding: 16px;
   box-shadow: 0 2px 10px rgba(16, 38, 61, 0.03);
@@ -1082,7 +1082,7 @@
 .pdp-bundle-title {
   font-size: 20px;
   font-weight: 800;
-  color: #102A43;
+  color: #F8FAFC;
   margin: 0 0 16px 0;
   display: flex;
   align-items: center;
@@ -1117,22 +1117,22 @@
   gap: 12px;
   padding: 10px 14px;
   border-radius: 14px;
-  border: 1px solid #DCEAF1;
-  background: #F8FAFC;
+  border: 1px solid #1E2230;
+  background: #0B0D14;
   transition: all 160ms ease;
 }
 
 .pdp-bundle-item.active {
-  background: #EAF4FC;
-  border-color: #168FC2;
+  background: #0B0D14;
+  border-color: #06B6D4;
 }
 
 .pdp-bundle-item-thumb {
   width: 56px;
   height: 56px;
   border-radius: 10px;
-  background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  background: #12141C;
+  border: 1px solid #1E2230;
   padding: 4px;
   flex-shrink: 0;
   display: flex;
@@ -1155,7 +1155,7 @@
 .pdp-bundle-item-name {
   font-size: 13px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1164,7 +1164,7 @@
 .pdp-bundle-item-price {
   font-size: 14px;
   font-weight: 800;
-  color: #168FC2;
+  color: #06B6D4;
   margin-top: 2px;
 }
 
@@ -1180,7 +1180,7 @@
   justify-content: space-between;
   width: 100%;
   gap: 16px;
-  border-top: 1px solid #DCEAF1;
+  border-top: 1px solid #1E2230;
   padding-top: 16px;
 }
 
@@ -1196,7 +1196,7 @@
 .pdp-bundle-total-price {
   font-size: 22px;
   font-weight: 800;
-  color: #102A43;
+  color: #F8FAFC;
 }
 
 /* ==========================================================================
@@ -1204,10 +1204,10 @@
    ========================================================================== */
 .pdp-tabs-card {
   margin-top: 36px;
-  background: rgba(255, 255, 255, 0.95);
+  background: #12141C;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid #DCEAF1;
+  border: 1px solid #1E2230;
   border-radius: 20px;
   padding: 16px;
   box-shadow: 0 2px 10px rgba(16, 38, 61, 0.03);
@@ -1232,7 +1232,7 @@
   width: 100%;
   min-width: 0;
   padding-bottom: 12px;
-  border-bottom: 1px solid #DCEAF1;
+  border-bottom: 1px solid #1E2230;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -1248,7 +1248,7 @@
   font-weight: 700;
   border: none;
   background: transparent;
-  color: #62788A;
+  color: #94A3B8;
   cursor: pointer;
   transition: all 160ms ease;
   white-space: nowrap;
@@ -1257,7 +1257,7 @@
 
 .pdp-tab-btn:hover {
   background: #F0F7FF;
-  color: #102A43;
+  color: #F8FAFC;
 }
 
 .pdp-tab-btn.active {
@@ -1273,24 +1273,24 @@
 .pdp-pane-heading {
   font-size: 20px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   margin: 0 0 12px 0;
 }
 
 .pdp-pane-body {
   font-size: 15px;
   line-height: 1.6;
-  color: #62788A;
+  color: #94A3B8;
   margin: 0;
 }
 
 /* 2-Column Specifications Table */
 .pdp-specs-table-wrapper {
   max-width: 860px;
-  border: 1px solid #DCEAF1;
+  border: 1px solid #1E2230;
   border-radius: 14px;
   overflow: hidden;
-  background: #FFFFFF;
+  background: #12141C;
   margin-top: 14px;
 }
 
@@ -1317,7 +1317,7 @@
   padding: 12px 18px;
   font-size: 14px;
   font-weight: 600;
-  color: #62788A;
+  color: #94A3B8;
   vertical-align: top;
 }
 
@@ -1326,7 +1326,7 @@
   padding: 12px 18px;
   font-size: 14px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   vertical-align: top;
 }
 
@@ -1348,8 +1348,8 @@
    ========================================================================== */
 .pdp-related-card {
   margin-top: 36px;
-  background: #FFFFFF;
-  border: 1px solid #DCEAF1;
+  background: #12141C;
+  border: 1px solid #1E2230;
   border-radius: 20px;
   padding: 16px;
   box-shadow: 0 2px 10px rgba(16, 38, 61, 0.03);
@@ -1385,15 +1385,15 @@
   justify-content: space-between;
   padding: 14px;
   border-radius: 16px;
-  background: #FFFFFF;
-  border: 1px solid #DCEAF1;
+  background: #12141C;
+  border: 1px solid #1E2230;
   cursor: pointer;
   transition: all 180ms ease;
 }
 
 .pdp-related-item:hover {
   transform: translateY(-2px);
-  border-color: #168FC2;
+  border-color: #06B6D4;
   box-shadow: 0 8px 24px -4px rgba(16, 38, 61, 0.08);
 }
 
@@ -1401,7 +1401,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #F8FAFC;
+  background: #0B0D14;
   border-radius: 12px;
   padding: 8px;
   display: flex;
@@ -1424,7 +1424,7 @@
 .pdp-related-title {
   font-size: 13px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1436,7 +1436,7 @@
 .pdp-related-price {
   font-size: 15px;
   font-weight: 800;
-  color: #102A43;
+  color: #F8FAFC;
 }
 
 /* ==========================================================================
@@ -1449,9 +1449,9 @@
   left: 0;
   right: 0;
   z-index: 40;
-  background: rgba(255, 255, 255, 0.98);
+  background: #12141C;
   backdrop-filter: blur(12px);
-  border-top: 1px solid #DCEAF1;
+  border-top: 1px solid #1E2230;
   padding: 10px 16px;
   align-items: center;
   justify-content: space-between;
@@ -1476,8 +1476,8 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  border: 1px solid #DCEAF1;
-  background: #FFFFFF;
+  border: 1px solid #1E2230;
+  background: #12141C;
   padding: 2px;
   flex-shrink: 0;
 }
@@ -1495,7 +1495,7 @@
 .pdp-mobile-bar-title {
   font-size: 12px;
   font-weight: 700;
-  color: #102A43;
+  color: #F8FAFC;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1505,7 +1505,7 @@
 .pdp-mobile-bar-price {
   font-size: 14px;
   font-weight: 800;
-  color: #168FC2;
+  color: #06B6D4;
   line-height: 1;
 }
 
@@ -1563,8 +1563,8 @@
 .pdp-overview-card {
   padding: 16px 18px;
   border-radius: 14px;
-  background: #F8FAFC;
-  border: 1px solid #DCEAF1;
+  background: #0B0D14;
+  border: 1px solid #1E2230;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1587,8 +1587,8 @@
 .pdp-shipping-card {
   padding: 20px;
   border-radius: 16px;
-  background: #F8FAFC;
-  border: 1px solid #DCEAF1;
+  background: #0B0D14;
+  border: 1px solid #1E2230;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1613,8 +1613,8 @@
 .pdp-reviews-sidebar {
   padding: 22px;
   border-radius: 16px;
-  background: #F8FAFC;
-  border: 1px solid #DCEAF1;
+  background: #0B0D14;
+  border: 1px solid #1E2230;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -1629,8 +1629,8 @@
 .pdp-review-card {
   padding: 16px 18px;
   border-radius: 14px;
-  background: #FFFFFF;
-  border: 1px solid #DCEAF1;
+  background: #12141C;
+  border: 1px solid #1E2230;
   display: flex;
   flex-direction: column;
   gap: 8px;

@@ -11,29 +11,30 @@ export default function Footer({
   lang 
 }) {
   return (
-    <footer className="w-full mt-16 sm:mt-24 border-t border-[#E2E8F0] bg-white shadow-xs">
+    <footer className="w-full mt-16 sm:mt-24 border-t border-[#1E2230] bg-[#090A0F] text-zinc-400">
       <div className="container pt-12 sm:pt-16 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#E2E8F0]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#1E2230]">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-3.5">
             <div className="flex items-center">
-              <BrandLogo height={48} className="h-12 sm:h-14 w-auto" />
+              <BrandLogo variant="dark" height={48} className="h-10 sm:h-12 w-auto" />
             </div>
-            <p className="text-xs text-slate-500 leading-relaxed max-w-sm">
-              {t.footerAbout}
+            <p className="text-xs text-zinc-400 leading-relaxed max-w-sm font-mono">
+              {t.footerAbout || 'Tech Nest — Precision-engineered mobile accessories, GaN fast chargers, ANC acoustics, and wearable tech with 24-48h nationwide delivery.'}
             </p>
-            <div className="text-xs text-slate-500 space-y-2 pt-1">
+            <div className="text-xs font-mono text-zinc-400 space-y-2 pt-1">
               <div className="flex items-center gap-2">
-                <MapPin size={14} className="text-[#145CFF] shrink-0" />
-                <span>Dhaka, Bangladesh • Fast Nationwide Courier</span>
+                <MapPin size={13} className="text-cyan-400 shrink-0" />
+                <span>Dhaka, Bangladesh • Fast Nationwide Dispatch</span>
               </div>
               <div className="flex items-center gap-2">
-                <HelpCircle size={14} className="text-[#145CFF] shrink-0" />
+                <HelpCircle size={13} className="text-cyan-400 shrink-0" />
                 <button 
+                  type="button"
                   onClick={onOpenSupport}
-                  className="footer-link-btn text-[#145CFF] font-medium hover:underline"
+                  className="text-cyan-400 hover:text-cyan-300 hover:underline cursor-pointer"
                 >
-                  Contact support & store inquiries
+                  Contact support & warranty telemetry
                 </button>
               </div>
             </div>
@@ -41,40 +42,44 @@ export default function Footer({
 
           {/* Quick Shop Links */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
+            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-white">
               Categories
             </h4>
-            <ul className="footer-nav-list">
+            <ul className="space-y-2 text-xs font-mono">
               <li>
                 <button 
+                  type="button"
                   onClick={() => onSelectCategory('audio')} 
-                  className="footer-link-btn"
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
                 >
-                  {t.catAudio || 'Audio'}
+                  {t.catAudio || 'Audio & TWS'}
                 </button>
               </li>
               <li>
                 <button 
+                  type="button"
                   onClick={() => onSelectCategory('charging')} 
-                  className="footer-link-btn"
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
                 >
-                  {t.catCharging || 'Charging'}
+                  {t.catCharging || 'GaN & Charging'}
                 </button>
               </li>
               <li>
                 <button 
+                  type="button"
                   onClick={() => onSelectCategory('wearables')} 
-                  className="footer-link-btn"
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
                 >
                   {t.catWearables || 'Smartwatches'}
                 </button>
               </li>
               <li>
                 <button 
+                  type="button"
                   onClick={() => onSelectCategory(null)} 
-                  className="footer-link-btn"
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
                 >
-                  {t.allProducts || 'All Products'}
+                  {t.allProducts || 'Master Catalog'}
                 </button>
               </li>
             </ul>
@@ -82,40 +87,44 @@ export default function Footer({
 
           {/* Support & Policies */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
+            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-white">
               Assistance
             </h4>
-            <ul className="footer-nav-list">
+            <ul className="space-y-2 text-xs font-mono">
               <li>
                 <button 
+                  type="button"
                   onClick={onOpenTracking} 
-                  className="footer-link-btn"
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
                 >
-                  Track Your Order
+                  Track Dispatch Status
                 </button>
               </li>
               <li>
                 <button 
+                  type="button"
                   onClick={onOpenSupport} 
-                  className="footer-link-btn"
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
                 >
-                  Warranty & Inquiries
+                  Warranty & Diagnostics
                 </button>
               </li>
               <li>
                 <button 
+                  type="button"
                   onClick={onOpenSupport} 
-                  className="footer-link-btn"
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
                 >
-                  Delivery Options & Tiers
+                  Free Delivery Tiers (৳2,000+)
                 </button>
               </li>
               <li>
                 <button 
+                  type="button"
                   onClick={onOpenSupport} 
-                  className="footer-link-btn"
+                  className="hover:text-cyan-400 transition-colors cursor-pointer"
                 >
-                  Return & Exchange Policy
+                  7-Day Replacement Policy
                 </button>
               </li>
             </ul>
@@ -123,21 +132,21 @@ export default function Footer({
 
           {/* Customer Trust & Logistics */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#0F172A]">
-              {lang === 'bn' ? 'নিরাপত্তা ও ডেলিভারি' : 'Trust & Delivery'}
+            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-white">
+              {lang === 'bn' ? 'নিরাপত্তা ও ডেলিভারি' : 'Trust Protocol'}
             </h4>
-            <ul className="footer-nav-list text-xs text-slate-500 space-y-1.5">
-              <li className="flex items-center gap-1.5">
-                <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
-                <span>{lang === 'bn' ? '১০০% অরিজিনাল গ্যাজেট' : '100% Genuine BD Imports'}</span>
+            <ul className="text-xs font-mono space-y-2">
+              <li className="flex items-center gap-1.5 text-emerald-400">
+                <ShieldCheck size={14} className="shrink-0" />
+                <span>{lang === 'bn' ? '১০০% পরীক্ষিত আসল পণ্য' : '100% Quality Inspected'}</span>
               </li>
-              <li className="flex items-center gap-1.5">
-                <Sparkles size={14} className="text-[#145CFF] shrink-0" />
+              <li className="flex items-center gap-1.5 text-cyan-400">
+                <Sparkles size={14} className="shrink-0" />
                 <span>{lang === 'bn' ? '৭ দিনের রিপ্লেসমেন্ট পলিসি' : '7-Day Replacement Policy'}</span>
               </li>
               <li>
-                <span className="text-slate-500 text-[11px]">
-                  {lang === 'bn' ? 'সারা বাংলাদেশে ক্যাশ অন ডেলিভারি' : 'Cash on Delivery Across Bangladesh'}
+                <span className="text-zinc-400 text-[11px]">
+                  {lang === 'bn' ? 'সারা বাংলাদেশে ক্যাশ অন ডেলিভারি' : 'Nationwide Cash on Delivery (COD)'}
                 </span>
               </li>
             </ul>
@@ -145,27 +154,27 @@ export default function Footer({
         </div>
 
         {/* Bottom Strip & Payment Methods */}
-        <div className="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>{t.copyright}</p>
+        <div className="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-400">
+          <p>{t.copyright || '© 2026 Tech Nest. All rights reserved.'}</p>
 
           {/* Payment Badges */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-semibold text-[#0F172A] mr-1">Accepted Payments:</span>
-            <span className="px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-[11px] shadow-2xs">
+            <span className="text-[11px] text-zinc-400 mr-1">PAYMENTS:</span>
+            <span className="px-2 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 font-bold text-[10px]">
               Cash on Delivery
             </span>
-            <span className="px-2.5 py-1 rounded-md bg-pink-50 border border-pink-200 text-pink-700 font-bold text-[11px] shadow-2xs">
+            <span className="px-2 py-0.5 rounded-md bg-pink-950/40 border border-pink-500/30 text-pink-400 font-bold text-[10px]">
               bKash
             </span>
-            <span className="px-2.5 py-1 rounded-md bg-orange-50 border border-orange-200 text-orange-700 font-bold text-[11px] shadow-2xs">
+            <span className="px-2 py-0.5 rounded-md bg-amber-950/40 border border-amber-500/30 text-amber-400 font-bold text-[10px]">
               Nagad
             </span>
-            <span className="px-2.5 py-1 rounded-md bg-[#EFF6FF] border border-[#BFDBFE] text-[#145CFF] font-bold text-[11px] shadow-2xs">
+            <span className="px-2 py-0.5 rounded-md bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-bold text-[10px]">
               Visa / Mastercard
             </span>
-            <span className="px-2.5 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-600 font-medium text-[11px] flex items-center gap-1">
-              <ShieldCheck size={12} className="text-emerald-600" />
-              <span>256-bit Secure Gateway</span>
+            <span className="px-2 py-0.5 rounded-md bg-[#12141C] border border-[#1E2230] text-zinc-300 font-medium text-[10px] flex items-center gap-1">
+              <ShieldCheck size={11} className="text-emerald-400" />
+              <span>256-bit SSL</span>
             </span>
           </div>
         </div>

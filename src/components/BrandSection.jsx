@@ -9,16 +9,19 @@ export default function BrandSection({
   lang = 'en'
 }) {
   return (
-    <section className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-white rounded-xl sm:rounded-2xl border border-[#E2E8F0] shadow-xs">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
+    <section className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-[#12141C] rounded-2xl border border-[#1E2230] shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-[#1E2230]">
         <div>
-          <h2 className="text-lg sm:text-xl font-extrabold text-[#0F172A] tracking-tight uppercase">
-            {lang === 'bn' ? 'ব্র্যান্ড ও ফোন মডেল কম্প্যাটিবিলিটি' : 'VERIFIED DEVICE COMPATIBILITY'}
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="agent-pulse-dot" />
+            <h2 className="text-sm sm:text-base font-bold font-mono text-white tracking-wide uppercase">
+              {lang === 'bn' ? 'ব্র্যান্ড ও ফোন মডেল কম্প্যাটিবিলিটি' : 'VERIFIED DEVICE COMPATIBILITY MATRIX'}
+            </h2>
+          </div>
+          <p className="text-[11px] text-zinc-400 font-mono">
             {lang === 'bn' 
               ? 'আপনার স্মার্টফোনের জন্য শতভাগ পরীক্ষিত চার্জার, ক্যাবল ও অডিও এক্সেসরিজ' 
-              : 'Select your phone model to view verified compatible accessories'}
+              : 'Filter accessories with guaranteed wattage, pin-out, and protocol compatibility'}
           </p>
         </div>
 
@@ -26,9 +29,10 @@ export default function BrandSection({
           <button
             type="button"
             onClick={onClearPhoneFilter}
-            className="text-xs font-bold text-[#145CFF] hover:underline cursor-pointer"
+            className="text-xs font-mono font-semibold text-cyan-400 hover:text-cyan-300 hover:underline cursor-pointer flex items-center gap-1"
           >
-            {lang === 'bn' ? 'ফিল্টার মুছুন' : 'Clear Phone Filter'}
+            <span>{lang === 'bn' ? 'ফিল্টার মুছুন' : 'Reset Filter'}</span>
+            <span className="text-zinc-500">({selectedPhone})</span>
           </button>
         )}
       </div>
@@ -38,12 +42,14 @@ export default function BrandSection({
         {BRANDS_AND_MODELS.map((brandGroup) => (
           <div 
             key={brandGroup.brand} 
-            className="p-4 rounded-xl bg-slate-50 border border-[#E2E8F0] hover:border-[#BFDBFE] transition-all flex flex-col justify-between"
+            className="p-4 rounded-xl bg-[#0B0D14] border border-[#1E2230] hover:border-cyan-500/30 transition-all flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-center gap-2 mb-2.5">
-                <Smartphone size={16} className="text-[#145CFF]" />
-                <h3 className="text-sm font-bold text-[#0F172A]">{brandGroup.brand}</h3>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-6 h-6 rounded bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                  <Smartphone size={13} />
+                </div>
+                <h3 className="text-xs font-mono font-bold text-white tracking-wider uppercase">{brandGroup.brand}</h3>
               </div>
 
               <div className="flex flex-wrap gap-1.5">
@@ -54,10 +60,10 @@ export default function BrandSection({
                       key={model}
                       type="button"
                       onClick={() => onSelectPhone(isSelected ? null : model)}
-                      className={`text-[11px] px-2.5 py-1 rounded transition-all cursor-pointer ${
+                      className={`text-[11px] font-mono px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#145CFF] text-white font-bold shadow-xs'
-                          : 'bg-white text-slate-600 hover:text-[#0F172A] hover:bg-slate-100 border border-slate-200'
+                          ? 'bg-cyan-500 text-[#090A0F] font-bold shadow-[0_0_12px_rgba(6,182,212,0.4)]'
+                          : 'bg-[#12141C] text-zinc-300 hover:text-cyan-300 hover:border-cyan-500/50 border border-[#1E2230]'
                       }`}
                     >
                       {model}
@@ -70,7 +76,7 @@ export default function BrandSection({
             <button
               type="button"
               onClick={() => onSelectPhone(brandGroup.models[0])}
-              className="mt-3 text-[11px] font-semibold text-[#145CFF] hover:underline flex items-center gap-1 cursor-pointer"
+              className="mt-4 text-[11px] font-mono font-medium text-cyan-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <span>{lang === 'bn' ? `${brandGroup.brand} এক্সেসরিজ` : `View ${brandGroup.brand} Gear`}</span>
               <ChevronRight size={13} />
