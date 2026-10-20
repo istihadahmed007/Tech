@@ -1,34 +1,42 @@
 import React from 'react';
 
 /**
- * BrandLogo — Official Logo Component for Tech Vartual Tutor
- * Renders the authentic Vartual Tutor educational crest emblem
- * and "TECH VARTUAL TUTOR" typography.
+ * BrandLogo — Official Logo Component for Tech Nest
+ * Renders the authentic futuristic glowing cyan Circuit Nest emblem
+ * and 3D "TECH NEST" wordmark.
  */
-const LOGO_VERSION = '20261020_v1';
+const LOGO_VERSION = '20261019_v6';
 
 export default function BrandLogo({ 
   variant = 'horizontal', 
   className = '', 
   height = 44,
-  alt = "Tech Vartual Tutor — Authentic Mobile Accessories" 
+  alt = "Tech Nest — Authentic Mobile Accessories" 
 }) {
-  let baseSrc = '/assets/tech-vartual-tutor-logo-horizontal.svg';
-  let aspectRatio = '880 / 180';
-  let ratioNumber = 880 / 180;
+  let baseSrc = '/assets/tech-nest-logo-horizontal.png';
+  let aspectRatio = '2349 / 478';
+  let ratioNumber = 2349 / 478;
 
-  if (variant === 'icon' || variant === 'icon-transparent') {
-    baseSrc = '/assets/tech-vartual-tutor-icon.svg';
+  if (variant === 'icon') {
+    baseSrc = '/assets/tech-nest-icon.png';
+    aspectRatio = '1 / 1';
+    ratioNumber = 1;
+  } else if (variant === 'icon-transparent') {
+    baseSrc = '/assets/tech-nest-icon-transparent.png';
     aspectRatio = '1 / 1';
     ratioNumber = 1;
   } else if (variant === 'badge' || variant === 'dark') {
-    baseSrc = '/assets/tech-vartual-tutor-logo-dark.svg';
-    aspectRatio = '880 / 180';
-    ratioNumber = 880 / 180;
-  } else if (variant === 'vertical' || variant === 'stacked' || variant === 'raw') {
-    baseSrc = '/assets/vartualtutor-logo.svg';
-    aspectRatio = '1 / 1';
-    ratioNumber = 1;
+    baseSrc = '/assets/tech-nest-logo-dark.png';
+    aspectRatio = '2349 / 478';
+    ratioNumber = 2349 / 478;
+  } else if (variant === 'vertical' || variant === 'stacked') {
+    baseSrc = '/assets/tech-nest-logo-vertical.png';
+    aspectRatio = '504 / 530';
+    ratioNumber = 504 / 530;
+  } else if (variant === 'raw') {
+    baseSrc = '/assets/tech-nest-logo-raw.jpg';
+    aspectRatio = '1024 / 571';
+    ratioNumber = 1024 / 571;
   }
 
   const src = `${baseSrc}?v=${LOGO_VERSION}`;
@@ -55,5 +63,4 @@ export default function BrandLogo({
     />
   );
 }
-
 

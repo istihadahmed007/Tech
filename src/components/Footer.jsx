@@ -12,12 +12,12 @@ export default function Footer({
 }) {
   return (
     <footer className="w-full mt-16 sm:mt-24 border-t border-[#E2E8F0] bg-white shadow-xs">
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-12">
+      <div className="container pt-12 sm:pt-16 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#E2E8F0]">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-3.5">
             <div className="flex items-center">
-              <BrandLogo variant="horizontal" height={36} className="h-9 w-auto" alt="Tech Vartual Tutor" />
+              <BrandLogo height={48} className="h-12 sm:h-14 w-auto" />
             </div>
             <p className="text-xs text-slate-500 leading-relaxed max-w-sm">
               {t.footerAbout}

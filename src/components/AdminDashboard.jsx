@@ -62,7 +62,6 @@ import {
 import { openPrintWindow, openBatchPrintWindow } from '../utils/invoice.js';
 import { safeFetchJson, getApiBaseUrl, setApiBaseUrl, testApiConnection } from '../utils/api.js';
 import { INITIAL_PRODUCTS } from '../data/catalog.js';
-import BrandLogo from './BrandLogo.jsx';
 
 function getStoredProducts() {
   if (typeof window !== 'undefined' && window.localStorage) {
@@ -212,7 +211,7 @@ export default function AdminDashboard({
 
   // Shipping & Delivery Configuration State
   const [shippingSettings, setShippingSettings] = useState({
-    storeName: 'Tech Vartual Tutor',
+    storeName: 'Tech Nest',
     insideDhakaFee: 60,
     outsideDhakaFee: 120,
     freeShippingThreshold: 2000,
@@ -222,7 +221,7 @@ export default function AdminDashboard({
     reviewsEnabled: true,
     serviceRequestsEnabled: true,
     supportPhone: '+880 1700-000000',
-    supportEmail: 'support@vartualtutor.com',
+    supportEmail: 'support@technest.com.bd',
     address: 'Multiplan Center, Level 4, Shop 412, Elephant Road, Dhaka-1205'
   });
   const [savingSettings, setSavingSettings] = useState(false);
@@ -1513,11 +1512,11 @@ export default function AdminDashboard({
         <div className="w-full max-w-md bg-white rounded-2xl border border-[#DCE7F0] shadow-sm p-6 sm:p-8 space-y-6">
           {/* Brand Emblem */}
           <div className="flex flex-col items-center text-center space-y-3">
-            <BrandLogo 
-              variant="horizontal" 
-              height={44} 
-              alt="Tech Vartual Tutor" 
+            <img 
+              src="/assets/tech-nest-logo-horizontal.png?v=20261019_v6" 
+              alt="Tech Nest" 
               className="h-11 w-auto object-contain"
+              style={{ aspectRatio: '2349 / 478' }}
             />
             <div className="space-y-1">
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#10263D]">
@@ -1931,11 +1930,11 @@ export default function AdminDashboard({
           <div className="flex items-center justify-between pb-3 border-b border-[#DCE7F0]">
             {!sidebarCollapsed ? (
               <div className="flex items-center gap-2">
-                <BrandLogo 
-                  variant="horizontal" 
-                  height={32} 
-                  alt="Tech Vartual Tutor" 
+                <img 
+                  src="/assets/tech-nest-logo-horizontal.png?v=20261019_v6" 
+                  alt="Tech Nest" 
                   className="h-8 w-auto object-contain"
+                  style={{ aspectRatio: '2349 / 478' }}
                 />
                 <span className="text-[10px] font-bold bg-[#EAF4FC] text-[#145CFF] px-2 py-0.5 rounded-full">
                   Admin
@@ -2117,7 +2116,7 @@ export default function AdminDashboard({
               </div>
             </div>
             <p className="text-xs sm:text-sm text-[#52677B] mt-0.5">
-              Centralized operational dashboard for Tech Vartual Tutor (Bangladesh).
+              Centralized operational dashboard for Tech Nest (Bangladesh).
             </p>
           </div>
 
@@ -4027,7 +4026,7 @@ export default function AdminDashboard({
                 Customer Account Profiles ({customers.length})
               </h3>
               <p className="text-xs text-[#52677B]">
-                Registered Tech Vartual Tutor customer accounts, order frequency, and cumulative spend.
+                Registered Tech Nest customer accounts, order frequency, and cumulative spend.
               </p>
             </div>
 

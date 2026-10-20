@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import TopUtilityBar from './components/TopUtilityBar';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import CategoryIconRow from './components/CategoryIconRow';
-import FeaturedCategoryCards from './components/FeaturedCategoryCards';
-import LifestylePromoBanners from './components/LifestylePromoBanners';
-import HotDealsSection from './components/HotDealsSection';
-import NewInSection from './components/NewInSection';
+import QuickShortcuts from './components/QuickShortcuts';
+import FlashSale from './components/FlashSale';
+import FeaturedCategories from './components/FeaturedCategories';
+import DailyDiscover from './components/DailyDiscover';
+import BrandSection from './components/BrandSection';
+import ReviewsSection from './components/ReviewsSection';
+import FaqSection from './components/FaqSection';
+import NewsletterSection from './components/NewsletterSection';
+import CompatibilityFinder from './components/CompatibilityFinder';
+import CategoryNav from './components/CategoryNav';
 import ProductGrid from './components/ProductGrid';
 import ProductDetailModal from './components/ProductDetailModal';
 import ProductDetailPage from './components/ProductDetailPage';
@@ -416,18 +422,18 @@ export default function App() {
         setIsCheckoutView(false);
         setSelectedProduct(null);
         setActiveModal(null);
-        document.title = 'Staff Console — Tech Vartual Tutor';
+        document.title = 'Staff Console — Tech Nest';
         return;
       }
 
-      // 1. Dedicated Cart Page routing (/cart, #cart, or ?view=cart)
+      // 1. Dedicated Amazon Cart Page routing (/cart, #cart, or ?view=cart)
       if (pathname === '/cart' || pathname === '/cart/' || hash === '#cart' || hash.startsWith('#cart?') || search.includes('view=cart')) {
         setIsCartView(true);
         setIsCheckoutView(false);
         setIsAdminView(false);
         setSelectedProduct(null);
         setActiveModal(null);
-        document.title = 'Shopping Cart — Tech Vartual Tutor';
+        document.title = 'Amazon.com Shopping Cart — Tech Nest';
         return;
       }
 
@@ -438,7 +444,7 @@ export default function App() {
         setIsAdminView(false);
         setSelectedProduct(null);
         setActiveModal(null);
-        document.title = 'Secure Checkout — Tech Vartual Tutor';
+        document.title = 'Amazon.com Checkout — Tech Nest';
         return;
       }
 
@@ -816,18 +822,32 @@ export default function App() {
         </div>
       )}
 
-      {/* Compact Premium Electronics Store Header (Screenshot 2) */}
+      {/* Shopee-Inspired Top Utility Bar */}
+      <TopUtilityBar
+        onOpenTracking={(id) => {
+          setTrackingOrderId(id || '');
+          setTrackingToken('');
+          setActiveModal('tracking');
+        }}
+        onOpenSupport={() => setActiveModal('support')}
+        lang={lang}
+        setLang={setLang}
+        t={t}
+      />
+
+      {/* Shopee-Style Header */}
       <Header
-        storeName={import.meta.env.VITE_STORE_NAME || "Tech Vartual Tutor"}
+        storeName={import.meta.env.VITE_STORE_NAME || "Tech Nest"}
         t={t}
         lang={lang}
         setLang={setLang}
         currentUser={currentUser}
         cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
         wishlistCount={wishlistIds.length}
-        cartTotal={cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)}
+        comparisonCount={comparisonIds.length}
         onOpenCart={() => navigateToCart(true)}
         onOpenWishlist={() => setActiveModal('wishlist')}
+        onOpenComparison={() => setActiveModal('comparison')}
         onOpenSupport={() => setActiveModal('support')}
         onOpenAccount={() => setActiveModal('account')}
         onOpenTracking={(id) => {
@@ -840,6 +860,22 @@ export default function App() {
           setSearchQuery(query);
           if (selectedProduct && query.trim()) {
             navigateToHome(false);
+          }
+        }}
+        onScrollToFinder={() => {
+          if (selectedProduct || isCartView) {
+            navigateToHome(false);
+            setTimeout(() => scrollToSection('smart-tech-finder'), 50);
+          } else {
+            scrollToSection('smart-tech-finder');
+          }
+        }}
+        onScrollToKits={() => {
+          if (selectedProduct || isCartView) {
+            navigateToHome(false);
+            setTimeout(() => scrollToSection('tech-kits-section'), 50);
+          } else {
+            scrollToSection('tech-kits-section');
           }
         }}
         onGoHome={() => navigateToHome(true)}
@@ -857,7 +893,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className={selectedProduct || isCartView || isCheckoutView ? "flex-grow w-full" : "w-full flex-grow"}>
+      <main className={selectedProduct || isCartView || isCheckoutView ? "flex-grow w-full" : "container flex-grow pt-2 sm:pt-4"}>
         {selectedProduct ? (
           <ProductDetailPage
             product={selectedProduct}
@@ -905,92 +941,162 @@ export default function App() {
           />
         ) : (
           <>
-            {/* 1. Main Hero Spotlight Banner (Screenshot 1 & 2) */}
+            {/* 1. Hero Carousel + Side Highlight Banners */}
             <Hero
-              onShopClick={() => {
-                setSelectedCategory(null);
-                scrollToSection('products-section');
-              }}
+              onShopClick={() => scrollToSection('products-section')}
+              onFindPhoneClick={() => scrollToSection('compatibility-finder')}
               onSelectCategory={(catId) => {
                 setSelectedCategory(catId);
                 scrollToSection('products-section');
               }}
-              onSelectProduct={(p) => navigateToProduct(p, true)}
-              onOpenDetail={(p) => navigateToProduct(p, true)}
-              products={products}
+              onSelectPhone={(phone) => {
+                setSelectedPhone(phone);
+                scrollToSection('products-section');
+              }}
               t={t}
               lang={lang}
-            />
-
-            {/* 2. Category Icon Row (Screenshot 1 Section C) */}
-            <CategoryIconRow
-              onSelectCategory={navigateToCategory}
-              onNavigateSection={scrollToSection}
               selectedCategory={selectedCategory}
+            />
+
+            {/* 2. Shopee-Style Quick Shopping Shortcuts */}
+            <QuickShortcuts
+              onSelectCategory={navigateToCategory}
+              onNavigateSection={scrollToSection}
+              onSetSortBy={() => scrollToSection('products-section')}
               lang={lang}
             />
 
-            {/* 3. Featured Category Cards - 3 Columns (Screenshot 2 Section D) */}
-            <FeaturedCategoryCards
-              onSelectCategory={navigateToCategory}
+            {/* 2.5 Smart Tech Finder Interactive Lifestyle Matching */}
+            <div id="smart-tech-finder">
+              <SmartTechFinder
+                products={products}
+                onSelectProduct={(p) => navigateToProduct(p, true)}
+                onAddToCart={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+                onToggleCompare={handleToggleCompare}
+                comparisonIds={comparisonIds}
+                lang={lang}
+                t={t}
+              />
+            </div>
+
+            {/* 3. Flash Sale Section With Countdown Clock */}
+            <FlashSale
+              products={products}
               onOpenDetail={(p) => navigateToProduct(p, true)}
-              onNavigateSection={scrollToSection}
-              products={products}
-            />
-
-            {/* 4. Lifestyle Promotional Photographic Banners (Screenshot 1 Section E) */}
-            <LifestylePromoBanners
-              onSelectCategory={navigateToCategory}
-              onNavigateSection={scrollToSection}
-            />
-
-            {/* 5. Hot Deals Section with Countdown Timer (Screenshot 1 Section F) */}
-            <HotDealsSection
-              products={products}
-              currencySymbol="৳"
               onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-              onOpenDetail={(p) => navigateToProduct(p, true)}
-              wishlistIds={wishlistIds}
-              onToggleWishlist={handleToggleWishlist}
+              onViewAllFlashDeals={() => {
+                setSelectedCategory(null);
+                scrollToSection('products-section');
+              }}
+              currencySymbol="৳"
               lang={lang}
             />
 
-            {/* 6. New In Section with "Shop All New" Action (Screenshot 2 Section F) */}
-            <NewInSection
-              products={products}
-              currencySymbol="৳"
-              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-              onOpenDetail={(p) => navigateToProduct(p, true)}
+            {/* 4. Featured Mobile Accessory Categories */}
+            <FeaturedCategories
+              selectedCategory={selectedCategory}
+              onSelectCategory={navigateToCategory}
               onShopAll={() => {
                 setSelectedCategory(null);
                 scrollToSection('products-section');
               }}
-              wishlistIds={wishlistIds}
-              onToggleWishlist={handleToggleWishlist}
               lang={lang}
             />
 
-            {/* 7. Product Catalog Grid for Direct Filtering & Search */}
-            <div id="products-section" className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-              <ProductGrid
-                products={products}
-                currencySymbol="৳"
-                selectedCategory={selectedCategory}
-                onSelectCategory={setSelectedCategory}
-                selectedPhone={selectedPhone}
-                onClearPhoneFilter={() => setSelectedPhone(null)}
-                searchQuery={searchQuery}
-                onClearSearch={() => setSearchQuery('')}
-                onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-                onOpenDetail={(p) => navigateToProduct(p, true)}
-                wishlistIds={wishlistIds}
-                onToggleWishlist={handleToggleWishlist}
-                onToggleCompare={handleToggleCompare}
-                comparisonIds={comparisonIds}
-                t={t}
+            {/* 4.5 Configurable Tech Kits for Lifestyle & Workflows */}
+            <TechKits
+              products={products}
+              onAddKitToBag={handleAddKitToBag}
+              onSelectProduct={(p) => navigateToProduct(p, true)}
+              currencySymbol="৳"
+              lang={lang}
+              t={t}
+            />
+
+            {/* 5. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
+            <div id="bundles-section">
+              <BundleDeals
+                onAddBundle={handleAddBundle}
                 lang={lang}
+                t={t}
               />
             </div>
+
+            {/* 6. Product Collection Grid with Category Filtering & Search */}
+            <ProductGrid
+              products={products}
+              currencySymbol="৳"
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+              selectedPhone={selectedPhone}
+              onClearPhoneFilter={() => setSelectedPhone(null)}
+              searchQuery={searchQuery}
+              onClearSearch={() => setSearchQuery('')}
+              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+              onOpenDetail={(p) => navigateToProduct(p, true)}
+              wishlistIds={wishlistIds}
+              onToggleWishlist={handleToggleWishlist}
+              onToggleCompare={handleToggleCompare}
+              comparisonIds={comparisonIds}
+              t={t}
+              lang={lang}
+            />
+
+            {/* 7. Shopee Daily Discover Tabbed Product Recommendations */}
+            <DailyDiscover
+              products={products}
+              currencySymbol="৳"
+              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+              onOpenDetail={(p) => navigateToProduct(p, true)}
+              wishlistIds={wishlistIds}
+              onToggleWishlist={handleToggleWishlist}
+              onToggleCompare={handleToggleCompare}
+              comparisonIds={comparisonIds}
+              selectedPhone={selectedPhone}
+              t={t}
+              lang={lang}
+            />
+
+            {/* 8. Brand & Phone Model Compatibility */}
+            <BrandSection
+              selectedPhone={selectedPhone}
+              onSelectPhone={(phone) => {
+                setSelectedPhone(phone);
+                scrollToSection('products-section');
+              }}
+              onClearPhoneFilter={() => setSelectedPhone(null)}
+              lang={lang}
+            />
+
+            {/* 8.5 Recently Viewed Products Showcase */}
+            <RecentlyViewedSection
+              recentIds={recentIds}
+              products={products}
+              onSelectProduct={(p) => navigateToProduct(p, true)}
+              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+              onToggleCompare={handleToggleCompare}
+              comparisonIds={comparisonIds}
+              lang={lang}
+              t={t}
+            />
+
+            {/* 9. Verified Customer Reviews & Shopping Benefits */}
+            <ReviewsSection
+              onOpenSupport={() => setActiveModal('support')}
+              lang={lang}
+              t={t}
+            />
+
+            {/* 9.5 Verified Shopping & Policy FAQs */}
+            <FaqSection
+              onOpenSupport={() => setActiveModal('support')}
+              lang={lang}
+            />
+
+            {/* 10. Newsletter Signup */}
+            <NewsletterSection
+              lang={lang}
+            />
           </>
         )}
       </main>
@@ -1162,7 +1268,7 @@ export default function App() {
 
       {/* Concise Customer Footer */}
       <Footer
-        storeName={import.meta.env.VITE_STORE_NAME || "Tech Vartual Tutor"}
+        storeName={import.meta.env.VITE_STORE_NAME || "Tech Nest"}
         onOpenSupport={() => setActiveModal('support')}
         onOpenTracking={() => {
           setTrackingOrderId('');

@@ -63,6 +63,6 @@ test('Admin Privacy & Access Controls', async (t) => {
   await t.test('9. Static route generator generates /admin/index.html SPA fallback', () => {
     const staticRoutesCode = fs.readFileSync(path.resolve('scripts/generate-static-routes.js'), 'utf8');
     assert.match(staticRoutesCode, /const adminDir = path\.join\(DIST_DIR, 'admin'\)/, 'Must generate /admin static route');
-    assert.match(staticRoutesCode, /Staff Console — Tech Vartual Tutor/, 'Must set proper staff title in static route');
+    assert.match(staticRoutesCode, /Staff Console — Tech Nest/, 'Must set proper staff title in static route');
   });
 });

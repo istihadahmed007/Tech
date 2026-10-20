@@ -22,7 +22,6 @@ import {
 import { calculateOrderTotals, FREE_SHIPPING_THRESHOLD } from '../utils/pricing';
 import { safeFetchJson } from '../utils/api';
 import { trackCheckoutStarted } from '../utils/analytics';
-import BrandLogo from './BrandLogo';
 import './CheckoutModal.css';
 
 export const OFFICIAL_PAYMENTLY_URL = "https://vartualtutor.paymently.io/paymentlink/default/BDT";
@@ -378,12 +377,12 @@ export default function CheckoutModal({
     <div className="checkout-modal-card">
       {/* Amazon-style Checkout Header */}
       <header className="checkout-header">
-        <div className="checkout-header-logo cursor-pointer" onClick={onClose} title="Tech Vartual Tutor Checkout">
-          <BrandLogo 
-            variant="horizontal" 
-            height={36} 
-            alt="Tech Vartual Tutor" 
+        <div className="checkout-header-logo" onClick={onClose} title="Tech Nest Checkout">
+          <img 
+            src="/assets/tech-nest-logo-horizontal.png?v=20261019_v6" 
+            alt="Tech Nest" 
             className="checkout-header-logo-img object-contain"
+            style={{ height: '36px', width: 'auto', aspectRatio: '2349 / 478' }}
           />
           <span className="checkout-header-tag">
             Checkout
@@ -763,7 +762,7 @@ export default function CheckoutModal({
               </button>
 
               <p style={{ fontSize: '11px', color: '#565959', textAlign: 'center', marginTop: '10px' }}>
-                By placing your order, you agree to Tech Vartual Tutor's privacy notice and conditions of use.
+                By placing your order, you agree to Tech Nest's privacy notice and conditions of use.
               </p>
 
               {/* Price Breakdown */}

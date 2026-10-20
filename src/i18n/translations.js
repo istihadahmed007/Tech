@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    brandName: "Tech Vartual Tutor",
+    brandName: "Tech Nest",
     tagline: "Find the tech that fits your life. Delivered across Bangladesh.",
     heroTitle: "Find the tech that fits your life.",
     heroSub: "Explore curated audio, charging essentials, and smart wearables with transparent specs and honest guidance.",
@@ -148,10 +148,10 @@ export const translations = {
     footerAbout: "Optic-grade protection, GaN power, and acoustic clarity for modern devices. Designed for seamless daily tech.",
     footerSupport: "Online Customer Assistance: Available via Support & Inquiry Form",
     footerDhaka: "Dhaka, Bangladesh",
-    copyright: "© 2026 Tech Vartual Tutor. All rights reserved."
+    copyright: "© 2026 Tech Nest. All rights reserved."
   },
   bn: {
-    brandName: "টেক ভার্চুয়াল টিউটর",
+    brandName: "টেক নেস্ট",
     tagline: "আপনার জীবনের সাথে মানানসই সেরা প্রযুক্তি খুঁজুন।",
     heroTitle: "আপনার জীবনের সাথে মানানসই সেরা প্রযুক্তি খুঁজুন।",
     heroSub: "স্বচ্ছ স্পেসিফিকেশন ও নিখুঁত যাচাইকৃত অডিও, ফাস্ট চার্জার এবং স্মার্টওয়াচ এক্সপ্লোর করুন।",
@@ -298,7 +298,7 @@ export const translations = {
     // Footer
     footerAbout: "অপটিক্যাল গ্রেড সুরক্ষা, GaN চার্জিং এবং ক্রিস্টাল ক্লিয়ার সাউন্ড। গ্লেসিয়াল গ্লাস ডিজাইনে নির্মিত।",
     footerSupport: "অনলাইন কাস্টমার সাপোর্ট: ইনকোয়ারি ফর্মের মাধ্যমে বার্তা পাঠান",
-    footerDhaka: "ঢাকা, বাংলাদেশ",
-    copyright: "© ২০২৬ টেক ভার্চুয়াল টিউটর। সর্বস্বত্ব সংরক্ষিত।"
+    footerDhaka: "ঢাকা, বাংলাদেশ (ডেমো স্টোরফ্রন্ট)",
+    copyright: "© ২০২৫ অ্যাক্সেসরিজ বিডি। ডেমো স্টোরফ্রন্ট।"
   }
 };

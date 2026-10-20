@@ -172,7 +172,7 @@ test('Analytics: trackProductView emits clean, privacy-conscious event', () => {
       sku: 'SKU-WATCH-01',
       category: 'wearables',
       price: 4500,
-      title: 'Tech Vartual Tutor Smartwatch Ultra'
+      title: 'Tech Nest Smartwatch Ultra'
     };
 
     const res = trackProductView(product);

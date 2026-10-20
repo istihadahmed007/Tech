@@ -2284,7 +2284,7 @@ export function getStoreSettings() {
     } catch (e) {}
   }
   return {
-    storeName: 'Tech Vartual Tutor',
+    storeName: 'Tech Nest',
     insideDhakaFee: 60,
     outsideDhakaFee: 120,
     freeShippingThreshold: 2000,
@@ -2294,7 +2294,7 @@ export function getStoreSettings() {
     reviewsEnabled: true,
     serviceRequestsEnabled: true,
     supportPhone: '+880 1700-000000',
-    supportEmail: 'support@vartualtutor.com',
+    supportEmail: 'support@technest.com.bd',
     address: 'Multiplan Center, Level 4, Shop 412, Elephant Road, Dhaka-1205',
     updatedAt: new Date().toISOString()
   };

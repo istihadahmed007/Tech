@@ -1,5 +1,5 @@
 :root {
-  /* Tech Vartual Tutor Premium Technology E-Commerce Design System */
+  /* Tech Nest Premium Technology E-Commerce Design System */
   /* Clean White / Light-Gray Background Canvas & Surfaces */
   --canvas-bg: #F8FAFC;
   --surface-white: #FFFFFF;
@@ -1993,7 +1993,7 @@ img {
   color: #B8E7F8;
 }
 
-/* Modern Tech Vartual Tutor Search Bar */
+/* Modern Tech Nest Search Bar */
 .shopee-search-bar {
   display: flex;
   align-items: center;
@@ -2180,41 +2180,4 @@ img {
   color: #145CFF;
   border-bottom-color: #145CFF;
 }
-
-/* ==========================================================
-   Voltura Electronics Storefront Layout Utilities
-   ========================================================== */
-.max-w-\[1360px\] { max-width: 1360px; }
-.min-h-\[440px\] { min-height: 440px; }
-.min-h-\[480px\] { min-height: 480px; }
-.min-h-\[500px\] { min-height: 500px; }
-.h-\[68px\] { height: 68px; }
-.h-\[340px\] { height: 340px; }
-.h-\[380px\] { height: 380px; }
-.h-\[420px\] { height: 420px; }
-.w-20 { width: 80px; }
-.h-20 { height: 80px; }
-.w-24 { width: 96px; }
-.h-24 { height: 96px; }
-.w-48 { width: 192px; }
-.rounded-\[22px\] { border-radius: 22px; }
-.rounded-\[26px\] { border-radius: 26px; }
-
-/* Pale Tinted Card Pedestals (Screenshot 1 & 2) */
-.bg-\[\#f7f0eb\] { background-color: #f7f0eb; }
-.bg-\[\#eef3f1\] { background-color: #eef3f1; }
-.bg-\[\#f0f2f8\] { background-color: #f0f2f8; }
-.bg-\[\#f5f2ee\] { background-color: #f5f2ee; }
-.bg-\[\#f0f3f6\] { background-color: #f0f3f6; }
-.bg-\[\#faedea\] { background-color: #faedea; }
-.bg-\[\#f1f3f5\] { background-color: #f1f3f5; }
-.bg-\[\#f0f2f5\] { background-color: #f0f2f5; }
-.bg-\[\#f7f5f2\] { background-color: #f7f5f2; }
-.bg-\[\#f1f4f8\] { background-color: #f1f4f8; }
-.bg-\[\#0b1329\] { background-color: #0b1329; }
-.bg-\[\#0066FF\] { background-color: #0066FF; }
-.text-\[\#0066FF\] { color: #0066FF; }
-.border-\[\#0066FF\] { border-color: #0066FF; }
-.shadow-2xs { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03); }
-
 

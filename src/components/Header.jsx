@@ -6,36 +6,37 @@ import {
   X, 
   User, 
   Globe,
+  SlidersHorizontal,
   HelpCircle,
   Menu,
+  ShieldCheck,
+  Package,
   ChevronDown,
-  Mic,
-  Camera,
-  Headphones,
-  Watch,
-  Glasses,
-  Zap,
-  Radio,
-  ArrowRight
+  Sparkles,
+  ArrowRight,
+  Scale
 } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 
 export default function Header({ 
-  storeName = "Tech Vartual Tutor", 
+  storeName = "Tech Nest", 
   t = {}, 
   lang = 'en', 
   setLang, 
   currentUser,
   cartCount = 0, 
   wishlistCount = 0, 
-  cartTotal = 0,
+  comparisonCount = 0,
   onOpenCart, 
   onOpenWishlist, 
+  onOpenComparison,
   onOpenSupport,
   onOpenAccount,
   onOpenTracking,
   searchQuery = '', 
   setSearchQuery,
+  onScrollToFinder,
+  onScrollToKits,
   onGoHome,
   onGoToShop,
   onSelectCategory,
@@ -43,27 +44,34 @@ export default function Header({
   products = []
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-  const [selectedCatLabel, setSelectedCatLabel] = useState('All Categories');
+  const [searchOpen, setSearchOpen] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchContainerRef = useRef(null);
-  const categoryDropdownRef = useRef(null);
 
-  // Close dropdowns on outside click
+  // Close search suggestions on click outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
         setShowSuggestions(false);
-      }
-      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
-        setCategoryDropdownOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Filter products for search suggestions
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setSearchOpen(false);
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Filter products for live suggestions
   const liveSuggestions = React.useMemo(() => {
     if (!searchQuery || searchQuery.trim().length < 2) return [];
     const q = searchQuery.toLowerCase().trim();
@@ -90,20 +98,20 @@ export default function Header({
     }
   };
 
-  const categoryOptions = [
-    { label: 'All Categories', id: null },
-    { label: 'Smart Watch', id: 'wearables' },
-    { label: 'Headphones', id: 'audio' },
-    { label: 'Accessories & Charging', id: 'charging' },
-    { label: 'Cameras & Drones', id: 'drones' }
+  const popularKeywords = [
+    { label: 'Ultrapods', query: 'Ultrapods' },
+    { label: '120W Cable', query: '120W' },
+    { label: 'Smartwatch', query: 'Smartwatch' },
+    { label: 'Pro TWS', query: 'TWS' },
+    { label: 'Neckband', query: 'Neckband' }
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200/80 shadow-xs">
-      {/* Primary Navigation Row (Screenshot 2 Top Bar) */}
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 h-[68px] flex items-center justify-between gap-4 lg:gap-8">
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-[#DCEAF1] shadow-xs">
+      {/* Top Main Header Container */}
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-6">
         
-        {/* Left: Brand Logo */}
+        {/* Left: Tech Nest Logo */}
         <a 
           href="/" 
           onClick={(e) => {
@@ -112,51 +120,18 @@ export default function Header({
               onGoHome();
             }
           }}
-          className="flex items-center gap-2 group shrink-0 select-none py-1"
-          title="Tech Vartual Tutor — Authentic Mobile Accessories"
+          className="flex items-center group shrink-0 select-none py-0.5"
+          title="Tech Nest — Authentic Mobile Accessories"
         >
-          <BrandLogo variant="horizontal" height={38} className="h-8 sm:h-9 md:h-10 w-auto" alt="Tech Vartual Tutor" />
+          <BrandLogo 
+            height={44} 
+            className="h-9 sm:h-11 md:h-12 w-auto transition-transform duration-200 group-hover:scale-[1.02]" 
+          />
         </a>
 
-        {/* Center: Integrated Category Selector & Search Bar */}
-        <div ref={searchContainerRef} className="hidden md:flex flex-1 max-w-xl mx-auto relative">
-          <form 
-            onSubmit={handleSearchSubmit}
-            className="w-full flex items-center h-11 bg-slate-50 hover:bg-slate-100/70 focus-within:bg-white border border-slate-200 focus-within:border-[#0066FF] rounded-full transition-all px-2 pl-3 shadow-2xs"
-          >
-            {/* Category Dropdown Selector */}
-            <div ref={categoryDropdownRef} className="relative shrink-0 pr-3 border-r border-slate-200">
-              <button
-                type="button"
-                onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                className="flex items-center gap-1.5 text-xs font-medium text-slate-700 hover:text-slate-900 py-1 cursor-pointer select-none"
-              >
-                <span className="max-w-[105px] truncate">{selectedCatLabel}</span>
-                <ChevronDown size={14} className="text-slate-400 stroke-[2.5]" />
-              </button>
-
-              {categoryDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-50">
-                  {categoryOptions.map((opt) => (
-                    <button
-                      key={opt.label}
-                      type="button"
-                      onClick={() => {
-                        setSelectedCatLabel(opt.label);
-                        setCategoryDropdownOpen(false);
-                        if (onSelectCategory) onSelectCategory(opt.id);
-                        if (onGoToShop) onGoToShop();
-                      }}
-                      className="w-full text-left px-3.5 py-1.5 text-xs text-slate-700 hover:bg-blue-50 hover:text-[#0066FF] font-medium transition-colors cursor-pointer"
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Search Input Field */}
+        {/* Center: Shopee-Style Large Search Bar */}
+        <div ref={searchContainerRef} className="hidden lg:flex flex-col flex-1 max-w-2xl mx-2 relative">
+          <form onSubmit={handleSearchSubmit} className="shopee-search-bar relative">
             <input
               type="text"
               value={searchQuery}
@@ -167,11 +142,10 @@ export default function Header({
               onFocus={() => {
                 if (searchQuery.trim().length >= 2) setShowSuggestions(true);
               }}
-              placeholder="Bluetooth headphones, smartwatches, cables..."
-              className="flex-1 bg-transparent px-3 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+              placeholder={t.searchPlaceholder || "Search for phone cases, chargers, earbuds, cables & smartwatches..."}
+              className="shopee-search-input"
             />
-
-            {/* Clear Button */}
+            
             {searchQuery && (
               <button 
                 type="button"
@@ -179,174 +153,200 @@ export default function Header({
                   setSearchQuery('');
                   setShowSuggestions(false);
                 }}
-                className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="px-2 text-slate-400 hover:text-slate-600 cursor-pointer"
                 aria-label="Clear search"
               >
-                <X size={15} />
+                <X size={16} />
               </button>
             )}
 
-            {/* Mic / Search Icon */}
             <button 
               type="submit"
-              className="p-1.5 text-slate-500 hover:text-[#0066FF] cursor-pointer transition-colors"
+              className="shopee-search-btn"
               title="Search products"
             >
-              <Search size={17} />
+              <Search size={16} />
+              <span>{lang === 'bn' ? 'খুঁজুন' : 'Search'}</span>
             </button>
           </form>
 
-          {/* Autocomplete Suggestions Dropdown */}
+          {/* Quick trending search tags below search bar (Shopee style) */}
+          <div className="flex items-center gap-2 mt-1 px-1 text-[11px] text-slate-500 overflow-hidden whitespace-nowrap">
+            <span className="font-semibold text-slate-400">{lang === 'bn' ? 'জনপ্রিয়:' : 'Trending:'}</span>
+            {popularKeywords.map((kw) => (
+              <button
+                key={kw.query}
+                type="button"
+                onClick={() => {
+                  setSearchQuery(kw.query);
+                  if (onGoToShop) onGoToShop();
+                }}
+                className="hover:text-[#168FC2] transition-colors cursor-pointer"
+              >
+                {kw.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Predictive Search Suggestions Dropdown */}
           {showSuggestions && liveSuggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50 overflow-hidden">
-              <div className="px-3.5 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
-                <span>Matching Products</span>
-                <span className="text-[#0066FF] text-[10px] font-semibold">{liveSuggestions.length} found</span>
+            <div className="search-suggestions-dropdown py-2 border border-slate-200 shadow-xl bg-white">
+              <div className="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                <span>{lang === 'bn' ? 'প্রস্তাবিত পণ্যসমূহ' : 'Suggested Products'}</span>
+                <span className="text-[#168FC2] text-[10px]">{liveSuggestions.length} items</span>
               </div>
               {liveSuggestions.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => handleSuggestionClick(item)}
-                  className="px-3.5 py-2 flex items-center gap-3 hover:bg-blue-50/60 cursor-pointer transition-colors border-b border-slate-50 last:border-b-0"
+                  className="px-3 py-2 flex items-center gap-3 hover:bg-[#DDF4FC] cursor-pointer transition-colors border-b border-slate-50 last:border-b-0"
                 >
                   <img 
                     src={item.image} 
                     alt={item.title} 
-                    className="w-10 h-10 object-contain rounded-lg bg-slate-50 p-1 border border-slate-200 shrink-0" 
+                    className="w-10 h-10 object-contain rounded bg-white p-0.5 border border-slate-200 shrink-0" 
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-slate-900 truncate">
-                      {item.title}
+                    <p className="text-xs font-semibold text-[#102A43] truncate">
+                      {lang === 'bn' ? (item.titleBn || item.title) : item.title}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs font-bold text-[#0066FF]">৳{item.price.toLocaleString()}</span>
+                      <span className="text-xs font-bold text-[#168FC2]">৳{item.price.toLocaleString()}</span>
                       {item.originalPrice && item.originalPrice > item.price && (
                         <span className="text-[10px] text-slate-400 line-through">৳{item.originalPrice.toLocaleString()}</span>
                       )}
-                      <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded uppercase">
+                      <span className="text-[10px] font-medium text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded uppercase">
                         {item.category}
                       </span>
                     </div>
                   </div>
-                  <ArrowRight size={14} className="text-slate-400 group-hover:text-[#0066FF]" />
+                  <ArrowRight size={14} className="text-slate-400 group-hover:text-[#168FC2]" />
                 </div>
               ))}
+              <div className="p-2 border-t border-slate-100 text-center">
+                <button
+                  type="button"
+                  onClick={handleSearchSubmit}
+                  className="text-xs font-bold text-[#168FC2] hover:underline cursor-pointer"
+                >
+                  {lang === 'bn' ? `"${searchQuery}" এর সব ফলাফল দেখুন` : `View all results for "${searchQuery}"`}
+                </button>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Right Controls: Country/Region, Account, Wishlist, Cart */}
-        <div className="flex items-center gap-2 sm:gap-4 lg:gap-5 shrink-0">
-          
-          {/* Country / Currency Control */}
-          <div className="hidden lg:flex items-center gap-2 text-slate-700 py-1">
-            <Globe size={18} className="text-slate-500 shrink-0" />
-            <div className="text-left text-xs leading-tight">
-              <span className="text-[10px] text-slate-400 block font-normal">Country/Region</span>
-              <span className="font-semibold text-slate-800 text-[11px] flex items-center gap-0.5">
-                Bangladesh (৳ BDT)
-              </span>
-            </div>
-          </div>
-
-          <span className="hidden lg:inline-block w-px h-6 bg-slate-200" />
-
-          {/* Account Control */}
-          <button
+        {/* Right Actions: Wishlist, Customer Account & Shopping Cart */}
+        {/* Right Actions: Wishlist, Comparison, Customer Account & Shopping Bag */}
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          {/* Mobile Search Button */}
+          <button 
             type="button"
-            onClick={onOpenAccount}
-            className="flex items-center gap-2 p-1 text-slate-700 hover:text-slate-900 cursor-pointer select-none"
-            title={currentUser ? `Account: ${currentUser.name}` : "Sign In / Register"}
+            onClick={() => setSearchOpen(!searchOpen)}
+            className="lg:hidden p-2 rounded-xl hover:bg-slate-100 text-slate-700 transition-colors cursor-pointer"
+            aria-label="Toggle Search"
           >
-            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
-              <User size={18} />
-            </div>
-            <div className="hidden sm:flex flex-col text-left text-xs leading-tight">
-              <span className="text-[10px] text-slate-400 font-normal">Welcome</span>
-              <span className="font-semibold text-slate-800 text-[11px] max-w-[100px] truncate">
-                {currentUser ? currentUser.name.split(' ')[0] : 'Sign In / Register'}
-              </span>
-            </div>
+            <Search size={20} />
           </button>
 
-          {/* Wishlist Icon */}
+          {/* Wishlist Button */}
           <button
             type="button"
             onClick={onOpenWishlist}
-            className="relative p-2 rounded-full hover:bg-slate-100 text-slate-700 hover:text-rose-600 transition-colors cursor-pointer"
+            className="relative p-2 rounded-xl hover:bg-slate-100 text-[#0F172A] hover:text-[#145CFF] transition-colors cursor-pointer"
             aria-label="Wishlist"
             title="Saved items"
           >
             <Heart size={20} />
             {wishlistCount > 0 && (
-              <span className="absolute top-1 right-1 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+              <span className="absolute top-0.5 right-0.5 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                 {wishlistCount}
               </span>
             )}
           </button>
 
-          {/* Shopping Cart with Badge */}
+          {/* Comparison Matrix Trigger Button */}
           <button
             type="button"
-            onClick={onOpenCart}
-            className="flex items-center gap-2.5 p-1 sm:pl-2 sm:pr-3 sm:py-1.5 rounded-full hover:bg-slate-100 text-slate-800 transition-all cursor-pointer group"
-            aria-label="Shopping Cart"
-            title="View Shopping Cart"
+            onClick={onOpenComparison}
+            className="relative p-2 rounded-xl hover:bg-slate-100 text-[#0F172A] hover:text-[#145CFF] transition-colors cursor-pointer"
+            aria-label="Product Comparison Matrix"
+            title="Side-by-side comparison"
           >
-            <div className="relative">
-              <ShoppingBag size={21} className="text-slate-800 group-hover:text-[#0066FF] transition-colors" />
-              <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[#0066FF] text-white text-[10px] font-black flex items-center justify-center shadow-xs">
-                {cartCount}
+            <Scale size={20} />
+            {comparisonCount > 0 && (
+              <span className="absolute top-0.5 right-0.5 min-w-4 h-4 px-1 rounded-full bg-[#145CFF] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+                {comparisonCount}
               </span>
-            </div>
-            <div className="hidden sm:flex flex-col text-left text-xs leading-tight">
-              <span className="text-[10px] text-slate-400 font-normal">Cart</span>
-              <span className="font-bold text-slate-900 text-[11px]">
-                ৳{cartTotal.toLocaleString()}
+            )}
+          </button>
+
+          {/* Customer Account Button */}
+          <button
+            type="button"
+            onClick={onOpenAccount}
+            className="p-1.5 sm:px-3 sm:py-1.5 rounded-xl hover:bg-slate-100 text-[#0F172A] transition-colors flex items-center gap-2 cursor-pointer border border-transparent hover:border-slate-200"
+            aria-label="Customer Account"
+            title={currentUser ? `Account: ${currentUser.name}` : "Sign In / Register"}
+          >
+            <User size={19} className="text-[#0F172A]" />
+            <div className="hidden md:flex flex-col text-left">
+              <span className="text-[10px] text-slate-500 leading-none">
+                {currentUser ? (lang === 'bn' ? 'আমার প্রোফাইল' : 'Hello,') : (lang === 'bn' ? 'সাইন ইন' : 'Sign In')}
+              </span>
+              <span className="text-xs font-bold text-[#0F172A] leading-tight max-w-[95px] truncate">
+                {currentUser ? currentUser.name.split(' ')[0] : (lang === 'bn' ? 'অ্যাকাউন্ট' : 'Account')}
               </span>
             </div>
           </button>
 
-          {/* Mobile Search Toggle */}
-          <button 
+          {/* Modern Electric-Blue Shopping Bag Button */}
+          <button
+            type="button"
+            onClick={onOpenCart}
+            className="relative flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+            aria-label="Shopping Cart"
+            title="View Shopping Cart"
+          >
+            <div className="relative">
+              <ShoppingBag size={18} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2.5 min-w-4 h-4 px-1 rounded-full bg-white text-[#145CFF] text-[10px] font-extrabold flex items-center justify-center shadow-xs border border-[#145CFF]/20">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+            <span className="hidden sm:inline text-xs font-bold">
+              {lang === 'bn' ? 'কার্ট' : 'Cart'}
+            </span>
+          </button>
+
+          {/* Mobile Menu Hamburger */}
+          <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-slate-700 hover:text-slate-900 cursor-pointer"
-            aria-label="Toggle Navigation Menu"
+            className="lg:hidden p-2 rounded-xl hover:bg-slate-100 text-[#0F172A] cursor-pointer transition-colors"
+            aria-label="Toggle mobile navigation menu"
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </div>
 
-      {/* Secondary Navigation Row (Screenshot 2 Sub-Row) */}
-      <div className="border-t border-slate-100 bg-white hidden md:block">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between">
-          
-          {/* Left Category Shortcuts with Icons */}
-          <nav className="flex items-center gap-6 text-xs font-medium text-slate-600">
+      {/* Subheader: Clean Tech Categories Navigation Strip */}
+      <div className="border-t border-[#E2E8F0] bg-white hidden lg:block">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+          <nav className="flex items-center gap-1 sm:gap-1.5 py-1.5 text-xs font-semibold text-[#0F172A] overflow-x-auto scrollbar-none">
+            {/* Categories */}
             <button
               type="button"
               onClick={() => {
-                if (onSelectCategory) onSelectCategory('drones');
+                if (onSelectCategory) onSelectCategory(null);
                 if (onGoToShop) onGoToShop();
               }}
-              className="flex items-center gap-1.5 hover:text-[#0066FF] transition-colors cursor-pointer py-1"
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] transition-colors cursor-pointer"
             >
-              <Radio size={14} className="text-slate-400" />
-              <span>Drone</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                if (onSelectCategory) onSelectCategory('cameras');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="flex items-center gap-1.5 hover:text-[#0066FF] transition-colors cursor-pointer py-1"
-            >
-              <Camera size={14} className="text-slate-400" />
-              <span>Camera</span>
+              {lang === 'bn' ? 'সকল পণ্য' : 'All Products'}
             </button>
 
             <button
@@ -355,34 +355,9 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('audio');
                 if (onGoToShop) onGoToShop();
               }}
-              className="flex items-center gap-1.5 hover:text-[#0066FF] transition-colors cursor-pointer py-1"
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] transition-colors cursor-pointer"
             >
-              <Headphones size={14} className="text-slate-400" />
-              <span>Headphones</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                if (onSelectCategory) onSelectCategory('wearables');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="flex items-center gap-1.5 hover:text-[#0066FF] transition-colors cursor-pointer py-1"
-            >
-              <Watch size={14} className="text-slate-400" />
-              <span>Smart Watch</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                if (onSelectCategory) onSelectCategory('vr');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="flex items-center gap-1.5 hover:text-[#0066FF] transition-colors cursor-pointer py-1"
-            >
-              <Glasses size={14} className="text-slate-400" />
-              <span>Virtual Reality</span>
+              {lang === 'bn' ? 'অডিও ও ইয়ারবাডস' : 'Audio & Earbuds'}
             </button>
 
             <button
@@ -391,95 +366,101 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory('charging');
                 if (onGoToShop) onGoToShop();
               }}
-              className="flex items-center gap-1.5 hover:text-[#0066FF] transition-colors cursor-pointer py-1"
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] transition-colors cursor-pointer"
             >
-              <Zap size={14} className="text-slate-400" />
-              <span>Accessories</span>
+              {lang === 'bn' ? 'ফাস্ট চার্জার ও ক্যাবল' : 'Fast Chargers & Cables'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectCategory) onSelectCategory('wearables');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="px-3 py-1.5 rounded-lg hover:bg-slate-100 text-[#475569] hover:text-[#0F172A] transition-colors cursor-pointer"
+            >
+              {lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches'}
+            </button>
+
+            <span className="text-slate-300 mx-1">|</span>
+
+            {/* Signature Shopping Features */}
+            <button
+              type="button"
+              onClick={onScrollToFinder}
+              className="px-2.5 py-1 rounded-lg text-[#145CFF] hover:bg-blue-50 font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Sparkles size={13} />
+              <span>{lang === 'bn' ? 'স্মার্ট টেক ফাইন্ডার' : 'Smart Tech Finder'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onScrollToKits}
+              className="px-2.5 py-1 rounded-lg text-[#475569] hover:text-[#0F172A] hover:bg-slate-100 font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Package size={13} className="text-[#145CFF]" />
+              <span>{lang === 'bn' ? 'টেক কিটস' : 'Tech Kits'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onOpenComparison}
+              className="px-2.5 py-1 rounded-lg text-[#475569] hover:text-[#0F172A] hover:bg-slate-100 font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Scale size={13} className="text-[#475569]" />
+              <span>{lang === 'bn' ? 'প্রোডাক্ট তুলনা' : 'Compare'}</span>
+              {comparisonCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-[#145CFF] text-white text-[10px] font-bold flex items-center justify-center">
+                  {comparisonCount}
+                </span>
+              )}
             </button>
           </nav>
 
-          {/* Right Utility Navigation Links (Screenshot 2: Blog, Pages, Get help) */}
-          <div className="flex items-center gap-6 text-xs font-medium text-slate-500">
-            <button
-              type="button"
-              onClick={() => {
-                if (onOpenTracking) onOpenTracking('');
-              }}
-              className="hover:text-slate-900 transition-colors cursor-pointer"
-            >
-              Track Order
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (onGoToShop) onGoToShop();
-              }}
-              className="hover:text-slate-900 transition-colors cursor-pointer"
-            >
-              Pages
-            </button>
-            <button
-              type="button"
-              onClick={onOpenSupport}
-              className="hover:text-slate-900 transition-colors cursor-pointer flex items-center gap-1"
-            >
-              <HelpCircle size={13} className="text-slate-400" />
-              <span>Get help</span>
-            </button>
+          <div className="flex items-center gap-3 text-xs font-semibold py-1">
+            <span className="text-emerald-700 font-bold flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[11px]">
+              <ShieldCheck size={13} />
+              <span>{lang === 'bn' ? '১০০% অরিজিনাল গ্যাজেট' : '100% Genuine Tech'}</span>
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden px-4 py-4 bg-white border-t border-slate-200 shadow-xl space-y-3">
-          {/* Mobile Search */}
-          <form onSubmit={handleSearchSubmit} className="flex items-center h-10 bg-slate-100 rounded-full px-3">
-            <Search size={16} className="text-slate-400 mr-2" />
-            <input 
-              type="text" 
+      {/* Mobile Search Input Drawer */}
+      {searchOpen && (
+        <div className="lg:hidden px-4 py-2.5 bg-slate-50 border-t border-slate-200">
+          <form onSubmit={handleSearchSubmit} className="shopee-search-bar">
+            <input
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search products..."
-              className="w-full bg-transparent text-xs text-slate-900 focus:outline-none"
+              placeholder={t.searchPlaceholder || "Search products..."}
+              autoFocus
+              className="shopee-search-input py-2 text-xs"
             />
+            <button type="submit" className="shopee-search-btn py-2 px-3">
+              <Search size={15} />
+            </button>
           </form>
+        </div>
+      )}
 
-          {/* Mobile Categories */}
-          <div className="grid grid-cols-2 gap-2 text-xs font-semibold pt-2">
+      {/* Mobile Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden px-4 py-4 bg-white border-t border-slate-200 shadow-xl animate-fadeIn space-y-3">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <BrandLogo height={38} className="h-9 w-auto" />
             <button
               type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (onSelectCategory) onSelectCategory('wearables');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-blue-50 hover:text-[#0066FF] text-slate-800 transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-1 rounded text-slate-500"
             >
-              Smart Watch
+              <X size={20} />
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (onSelectCategory) onSelectCategory('audio');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-blue-50 hover:text-[#0066FF] text-slate-800 transition-colors"
-            >
-              Headphones
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (onSelectCategory) onSelectCategory('charging');
-                if (onGoToShop) onGoToShop();
-              }}
-              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-blue-50 hover:text-[#0066FF] text-slate-800 transition-colors"
-            >
-              Accessories
-            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
             <button
               type="button"
               onClick={() => {
@@ -487,9 +468,42 @@ export default function Header({
                 if (onSelectCategory) onSelectCategory(null);
                 if (onGoToShop) onGoToShop();
               }}
-              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-blue-50 hover:text-[#0066FF] text-slate-800 transition-colors"
+              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-[#EFF6FF] hover:text-[#145CFF] text-[#0F172A] transition-colors"
             >
-              All Products
+              {lang === 'bn' ? 'সব পণ্য' : 'All Products'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onSelectCategory) onSelectCategory('audio');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-[#EFF6FF] hover:text-[#145CFF] text-[#0F172A] transition-colors"
+            >
+              {lang === 'bn' ? 'অডিও ও ইয়ারবাডস' : 'Audio & Earbuds'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onSelectCategory) onSelectCategory('charging');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-[#EFF6FF] hover:text-[#145CFF] text-[#0F172A] transition-colors"
+            >
+              {lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Chargers & Cables'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onSelectCategory) onSelectCategory('wearables');
+                if (onGoToShop) onGoToShop();
+              }}
+              className="p-2.5 rounded-xl bg-slate-50 text-left hover:bg-[#EFF6FF] hover:text-[#145CFF] text-[#0F172A] transition-colors"
+            >
+              {lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches'}
             </button>
           </div>
 
@@ -500,9 +514,10 @@ export default function Header({
                 setMobileMenuOpen(false);
                 if (onOpenTracking) onOpenTracking('');
               }}
-              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg text-slate-800"
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg text-[#0F172A] transition-colors"
             >
-              <span>Track Order Status</span>
+              <Package size={15} className="text-[#145CFF]" />
+              <span>{lang === 'bn' ? 'অর্ডার ট্র্যাকিং' : 'Track Order Status'}</span>
             </button>
             <button
               type="button"
@@ -510,9 +525,10 @@ export default function Header({
                 setMobileMenuOpen(false);
                 if (onOpenSupport) onOpenSupport();
               }}
-              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg text-slate-800"
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg text-[#0F172A] transition-colors"
             >
-              <span>Support & Help</span>
+              <HelpCircle size={15} className="text-[#145CFF]" />
+              <span>{lang === 'bn' ? 'কাস্টমার সাপোর্ট' : 'Support & Warranty'}</span>
             </button>
             <button
               type="button"
@@ -520,9 +536,10 @@ export default function Header({
                 setMobileMenuOpen(false);
                 if (onOpenAccount) onOpenAccount();
               }}
-              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg font-semibold text-slate-800"
+              className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg font-semibold text-[#0F172A] transition-colors"
             >
-              <span>{currentUser ? `Account (${currentUser.name})` : 'Sign In / Register'}</span>
+              <User size={15} className="text-[#145CFF]" />
+              <span>{currentUser ? `Profile (${currentUser.name})` : (lang === 'bn' ? 'সাইন ইন / রেজিস্টার' : 'Sign In / Register')}</span>
             </button>
           </div>
         </div>

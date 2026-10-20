@@ -25,7 +25,7 @@ export default function NewsletterSection({
             <span>{lang === 'bn' ? 'এক্সক্লুসিভ অফার' : 'Exclusive Deals & Updates'}</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black tracking-tight leading-tight">
-            {lang === 'bn' ? 'টেক ভার্চুয়াল টিউটর নিউজলেটারে যুক্ত হোন' : 'Stay Ahead With Tech Vartual Tutor Upgrades'}
+            {lang === 'bn' ? 'টেক নেস্ট নিউজলেটারে যুক্ত হোন' : 'Stay Ahead With Tech Nest Upgrades'}
           </h3>
           <p className="text-xs text-slate-300 mt-1 leading-relaxed">
             {lang === 'bn'
@@ -38,7 +38,7 @@ export default function NewsletterSection({
           {subscribed ? (
             <div className="flex items-center gap-2 p-3 bg-emerald-900/60 border border-emerald-500/50 rounded-lg text-emerald-300 text-xs font-semibold">
               <Check size={16} />
-              <span>{lang === 'bn' ? 'ধন্যবাদ! আপনি সফলভাবে যুক্ত হয়েছেন।' : 'Thank you for subscribing to Tech Vartual Tutor!'}</span>
+              <span>{lang === 'bn' ? 'ধন্যবাদ! আপনি সফলভাবে যুক্ত হয়েছেন।' : 'Thank you for subscribing to Tech Nest!'}</span>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md">

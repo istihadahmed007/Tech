@@ -63,13 +63,13 @@ export function generateInvoiceHtml(order, options = {}) {
     type = 'invoice', // 'invoice' or 'packing-slip'
     origin = '',
     storeInfo = {
-      name: 'Tech Vartual Tutor',
-      nameBn: 'টেক ভার্চুয়াল টিউটর',
+      name: 'Tech Nest',
+      nameBn: 'টেক নেস্ট',
       tagline: 'Authentic Premium Mobile Gear & Tech Essentials',
       address: 'Suite 402, Concord Tower, Road 11, Dhanmondi, Dhaka-1209',
       phone: '+880 1712-345678',
-      email: 'care@vartualtutor.com',
-      website: 'tech.vartualtutor.com',
+      email: 'care@technest.com.bd',
+      website: 'technest.com.bd',
       tradeLicense: 'TRAD/DNCC/092841/2026'
     }
   } = options;
@@ -526,7 +526,7 @@ export function generateInvoiceHtml(order, options = {}) {
         <tr>
           <td style="vertical-align: top; width: 55%;">
             <div style="margin-bottom: 8px;">
-              <img src="/assets/tech-vartual-tutor-logo-horizontal.svg?v=20261020_v1" alt="Tech Vartual Tutor" style="height: 44px; width: auto; object-fit: contain; aspect-ratio: 880 / 180;" />
+              <img src="/assets/tech-nest-logo-horizontal.png?v=20261019_v6" alt="Tech Nest" style="height: 44px; width: auto; object-fit: contain; aspect-ratio: 2349 / 478;" />
             </div>
             <div class="brand-subtitle">${escapeHtml(storeInfo.nameBn)} • ${escapeHtml(storeInfo.tagline)}</div>
             <div class="brand-meta">
