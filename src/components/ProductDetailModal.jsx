@@ -263,11 +263,6 @@ export default function ProductDetailModal({
                     Model: {product.model}
                   </span>
                 )}
-                {product.photoRef && (
-                  <span className="text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
-                    Ref: {product.photoRef}
-                  </span>
-                )}
                 <span className="text-[11px] font-medium text-[#62788A] bg-slate-100 px-2 py-0.5 rounded-md font-mono">
                   SKU: {product.sku || product.id}
                 </span>

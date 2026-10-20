@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import { SearchX, ArrowUpDown, Filter, Sparkles, Check, Zap } from 'lucide-react';
 
@@ -22,34 +22,58 @@ export default function ProductGrid({
 }) {
   const [sortBy, setSortBy] = useState('featured');
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [priceTier, setPriceTier] = useState('all'); // 'all', 'under_500', 'under_1000'
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'top_rated', 'under_500', 'under_1000', 'audio', 'charging'
 
-  // Master Unified Quick-Filter Pills
+  // Unified Catalog Filter Tabs
   const QUICK_FILTERS = [
-    { id: 'all', label: lang === 'bn' ? 'সব পণ্য' : 'All Gear', catId: null, maxPrice: null },
-    { id: 'under_500', label: lang === 'bn' ? '৫০০৳ এর নিচে' : 'Under ৳500', catId: null, maxPrice: 500 },
-    { id: 'under_1000', label: lang === 'bn' ? '১,০০০৳ এর নিচে' : 'Under ৳1,000', catId: null, maxPrice: 1000 },
-    { id: 'charging', label: lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charging', catId: 'charging', maxPrice: null },
-    { id: 'audio', label: lang === 'bn' ? 'TWS ও অডিও' : 'TWS & Audio', catId: 'audio', maxPrice: null },
-    { id: 'wearables', label: lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches', catId: 'wearables', maxPrice: null },
+    { id: 'all', label: lang === 'bn' ? 'সব গিয়ার' : 'All Gear' },
+    { id: 'top_rated', label: lang === 'bn' ? 'টপ রেটেড' : 'Top Rated' },
+    { id: 'under_500', label: lang === 'bn' ? '৫০০৳ এর নিচে' : 'Under ৳500' },
+    { id: 'under_1000', label: lang === 'bn' ? '১,০০০৳ এর নিচে' : 'Under ৳1,000' },
+    { id: 'audio', label: lang === 'bn' ? 'অডিও গিয়ার' : 'Audio Gear' },
+    { id: 'charging', label: lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charging' },
   ];
 
-  const handleQuickFilterClick = (filter) => {
-    if (filter.catId !== undefined) {
-      onSelectCategory(filter.catId);
+  // Align active tab if category is changed externally
+  useEffect(() => {
+    if (selectedCategory === 'audio') {
+      setActiveTab('audio');
+    } else if (selectedCategory === 'charging') {
+      setActiveTab('charging');
+    } else if (!selectedCategory && (activeTab === 'audio' || activeTab === 'charging')) {
+      setActiveTab('all');
     }
-    if (filter.maxPrice !== undefined) {
-      setPriceTier(filter.id);
-    } else {
-      setPriceTier('all');
+  }, [selectedCategory]);
+
+  const handleTabClick = (filterId) => {
+    setActiveTab(filterId);
+    if (filterId === 'audio') {
+      onSelectCategory('audio');
+    } else if (filterId === 'charging') {
+      onSelectCategory('charging');
+    } else if (filterId === 'all') {
+      onSelectCategory(null);
     }
   };
 
   // Comprehensive filter and search matching
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
-      // Category filter supporting both broad and granular IDs
-      if (selectedCategory) {
+      // Tab filter
+      if (activeTab === 'top_rated') {
+        if (!item.rating || item.rating < 4.7) return false;
+      } else if (activeTab === 'under_500') {
+        if (item.price > 500) return false;
+      } else if (activeTab === 'under_1000') {
+        if (item.price > 1000) return false;
+      } else if (activeTab === 'audio') {
+        if (item.category !== 'audio') return false;
+      } else if (activeTab === 'charging') {
+        if (item.category !== 'charging') return false;
+      }
+
+      // External Category filter (e.g. from nav/hero shortcuts)
+      if (selectedCategory && activeTab !== 'audio' && activeTab !== 'charging') {
         if (selectedCategory === 'earbuds') {
           if (item.category !== 'audio' || item.id.includes('headphone') || item.id.includes('neckband') || item.id.includes('headset')) return false;
         } else if (selectedCategory === 'headphones') {
@@ -67,14 +91,6 @@ export default function ProductGrid({
         } else if (item.category !== selectedCategory) {
           return false;
         }
-      }
-
-      // Quick price tier filter
-      if (priceTier === 'under_500' && item.price > 500) {
-        return false;
-      }
-      if (priceTier === 'under_1000' && item.price > 1000) {
-        return false;
       }
 
       // Phone compatibility filter
@@ -105,9 +121,10 @@ export default function ProductGrid({
       if (sortBy === 'price-desc') return b.price - a.price;
       if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
       if (sortBy === 'newest') return (b.id > a.id ? 1 : -1);
+      if (activeTab === 'top_rated') return (b.rating || 0) - (a.rating || 0);
       return 0; // featured default order
     });
-  }, [products, selectedCategory, priceTier, selectedPhone, searchQuery, inStockOnly, sortBy]);
+  }, [products, selectedCategory, activeTab, selectedPhone, searchQuery, inStockOnly, sortBy]);
 
   return (
     <section id="products-section" className="w-full my-6 sm:my-10" aria-label="Unified Master Catalog">
@@ -140,11 +157,7 @@ export default function ProductGrid({
         {/* Quick-Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none" role="tablist">
           {QUICK_FILTERS.map((f) => {
-            const isCatMatch = f.catId === null ? selectedCategory === null : selectedCategory === f.catId;
-            const isPriceMatch = f.maxPrice === null ? priceTier === 'all' : priceTier === f.id;
-            const isActive = (f.id === 'all' && selectedCategory === null && priceTier === 'all') || 
-                             (f.catId && selectedCategory === f.catId) || 
-                             (f.maxPrice && priceTier === f.id);
+            const isActive = activeTab === f.id;
 
             return (
               <button
@@ -152,7 +165,7 @@ export default function ProductGrid({
                 type="button"
                 role="tab"
                 aria-selected={isActive}
-                onClick={() => handleQuickFilterClick(f)}
+                onClick={() => handleTabClick(f.id)}
                 className={`px-3 py-1.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
                     ? 'bg-cyan-500 text-slate-950 font-bold border border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.35)]'
@@ -208,9 +221,27 @@ export default function ProductGrid({
       </div>
 
       {/* Active Filter Chips */}
-      {(selectedPhone || searchQuery || selectedCategory || priceTier !== 'all') && (
+      {(selectedPhone || searchQuery || (selectedCategory && activeTab !== 'audio' && activeTab !== 'charging') || activeTab !== 'all') && (
         <div className="flex items-center flex-wrap gap-2 mb-4 text-xs">
           <span className="font-mono text-slate-400 text-[11px] mr-1">ACTIVE FILTERS:</span>
+
+          {activeTab !== 'all' && (
+            <span className="flex items-center gap-1 bg-[#161924] text-cyan-400 border border-cyan-500/30 px-2.5 py-0.5 rounded-lg font-mono text-[11px]">
+              <span>TAB: {QUICK_FILTERS.find(f => f.id === activeTab)?.label.toUpperCase()}</span>
+              <button 
+                onClick={() => {
+                  setActiveTab('all');
+                  if (selectedCategory === 'audio' || selectedCategory === 'charging') {
+                    onSelectCategory(null);
+                  }
+                }} 
+                className="ml-1 text-cyan-400 hover:text-white font-bold cursor-pointer"
+                aria-label="Clear tab filter"
+              >
+                ×
+              </button>
+            </span>
+          )}
 
           {selectedPhone && (
             <span className="flex items-center gap-1 bg-[#161924] text-cyan-400 border border-cyan-500/30 px-2.5 py-0.5 rounded-lg font-mono text-[11px]">
@@ -238,25 +269,13 @@ export default function ProductGrid({
             </span>
           )}
 
-          {priceTier !== 'all' && (
-            <span className="flex items-center gap-1 bg-[#161924] text-cyan-400 border border-cyan-500/30 px-2.5 py-0.5 rounded-lg font-mono text-[11px]">
-              <span>PRICE: {priceTier === 'under_500' ? '< ৳500' : '< ৳1,000'}</span>
-              <button 
-                onClick={() => setPriceTier('all')} 
-                className="ml-1 text-cyan-400 hover:text-white font-bold cursor-pointer"
-                aria-label="Clear price tier"
-              >
-                ×
-              </button>
-            </span>
-          )}
-
           <button 
             onClick={() => {
               onClearPhoneFilter();
               onClearSearch();
               onSelectCategory(null);
-              setPriceTier('all');
+              setActiveTab('all');
+              setInStockOnly(false);
             }}
             className="font-mono text-xs text-cyan-400 hover:text-cyan-300 underline ml-2 cursor-pointer"
           >

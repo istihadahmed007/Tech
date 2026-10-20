@@ -313,7 +313,9 @@ export default function ProductDetailPage({
     const bullets = [];
     if (product.specs) {
       Object.entries(product.specs).forEach(([k, v]) => {
-        bullets.push(`${k}: ${v}`);
+        if (k.toLowerCase() !== 'photoref') {
+          bullets.push(`${k}: ${v}`);
+        }
       });
     }
     if (bullets.length < 3 && product.description) {
@@ -543,11 +545,6 @@ export default function ProductDetailPage({
                   fontFamily: 'monospace'
                 }}>
                   Model: {product.model}
-                </span>
-              )}
-              {product.photoRef && (
-                <span className="pdp-ref-tag">
-                  Ref: {product.photoRef}
                 </span>
               )}
               <span className="pdp-sku-tag">
@@ -1029,7 +1026,9 @@ export default function ProductDetailPage({
                 <div className="pdp-specs-table-wrapper">
                   <table className="pdp-specs-table">
                     <tbody>
-                      {Object.entries(product.specs).map(([key, value]) => (
+                      {Object.entries(product.specs)
+                        .filter(([key]) => key.toLowerCase() !== 'photoref')
+                        .map(([key, value]) => (
                         <tr key={key}>
                           <th scope="row" className="pdp-specs-th">
                             {key}

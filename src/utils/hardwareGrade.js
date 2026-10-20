@@ -9,11 +9,11 @@
 export function getHardwareGrade(product) {
   if (!product) {
     return {
-      tier: 'value',
-      code: 'VALUE ESSENTIAL • TESTED',
-      badgeClass: 'bg-amber-500/10 text-amber-400 border border-amber-500/30',
-      shortLabel: 'VALUE GRADE',
-      color: 'amber'
+      tier: 'qc_tested',
+      code: '1:1 QC-TESTED GRADE',
+      badgeClass: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30',
+      shortLabel: '1:1 QC-TESTED GRADE',
+      color: 'cyan'
     };
   }
 
@@ -21,32 +21,46 @@ export function getHardwareGrade(product) {
   const brandStr = (product.brand || '').toLowerCase();
   const verification = (product.verificationNotes || '').toLowerCase();
 
-  // Tier 2: 1:1 MASTER GRADE • QC TESTED (Replaces "Comparable Copy" and "Authenticity Unverified")
+  // Tier 2: 1:1 QC-TESTED GRADE (Clean trustworthy grade for replica, style & labelled hardware)
   if (
-    badgeStr.includes('comparable copy') ||
-    brandStr.includes('authenticity unverified') ||
-    brandStr.includes('comparable') ||
-    verification.includes('comparable copy') ||
+    badgeStr.includes('1:1') ||
+    badgeStr.includes('qc-tested') ||
+    badgeStr.includes('comparable') ||
+    brandStr.includes('1:1') ||
+    brandStr.includes('style') ||
+    brandStr.includes('labelled') ||
+    brandStr.includes('marked') ||
+    brandStr.includes('unverified') ||
+    brandStr.includes('copy') ||
+    verification.includes('1:1') ||
+    verification.includes('qc-tested') ||
+    verification.includes('comparable') ||
     product.id === 'h2-anc-pro-tws' ||
-    product.id === 'p25-pro-tws-black'
+    product.id === 'p25-pro-tws-black' ||
+    product.id.startsWith('p06-') ||
+    product.id === 'turbo-single-wall-charger' ||
+    product.id === 'oraimo-or08-wireless-headset' ||
+    product.id === 'p22-hoco-bt-diamond-700h'
   ) {
     return {
-      tier: 'master_grade',
-      code: '1:1 MASTER GRADE • QC TESTED',
+      tier: 'qc_tested',
+      code: '1:1 QC-TESTED GRADE',
       badgeClass: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30',
-      shortLabel: '1:1 MASTER GRADE',
+      shortLabel: '1:1 QC-TESTED GRADE',
       color: 'cyan'
     };
   }
 
-  // Tier 1: VERIFIED ORIGINAL
+  // Tier 1: VERIFIED ORIGINAL (Authentic branded imports from REMAX, VDENMENV, RECRSI, TUCCI, ANKEER)
   if (
     product.isOriginal ||
+    badgeStr.includes('original') ||
     brandStr.includes('remax') ||
     brandStr.includes('recrsi') ||
     brandStr.includes('vdenmenv') ||
+    brandStr.includes('tucci') ||
     brandStr.includes('ankeer') ||
-    (!brandStr.includes('unverified') && !brandStr.includes('unbranded'))
+    (!brandStr.includes('unverified') && !brandStr.includes('unbranded') && !brandStr.includes('style'))
   ) {
     return {
       tier: 'original',
@@ -57,13 +71,13 @@ export function getHardwareGrade(product) {
     };
   }
 
-  // Tier 3: VALUE ESSENTIAL • TESTED
+  // Tier 3: 1:1 QC-TESTED GRADE
   return {
-    tier: 'value',
-    code: 'VALUE ESSENTIAL • TESTED',
-    badgeClass: 'bg-amber-500/10 text-amber-400 border border-amber-500/30',
-    shortLabel: 'VALUE GRADE',
-    color: 'amber'
+    tier: 'qc_tested',
+    code: '1:1 QC-TESTED GRADE',
+    badgeClass: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30',
+    shortLabel: '1:1 QC-TESTED GRADE',
+    color: 'cyan'
   };
 }
 

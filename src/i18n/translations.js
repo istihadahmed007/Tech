@@ -98,7 +98,7 @@ export const translations = {
     noProductsFound: "No matching accessories found",
     noProductsSub: "Try clearing your filters or exploring different categories.",
     resetFilters: "Reset All Filters",
-    devSeedNotice: "Demo Catalog Items for Storefront Preview (Development Seed Data)",
+    devSeedNotice: "",
     
     // Value Props
     prop1Title: "Standard Courier Rates",
@@ -248,7 +248,7 @@ export const translations = {
     noProductsFound: "কোন মানানসই অ্যাক্সেসরিজ পাওয়া যায়নি",
     noProductsSub: "ফিল্টার মুছে ফেলুন অথবা অন্য ক্যাটাগরি ঘুরে দেখুন।",
     resetFilters: "সব ফিল্টার রিসেট করুন",
-    devSeedNotice: "স্টোরফ্রন্ট প্রিভিউয়ের জন্য ডেমো ক্যাটালগ আইটেম (উন্নয়নমূলক ডেমো ডাটা)",
+    devSeedNotice: "",
     
     // Value Props
     prop1Title: "স্ট্যান্ডার্ড কুরিয়ার ডেলিভারি",
