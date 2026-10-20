@@ -72,6 +72,32 @@ test('UddoktaPay Integration: resolves provider and records manual TrxID as pend
   delete process.env.PAYMENTLY_URL;
 });
 
+test('Paymently Integration: activates live Paymently link and resolves provider', async () => {
+  process.env.PAYMENT_GATEWAY_PROVIDER = 'paymently';
+  const provider = getPaymentProvider('paymently');
+  assert.ok(provider);
+  assert.equal(provider.isConfigured(), true);
+
+  const configStatus = getPaymentConfigurationStatus();
+  assert.equal(configStatus.isConfigured, true);
+  assert.equal(configStatus.onlinePaymentAvailable, true);
+  assert.equal(configStatus.activeProvider, 'paymently');
+  assert.equal(configStatus.paymently.paymentLink, 'https://vartualtutor.paymently.io/paymentlink/default/BDT');
+
+  const mockOrder = {
+    id: 'ORD-VT-999',
+    total: 2500,
+    customer: { name: 'Paymently Tester', phone: '01700000000' }
+  };
+  const session = await provider.initiatePayment(mockOrder, 'https://tech.vartualtutor.com');
+  assert.equal(session.success, true);
+  assert.equal(session.provider, 'paymently');
+  assert.equal(session.paymentLink, 'https://vartualtutor.paymently.io/paymentlink/default/BDT');
+  assert.equal(session.redirectUrl, 'https://vartualtutor.paymently.io/paymentlink/default/BDT');
+
+  delete process.env.PAYMENT_GATEWAY_PROVIDER;
+});
+
 test('Order Status Model: accurately distinguishes demo_received, unpaid, and paid states', () => {
   // Demo COD order
   const demoOrder = {

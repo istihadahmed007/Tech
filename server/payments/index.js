@@ -1,11 +1,11 @@
 import { SSLCommerzProvider } from './sslcommerz.js';
 import { BkashProvider } from './bkash.js';
-import { UddoktaPayProvider } from './uddoktapay.js';
+import { UddoktaPayProvider, DEFAULT_PAYMENTLY_URL } from './uddoktapay.js';
 import { SandboxPaymentProvider } from './sandbox.js';
 import { PAYMENT_PROVIDERS } from './types.js';
 
 export * from './types.js';
-export { UddoktaPayProvider };
+export { UddoktaPayProvider, DEFAULT_PAYMENTLY_URL };
 
 export function getPublicOrigin(req = null) {
   const configured = process.env.APP_URL || process.env.PUBLIC_URL || process.env.BASE_URL;
@@ -120,11 +120,14 @@ export function getPaymentConfigurationStatus() {
 
   const configured = sslcommerz.isConfigured() || bkash.isConfigured() || uddoktapay.isConfigured() || sandboxEnabled;
 
-  const activeProvider = (process.env.PAYMENT_GATEWAY_PROVIDER === 'paymently' || process.env.PAYMENT_GATEWAY_PROVIDER === 'uddoktapay' || uddoktapay.apiKey)
-    ? (process.env.PAYMENT_GATEWAY_PROVIDER === 'paymently' ? 'paymently' : 'uddoktapay')
-    : (sslcommerz.isConfigured() 
-        ? 'sslcommerz' 
-        : (bkash.isConfigured() ? 'bkash' : (sandboxEnabled ? 'sandbox' : (uddoktapay.isConfigured() ? 'paymently' : null))));
+  const serverConfigured = (process.env.PAYMENT_GATEWAY_PROVIDER || '').toLowerCase();
+  const activeProvider = (serverConfigured === 'paymently' || (!uddoktapay.apiKey && uddoktapay.isConfigured()))
+    ? 'paymently'
+    : (serverConfigured === 'uddoktapay' || uddoktapay.apiKey
+        ? 'uddoktapay'
+        : (sslcommerz.isConfigured() 
+            ? 'sslcommerz' 
+            : (bkash.isConfigured() ? 'bkash' : (sandboxEnabled ? 'sandbox' : (uddoktapay.isConfigured() ? 'paymently' : null)))));
 
   const isSandbox = Boolean(
     !isProd && (
@@ -147,8 +150,8 @@ export function getPaymentConfigurationStatus() {
       supportedMethods: ['bKash', 'Nagad', 'Rocket', 'Upay', 'Visa / Mastercard', 'Internet Banking']
     },
     paymently: {
-      configured: Boolean(uddoktapay.paymentLink),
-      paymentLink: uddoktapay.paymentLink,
+      configured: uddoktapay.isConfigured(),
+      paymentLink: uddoktapay.paymentLink || DEFAULT_PAYMENTLY_URL,
       qrCodeUrl: uddoktapay.qrCodeUrl
     },
     sslcommerz: {

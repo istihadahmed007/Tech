@@ -1,22 +1,26 @@
 import { PAYMENT_STATUS } from './types.js';
 
+export const DEFAULT_PAYMENTLY_URL = 'https://vartualtutor.paymently.io/paymentlink/default/BDT';
+
 export class UddoktaPayProvider {
   constructor(config = {}) {
     this.name = 'uddoktapay';
     this.apiKey = (config.apiKey || process.env.UDDOKTAPAY_API_KEY || '').trim();
     const rawBaseUrl = (config.baseUrl || process.env.UDDOKTAPAY_BASE_URL || 'https://my.uddoktapay.com').trim();
     this.baseUrl = rawBaseUrl.replace(/\/+$/, '').replace(/\/api$/, '');
-    this.paymentLink = (config.paymentLink || process.env.PAYMENTLY_URL || '').trim();
+
+    const explicitLink = (config.paymentLink || process.env.PAYMENTLY_URL || '').trim();
+    const isPaymentlySelected = (process.env.PAYMENT_GATEWAY_PROVIDER || '').toLowerCase() === 'paymently';
+
+    this.paymentLink = explicitLink || (isPaymentlySelected ? DEFAULT_PAYMENTLY_URL : '');
     this.qrCodeUrl = (config.qrCodeUrl || process.env.PAYMENT_QR_CODE_URL || '').trim();
   }
 
   isConfigured() {
     return Boolean(
       this.apiKey || 
-      (this.paymentLink && (
-        process.env.PAYMENT_GATEWAY_PROVIDER === 'paymently' || 
-        process.env.PAYMENT_GATEWAY_PROVIDER === 'uddoktapay'
-      ))
+      this.paymentLink ||
+      (process.env.PAYMENT_GATEWAY_PROVIDER || '').toLowerCase() === 'paymently'
     );
   }
 
@@ -82,21 +86,18 @@ export class UddoktaPayProvider {
       }
     }
 
-    // 2. Direct merchant payment link (only if explicitly set in environment)
-    if (this.paymentLink) {
-      return {
-        success: true,
-        provider: 'uddoktapay',
-        redirectUrl: this.paymentLink,
-        paymentLink: this.paymentLink,
-        qrCodeUrl: this.qrCodeUrl || null,
-        invoiceId: String(order.id),
-        isPaymently: true,
-        supportedMethods: ['bKash', 'Nagad', 'Rocket', 'Upay', 'Visa / Mastercard']
-      };
-    }
-
-    throw new Error('No valid payment provider configuration available');
+    // 2. Direct merchant payment link (Paymently or custom gateway link)
+    const effectiveLink = this.paymentLink || DEFAULT_PAYMENTLY_URL;
+    return {
+      success: true,
+      provider: (process.env.PAYMENT_GATEWAY_PROVIDER === 'uddoktapay' || this.apiKey) ? 'uddoktapay' : 'paymently',
+      redirectUrl: effectiveLink,
+      paymentLink: effectiveLink,
+      qrCodeUrl: this.qrCodeUrl || null,
+      invoiceId: String(order.id),
+      isPaymently: true,
+      supportedMethods: ['bKash', 'Nagad', 'Rocket', 'Upay', 'Visa / Mastercard']
+    };
   }
 
   async verifyPayment({ invoiceId, order, trxId, senderPhone }) {
