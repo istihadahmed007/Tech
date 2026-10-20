@@ -123,21 +123,21 @@ export default function ProductGrid({
     : filteredProducts.slice(0, 10);
 
   return (
-    <section id="products-section" className="relative z-20 -mt-24 sm:-mt-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-      {/* Top Header of Section: Title and SKU Count */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+    <section id="products-section" className="product-grid-overlap max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      {/* Top Header of Section: High-Contrast Heading and Filter Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-white drop-shadow-sm tracking-tight flex items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-black text-[#10263D] tracking-tight flex items-center gap-2">
             <span>{lang === 'bn' ? 'ফিচার্ড গ্যাজেট' : 'Featured Tech Gear'}</span>
           </h2>
-          <p className="text-xs text-blue-100 font-medium hidden sm:block">
+          <p className="text-xs text-[#47617D] font-medium hidden sm:block mt-0.5">
             {lang === 'bn' ? 'আসল ও ওয়ারেন্টিযুক্ত মোবাইল এক্সেসরিজ' : 'Genuine hardware, verified compatibility & express delivery'}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Quick Filter Tabs */}
-          <div className="hidden md:flex items-center gap-1 bg-white/20 p-1 rounded-full backdrop-blur-md border border-white/30 text-xs text-white">
+          {/* Quick Filter Tabs with Strong Contrast */}
+          <div className="hidden md:flex items-center gap-1 bg-white/85 p-1 rounded-full backdrop-blur-md border border-blue-200/80 text-xs shadow-xs">
             {QUICK_FILTERS.map((f) => (
               <button
                 key={f.id}
@@ -145,8 +145,8 @@ export default function ProductGrid({
                 onClick={() => handleTabClick(f.id)}
                 className={`px-3 py-1 rounded-full font-semibold transition cursor-pointer ${
                   activeTab === f.id
-                    ? 'bg-white text-blue-600 shadow-xs'
-                    : 'text-white/90 hover:text-white hover:bg-white/15'
+                    ? 'bg-[#0084FF] text-white shadow-xs font-bold'
+                    : 'text-[#10263D] hover:text-[#0084FF] hover:bg-blue-50/70'
                 }`}
               >
                 {f.label}
@@ -154,7 +154,7 @@ export default function ProductGrid({
             ))}
           </div>
 
-          <span className="text-xs font-mono font-semibold text-white/95 bg-blue-600/35 border border-white/25 px-3 py-1.5 rounded-full backdrop-blur-md">
+          <span className="text-xs font-mono font-bold text-[#0077E6] bg-blue-50/90 border border-blue-200 px-3 py-1.5 rounded-full shadow-xs">
             {filteredProducts.length} Verified SKUs
           </span>
         </div>

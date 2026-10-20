@@ -1061,8 +1061,21 @@ export default function App() {
               lang={lang}
             />
 
-            {/* 5. Smart Tech Finder Interactive Lifestyle Matching */}
-            <div id="smart-tech-finder">
+            {/* 5. Brand & Phone Model Compatibility Finder */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <BrandSection
+                selectedPhone={selectedPhone}
+                onSelectPhone={(phone) => {
+                  setSelectedPhone(phone);
+                  scrollToSection('products-section');
+                }}
+                onClearPhoneFilter={() => setSelectedPhone(null)}
+                lang={lang}
+              />
+            </div>
+
+            {/* 6. Smart Tech Finder Interactive Lifestyle Matching */}
+            <div id="smart-tech-finder" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <SmartTechFinder
                 products={products}
                 onSelectProduct={(p) => navigateToProduct(p, true)}
@@ -1074,8 +1087,8 @@ export default function App() {
               />
             </div>
 
-            {/* 6. Configurable Tech Kits for Lifestyle & Workflows */}
-            <div id="tech-kits-section">
+            {/* 7. Configurable Tech Kits for Lifestyle & Workflows */}
+            <div id="tech-kits-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <TechKits
                 products={products}
                 onAddKitToBag={handleAddKitToBag}
@@ -1086,8 +1099,8 @@ export default function App() {
               />
             </div>
 
-            {/* 7. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
-            <div id="bundles-section">
+            {/* 8. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
+            <div id="bundles-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <BundleDeals
                 onAddBundle={handleAddBundle}
                 lang={lang}
@@ -1095,41 +1108,27 @@ export default function App() {
               />
             </div>
 
-            {/* 8. Brand & Phone Model Compatibility */}
-            <BrandSection
-              selectedPhone={selectedPhone}
-              onSelectPhone={(phone) => {
-                setSelectedPhone(phone);
-                scrollToSection('products-section');
-              }}
-              onClearPhoneFilter={() => setSelectedPhone(null)}
-              lang={lang}
-            />
-
             {/* 8.5 Recently Viewed Products Showcase */}
-            <RecentlyViewedSection
-              recentIds={recentIds}
-              products={products}
-              onSelectProduct={(p) => navigateToProduct(p, true)}
-              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-              onToggleCompare={handleToggleCompare}
-              comparisonIds={comparisonIds}
-              lang={lang}
-              t={t}
-            />
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <RecentlyViewedSection
+                recentIds={recentIds}
+                products={products}
+                onSelectProduct={(p) => navigateToProduct(p, true)}
+                onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+                onToggleCompare={handleToggleCompare}
+                comparisonIds={comparisonIds}
+                lang={lang}
+                t={t}
+              />
+            </div>
 
-            {/* 9. Verified Customer Reviews & Shopping Benefits */}
-            <ReviewsSection
-              onOpenSupport={() => setActiveModal('support')}
-              lang={lang}
-              t={t}
-            />
-
-            {/* 9.5 Verified Shopping & Policy FAQs */}
-            <FaqSection
-              onOpenSupport={() => setActiveModal('support')}
-              lang={lang}
-            />
+            {/* 9. Verified Shopping & Policy FAQs */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <FaqSection
+                onOpenSupport={() => setActiveModal('support')}
+                lang={lang}
+              />
+            </div>
 
             {/* 10. Newsletter Signup */}
             <NewsletterSection

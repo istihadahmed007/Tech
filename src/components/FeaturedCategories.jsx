@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, MessageSquare, BadgePercent, Package, Clock, ChevronRight } from 'lucide-react';
+import { Headphones, Watch, Zap, Package, ShieldCheck, ChevronRight } from 'lucide-react';
 
 export default function FeaturedCategories({
   selectedCategory,
@@ -13,33 +13,33 @@ export default function FeaturedCategories({
 }) {
   const cards = [
     {
-      id: 'track',
-      title: lang === 'bn' ? 'অর্ডার ট্র্যাকিং' : 'Track BD',
-      subtext: lang === 'bn' ? 'ঢাকা ২৪-৪৮ঘ • সারা দেশ ২-৪ দিন' : 'Dhaka 24-48h • Nationwide 2-4 Days',
-      icon: MapPin,
+      id: 'audio',
+      title: lang === 'bn' ? 'অডিও ও বাডস' : 'Audio & TWS',
+      subtext: lang === 'bn' ? 'নয়েজ ক্যান্সেলেশন ও ব্লুটুথ' : 'ANC, Hi-Fi sound & call headsets',
+      icon: Headphones,
+      active: selectedCategory === 'audio',
       onClick: () => {
-        if (onOpenTracking) onOpenTracking();
-        else if (onOpenSupport) onOpenSupport();
+        if (onSelectCategory) onSelectCategory('audio');
       }
     },
     {
-      id: 'matcher',
-      title: lang === 'bn' ? 'স্মার্ট ম্যাচিং' : 'AI Matcher',
-      subtext: lang === 'bn' ? 'ফোন ও চার্জার কম্প্যাটিবিলিটি' : 'Instant phone & accessory matching',
-      icon: MessageSquare,
+      id: 'wearables',
+      title: lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches',
+      subtext: lang === 'bn' ? 'আল্ট্রা ডিসপ্লে ও হেলথ ট্র্যাকিং' : 'Ultra HD display & strap combos',
+      icon: Watch,
+      active: selectedCategory === 'wearables',
       onClick: () => {
-        if (onScrollToFinder) onScrollToFinder();
-        else if (onSelectCategory) onSelectCategory('audio');
+        if (onSelectCategory) onSelectCategory('wearables');
       }
     },
     {
-      id: 'deals',
-      title: lang === 'bn' ? 'ফ্ল্যাশ ডিলস' : 'Flash Deals',
-      subtext: lang === 'bn' ? 'বিশেষ ডিসকাউন্ট ও অফার' : 'Limited-time discounts & clearance',
-      icon: BadgePercent,
+      id: 'charging',
+      title: lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Cables & Power',
+      subtext: lang === 'bn' ? '৬৫W/১২০W ফাস্ট চার্জিং' : '65W/120W cables & wall chargers',
+      icon: Zap,
+      active: selectedCategory === 'charging',
       onClick: () => {
         if (onSelectCategory) onSelectCategory('charging');
-        else if (onShopAll) onShopAll();
       }
     },
     {
@@ -47,6 +47,7 @@ export default function FeaturedCategories({
       title: lang === 'bn' ? 'ফ্রি ডেলিভারি' : 'Free Parcel',
       subtext: lang === 'bn' ? '৳২,০০০+ অর্ডারে সম্পূর্ণ ফ্রি' : '100% Free courier on ৳2,000+',
       icon: Package,
+      active: false,
       onClick: () => {
         if (onScrollToBundles) onScrollToBundles();
         else if (onShopAll) onShopAll();
@@ -54,9 +55,10 @@ export default function FeaturedCategories({
     },
     {
       id: 'warranty',
-      title: lang === 'bn' ? '৭-৩০ দিন ওয়ারেন্টি' : 'Fast Dispatch',
-      subtext: lang === 'bn' ? 'কিউসি টেস্টেড ও রিপ্লেসমেন্ট' : '100% QC tested & replacement warranty',
-      icon: Clock,
+      title: lang === 'bn' ? 'কিউসি ওয়ারেন্টি' : 'QC & Warranty',
+      subtext: lang === 'bn' ? '১০০% টেস্টেড ও রিপ্লেসমেন্ট' : '100% Tested with replacement',
+      icon: ShieldCheck,
+      active: false,
       onClick: () => {
         if (onOpenSupport) onOpenSupport();
       }

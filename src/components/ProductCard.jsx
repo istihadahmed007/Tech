@@ -127,7 +127,7 @@ export default function ProductCard({
         onClick={handleQuickAddClick}
         className="bg-white/65 group-hover:bg-white/90 border-t border-white/80 py-2.5 px-3 text-center transition-all cursor-pointer flex flex-col items-center justify-center"
       >
-        <p className="text-xs font-semibold text-[#1E3A5F] truncate w-full">
+        <p className="text-xs font-semibold text-[#1E3A5F] line-clamp-2 min-h-[2rem] leading-snug w-full">
           {lang === 'bn' ? (product.titleBn || product.title) : product.title}
         </p>
         <p className="text-[10px] font-semibold text-[#0077E6] mt-0.5 flex items-center gap-1 group-hover:text-blue-700">

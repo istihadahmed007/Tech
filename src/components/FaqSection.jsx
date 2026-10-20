@@ -36,17 +36,17 @@ export default function FaqSection({ onOpenSupport, lang = 'en' }) {
   ];
 
   return (
-    <section className="w-full my-8 sm:my-12 p-5 sm:p-8 bg-[#12141C] rounded-2xl border border-[#1E2230] shadow-xl">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-[#1E2230]">
+    <section className="w-full my-8 sm:my-12 p-5 sm:p-8 bg-white rounded-2xl border border-blue-100 shadow-sm text-[#10263D]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-blue-100">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/40 text-cyan-400 text-xs font-mono font-bold mb-2 border border-cyan-500/30">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0084FF] text-xs font-mono font-bold mb-2 border border-blue-200">
             <HelpCircle size={14} />
             <span>{lang === 'bn' ? 'সাধারণ জিজ্ঞাসা' : 'FREQUENTLY ASKED QUESTIONS'}</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold font-mono text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold font-mono text-[#10263D] tracking-tight">
             {lang === 'bn' ? 'প্রয়োজনীয় তথ্যাবলী ও পলিসি' : 'Helpful Shopping & Policy FAQs'}
           </h2>
-          <p className="text-xs sm:text-sm text-zinc-400 font-mono mt-1">
+          <p className="text-xs sm:text-sm text-[#47617D] font-mono mt-1">
             {lang === 'bn' 
               ? 'ডেলিভারি, রিপ্লেসমেন্ট এবং পেমেন্ট সংক্রান্ত আসল তথ্যাবলী।'
               : 'Clear, verified answers regarding shipping timelines, returns, and payment options.'}
@@ -57,7 +57,7 @@ export default function FaqSection({ onOpenSupport, lang = 'en' }) {
           <button
             type="button"
             onClick={onOpenSupport}
-            className="text-xs sm:text-sm font-mono font-semibold text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-1.5 self-start md:self-auto cursor-pointer"
+            className="text-xs sm:text-sm font-mono font-semibold text-[#0084FF] hover:text-[#005BB3] hover:underline flex items-center gap-1.5 self-start md:self-auto cursor-pointer"
           >
             <span>{lang === 'bn' ? 'সাপোর্টে যোগাযোগ করুন' : 'Have more questions? Contact Support'}</span>
           </button>
@@ -74,8 +74,8 @@ export default function FaqSection({ onOpenSupport, lang = 'en' }) {
               key={idx}
               className={`rounded-xl border transition-all duration-200 overflow-hidden ${
                 isOpen 
-                  ? 'border-cyan-500/50 bg-[#0B0D14] shadow-[0_0_15px_rgba(6,182,212,0.1)]' 
-                  : 'border-[#1E2230] bg-[#0B0D14] hover:border-zinc-700'
+                  ? 'border-blue-300 bg-blue-50/50 shadow-xs' 
+                  : 'border-slate-200 bg-[#F8FBFE] hover:border-blue-200'
               }`}
             >
               <button
@@ -86,17 +86,17 @@ export default function FaqSection({ onOpenSupport, lang = 'en' }) {
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                    isOpen ? 'bg-cyan-500 text-[#090A0F]' : 'bg-[#12141C] text-cyan-400 border border-[#1E2230]'
+                    isOpen ? 'bg-[#0084FF] text-white shadow-xs' : 'bg-white text-[#0084FF] border border-blue-100 shadow-2xs'
                   }`}>
                     <Icon size={16} />
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold text-zinc-100">
+                  <h3 className="text-xs sm:text-sm font-bold text-[#10263D]">
                     {faq.q}
                   </h3>
                 </div>
 
-                <div className={`p-1 rounded-full text-zinc-400 transition-transform duration-200 shrink-0 ${
-                  isOpen ? 'rotate-180 text-cyan-400' : ''
+                <div className={`p-1 rounded-full text-slate-400 transition-transform duration-200 shrink-0 ${
+                  isOpen ? 'rotate-180 text-[#0084FF]' : ''
                 }`}>
                   <ChevronDown size={18} />
                 </div>
@@ -104,7 +104,7 @@ export default function FaqSection({ onOpenSupport, lang = 'en' }) {
 
               {isOpen && (
                 <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 pl-14 sm:pl-16">
-                  <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-mono">
+                  <p className="text-xs sm:text-sm text-[#47617D] leading-relaxed">
                     {faq.a}
                   </p>
                 </div>
