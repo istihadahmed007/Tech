@@ -5,7 +5,7 @@ import Hero from './components/Hero';
 import QuickShortcuts from './components/QuickShortcuts';
 import FlashSale from './components/FlashSale';
 import FeaturedCategories from './components/FeaturedCategories';
-import DailyDiscover from './components/DailyDiscover';
+import AgentDock from './components/AgentDock';
 import BrandSection from './components/BrandSection';
 import ReviewsSection from './components/ReviewsSection';
 import FaqSection from './components/FaqSection';
@@ -27,7 +27,6 @@ import AdminDashboard from './components/AdminDashboard';
 import SupportModal from './components/SupportModal';
 import BundleDeals from './components/BundleDeals';
 import SmartTechFinder from './components/SmartTechFinder';
-import ComparisonBar from './components/ComparisonBar';
 import ProductComparisonModal from './components/ProductComparisonModal';
 import TechKits from './components/TechKits';
 import RecentlyViewedSection from './components/RecentlyViewedSection';
@@ -1042,20 +1041,7 @@ export default function App() {
               lang={lang}
             />
 
-            {/* 7. Shopee Daily Discover Tabbed Product Recommendations */}
-            <DailyDiscover
-              products={products}
-              currencySymbol="৳"
-              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-              onOpenDetail={(p) => navigateToProduct(p, true)}
-              wishlistIds={wishlistIds}
-              onToggleWishlist={handleToggleWishlist}
-              onToggleCompare={handleToggleCompare}
-              comparisonIds={comparisonIds}
-              selectedPhone={selectedPhone}
-              t={t}
-              lang={lang}
-            />
+
 
             {/* 8. Brand & Phone Model Compatibility */}
             <BrandSection
@@ -1255,16 +1241,18 @@ export default function App() {
         />
       )}
 
-      {/* Floating Persistent Comparison Drawer */}
-      <ComparisonBar
-        comparisonIds={comparisonIds}
-        products={products}
-        onOpenModal={() => setActiveModal('comparison')}
-        onRemoveItem={handleRemoveFromCompare}
-        onClearAll={handleClearComparison}
-        lang={lang}
-        t={t}
-      />
+      {/* Floating Persistent Agent Cart & Compare Dock */}
+      {!isCheckoutView && (
+        <AgentDock
+          cart={cart}
+          comparisonIds={comparisonIds}
+          onOpenCart={() => navigateToCart(true)}
+          onOpenCheckout={() => navigateToCheckout()}
+          onOpenComparison={() => setActiveModal('comparison')}
+          currencySymbol="৳"
+          lang={lang}
+        />
+      )}
 
       {/* Concise Customer Footer */}
       <Footer

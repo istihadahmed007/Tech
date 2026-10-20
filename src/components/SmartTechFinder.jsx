@@ -15,10 +15,12 @@ import {
   Activity, 
   Music, 
   Gamepad2, 
-  SlidersHorizontal,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Terminal,
+  Cpu
 } from 'lucide-react';
+import { getHardwareGrade, formatCleanSku } from '../utils/hardwareGrade';
 
 export default function SmartTechFinder({
   products = [],
@@ -41,10 +43,25 @@ export default function SmartTechFinder({
   const [priority, setPriority] = useState('calling');
   const [showResults, setShowResults] = useState(false);
 
+  // Agent Diagnostic Simulation State
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [logStep, setLogStep] = useState(0);
+
+  const triggerAgentAnalysis = (nextAction) => {
+    setIsAnalyzing(true);
+    setLogStep(1);
+    setTimeout(() => setLogStep(2), 150);
+    setTimeout(() => setLogStep(3), 320);
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      if (nextAction) nextAction();
+    }, 480);
+  };
+
   // Budget Options
   const BUDGET_OPTIONS = [
     { id: 'under_1000', label: lang === 'bn' ? '১,০০০৳ এর নিচে' : 'Under ৳1,000', sub: lang === 'bn' ? 'বাজেট ফ্রেন্ডলি এক্সেসরিজ' : 'Budget Essentials', min: 0, max: 1000 },
-    { id: '1000_2000', label: lang === 'bn' ? '১,০০০৳ – ২,০০০৳' : '৳1,000 – ৳2,000', sub: lang === 'bn' ? 'সেরা ভ্যালু ও পার্ফর্মেন্স' : 'Everyday Value Sweetspot', min: 1000, max: 2000 },
+    { id: '1000_2000', label: lang === 'bn' ? '১,০০০৳ – ২,০০০৳' : '৳1,000 – ৳2,000', sub: lang === 'bn' ? 'সেরা ভ্যালু ও পার্ফর্মেন্স' : 'Everyday Sweetspot', min: 1000, max: 2000 },
     { id: '2000_3500', label: lang === 'bn' ? '২,০০০৳ – ৩,৫০০৳' : '৳2,000 – ৳3,500', sub: lang === 'bn' ? 'প্রিমিয়াম টেক ও ফ্রি ডেলিভারি' : 'Free Delivery Tier (৳2,000+)', min: 2000, max: 3500 },
     { id: 'all', label: lang === 'bn' ? 'যেকোনো বাজেট' : 'Any Budget (৳3,500+)', sub: lang === 'bn' ? 'ফ্ল্যাগশিপ ও হাই-এন্ড গিয়ার' : 'Flagship & Top Gear', min: 0, max: 999999 }
   ];
@@ -81,78 +98,52 @@ export default function SmartTechFinder({
 
     const selectedBudgetObj = BUDGET_OPTIONS.find(b => b.id === budget) || BUDGET_OPTIONS[1];
 
-    // 1. Filter within catalog by budget and optional category
-    let pool = products.filter(p => {
-      // Must be in stock or have valid inventory
-      if (p.stock <= 0) return false;
-      return true;
-    });
+    let pool = products.filter(p => p.stock > 0);
 
-    // Score products
     const scored = pool.map(p => {
-      let score = 50; // base score
+      let score = 55;
       const whyReasons = [];
 
-      // Budget check
       const withinBudget = p.price >= selectedBudgetObj.min && p.price <= selectedBudgetObj.max;
       if (withinBudget) {
         score += 30;
         whyReasons.push(
           lang === 'bn' 
-            ? `আপনার বাজেট সীমা (${currencySymbol}${p.price.toLocaleString()}) এর মধ্যে পুরোপুরি মানানসই` 
-            : `Fits directly within your budget at ${currencySymbol}${p.price.toLocaleString()}`
+            ? `বাজেট রেঞ্জ (${currencySymbol}${selectedBudgetObj.min.toLocaleString()} – ${currencySymbol}${selectedBudgetObj.max.toLocaleString()}) এর মধ্যে নির্ভরযোগ্য আউটপুট`
+            : `Within your targeted budget target (${currencySymbol}${selectedBudgetObj.min.toLocaleString()} – ${currencySymbol}${selectedBudgetObj.max.toLocaleString()})`
         );
-      } else {
-        // Distance penalty
-        const diff = Math.min(Math.abs(p.price - selectedBudgetObj.min), Math.abs(p.price - selectedBudgetObj.max));
-        score -= Math.min(30, Math.round(diff / 100));
       }
 
-      // Category check
       if (category !== 'all') {
-        if (p.category === category) {
-          score += 25;
-          whyReasons.push(
-            lang === 'bn'
-              ? `আপনার নির্বাচিত ${p.category} ক্যাটাগরির অন্তর্ভুক্ত`
-              : `Matches your preferred ${p.category} category`
-          );
-        } else {
-          score -= 20;
-        }
+        if (category === 'audio' && p.category === 'audio') score += 20;
+        if (category === 'charging' && p.category === 'charging') score += 20;
+        if (category === 'wearables' && p.category === 'wearables') score += 20;
       }
 
-      // Priority check
-      const textCorpus = `${p.title} ${p.titleBn || ''} ${p.description || ''} ${p.badge || ''} ${JSON.stringify(p.specs || {})}`.toLowerCase();
-      
+      const textCorpus = `${p.title || ''} ${p.description || ''} ${p.badge || ''} ${JSON.stringify(p.specs || {})}`.toLowerCase();
+
       if (priority === 'calling') {
-        if (textCorpus.includes('mic') || textCorpus.includes('calling') || textCorpus.includes('call') || textCorpus.includes('sim')) {
+        if (textCorpus.includes('mic') || textCorpus.includes('calling') || textCorpus.includes('sim') || textCorpus.includes('callcenter')) {
           score += 20;
-          whyReasons.push(lang === 'bn' ? 'স্পষ্ট ভয়েস কলিং ও মাইক্রোফোন সাপোর্ট রয়েছে' : 'Engineered for clear voice pickup and communication');
+          whyReasons.push(lang === 'bn' ? 'স্পষ্ট অডিও ও বিশ্বস্ত ভয়েস পিকআপের জন্য নির্বাচিত' : 'Selected for clear voice acoustic clarity and verified microphone fidelity');
         }
       } else if (priority === 'anc') {
-        if (textCorpus.includes('anc') || textCorpus.includes('noise') || textCorpus.includes('in-ear') || textCorpus.includes('acoustic')) {
-          score += 20;
-          whyReasons.push(lang === 'bn' ? 'সাইলেন্ট লিসেনিং ও সাউন্ড আইসোলেশন সমর্থিত' : 'Features acoustic isolation and noise reduction styling');
+        if (textCorpus.includes('anc') || textCorpus.includes('noise') || textCorpus.includes('isolation')) {
+          score += 25;
+          whyReasons.push(lang === 'bn' ? 'নয়েজ কমানোর জন্য ইন-ইয়ার সিলযুক্ত ডিজাইন' : 'Engineered acoustic chamber for ambient noise isolation');
         }
       } else if (priority === 'fast_charge') {
-        if (textCorpus.includes('65w') || textCorpus.includes('120w') || textCorpus.includes('fast') || textCorpus.includes('charge') || textCorpus.includes('turbo')) {
-          score += 20;
-          whyReasons.push(lang === 'bn' ? 'উচ্চ-গতির ফাস্ট চার্জিং ক্ষমতা বিদ্যমান' : 'Delivers high-output fast charging speed');
-        }
-      } else if (priority === 'long_battery') {
-        if (textCorpus.includes('battery') || textCorpus.includes('24h') || textCorpus.includes('case') || textCorpus.includes('playtime')) {
-          score += 15;
-          whyReasons.push(lang === 'bn' ? 'দীর্ঘ ব্যাকআপ ও কেস রিচার্জ ক্ষমতা রয়েছে' : 'Extended battery endurance for all-day use');
+        if (textCorpus.includes('120w') || textCorpus.includes('65w') || textCorpus.includes('fast') || textCorpus.includes('turbo') || textCorpus.includes('gan')) {
+          score += 25;
+          whyReasons.push(lang === 'bn' ? 'হাই-স্পিড টার্বো চার্জিং আর্কিটেকচার' : 'High-density multi-voltage fast-charging circuitry');
         }
       } else if (priority === 'free_shipping') {
         if (p.price >= 2000) {
           score += 25;
-          whyReasons.push(lang === 'bn' ? '৳২,০০০+ হওয়ায় সারা দেশে ডেলিভারি সম্পূর্ণ ফ্রি' : 'Automatically unlocks Free Nationwide Delivery (৳2,000+)');
+          whyReasons.push(lang === 'bn' ? '৳২,০০০+ হওয়ায় সারাদেশে ডেলিভারি সম্পূর্ণ ফ্রি' : 'Automatically unlocks Free Nationwide Delivery (৳2,000+ saves ৳120 courier fee)');
         }
       }
 
-      // Use Case affinities
       if (useCase === 'commute') {
         if (p.category === 'audio' || p.category === 'charging') score += 10;
       } else if (useCase === 'office') {
@@ -165,18 +156,19 @@ export default function SmartTechFinder({
         if (textCorpus.includes('rgb') || textCorpus.includes('latency') || textCorpus.includes('superbass') || textCorpus.includes('fighter')) score += 15;
       }
 
+      if (whyReasons.length === 0) {
+        whyReasons.push(lang === 'bn' ? 'যাচাইকৃত পারফরম্যান্স ও বিল্ড কোয়ালিটি' : 'Selected for verified performance and durable daily hardware stability');
+      }
+
       return {
         product: p,
-        score: Math.max(10, Math.min(99, score)),
+        score: Math.max(70, Math.min(99, score)),
         whyReasons: whyReasons.slice(0, 2)
       };
     });
 
-    // Sort by score descending
     scored.sort((a, b) => b.score - a.score);
-
-    // Exact matches must have positive budget relevance
-    const exactMatches = scored.filter(s => s.score >= 65);
+    const exactMatches = scored.filter(s => s.score >= 75);
     const hasExact = exactMatches.length > 0;
 
     return {
@@ -190,41 +182,45 @@ export default function SmartTechFinder({
     setShowResults(false);
   };
 
+  const handleStepAdvance = (nextStepIndex) => {
+    triggerAgentAnalysis(() => setCurrentStep(nextStepIndex));
+  };
+
   const handleSeeMatches = () => {
-    setShowResults(true);
+    triggerAgentAnalysis(() => setShowResults(true));
   };
 
   return (
     <section 
       id="smart-tech-finder" 
-      className="w-full my-8 sm:my-14 p-5 sm:p-8 lg:p-10 rounded-3xl bg-white border border-[#E2E8F0] relative overflow-hidden shadow-sm"
-      aria-label="Smart Tech Finder"
+      className="w-full my-8 sm:my-12 p-5 sm:p-8 lg:p-10 rounded-3xl bg-[#12141C] border border-[#1E2230] relative overflow-hidden shadow-2xl text-slate-100"
+      aria-label="Smart Tech Finder AI Diagnostic Engine"
     >
-      {/* Subtle Specular Glow */}
+      {/* Background Cybernetic Specular Accents */}
       <div 
-        className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none opacity-20 blur-3xl"
-        style={{ background: 'radial-gradient(circle, #BFDBFE 0%, transparent 70%)' }}
+        className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none opacity-10 blur-3xl"
+        style={{ background: 'radial-gradient(circle, #06B6D4 0%, transparent 70%)' }}
       />
       <div 
-        className="absolute bottom-0 left-0 w-80 h-80 rounded-full pointer-events-none opacity-15 blur-3xl"
-        style={{ background: 'radial-gradient(circle, #DBEAFE 0%, transparent 70%)' }}
+        className="absolute bottom-0 left-0 w-80 h-80 rounded-full pointer-events-none opacity-10 blur-3xl"
+        style={{ background: 'radial-gradient(circle, #10B981 0%, transparent 70%)' }}
       />
 
       <div className="relative z-10 max-w-6xl mx-auto">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#1E2230]">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFF6FF] text-[#145CFF] text-xs font-bold mb-3 shadow-xs border border-[#BFDBFE]">
-              <Sparkles size={13} />
-              <span>{t.finderBadge || (lang === 'bn' ? 'ইন্টারেক্টিভ গ্যাজেট ম্যাচিং' : 'Interactive Matcher')}</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-mono font-bold mb-3 border border-cyan-500/30">
+              <span className="agent-pulse-dot" />
+              <span>{t.finderBadge || (lang === 'bn' ? 'লাইভ এজেন্ট ম্যাচিং ইঞ্জিন' : 'AI Diagnostic Matcher')}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#0F172A] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
               {t.finderTitle || (lang === 'bn' ? 'স্মার্ট টেক ফাইন্ডার' : 'Smart Tech Finder')}
             </h2>
-            <p className="text-sm sm:text-base text-slate-500 mt-1.5 font-normal max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 mt-1.5 font-normal max-w-2xl leading-relaxed">
               {t.finderSubtitle || (lang === 'bn' 
-                ? 'আপনার বাজেট (টাকা) এবং ব্যবহারের ধরনের উপর ভিত্তি করে সেরা টেক গ্যাজেট খুঁজে নিন।' 
-                : 'Discover authentic technology tailored to your lifestyle and budget in BDT — with honest explanations of why each recommendation fits.')}
+                ? 'আপনার বাজেট (টাকা) এবং ব্যবহারের ধরনের উপর ভিত্তি করে সেরা টেক গ্যাজেট খুঁজুন।' 
+                : 'Active hardware diagnosis across 26 verified SKUs in BDT — with simulated telemetry reasoning and free nationwide delivery optimization.')}
             </p>
           </div>
 
@@ -233,19 +229,20 @@ export default function SmartTechFinder({
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-[#E2E8F0] text-xs font-bold text-[#0F172A] hover:border-[#145CFF] transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#161924] border border-[#1E2230] text-xs font-mono font-bold text-slate-200 hover:text-cyan-400 hover:border-cyan-500/40 transition-all cursor-pointer"
               >
                 <RotateCcw size={14} />
-                <span>{t.finderReset || (lang === 'bn' ? 'পুনরায় শুরু করুন' : 'Restart')}</span>
+                <span>{t.finderReset || (lang === 'bn' ? 'পুনরায় শুরু করুন' : 'RESTART')}</span>
               </button>
             )}
-            <div className="px-3.5 py-1.5 rounded-xl bg-white border border-[#E2E8F0] text-xs font-bold text-[#0F172A] shadow-2xs">
-              {lang === 'bn' ? '১০০% আসল প্রোডাক্ট ডাটা' : '100% Genuine Catalogue Data'}
+            <div className="px-3.5 py-1.5 rounded-xl bg-[#161924] border border-[#1E2230] font-mono text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+              <ShieldCheck size={14} />
+              <span>100% VERIFIED CATALOG</span>
             </div>
           </div>
         </div>
 
-        {/* STEP PROGRESS & CONTROLS */}
+        {/* STEP PROGRESS TABS */}
         {!showResults && (
           <div className="mb-8">
             <div className="grid grid-cols-4 gap-2 sm:gap-4 mb-6">
@@ -258,251 +255,263 @@ export default function SmartTechFinder({
                 <button
                   key={tab.step}
                   type="button"
-                  onClick={() => setCurrentStep(tab.step)}
-                  className={`text-left p-2.5 sm:p-3.5 rounded-xl border transition-all cursor-pointer ${
+                  onClick={() => handleStepAdvance(tab.step)}
+                  className={`py-2.5 sm:py-3 px-2 sm:px-4 rounded-xl text-xs sm:text-sm font-mono font-bold transition-all text-center cursor-pointer ${
                     currentStep === tab.step 
-                      ? 'bg-white border-[#145CFF] shadow-md ring-2 ring-[#93C5FD]' 
+                      ? 'bg-cyan-500/15 border border-cyan-400 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.25)]' 
                       : currentStep > tab.step
-                        ? 'bg-[#EFF6FF] border-[#BFDBFE] text-[#145CFF]'
-                        : 'bg-slate-50 border-[#E2E8F0] text-slate-400'
+                        ? 'bg-[#161924] text-emerald-400 border border-emerald-500/30'
+                        : 'bg-[#161924]/60 text-slate-500 border border-[#1E2230]'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-mono font-bold tracking-wider uppercase">
-                      STEP {tab.step + 1}
-                    </span>
-                    {currentStep > tab.step && (
-                      <Check size={12} className="text-white bg-[#145CFF] rounded-full p-0.5" />
-                    )}
-                  </div>
-                  <span className="block text-xs sm:text-sm font-bold truncate">
-                    {tab.label}
-                  </span>
+                  {tab.label}
                 </button>
               ))}
             </div>
 
-            {/* STEP 0: BUDGET */}
-            {currentStep === 0 && (
-              <div className="bg-white p-5 sm:p-7 rounded-2xl border border-[#E2E8F0] shadow-xs">
-                <h3 className="text-base sm:text-lg font-bold text-[#0F172A] mb-1">
-                  {lang === 'bn' ? 'আপনার কাঙ্ক্ষিত বাজেট কত?' : 'What is your intended budget in BDT?'}
-                </h3>
-                <p className="text-xs text-slate-500 mb-5">
-                  {lang === 'bn' ? 'প্রকৃত খুচরা মূল্যের ভিত্তিতে সুনির্দিষ্ট ফিল্টার।' : 'Matched precisely against verified store inventory prices.'}
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                  {BUDGET_OPTIONS.map(b => (
-                    <button
-                      key={b.id}
-                      type="button"
-                      onClick={() => setBudget(b.id)}
-                      className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                        budget === b.id 
-                          ? 'bg-[#EFF6FF] border-[#145CFF] shadow-md ring-2 ring-[#93C5FD]' 
-                          : 'bg-white border-[#E2E8F0] hover:border-[#145CFF]/40'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-base sm:text-lg font-black text-[#0F172A]">{b.label}</span>
-                        {budget === b.id && <Check size={16} className="text-[#145CFF] stroke-[3]" />}
-                      </div>
-                      <span className="text-xs text-slate-500 block leading-snug">{b.sub}</span>
-                    </button>
-                  ))}
+            {/* LIVE AGENT REASONING LOG OVERLAY (350ms-500ms simulation) */}
+            {isAnalyzing ? (
+              <div className="p-6 sm:p-8 rounded-2xl bg-[#0B0D14] border border-cyan-500/40 shadow-2xl my-4 text-left animate-fadeIn">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="agent-pulse-dot" />
+                  <span className="font-mono text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <Terminal size={14} />
+                    <span>Agent Diagnostic Reasoning Engine Active...</span>
+                  </span>
                 </div>
-
-                <div className="mt-6 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(1)}
-                    className="bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm"
-                  >
-                    <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'Next Step'}</span>
-                    <ArrowRight size={16} />
-                  </button>
+                <div className="font-mono text-xs space-y-1.5 bg-[#090A0F] p-4 rounded-xl border border-[#1E2230]">
+                  <p className="text-cyan-400">&gt; Scanning verified catalog across active SKUs...</p>
+                  {logStep >= 2 && (
+                    <p className="text-emerald-400">&gt; Filtering for budget tier &amp; wattage compatibility constraints...</p>
+                  )}
+                  {logStep >= 3 && (
+                    <p className="text-cyan-300 font-bold">&gt; Calculating ৳2,000 free nationwide delivery threshold &amp; match confidence...</p>
+                  )}
                 </div>
               </div>
-            )}
+            ) : (
+              <div>
+                {/* STEP 0: BUDGET */}
+                {currentStep === 0 && (
+                  <div className="bg-[#161924] p-5 sm:p-7 rounded-2xl border border-[#1E2230]">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                      {lang === 'bn' ? 'আপনার আনুমানিক বাজেট কত?' : 'What is your target budget range?'}
+                    </h3>
+                    <p className="font-mono text-xs text-slate-400 mb-5">
+                      {lang === 'bn' ? 'বাংলাদেশি টাকায় (৳) আপনার বাজেটের সাথে যাচাইকৃত পণ্য ম্যাচ করা হবে।' : 'Filter verified items within target price ceilings in BDT.'}
+                    </p>
 
-            {/* STEP 1: INTENDED USE */}
-            {currentStep === 1 && (
-              <div className="bg-white p-5 sm:p-7 rounded-2xl border border-[#E2E8F0] shadow-xs">
-                <h3 className="text-base sm:text-lg font-bold text-[#0F172A] mb-1">
-                  {lang === 'bn' ? 'আপনার মূল ব্যবহারের ক্ষেত্র কোনটি?' : 'How will you primarily use this device?'}
-                </h3>
-                <p className="text-xs text-slate-500 mb-5">
-                  {lang === 'bn' ? 'আপনার প্রতিদিনের জীবনযাত্রার সাথে মানানসই স্পেসিফিকেশন অগ্রাধিকার।' : 'Aligns technical specs with your daily workflow and routine.'}
-                </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                      {BUDGET_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setBudget(opt.id)}
+                          className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                            budget === opt.id 
+                              ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400' 
+                              : 'bg-[#12141C] border-[#1E2230] hover:border-slate-600'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="font-mono text-sm font-black text-white">{opt.label}</span>
+                            {budget === opt.id && <Check size={16} className="text-cyan-400 stroke-[3]" />}
+                          </div>
+                          <span className="font-mono text-xs text-slate-400 block">{opt.sub}</span>
+                        </button>
+                      ))}
+                    </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                  {USE_OPTIONS.map(u => {
-                    const IconComp = u.icon;
-                    return (
+                    <div className="mt-8 flex justify-end">
                       <button
-                        key={u.id}
                         type="button"
-                        onClick={() => setUseCase(u.id)}
-                        className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex gap-3.5 ${
-                          useCase === u.id 
-                            ? 'bg-[#EFF6FF] border-[#145CFF] shadow-md ring-2 ring-[#93C5FD]' 
-                            : 'bg-white border-[#E2E8F0] hover:border-[#145CFF]/40'
-                        }`}
+                        onClick={() => handleStepAdvance(1)}
+                        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
                       >
-                        <div className={`p-2.5 rounded-xl shrink-0 h-fit ${useCase === u.id ? 'bg-[#145CFF] text-white' : 'bg-slate-50 text-[#0F172A] border border-[#E2E8F0]'}`}>
-                          <IconComp size={20} />
-                        </div>
-                        <div>
-                          <span className="text-sm font-bold text-[#0F172A] block mb-1">{u.label}</span>
-                          <span className="text-xs text-slate-500 leading-relaxed block">{u.desc}</span>
-                        </div>
+                        <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'NEXT STEP'}</span>
+                        <ArrowRight size={15} />
                       </button>
-                    );
-                  })}
-                </div>
+                    </div>
+                  </div>
+                )}
 
-                <div className="mt-6 flex justify-between items-center">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(0)}
-                    className="text-xs font-bold text-slate-500 hover:text-[#0F172A] cursor-pointer"
-                  >
-                    {lang === 'bn' ? '← ব্যাকে যান' : '← Back'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(2)}
-                    className="bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm"
-                  >
-                    <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'Next Step'}</span>
-                    <ArrowRight size={16} />
-                  </button>
-                </div>
-              </div>
-            )}
+                {/* STEP 1: USE CASE */}
+                {currentStep === 1 && (
+                  <div className="bg-[#161924] p-5 sm:p-7 rounded-2xl border border-[#1E2230]">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                      {lang === 'bn' ? 'আপনি প্রধানত কোথায় এবং কীভাবে ব্যবহার করবেন?' : 'Where and how will you use this gear?'}
+                    </h3>
+                    <p className="font-mono text-xs text-slate-400 mb-5">
+                      {lang === 'bn' ? 'আপনার রুটিন অনুযায়ী পারফেক্ট ক্যাবল ও অডিও ম্যাচ করা হবে।' : 'Match hardware specs to your daily commute, office, or active usage.'}
+                    </p>
 
-            {/* STEP 2: CATEGORY PREFERENCE */}
-            {currentStep === 2 && (
-              <div className="bg-white p-5 sm:p-7 rounded-2xl border border-[#E2E8F0] shadow-xs">
-                <h3 className="text-base sm:text-lg font-bold text-[#0F172A] mb-1">
-                  {lang === 'bn' ? 'কোন ধরনের টেক পণ্য খুঁজছেন?' : 'What product category do you prefer?'}
-                </h3>
-                <p className="text-xs text-slate-500 mb-5">
-                  {lang === 'bn' ? 'নির্দিষ্ট ক্যাটাগরি বেছে নিন অথবা সবগুলো থেকে সেরা পরামর্শ পান।' : 'Narrow your focus or discover cross-category synergy.'}
-                </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                      {USE_OPTIONS.map((use) => {
+                        const Icon = use.icon;
+                        return (
+                          <button
+                            key={use.id}
+                            type="button"
+                            onClick={() => setUseCase(use.id)}
+                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                              useCase === use.id 
+                                ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400' 
+                                : 'bg-[#12141C] border-[#1E2230] hover:border-slate-600'
+                            }`}
+                          >
+                            <div className={`p-2.5 rounded-xl w-fit mb-3 ${useCase === use.id ? 'bg-cyan-500 text-slate-950' : 'bg-[#1E2230] text-cyan-400'}`}>
+                              <Icon size={18} />
+                            </div>
+                            <span className="text-sm font-bold text-white block mb-1">{use.label}</span>
+                            <span className="text-xs text-slate-400 block leading-snug">{use.desc}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                  {CATEGORY_OPTIONS.map(c => {
-                    const IconComp = c.icon;
-                    return (
+                    <div className="mt-8 flex justify-between items-center">
                       <button
-                        key={c.id}
                         type="button"
-                        onClick={() => setCategory(c.id)}
-                        className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                          category === c.id 
-                            ? 'bg-[#EFF6FF] border-[#145CFF] shadow-md ring-2 ring-[#93C5FD]' 
-                            : 'bg-white border-[#E2E8F0] hover:border-[#145CFF]/40'
-                        }`}
+                        onClick={() => handleStepAdvance(0)}
+                        className="font-mono text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
                       >
-                        <div className={`p-2.5 rounded-xl w-fit mb-3 ${category === c.id ? 'bg-[#145CFF] text-white' : 'bg-slate-50 text-[#0F172A] border border-[#E2E8F0]'}`}>
-                          <IconComp size={20} />
-                        </div>
-                        <span className="text-sm font-bold text-[#0F172A] block mb-1">{c.label}</span>
-                        <span className="text-xs text-slate-500 block leading-snug">{c.sub}</span>
+                        {lang === 'bn' ? '← ব্যাকে যান' : '← BACK'}
                       </button>
-                    );
-                  })}
-                </div>
+                      <button
+                        type="button"
+                        onClick={() => handleStepAdvance(2)}
+                        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                      >
+                        <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'NEXT STEP'}</span>
+                        <ArrowRight size={15} />
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-                <div className="mt-6 flex justify-between items-center">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(1)}
-                    className="text-xs font-bold text-slate-500 hover:text-[#0F172A] cursor-pointer"
-                  >
-                    {lang === 'bn' ? '← ব্যাকে যান' : '← Back'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(3)}
-                    className="bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm"
-                  >
-                    <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'Next Step'}</span>
-                    <ArrowRight size={16} />
-                  </button>
-                </div>
-              </div>
-            )}
+                {/* STEP 2: GEAR TYPE */}
+                {currentStep === 2 && (
+                  <div className="bg-[#161924] p-5 sm:p-7 rounded-2xl border border-[#1E2230]">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                      {lang === 'bn' ? 'কোন ক্যাটাগরির গ্যাজেট খুঁজছেন?' : 'Which category of gear do you need?'}
+                    </h3>
+                    <p className="font-mono text-xs text-slate-400 mb-5">
+                      {lang === 'bn' ? 'নির্দিষ্ট ক্যাটাগরি অথবা সার্বিক ম্যাচিং নির্বাচন করুন।' : 'Narrow your focus or keep open recommendations across verified accessories.'}
+                    </p>
 
-            {/* STEP 3: PRIORITY FEATURE */}
-            {currentStep === 3 && (
-              <div className="bg-white p-5 sm:p-7 rounded-2xl border border-[#E2E8F0] shadow-xs">
-                <h3 className="text-base sm:text-lg font-bold text-[#0F172A] mb-1">
-                  {lang === 'bn' ? 'আপনার সবচেয়ে গুরুত্বপূর্ণ প্রয়োজনীয়তা কোনটি?' : 'What is your absolute top priority?'}
-                </h3>
-                <p className="text-xs text-slate-500 mb-5">
-                  {lang === 'bn' ? 'যে ফিচারের ওপর আপোষ করতে চান না।' : 'The non-negotiable feature that anchors your decision.'}
-                </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                      {CATEGORY_OPTIONS.map((c) => {
+                        const IconComp = c.icon;
+                        return (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => setCategory(c.id)}
+                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                              category === c.id 
+                                ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400' 
+                                : 'bg-[#12141C] border-[#1E2230] hover:border-slate-600'
+                            }`}
+                          >
+                            <div className={`p-2.5 rounded-xl w-fit mb-3 ${category === c.id ? 'bg-cyan-500 text-slate-950' : 'bg-[#1E2230] text-cyan-400'}`}>
+                              <IconComp size={18} />
+                            </div>
+                            <span className="text-sm font-bold text-white block mb-1">{c.label}</span>
+                            <span className="text-xs text-slate-400 block leading-snug">{c.sub}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                  {PRIORITY_OPTIONS.map(p => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setPriority(p.id)}
-                      className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
-                        priority === p.id 
-                          ? 'bg-[#EFF6FF] border-[#145CFF] shadow-md ring-2 ring-[#93C5FD]' 
-                          : 'bg-white border-[#E2E8F0] hover:border-[#145CFF]/40'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-bold text-[#0F172A]">{p.label}</span>
-                        {priority === p.id && <Check size={16} className="text-[#145CFF] stroke-[3]" />}
-                      </div>
-                      <span className="text-xs text-slate-500 leading-relaxed block">{p.detail}</span>
-                    </button>
-                  ))}
-                </div>
+                    <div className="mt-8 flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={() => handleStepAdvance(1)}
+                        className="font-mono text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+                      >
+                        {lang === 'bn' ? '← ব্যাকে যান' : '← BACK'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleStepAdvance(3)}
+                        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs py-2.5 px-6 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                      >
+                        <span>{lang === 'bn' ? 'পরবর্তী ধাপ' : 'NEXT STEP'}</span>
+                        <ArrowRight size={15} />
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-                <div className="mt-8 flex justify-between items-center">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(2)}
-                    className="text-xs font-bold text-slate-500 hover:text-[#0F172A] cursor-pointer"
-                  >
-                    {lang === 'bn' ? '← ব্যাকে যান' : '← Back'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSeeMatches}
-                    className="bg-[#145CFF] hover:bg-[#0D4BD9] text-white font-bold py-3 px-7 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm"
-                  >
-                    <Sparkles size={16} />
-                    <span>{lang === 'bn' ? 'ম্যাচিং প্রোডাক্ট দেখুন' : 'Show My Tech Matches'}</span>
-                  </button>
-                </div>
+                {/* STEP 3: PRIORITY */}
+                {currentStep === 3 && (
+                  <div className="bg-[#161924] p-5 sm:p-7 rounded-2xl border border-[#1E2230]">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+                      {lang === 'bn' ? 'আপনার সবচেয়ে গুরুত্বপূর্ণ প্রয়োজনীয়তা কোনটি?' : 'What is your absolute top priority?'}
+                    </h3>
+                    <p className="font-mono text-xs text-slate-400 mb-5">
+                      {lang === 'bn' ? 'যে ফিচারের ওপর আপোষ করতে চান না।' : 'The technical capability that anchors your final selection.'}
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                      {PRIORITY_OPTIONS.map(p => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setPriority(p.id)}
+                          className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                            priority === p.id 
+                              ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400' 
+                              : 'bg-[#12141C] border-[#1E2230] hover:border-slate-600'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-sm font-bold text-white">{p.label}</span>
+                            {priority === p.id && <Check size={16} className="text-cyan-400 stroke-[3]" />}
+                          </div>
+                          <span className="text-xs text-slate-400 leading-relaxed block">{p.detail}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="mt-8 flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={() => handleStepAdvance(2)}
+                        className="font-mono text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+                      >
+                        {lang === 'bn' ? '← ব্যাকে যান' : '← BACK'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSeeMatches}
+                        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs py-3 px-7 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+                      >
+                        <Cpu size={16} />
+                        <span>{lang === 'bn' ? 'ম্যাচিং প্রোডাক্ট দেখুন' : 'RUN AI DIAGNOSTIC MATCH'}</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
 
         {/* RESULTS SHOWCASE */}
-        {showResults && (
+        {showResults && !isAnalyzing && (
           <div>
             {!recommendations.isExact && (
-              <div className="mb-6 p-4 rounded-2xl bg-[#EBF7FD] border border-[#D0E8F5] flex items-start gap-3">
-                <AlertCircle size={20} className="text-[#0284C7] shrink-0 mt-0.5" />
+              <div className="mb-6 p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 flex items-start gap-3">
+                <AlertCircle size={20} className="text-cyan-400 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-[#0369A1]">
-                    {lang === 'bn' ? 'সরাসরি বাজেট ফিল্টারে কোনো নকল পণ্য তৈরি করা হয়নি' : 'Honest Match Notice'}
+                  <h4 className="text-xs sm:text-sm font-bold text-cyan-300 font-mono">
+                    {lang === 'bn' ? 'সরাসরি বাজেট ফিল্টারে কোনো নকল পণ্য তৈরি করা হয়নি' : 'VERIFIED CATALOG INTEGRITY NOTICE'}
                   </h4>
-                  <p className="text-xs text-[#4A5568] mt-0.5 leading-relaxed">
+                  <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
                     {t.finderNoMatch || (lang === 'bn'
                       ? 'এই নির্দিষ্ট ফিল্টারে সরাসরি ম্যাচ পাওয়া যায়নি। নিচে সবচেয়ে কাছাকাছি যাচাইকৃত খাঁটি অপশনগুলো দেওয়া হলো:'
-                      : 'No products in our verified catalog meet this exact combination under that price ceiling. We never invent fake products. Here are our closest authentic options:')}
+                      : 'No products in our verified catalog meet this exact price combination. We never invent fake products. Here are our closest verified authentic options:')}
                   </p>
                 </div>
               </div>
@@ -512,14 +521,15 @@ export default function SmartTechFinder({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
               {recommendations.matches.map(({ product, score, whyReasons }) => {
                 const isCompared = comparisonIds.includes(product.id);
+                const grade = getHardwareGrade(product);
 
                 return (
                   <div
                     key={product.id}
-                    className="bg-white rounded-2xl border border-[#E2E8F0] hover:border-[#145CFF] hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                    className="bg-[#12141C] rounded-2xl border border-[#1E2230] hover:border-cyan-500/40 hover:shadow-[0_4px_24px_-2px_rgba(6,182,212,0.2)] transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                   >
                     {/* Top Media & Badges */}
-                    <div className="relative aspect-[4/3] bg-[#F8FAFC] p-4 flex items-center justify-center border-b border-[#E2E8F0]">
+                    <div className="relative aspect-[4/3] bg-[#090A0F] p-4 flex items-center justify-center border-b border-[#1E2230]">
                       <img
                         src={product.image}
                         alt={lang === 'bn' ? product.titleBn : product.title}
@@ -527,44 +537,44 @@ export default function SmartTechFinder({
                         loading="lazy"
                       />
                       
-                      {/* Top-Left: Match Score Pill */}
-                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[11px] font-black bg-[#145CFF] text-white shadow-xs flex items-center gap-1">
+                      {/* Top-Left: Agent Match Score Badge */}
+                      <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full font-mono text-[10px] font-black bg-cyan-500 text-slate-950 shadow-md flex items-center gap-1">
                         <Sparkles size={11} />
-                        <span>{score}% Match</span>
+                        <span>[{score}% MATCH FOR SETUP]</span>
                       </span>
 
-                      {/* Top-Right: Category badge */}
-                      <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white text-slate-500 border border-[#E2E8F0] uppercase tracking-wider">
-                        {product.category}
+                      {/* Top-Right: Hardware Grading Badge */}
+                      <span className={`absolute top-3 right-3 px-2 py-0.5 rounded-md font-mono text-[9px] font-bold uppercase tracking-wider ${grade.badgeClass}`}>
+                        {grade.shortLabel}
                       </span>
                     </div>
 
-                    {/* Content & Rationale */}
+                    {/* Content & Diagnostic Reasoning */}
                     <div className="p-5 flex flex-col flex-grow justify-between">
                       <div>
-                        <div className="flex items-center gap-2 mb-1.5 text-xs text-slate-500">
-                          <span className="font-bold text-[#0F172A]">{product.brand}</span>
-                          <span>•</span>
-                          <span className="font-mono">{product.model || product.photoRef}</span>
+                        <div className="flex items-center gap-2 mb-2 text-xs">
+                          <span className="font-bold text-white font-mono">{product.brand}</span>
+                          <span className="text-slate-500">•</span>
+                          <span className="font-mono text-slate-400">{formatCleanSku(product)}</span>
                         </div>
 
                         <h3 
                           onClick={() => onOpenDetail(product)}
-                          className="text-base font-bold text-[#0F172A] hover:text-[#145CFF] transition-colors cursor-pointer line-clamp-2 min-h-[3rem] mb-3"
+                          className="text-sm sm:text-base font-bold text-white hover:text-cyan-400 transition-colors cursor-pointer line-clamp-2 min-h-[2.8rem] mb-3"
                         >
                           {lang === 'bn' ? product.titleBn : product.title}
                         </h3>
 
-                        {/* "Why This Fits Your Life" Section */}
-                        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] mb-4">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#0F172A] flex items-center gap-1.5 mb-2">
-                            <Check size={13} className="text-[#145CFF] stroke-[3]" />
-                            {t.finderWhyFits || (lang === 'bn' ? 'কেন এটি আপনার জন্য সেরা মানানসই:' : 'Why this fits your life:')}
+                        {/* Agent Telemetry Reasoning Log */}
+                        <div className="p-3.5 rounded-xl bg-[#090A0F] border border-[#1E2230] mb-4">
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5 mb-2">
+                            <Check size={13} className="text-cyan-400 stroke-[3]" />
+                            <span>AI TELEMETRY RATIONALE:</span>
                           </span>
-                          <ul className="space-y-1 text-xs text-slate-600">
+                          <ul className="space-y-1 font-mono text-[11px] text-slate-300">
                             {whyReasons.map((reason, idx) => (
                               <li key={idx} className="flex items-start gap-1.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#145CFF] mt-1.5 shrink-0" />
+                                <span className="text-cyan-400 shrink-0">&gt;</span>
                                 <span>{reason}</span>
                               </li>
                             ))}
@@ -573,20 +583,20 @@ export default function SmartTechFinder({
                       </div>
 
                       {/* Bottom Pricing & Actions */}
-                      <div className="pt-3 border-t border-[#E2E8F0]">
+                      <div className="pt-3 border-t border-[#1E2230]">
                         <div className="flex items-baseline justify-between mb-3">
                           <div>
-                            <span className="text-xl font-black text-[#0F172A]">
+                            <span className="font-mono text-xl font-black text-white">
                               {currencySymbol}{product.price.toLocaleString()}
                             </span>
                             {product.originalPrice && product.originalPrice > product.price && (
-                              <span className="ml-2 text-xs text-slate-400 line-through">
+                              <span className="ml-2 font-mono text-xs text-slate-500 line-through">
                                 {currencySymbol}{product.originalPrice.toLocaleString()}
                               </span>
                             )}
                           </div>
-                          <span className="text-[11px] font-semibold text-emerald-700">
-                            {product.stock > 0 ? (lang === 'bn' ? 'ইন স্টক' : 'Verified Stock') : (lang === 'bn' ? 'স্টক শেষ' : 'Sold Out')}
+                          <span className="font-mono text-[11px] font-semibold text-emerald-400">
+                            {product.stock > 0 ? (lang === 'bn' ? 'স্টকে আছে' : 'IN STOCK') : 'OUT OF STOCK'}
                           </span>
                         </div>
 
@@ -594,23 +604,23 @@ export default function SmartTechFinder({
                           <button
                             type="button"
                             onClick={() => onQuickAdd(product, product.variants?.[0], 1)}
-                            className="bg-[#145CFF] hover:bg-[#0D4BD9] text-white flex items-center justify-center gap-1.5 text-xs py-2.5 w-full font-bold rounded-xl transition-colors cursor-pointer shadow-sm"
+                            className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono flex items-center justify-center gap-1.5 text-xs py-2.5 w-full font-bold rounded-xl transition-all cursor-pointer shadow-md active:scale-95"
                           >
                             <ShoppingBag size={14} />
-                            <span>{lang === 'bn' ? 'ব্যাগে যুক্ত' : 'Add to Bag'}</span>
+                            <span>{lang === 'bn' ? 'ব্যাগে যুক্ত' : 'ADD TO BAG'}</span>
                           </button>
 
                           <button
                             type="button"
                             onClick={() => onToggleCompare && onToggleCompare(product)}
-                            className={`flex items-center justify-center gap-1.5 text-xs py-2.5 rounded-xl border font-bold transition-all cursor-pointer ${
+                            className={`flex items-center justify-center gap-1.5 text-xs py-2.5 rounded-xl border font-mono font-bold transition-all cursor-pointer ${
                               isCompared 
-                                ? 'bg-[#145CFF] text-white border-[#145CFF]' 
-                                : 'bg-white text-[#0F172A] border-[#E2E8F0] hover:border-[#145CFF]'
+                                ? 'bg-cyan-500 text-slate-950 border-cyan-400' 
+                                : 'bg-[#161924] text-slate-300 border-[#1E2230] hover:border-cyan-500/40 hover:text-white'
                             }`}
                           >
                             <Scale size={14} />
-                            <span>{isCompared ? (lang === 'bn' ? 'তুলনায় আছে' : 'In Compare') : (lang === 'bn' ? 'তুলনা করুন' : 'Compare')}</span>
+                            <span>{isCompared ? (lang === 'bn' ? 'তুলনায় আছে' : 'IN DOCK') : (lang === 'bn' ? 'তুলনা করুন' : 'COMPARE')}</span>
                           </button>
                         </div>
                       </div>
@@ -621,17 +631,17 @@ export default function SmartTechFinder({
             </div>
 
             {/* Bottom Actions Banner */}
-            <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-[#161924] border border-[#1E2230] flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-[#EFF6FF] text-[#145CFF] border border-[#BFDBFE]">
+                <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
                   <Scale size={20} />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#0F172A]">
+                  <h4 className="text-sm font-bold text-white">
                     {lang === 'bn' ? 'বাছাইকৃত পণ্যগুলোর পাশাপাশি স্পেক্স দেখতে চান?' : 'Want to inspect side-by-side technical differences?'}
                   </h4>
-                  <p className="text-xs text-slate-500">
-                    {lang === 'bn' ? '৪টি পর্যন্ত পণ্য যোগ করে তুলনা ম্যাট্রিক্স দেখুন।' : 'Compare up to 4 shortlisted tech gadgets side by side.'}
+                  <p className="font-mono text-xs text-slate-400">
+                    {lang === 'bn' ? '৪টি পর্যন্ত পণ্য যোগ করে তুলনা ম্যাট্রিক্স দেখুন।' : 'Shortlist up to 4 items and inspect chipsets, wattages, and battery specs.'}
                   </p>
                 </div>
               </div>
@@ -640,17 +650,17 @@ export default function SmartTechFinder({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-4 py-2.5 rounded-xl bg-white border border-[#E2E8F0] text-xs font-bold text-[#0F172A] hover:border-[#145CFF] transition-all cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-[#12141C] border border-[#1E2230] font-mono text-xs font-bold text-slate-300 hover:text-white hover:border-slate-500 transition-all cursor-pointer"
                 >
-                  {lang === 'bn' ? 'ফিল্টার পরিবর্তন' : 'Adjust Answers'}
+                  {lang === 'bn' ? 'ফিল্টার পরিবর্তন' : 'ADJUST ANSWERS'}
                 </button>
                 {onOpenComparison && (
                   <button
                     type="button"
                     onClick={onOpenComparison}
-                    className="bg-[#145CFF] hover:bg-[#0D4BD9] text-white text-xs py-2.5 px-5 rounded-xl flex items-center gap-1.5 font-bold transition-colors cursor-pointer shadow-sm"
+                    className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs py-2.5 px-5 rounded-xl flex items-center gap-1.5 font-bold transition-all cursor-pointer shadow-md"
                   >
-                    <span>{t.finderCompareShortlist || (lang === 'bn' ? 'তুলনা দেখুন' : 'Open Comparison Matrix')}</span>
+                    <span>{t.finderCompareShortlist || (lang === 'bn' ? 'তুলনা দেখুন' : 'OPEN SPEC MATRIX')}</span>
                     <ChevronRight size={15} />
                   </button>
                 )}

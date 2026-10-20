@@ -105,7 +105,7 @@ export default function QuickShortcuts({
   ];
 
   return (
-    <section className="w-full my-4 sm:my-6 p-4 sm:p-6 bg-white rounded-xl sm:rounded-2xl border border-[#E2E8F0] shadow-xs">
+    <section className="w-full my-4 sm:my-6 p-4 sm:p-6 bg-[#12141C] rounded-xl sm:rounded-2xl border border-[#1E2230] shadow-md">
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 sm:gap-4">
         {shortcuts.map((sc) => {
           const Icon = sc.icon;
@@ -113,7 +113,7 @@ export default function QuickShortcuts({
             <div
               key={sc.id}
               onClick={sc.onClick}
-              className="shopee-shortcut-item group"
+              className="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-[#161924] transition-all cursor-pointer group text-center"
               role="button"
               tabIndex="0"
               onKeyDown={(e) => {
@@ -124,12 +124,12 @@ export default function QuickShortcuts({
               }}
             >
               <div 
-                className="shopee-shortcut-circle"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-2 transition-transform duration-200 group-hover:scale-110 shadow-xs border border-white/5"
                 style={{ backgroundColor: sc.bgColor }}
               >
-                <Icon size={22} style={{ color: sc.iconColor }} />
+                <Icon size={20} style={{ color: sc.iconColor }} />
               </div>
-              <span className="text-[11px] sm:text-xs font-semibold text-[#0F172A] group-hover:text-[#145CFF] transition-colors line-clamp-1 leading-snug">
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-200 group-hover:text-cyan-400 transition-colors line-clamp-1 leading-snug">
                 {sc.label}
               </span>
             </div>

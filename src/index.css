@@ -1,51 +1,63 @@
 :root {
-  /* Tech Nest Premium Technology E-Commerce Design System */
-  /* Clean White / Light-Gray Background Canvas & Surfaces */
-  --canvas-bg: #F8FAFC;
-  --surface-white: #FFFFFF;
-  --surface-card: #FFFFFF;
-  --surface-card-subtle: #F8FAFC;
-  --surface-alt: #F1F5F9;
-  --surface-muted: #F8FAFC;
+  /* Tech Nest Next-Gen Agentic UI Design System (Linear / Raycast / Perplexity inspired) */
+  /* Layered Dark Obsidian / Zinc Theme */
+  --canvas-bg: #090A0F;
+  --surface-white: #12141C;
+  --surface-card: #12141C;
+  --surface-card-subtle: #161924;
+  --surface-alt: #1A1E2C;
+  --surface-muted: #1E2230;
   
-  /* Dark Navy Typography */
-  --text-primary: #0F172A;
-  --text-navy: #0F172A;
-  --text-secondary: #475569;
+  /* Telemetry & High-Contrast Typography */
+  --text-primary: #F8FAFC;
+  --text-navy: #F8FAFC;
+  --text-secondary: #94A3B8;
   --text-tertiary: #64748B;
-  --text-muted: #94A3B8;
-  --text-inverted: #FFFFFF;
+  --text-muted: #64748B;
+  --text-inverted: #090A0F;
 
-  /* Electric-Blue Accent (Trust, Performance & Conversion Focused) */
-  --electric-blue: #145CFF;
-  --electric-blue-hover: #0D4BD9;
-  --electric-blue-active: #0A3DB8;
-  --electric-blue-subtle: #EFF6FF;
-  --electric-blue-border: #BFDBFE;
-  --electric-blue-text: #145CFF;
+  /* Electric Cyan (Active AI / Agent States & Interactive Highlights) */
+  --electric-cyan: #06B6D4;
+  --electric-cyan-hover: #0891B2;
+  --electric-cyan-glow: rgba(6, 182, 212, 0.35);
+  --electric-cyan-subtle: rgba(6, 182, 212, 0.08);
 
-  /* Supporting Functional Accents */
-  --brand-navy: #0F172A;
-  --brand-navy-dark: #0A0F1D;
-  --brand-navy-light: #1E293B;
-  --brand-primary: #145CFF;
-  --brand-hover: #0D4BD9;
-  --brand-active: #0A3DB8;
-  --brand-subtle: #EFF6FF;
+  /* Emerald (Verified Compatibility, Authenticity & Free Delivery Unlocked) */
+  --emerald-verified: #10B981;
+  --emerald-glow: rgba(16, 185, 129, 0.35);
+  --emerald-subtle: rgba(16, 185, 129, 0.08);
 
-  /* Clean Borders & Dividers */
-  --border-subtle: #E2E8F0;
-  --border-card: #E2E8F0;
-  --border-divider: #E2E8F0;
-  --border-focus: #145CFF;
+  /* Electric-Blue Legacy Mapping */
+  --electric-blue: #06B6D4;
+  --electric-blue-hover: #0891B2;
+  --electric-blue-active: #0E7490;
+  --electric-blue-subtle: rgba(6, 182, 212, 0.1);
+  --electric-blue-border: rgba(6, 182, 212, 0.3);
+  --electric-blue-text: #22D3EE;
 
-  /* Clean Refined Neutral Shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
-  --shadow-xl: 0 20px 32px -6px rgba(15, 23, 42, 0.10);
-  --shadow-blue: 0 4px 16px -2px rgba(20, 92, 255, 0.25);
+  /* Supporting Brand Accents */
+  --brand-navy: #090A0F;
+  --brand-navy-dark: #050608;
+  --brand-navy-light: #12141C;
+  --brand-primary: #06B6D4;
+  --brand-hover: #0891B2;
+  --brand-active: #0E7490;
+  --brand-subtle: rgba(6, 182, 212, 0.08);
+
+  /* Precise 1px Engineered Borders & Dividers */
+  --border-subtle: #1E2230;
+  --border-card: #1E2230;
+  --border-divider: #1E2230;
+  --border-focus: #06B6D4;
+
+  /* Refined Obsidian Glow & Depth Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.6), 0 4px 10px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 24px 40px -6px rgba(0, 0, 0, 0.7);
+  --shadow-blue: 0 4px 20px -2px rgba(6, 182, 212, 0.25);
+  --shadow-cyan-glow: 0 0 25px -3px rgba(6, 182, 212, 0.35);
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -54,7 +66,8 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 * {
@@ -148,6 +161,112 @@ a {
   border-color: var(--border-glass-hover);
   box-shadow: var(--shadow-l2), var(--inset-specular);
 }
+
+/* ==============================================================================
+   AGENTIC UI DESIGN SYSTEM UTILITIES (Linear / Raycast / Perplexity inspired)
+   ============================================================================== */
+
+.font-telemetry,
+.font-mono {
+  font-family: var(--font-mono) !important;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+}
+
+.agent-canvas {
+  background-color: #090A0F;
+  color: #F8FAFC;
+}
+
+.agent-card {
+  background-color: #12141C;
+  border: 1px solid #1E2230;
+  border-radius: 16px;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.agent-card:hover {
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 4px 24px -2px rgba(6, 182, 212, 0.12);
+}
+
+.agent-glass-panel {
+  background: rgba(18, 20, 28, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #1E2230;
+  border-radius: 16px;
+}
+
+.agent-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: #06B6D4;
+  box-shadow: 0 0 10px #06B6D4;
+  animation: agentPulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes agentPulseGlow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 8px #06B6D4;
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.2);
+    box-shadow: 0 0 16px #06B6D4;
+  }
+}
+
+.telemetry-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.telemetry-pill-cyan {
+  background: rgba(6, 182, 212, 0.1);
+  color: #22D3EE;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.telemetry-pill-emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.telemetry-pill-amber {
+  background: rgba(245, 158, 11, 0.1);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.telemetry-pill-zinc {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94A3B8;
+  border: 1px solid #1E2230;
+}
+
+.agent-terminal-log {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.6;
+  background-color: #0B0D14;
+  border: 1px solid #1E2230;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #22D3EE;
+}
+
 
 /* Primary Button */
 .btn-primary {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft, Pause, Play, Zap, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Pause, Play, Zap, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function Hero({ 
   onShopClick, 
@@ -16,7 +16,7 @@ export default function Hero({
       productType: 'audio',
       tabLabel: lang === 'bn' ? 'স্মার্ট ম্যাচিং' : 'Smart Finder',
       eyebrow: lang === 'bn' ? 'টেক নেস্ট সিগনেচার এক্সপেরিয়েন্স' : 'FIND THE TECH THAT FITS YOUR LIFE',
-      badge: lang === 'bn' ? 'সিগনেচার' : 'Signature',
+      badge: lang === 'bn' ? 'সিগনেচার' : 'AI MATCHING',
       title: lang === 'bn' ? 'আপনার জীবনের সাথে\nমানানসই প্রযুক্তি খুঁজুন' : 'Find the Tech That\nFits Your Life.',
       subtitle: lang === 'bn' 
         ? 'বাজেট, ব্যবহার এবং অগ্রাধিকারের ভিত্তিতে যাচাইকৃত অডিও, ফাস্ট চার্জার ও স্মার্টওয়াচ ম্যাচ করুন।'
@@ -25,14 +25,15 @@ export default function Hero({
       ctaText: lang === 'bn' ? 'টেক ফাইন্ডার শুরু করুন' : 'Launch Tech Finder',
       isFinderCta: true,
       image: '/assets/hero-audio-headphones.jpg',
-      imageAlt: 'Premium studio wireless headphones and crystal TWS earbuds'
+      imageAlt: 'Premium studio wireless headphones and crystal TWS earbuds',
+      telemetry: ['98% FIT ACCURACY', 'ACTIVE DIAGNOSTICS', 'VERIFIED STOCK']
     },
     {
       id: 'charging',
       productType: 'charging',
       tabLabel: lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Fast Charging',
       eyebrow: lang === 'bn' ? 'টার্বো পাওয়ার সল্যুশন' : 'TURBO POWER & CABLES',
-      badge: lang === 'bn' ? 'সুপার ফাস্ট' : 'Super Fast',
+      badge: lang === 'bn' ? 'সুপার ফাস্ট' : '120W TURBO',
       title: lang === 'bn' ? 'ফাস্ট চার্জিং ক্যাবল\n১২০W ম্যাক্স আউটপুট' : 'Fast Charging Cables.\n120W Max High-Speed.',
       subtitle: lang === 'bn'
         ? 'ব্রেইডেড ৪-ইন-১ ক্যাবল, গোল্ড-প্লেটেড কানেক্টর ও ওটিজি অ্যাডাপ্টার।'
@@ -40,14 +41,15 @@ export default function Hero({
       category: 'chargers',
       ctaText: lang === 'bn' ? 'চার্জিং সামগ্রী দেখুন' : 'Explore Charging',
       image: '/assets/cat-charging.jpg',
-      imageAlt: 'Fast charging GaN adapters and multi-tip braided cables'
+      imageAlt: 'Fast charging GaN adapters and multi-tip braided cables',
+      telemetry: ['120W HIGH-SPEED', 'GOLD CONNECTORS', 'NATIONWIDE ৳0']
     },
     {
       id: 'wearables',
       productType: 'wearables',
       tabLabel: lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches',
       eyebrow: lang === 'bn' ? 'স্মার্ট ওয়েয়ারবেলস' : 'ULTRA SMARTWEAR',
-      badge: lang === 'bn' ? 'ট্রেন্ডিং' : 'Trending',
+      badge: lang === 'bn' ? 'ট্রেন্ডিং' : 'CELLULAR SIM',
       title: lang === 'bn' ? 'সিম সাপোর্টেড স্মার্টওয়াচ\n৮+১ স্ট্র্যাপ কম্বো সেট' : 'Cellular Smartwatches.\n8+1 Strap Combo Sets.',
       subtitle: lang === 'bn'
         ? 'এইচডি ডিসপ্লে, ওয়্যারলেস চার্জিং, ব্লুটুথ কলিং ও ফিটনেস ট্র্যাকিং।'
@@ -55,7 +57,8 @@ export default function Hero({
       category: 'wearables',
       ctaText: lang === 'bn' ? 'স্মার্টওয়াচ দেখুন' : 'Explore Smartwatches',
       image: '/assets/cat-wearables.jpg',
-      imageAlt: 'Ultra smartwatch with interchangeable straps'
+      imageAlt: 'Ultra smartwatch with interchangeable straps',
+      telemetry: ['8+1 STRAPS', 'SIM CALLING', 'HEALTH TELEMETRY']
     }
   ];
 
@@ -84,39 +87,50 @@ export default function Hero({
   };
 
   return (
-    <section className="hero-shopee-container" aria-label="Featured Promotions and Collections">
-      <div className="hero-layout-grid">
+    <section className="w-full my-4 sm:my-6" aria-label="Featured Promotions and Collections">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         
-        {/* Left & Center Columns: Carousel Slider Card */}
+        {/* Left & Center: 8 Cols (Hero Bento Card) */}
         <div 
-          className="hero-slider-card group"
+          className="lg:col-span-8 bg-[#12141C] border border-[#1E2230] rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between group hover:border-cyan-500/30 transition-all duration-300 relative"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {/* Main Slider Content (Left: Text, Center: Image) */}
-          <div className="hero-slider-body">
-            
-            {/* Left Content Panel (approx 25-26% of overall hero) */}
-            <div className="hero-text-panel">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="hero-badge-pill">
-                  {currentSlide.badge}
+          {/* Main Slide Body */}
+          <div className="p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 flex-grow">
+            {/* Left Content Column */}
+            <div className="flex-1 flex flex-col items-start z-10 text-left">
+              <div className="flex items-center gap-2 mb-2.5">
+                <span className="font-mono text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                  [{currentSlide.badge}]
                 </span>
-                <span className="hero-eyebrow-text">
+                <span className="font-mono text-[10px] tracking-wider text-slate-400 uppercase font-semibold">
                   {currentSlide.eyebrow}
                 </span>
               </div>
 
-              <h1 className="hero-headline">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight mb-3 whitespace-pre-line">
                 {currentSlide.title}
               </h1>
 
-              <p className="hero-description">
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4 max-w-md">
                 {currentSlide.subtitle}
               </p>
 
-              {/* CTA Buttons: Primary Action + Secondary Browse All */}
-              <div className="hero-cta-group">
+              {/* Telemetry Spec Badges */}
+              <div className="flex items-center flex-wrap gap-1.5 mb-5">
+                {currentSlide.telemetry?.map((tag, idx) => (
+                  <span 
+                    key={idx}
+                    className="font-mono text-[10px] px-2 py-0.5 rounded bg-[#161924] border border-[#1E2230] text-slate-300"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex items-center gap-3 flex-wrap">
                 <button
                   type="button"
                   onClick={() => {
@@ -127,40 +141,39 @@ export default function Hero({
                       if (onShopClick) onShopClick();
                     }
                   }}
-                  className="hero-btn-primary"
-                  title={currentSlide.ctaText}
+                  className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(6,182,212,0.35)] cursor-pointer active:scale-95"
                 >
                   <span>{currentSlide.ctaText}</span>
-                  <ChevronRight size={15} className="stroke-[2.5]" />
+                  <ChevronRight size={14} className="stroke-[2.5]" />
                 </button>
 
                 <button
                   type="button"
                   onClick={onShopClick}
-                  className="hero-btn-secondary"
-                  title={lang === 'bn' ? 'সব পণ্য ব্রাউজ করুন' : 'Browse All Gear'}
+                  className="px-4 py-2.5 rounded-xl bg-[#161924] hover:bg-[#1E2230] text-slate-200 border border-[#1E2230] hover:border-slate-600 font-mono text-xs font-semibold transition-colors cursor-pointer"
                 >
                   <span>{lang === 'bn' ? 'সব পণ্য' : 'Browse All'}</span>
                 </button>
               </div>
             </div>
 
-            {/* Center Main Product Image Showcase (approx 44% of overall hero) */}
-            <div className="hero-image-showcase">
+            {/* Right Product Image Showcase */}
+            <div className="w-full sm:w-64 md:w-72 aspect-square flex items-center justify-center p-3 relative shrink-0">
+              <div className="absolute inset-0 bg-cyan-500/5 rounded-2xl blur-xl" />
               <img
                 key={currentSlide.image}
                 src={currentSlide.image}
                 alt={currentSlide.title.replace('\n', ' ')}
-                className="hero-main-img"
+                className="w-full h-full object-contain relative z-10 transition-transform duration-500 group-hover:scale-105"
                 loading="eager"
               />
             </div>
           </div>
 
           {/* Slider Bottom Control Bar: Tabs & Nav */}
-          <div className="hero-slider-bottom-bar">
+          <div className="px-6 py-3 border-t border-[#1E2230] bg-[#0E1017] flex items-center justify-between gap-3">
             {/* Category Slide Indicators */}
-            <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {SLIDES.map((slide, idx) => (
                 <button
                   key={slide.id}
@@ -169,7 +182,11 @@ export default function Hero({
                     setActiveSlideIndex(idx);
                     setIsPaused(true);
                   }}
-                  className={`hero-slide-tab ${idx === activeSlideIndex ? 'is-active' : ''}`}
+                  className={`px-3 py-1 rounded-lg font-mono text-xs font-semibold transition-all cursor-pointer ${
+                    idx === activeSlideIndex 
+                      ? 'bg-cyan-500 text-slate-950 font-bold border border-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.3)]' 
+                      : 'bg-[#161924] text-slate-400 hover:text-white border border-[#1E2230]'
+                  }`}
                 >
                   {slide.tabLabel}
                 </button>
@@ -177,38 +194,38 @@ export default function Hero({
             </div>
 
             {/* Prev / Next & Pause Controls */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={handlePrev}
-                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-700 cursor-pointer shadow-2xs"
+                className="w-7 h-7 rounded-lg bg-[#161924] border border-[#1E2230] hover:border-cyan-500/40 text-slate-300 hover:text-cyan-400 flex items-center justify-center cursor-pointer transition-colors"
                 aria-label="Previous Slide"
               >
-                <ChevronLeft size={15} />
+                <ChevronLeft size={14} />
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-700 cursor-pointer shadow-2xs"
+                className="w-7 h-7 rounded-lg bg-[#161924] border border-[#1E2230] hover:border-cyan-500/40 text-slate-300 hover:text-cyan-400 flex items-center justify-center cursor-pointer transition-colors"
                 aria-label="Next Slide"
               >
-                <ChevronRight size={15} />
+                <ChevronRight size={14} />
               </button>
               <button
                 type="button"
                 onClick={() => setIsPaused(p => !p)}
-                className="w-7 h-7 rounded-full bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer shadow-2xs ml-1"
+                className="w-7 h-7 rounded-lg bg-[#161924] border border-[#1E2230] hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 flex items-center justify-center cursor-pointer transition-colors ml-1"
                 title={isPaused ? "Play slide rotation" : "Pause slide rotation"}
                 aria-label={isPaused ? "Play slide rotation" : "Pause slide rotation"}
               >
-                {isPaused ? <Play size={11} /> : <Pause size={11} />}
+                {isPaused ? <Play size={10} /> : <Pause size={10} />}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Promotional Cards Stack (approx 30% of overall hero) */}
-        <div className="hero-promo-stack">
+        {/* Right Column: 4 Cols Stacked Bento Promo Cards */}
+        <div className="lg:col-span-4 flex flex-col gap-4">
           
           {/* Card 1: Fast Charge Hub */}
           <div 
@@ -216,80 +233,64 @@ export default function Hero({
               if (onSelectCategory) onSelectCategory('chargers');
               if (onShopClick) onShopClick();
             }}
-            className="hero-promo-card group"
+            className="flex-1 bg-[#12141C] border border-[#1E2230] hover:border-cyan-500/30 rounded-2xl p-5 flex items-center justify-between gap-4 cursor-pointer group transition-all duration-300 shadow-md relative overflow-hidden"
             role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                if (onSelectCategory) onSelectCategory('chargers');
-                if (onShopClick) onShopClick();
-              }
-            }}
+            tabIndex="0"
           >
-            <div className="hero-promo-card-info">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#145CFF] uppercase tracking-wider mb-1">
-                <Zap size={12} className="shrink-0" />
-                <span>{lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charge Hub'}</span>
-              </div>
-              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#145CFF] transition-colors line-clamp-2">
-                {lang === 'bn' ? '১০০% অরিজিনাল ক্যাবল ও অ্যাডাপ্টার' : 'GaN Chargers & 120W Cables'}
+            <div className="flex flex-col items-start z-10">
+              <span className="font-mono text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-1">
+                FAST CHARGE HUB
+              </span>
+              <h3 className="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors mb-1">
+                GaN Chargers & 120W Cables
               </h3>
-              <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
-                {lang === 'bn' ? 'শুরু মাত্র ৳১৫০ থেকে' : 'Starting from ৳150 with warranty'}
+              <p className="font-mono text-[11px] text-slate-400 mb-2">
+                Starting from ৳150 with warranty
               </p>
-              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#145CFF] mt-2 group-hover:underline">
-                <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
-                <ChevronRight size={13} className="shrink-0" />
-              </div>
+              <span className="font-mono text-[11px] font-bold text-cyan-400 flex items-center gap-1 group-hover:underline">
+                <span>Shop Now</span>
+                <ArrowRight size={12} />
+              </span>
             </div>
-            <div className="hero-promo-card-thumb">
+            <div className="w-20 h-20 rounded-xl bg-[#0B0D14] p-1.5 border border-[#1E2230] shrink-0">
               <img 
                 src="/assets/cat-charging.jpg" 
-                alt="GaN Chargers & Cables" 
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform" 
-                loading="eager"
+                alt="GaN Chargers" 
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform"
               />
             </div>
           </div>
 
-          {/* Card 2: Ultra Gear Smartwatches */}
+          {/* Card 2: Ultra Gear */}
           <div 
             onClick={() => {
               if (onSelectCategory) onSelectCategory('wearables');
               if (onShopClick) onShopClick();
             }}
-            className="hero-promo-card group"
+            className="flex-1 bg-[#12141C] border border-[#1E2230] hover:border-cyan-500/30 rounded-2xl p-5 flex items-center justify-between gap-4 cursor-pointer group transition-all duration-300 shadow-md relative overflow-hidden"
             role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                if (onSelectCategory) onSelectCategory('wearables');
-                if (onShopClick) onShopClick();
-              }
-            }}
+            tabIndex="0"
           >
-            <div className="hero-promo-card-info">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#145CFF] uppercase tracking-wider mb-1">
-                <Sparkles size={12} className="shrink-0" />
-                <span>{lang === 'bn' ? 'স্মার্ট গ্যাজেট' : 'Ultra Gear'}</span>
-              </div>
-              <h3 className="text-sm sm:text-[15px] font-extrabold text-[#102A43] leading-snug group-hover:text-[#145CFF] transition-colors line-clamp-2">
-                {lang === 'bn' ? 'সিম সাপোর্টেড স্মার্টওয়াচ' : 'SIM Smartwatches & Combos'}
+            <div className="flex flex-col items-start z-10">
+              <span className="font-mono text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-1">
+                # ULTRA GEAR
+              </span>
+              <h3 className="font-bold text-sm text-white group-hover:text-cyan-400 transition-colors mb-1">
+                SIM Smartwatches & Combos
               </h3>
-              <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">
-                {lang === 'bn' ? '৮+১ মাল্টি-স্ট্র্যাপ সংস্করণ' : '8+1 Interchangeable Straps'}
+              <p className="font-mono text-[11px] text-slate-400 mb-2">
+                8+1 Interchangeable Straps
               </p>
-              <div className="inline-flex items-center gap-1 text-xs font-bold text-[#145CFF] mt-2 group-hover:underline">
-                <span>{lang === 'bn' ? 'কিনুন' : 'Shop Now'}</span>
-                <ChevronRight size={13} className="shrink-0" />
-              </div>
+              <span className="font-mono text-[11px] font-bold text-cyan-400 flex items-center gap-1 group-hover:underline">
+                <span>Shop Now</span>
+                <ArrowRight size={12} />
+              </span>
             </div>
-            <div className="hero-promo-card-thumb">
+            <div className="w-20 h-20 rounded-xl bg-[#0B0D14] p-1.5 border border-[#1E2230] shrink-0">
               <img 
                 src="/assets/cat-wearables.jpg" 
-                alt="SIM Smartwatches & Combos" 
-                className="w-full h-full object-contain group-hover:scale-105 transition-transform" 
-                loading="eager"
+                alt="SIM Smartwatches" 
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform"
               />
             </div>
           </div>
