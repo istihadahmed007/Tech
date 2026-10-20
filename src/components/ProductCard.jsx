@@ -203,7 +203,7 @@ export default function ProductCard({
 
         {/* Bottom Price & Cyan Agent Add to Cart Button */}
         <div className="pt-2.5 border-t border-[#1E2230] mt-auto flex items-center justify-between gap-1.5">
-          <div>
+          <div className="flex flex-col gap-1 min-w-0">
             <div className="flex items-baseline gap-1.5">
               <span className="font-mono text-base sm:text-lg font-black text-white tracking-tight">
                 {currencySymbol}{product.price.toLocaleString()}
@@ -214,16 +214,18 @@ export default function ProductCard({
                 </span>
               )}
             </div>
-            <span className="font-mono text-[10px] text-slate-400 block truncate">
-              {product.warranty ? product.warranty : 'Verified QC Quality'}
-            </span>
+            {/* Engineered JetBrains Mono Warranty Pill */}
+            <div className="inline-flex items-center gap-1 font-mono text-[9px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded max-w-[125px] sm:max-w-[145px] truncate">
+              <ShieldCheck size={10} className="text-emerald-400 shrink-0" />
+              <span className="truncate">{product.warranty ? product.warranty.toUpperCase() : 'QC TESTED'}</span>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={handleQuickAddClick}
             disabled={isOutOfStock}
-            className={`p-2 sm:px-3 sm:py-2 rounded-xl flex items-center gap-1.5 font-bold font-mono text-xs transition-all cursor-pointer shadow-xs ${
+            className={`p-2 sm:px-3 sm:py-2 rounded-xl flex items-center gap-1.5 font-bold font-mono text-xs transition-all cursor-pointer shadow-xs shrink-0 ${
               isOutOfStock 
                 ? 'bg-[#161924] text-slate-500 cursor-not-allowed border border-[#1E2230]' 
                 : isQuickAdded

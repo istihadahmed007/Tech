@@ -52,6 +52,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPhone, setSelectedPhone] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [catalogTab, setCatalogTab] = useState('all');
 
   // Customer Authentication State
   const [currentUser, setCurrentUser] = useState(null);
@@ -952,6 +953,21 @@ export default function App() {
                 setSelectedPhone(phone);
                 scrollToSection('products-section');
               }}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onSearchSubmit={(q) => {
+                if (q !== undefined) setSearchQuery(q);
+                scrollToSection('products-section');
+              }}
+              onFilterAudioUnder500={() => {
+                setSelectedCategory('audio');
+                setCatalogTab('under_500');
+                setSearchQuery('');
+                scrollToSection('products-section');
+              }}
+              onScrollToBundles={() => scrollToSection('bundles-section')}
+              products={products}
+              onSelectProduct={(p) => navigateToProduct(p, true)}
               t={t}
               lang={lang}
               selectedCategory={selectedCategory}
@@ -1037,6 +1053,8 @@ export default function App() {
               onToggleWishlist={handleToggleWishlist}
               onToggleCompare={handleToggleCompare}
               comparisonIds={comparisonIds}
+              catalogTab={catalogTab}
+              onSelectCatalogTab={setCatalogTab}
               t={t}
               lang={lang}
             />

@@ -121,35 +121,27 @@ export default function Header({
   // Agent Quick-Prompt Intent Pills
   const agentPromptPills = [
     { 
-      label: '⚡ Unlock Free Delivery (৳2,000+ Combos)', 
+      label: '⚡ Unlock ৳2,000 Free Delivery', 
       action: () => {
-        if (onScrollToKits) onScrollToKits();
+        const el = document.getElementById('bundles-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        else if (onScrollToKits) onScrollToKits();
         else if (onGoToShop) onGoToShop();
       } 
     },
     { 
-      label: '📱 Verify Phone Compatibility', 
+      label: '📱 Match My Phone', 
       action: () => {
-        if (onScrollToFinder) onScrollToFinder();
-        else {
-          const el = document.getElementById('compatibility-finder');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }
+        const el = document.getElementById('compatibility-finder');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        else if (onScrollToFinder) onScrollToFinder();
       } 
     },
     { 
-      label: '🎧 Best Audio Under ৳500', 
+      label: '🎧 Audio Under ৳500', 
       action: () => {
-        setSearchQuery('earbuds');
+        setSearchQuery('');
         if (onSelectCategory) onSelectCategory('audio');
-        if (onGoToShop) onGoToShop();
-      } 
-    },
-    { 
-      label: '🔋 GaN & Fast Charge Hub', 
-      action: () => {
-        setSearchQuery('cable');
-        if (onSelectCategory) onSelectCategory('charging');
         if (onGoToShop) onGoToShop();
       } 
     }
@@ -203,10 +195,16 @@ export default function Header({
                 onFocus={() => {
                   if (searchQuery.trim().length >= 2) setShowSuggestions(true);
                 }}
-                placeholder="Ask Tech Nest Agent: 'I have an iPhone 15 and ৳1,500—need a fast charger + earbuds'..."
-                className="w-full pl-10 pr-24 py-2.5 bg-[#12141C] border border-[#1E2230] focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.25)] rounded-xl font-mono text-xs text-white placeholder-slate-400 focus:outline-none transition-all"
+                placeholder="Ask Tech Nest Agent: '120W fast charging cables', 'Galaxy S24 Ultra', or 'ANC earbuds'..."
+                className="w-full pl-12 pr-24 py-2.5 bg-[#12141C] border border-[#1E2230] focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.25)] rounded-xl font-mono text-xs text-white placeholder-slate-400 focus:outline-none transition-all"
               />
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-cyan-400" />
+              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500 shadow-[0_0_6px_#06B6D4]"></span>
+                </span>
+                <Search size={15} className="text-cyan-400" />
+              </div>
             </div>
 
             {searchQuery && (

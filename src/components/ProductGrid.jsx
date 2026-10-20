@@ -17,12 +17,16 @@ export default function ProductGrid({
   onToggleWishlist,
   onToggleCompare,
   comparisonIds = [],
+  catalogTab: externalTab,
+  onSelectCatalogTab,
   t = {},
   lang = 'en'
 }) {
   const [sortBy, setSortBy] = useState('featured');
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [activeTab, setActiveTab] = useState('all'); // 'all', 'top_rated', 'under_500', 'under_1000', 'audio', 'charging'
+  const [internalTab, setInternalTab] = useState('all');
+  const activeTab = externalTab !== undefined ? externalTab : internalTab;
+  const setActiveTab = onSelectCatalogTab || setInternalTab;
 
   // Unified Catalog Filter Tabs
   const QUICK_FILTERS = [
@@ -34,16 +38,16 @@ export default function ProductGrid({
     { id: 'charging', label: lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charging' },
   ];
 
-  // Align active tab if category is changed externally
+  // Align active tab if category is changed externally (preserving price filters like under_500)
   useEffect(() => {
-    if (selectedCategory === 'audio') {
+    if (selectedCategory === 'audio' && activeTab !== 'under_500' && activeTab !== 'under_1000') {
       setActiveTab('audio');
-    } else if (selectedCategory === 'charging') {
+    } else if (selectedCategory === 'charging' && activeTab !== 'under_500' && activeTab !== 'under_1000') {
       setActiveTab('charging');
     } else if (!selectedCategory && (activeTab === 'audio' || activeTab === 'charging')) {
       setActiveTab('all');
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, activeTab]);
 
   const handleTabClick = (filterId) => {
     setActiveTab(filterId);

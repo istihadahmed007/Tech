@@ -9,7 +9,7 @@ export default function BrandSection({
   lang = 'en'
 }) {
   return (
-    <section className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-[#12141C] rounded-2xl border border-[#1E2230] shadow-xl">
+    <section id="compatibility-finder" className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-[#12141C] rounded-2xl border border-[#1E2230] shadow-xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-[#1E2230]">
         <div>
           <div className="flex items-center gap-2 mb-1">

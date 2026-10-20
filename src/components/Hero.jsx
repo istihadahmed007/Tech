@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft, Pause, Play, Zap, Sparkles, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { ChevronRight, ChevronLeft, Pause, Play, Zap, Sparkles, ArrowRight, Search, X } from 'lucide-react';
 
 export default function Hero({ 
   onShopClick, 
   onFindPhoneClick, 
   onSelectCategory,
   onSelectPhone,
+  searchQuery = '',
+  onSearchChange,
+  onSearchSubmit,
+  onFilterAudioUnder500,
+  onScrollToBundles,
+  products = [],
+  onSelectProduct,
   t = {}, 
   lang = 'en',
   selectedCategory = null
@@ -64,6 +71,48 @@ export default function Hero({
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [localQuery, setLocalQuery] = useState(searchQuery || '');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchInputRef = useRef(null);
+  const searchDropdownRef = useRef(null);
+
+  useEffect(() => {
+    setLocalQuery(searchQuery || '');
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchDropdownRef.current && !searchDropdownRef.current.contains(e.target) &&
+          searchInputRef.current && !searchInputRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const liveSuggestions = useMemo(() => {
+    if (!localQuery || localQuery.trim().length < 2 || !products || products.length === 0) return [];
+    const q = localQuery.toLowerCase().trim();
+    return products.filter((p) => {
+      return (
+        p.title?.toLowerCase().includes(q) ||
+        (p.titleBn && p.titleBn.toLowerCase().includes(q)) ||
+        p.category?.toLowerCase().includes(q) ||
+        (p.photoRef && p.photoRef.toLowerCase().includes(q))
+      );
+    }).slice(0, 5);
+  }, [localQuery, products]);
+
+  const handleHeroSearchSubmit = (e) => {
+    e.preventDefault();
+    setShowSuggestions(false);
+    if (onSearchSubmit) {
+      onSearchSubmit(localQuery);
+    } else if (onShopClick) {
+      onShopClick();
+    }
+  };
 
   const currentSlide = SLIDES[activeSlideIndex];
 
@@ -88,6 +137,165 @@ export default function Hero({
 
   return (
     <section className="w-full my-4 sm:my-6" aria-label="Featured Promotions and Collections">
+      {/* 0. Hero Agentic Search Console with Live Pulsing Cyan Indicator & Quick-Action Prompt Pills */}
+      <div className="mb-4 sm:mb-6 bg-[#12141C] border border-[#1E2230] rounded-2xl p-4 sm:p-5 shadow-xl relative overflow-hidden group hover:border-cyan-500/40 focus-within:border-cyan-400 focus-within:shadow-[0_0_25px_rgba(6,182,212,0.2)] transition-all duration-300">
+        {/* Top Status & Live Pulsing Cyan Indicator */}
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2.5">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500 shadow-[0_0_8px_#06B6D4]"></span>
+            </span>
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-cyan-400">
+              {lang === 'bn' ? 'এজেন্টিক হার্ডওয়্যার সার্চ' : 'AGENTIC HARDWARE SEARCH'}
+            </span>
+            <span className="hidden sm:inline-flex font-mono text-[10px] text-slate-400 px-2 py-0.5 rounded bg-[#161924] border border-[#1E2230]">
+              LIVE INVENTORY MATCH
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 font-mono text-[11px] text-emerald-400">
+            <Zap size={13} className="text-emerald-400" />
+            <span className="hidden sm:inline">{lang === 'bn' ? '২,০০০৳+ অর্ডারে সারাদেশে ফ্রি ডেলিভারি' : '৳2,000+ Unlocks Free Nationwide Shipping'}</span>
+          </div>
+        </div>
+
+        {/* Search Bar Input */}
+        <form onSubmit={handleHeroSearchSubmit} className="relative flex items-center gap-2">
+          <div className="relative flex-grow">
+            <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-cyan-400" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={localQuery}
+              onChange={(e) => {
+                setLocalQuery(e.target.value);
+                if (onSearchChange) onSearchChange(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => {
+                if (localQuery.trim().length >= 2) setShowSuggestions(true);
+              }}
+              placeholder={lang === 'bn' ? 'অ্যাক্সেসরিজ সার্চ করুন (যেমন: 120W কেবল, ANC ইয়ারবাড, S24 Ultra কেস)...' : "Ask Tech Nest Agent: '120W fast charging cables', 'Galaxy S24 Ultra', or 'ANC earbuds'..."}
+              className="w-full pl-11 pr-24 py-3 bg-[#0B0D14] border border-[#1E2230] focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.25)] rounded-xl font-mono text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none transition-all"
+            />
+            {localQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setLocalQuery('');
+                  if (onSearchChange) onSearchChange('');
+                  setShowSuggestions(false);
+                }}
+                className="absolute right-20 sm:right-24 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 cursor-pointer"
+                aria-label="Clear search"
+              >
+                <X size={14} />
+              </button>
+            )}
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 font-mono text-[10px] text-slate-500 bg-[#161924] border border-[#1E2230] px-2 py-1 rounded-md">
+              <span>ENTER ↵</span>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="px-4 sm:px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs sm:text-sm flex items-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.35)] transition-all cursor-pointer shrink-0 active:scale-95"
+          >
+            <span>{lang === 'bn' ? 'সার্চ' : 'SEARCH'}</span>
+            <ArrowRight size={14} className="stroke-[2.5]" />
+          </button>
+        </form>
+
+        {/* Live Auto-Suggestions Dropdown */}
+        {showSuggestions && liveSuggestions.length > 0 && (
+          <div 
+            ref={searchDropdownRef}
+            className="absolute left-4 right-4 sm:left-5 sm:right-5 top-[95px] z-30 bg-[#0B0D14] border border-[#1E2230] rounded-xl shadow-2xl overflow-hidden divide-y divide-[#1E2230]"
+          >
+            <div className="px-3 py-1.5 bg-[#12141C] text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider flex items-center justify-between">
+              <span>MATCHING GEAR ({liveSuggestions.length})</span>
+              <span className="text-slate-500">PRESS ENTER TO VIEW ALL</span>
+            </div>
+            {liveSuggestions.map((prod) => (
+              <div
+                key={prod.id}
+                onClick={() => {
+                  setShowSuggestions(false);
+                  if (onSelectProduct) onSelectProduct(prod);
+                }}
+                className="p-2.5 hover:bg-[#161924] flex items-center justify-between gap-3 cursor-pointer transition-colors"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <img 
+                    src={prod.image} 
+                    alt={prod.title} 
+                    className="w-8 h-8 rounded-lg object-contain bg-[#12141C] p-0.5 border border-[#1E2230] shrink-0" 
+                  />
+                  <div className="truncate">
+                    <p className="text-xs font-semibold text-white truncate">
+                      {lang === 'bn' ? (prod.titleBn || prod.title) : prod.title}
+                    </p>
+                    <span className="font-mono text-[10px] text-cyan-400">
+                      {prod.brand || 'Tech Nest'}
+                    </span>
+                  </div>
+                </div>
+                <span className="font-mono font-black text-xs text-white shrink-0">
+                  ৳{prod.price.toLocaleString()}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Quick-Action Prompt Pills Underneath */}
+        <div className="flex items-center flex-wrap gap-2 mt-3 pt-3 border-t border-[#1E2230]">
+          <span className="font-mono text-[10px] uppercase font-bold text-slate-500 mr-1 flex items-center gap-1">
+            PROMPTS:
+          </span>
+
+          {/* Pill 1: ⚡ Unlock ৳2,000 Free Delivery */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onScrollToBundles) onScrollToBundles();
+              else if (onShopClick) onShopClick();
+            }}
+            className="px-3 py-1.5 rounded-xl bg-[#161924] hover:bg-[#1E2230] text-slate-200 hover:text-cyan-400 border border-[#1E2230] hover:border-cyan-500/40 font-mono text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+          >
+            <span>⚡ Unlock ৳2,000 Free Delivery</span>
+          </button>
+
+          {/* Pill 2: 📱 Match My Phone */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onFindPhoneClick) onFindPhoneClick();
+            }}
+            className="px-3 py-1.5 rounded-xl bg-[#161924] hover:bg-[#1E2230] text-slate-200 hover:text-cyan-400 border border-[#1E2230] hover:border-cyan-500/40 font-mono text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+          >
+            <span>📱 Match My Phone</span>
+          </button>
+
+          {/* Pill 3: 🎧 Audio Under ৳500 */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onFilterAudioUnder500) {
+                onFilterAudioUnder500();
+              } else {
+                if (onSelectCategory) onSelectCategory('audio');
+                if (onShopClick) onShopClick();
+              }
+            }}
+            className="px-3 py-1.5 rounded-xl bg-[#161924] hover:bg-[#1E2230] text-slate-200 hover:text-cyan-400 border border-[#1E2230] hover:border-cyan-500/40 font-mono text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+          >
+            <span>🎧 Audio Under ৳500</span>
+          </button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         
         {/* Left & Center: 8 Cols (Hero Bento Card) */}
