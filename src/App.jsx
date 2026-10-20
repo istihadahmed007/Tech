@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import TopUtilityBar from './components/TopUtilityBar';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import TrendingCarousel from './components/TrendingCarousel';
 import QuickShortcuts from './components/QuickShortcuts';
 import FlashSale from './components/FlashSale';
 import FeaturedCategories from './components/FeaturedCategories';
@@ -1019,20 +1018,6 @@ export default function App() {
               selectedCategory={selectedCategory}
             />
 
-            {/* 1.5 Horizontal Trending Products Carousel */}
-            <TrendingCarousel
-              products={products}
-              currencySymbol="৳"
-              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-              onOpenDetail={(p) => navigateToProduct(p, true)}
-              wishlistIds={wishlistIds}
-              onToggleWishlist={handleToggleWishlist}
-              onToggleCompare={handleToggleCompare}
-              comparisonIds={comparisonIds}
-              onViewAll={() => scrollToSection('products-section')}
-              t={t}
-              lang={lang}
-            />
 
             {/* 2. Filterable Product Grid */}
             <ProductGrid
