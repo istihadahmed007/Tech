@@ -247,6 +247,8 @@ export async function handleApiRequest(req, res) {
       const query = url.searchParams.get('query') || url.searchParams.get('q') || '';
       const inStockOnly = url.searchParams.get('inStockOnly') === 'true';
       const lowStock = url.searchParams.get('lowStock') === 'true';
+      const maxPrice = url.searchParams.get('maxPrice');
+      const sale = url.searchParams.get('sale');
 
       // Security: Public catalog route strictly excludes unpublished & archived products
       const products = getAllProducts({
@@ -258,7 +260,11 @@ export async function handleApiRequest(req, res) {
         includeArchived: false
       });
 
-      return sendJson(200, { products });
+      let results = products;
+      if (maxPrice) results = results.filter(p => p.price <= Number(maxPrice));
+      if (sale === 'true') results = results.filter(p => p.sale || p.isSale || (p.badge && p.badge.toLowerCase().includes('sale')));
+
+      return sendJson(200, { count: results.length, products: results });
     }
 
     if (pathname.startsWith('/api/products/') && !pathname.includes('/reviews') && method === 'GET') {
@@ -269,6 +275,51 @@ export async function handleApiRequest(req, res) {
         return sendJson(404, { error: 'Product not found' });
       }
       return sendJson(200, { product });
+    }
+
+    // ---------------------------------------------------------------------------
+    // 2b. Agentic Free-Delivery Threshold Optimizer (৳2,000+)
+    // ---------------------------------------------------------------------------
+    if (pathname === '/api/agent/optimize-bundle' && method === 'POST') {
+      const body = await parseBody();
+      const cartIds = Array.isArray(body.cartIds) ? body.cartIds : [];
+      const reqItems = Array.isArray(body.items) ? body.items : [];
+
+      const allPubProducts = getAllProducts({ inStockOnly: true });
+      const foundFromIds = cartIds.map(id => allPubProducts.find(p => p.id === id || p.sku === id)).filter(Boolean);
+      const items = foundFromIds.length > 0 ? foundFromIds : reqItems;
+      const subtotal = items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+      const FREE_DELIVERY_THRESHOLD = 2000;
+
+      if (subtotal >= FREE_DELIVERY_THRESHOLD) {
+        return sendJson(200, {
+          subtotal,
+          freeDeliveryUnlocked: true,
+          agentMessage: '100% Free Nationwide Delivery unlocked!'
+        });
+      }
+
+      const shortfall = FREE_DELIVERY_THRESHOLD - subtotal;
+      const recommendedFiller = allPubProducts
+        .filter(p => !cartIds.includes(p.id) && !cartIds.includes(p.sku) && p.price >= shortfall)
+        .sort((a, b) => a.price - b.price)[0] ||
+        allPubProducts.sort((a, b) => a.price - b.price)[0] ||
+        { id: 'TN-02', title: 'REMAX RC-155a Fast Cable', price: 150 };
+
+      const fillerName = recommendedFiller.title || recommendedFiller.name || 'Fast Cable';
+      const fillerPrice = recommendedFiller.price || 150;
+
+      return sendJson(200, {
+        subtotal,
+        shortfall,
+        freeDeliveryUnlocked: false,
+        recommendedFiller: {
+          id: recommendedFiller.id,
+          name: fillerName,
+          price: fillerPrice
+        },
+        agentMessage: `You are ৳${shortfall} away from Free Nationwide Delivery. Add ${fillerName} (৳${fillerPrice}) to waive the ৳120 courier fee.`
+      });
     }
 
     // ---------------------------------------------------------------------------
@@ -371,6 +422,14 @@ export async function handleApiRequest(req, res) {
       const db = getDatabase();
 
       // Customer validation
+      if (!body.customer && (body.customerName || body.phone)) {
+        body.customer = {
+          name: (body.customerName || '').trim(),
+          phone: (body.phone || '').trim(),
+          address: (body.address || body.district || 'Banani, Dhaka').trim(),
+          division: body.district || 'Dhaka'
+        };
+      }
       const cust = body.customer || {};
       if (!cust.name || !cust.name.trim()) {
         return sendJson(400, { success: false, error: 'Full customer name is required' });

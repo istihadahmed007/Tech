@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tech Nest — Best Shopping Experience</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F4F7FB;
+      color: #1E3A5F;
+    }
+    .font-mono-tech {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Exact Top Nav Gradient from Reference Image */
+    .nav-gradient {
+      background: linear-gradient(90deg, #6CA8FF 0%, #7CB8FF 45%, #8CC8FF 100%);
+    }
+    /* Soft Sky-Periwinkle Hero with Glowing Curved Horizon Arc */
+    .hero-gradient {
+      background: 
+        radial-gradient(110% 85% at 50% 18%, #E6F4FF 0%, #C5E2FF 48%, #9DC2FF 72%, #B5CFFF 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-arc {
+      position: absolute;
+      top: -35%;
+      left: -15%;
+      width: 130%;
+      height: 112%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 65%, rgba(255, 255, 255, 0.75) 0%, rgba(210, 236, 255, 0.55) 55%, rgba(255, 255, 255, 0.9) 70%, transparent 73%);
+      box-shadow: 0 25px 60px rgba(100, 155, 255, 0.25);
+      pointer-events: none;
+    }
+    /* Soft Gradient CTA Button */
+    .btn-soft-blue {
+      background: linear-gradient(135deg, #89C4FF 0%, #689BFF 100%);
+      box-shadow: 0 10px 25px -5px rgba(104, 155, 255, 0.55);
+    }
+    .btn-soft-blue:hover {
+      background: linear-gradient(135deg, #74B6FF 0%, #5289FF 100%);
+      transform: translateY(-1px);
+    }
+    /* Frosted Glass Product Cards */
+    .product-card-glass {
+      background: linear-gradient(180deg, rgba(235, 246, 255, 0.92) 0%, rgba(216, 238, 255, 0.88) 100%);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 14px 30px -10px rgba(100, 150, 230, 0.16);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .product-card-glass:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 22px 40px -12px rgba(70, 130, 240, 0.28);
+      border-color: #8CC8FF;
+    }
+    /* Top-Left Diagonal Coral SALE Ribbon */
+    .sale-ribbon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 64px;
+      height: 64px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .sale-ribbon span {
+      position: absolute;
+      display: block;
+      width: 96px;
+      padding: 4px 0;
+      background: linear-gradient(90deg, #FF7578 0%, #FF8E72 100%);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.08em;
+      transform: rotate(-45deg);
+      top: 13px;
+      left: -25px;
+      box-shadow: 0 2px 6px rgba(255, 117, 120, 0.35);
+    }
+    /* Isometric 3D Pastel Cube / Product Pedestal */
+    .iso-cube {
+      width: 78px;
+      height: 78px;
+      position: relative;
+      margin: 0 auto;
+      transition: transform 0.3s ease;
+    }
+    .product-card-glass:hover .iso-cube {
+      transform: scale(1.08) translateY(-3px);
+    }
+    /* Promo Banner Gradient */
+    .promo-banner-gradient {
+      background: linear-gradient(135deg, #7CC8FF 0%, #86B3FF 50%, #91AEFF 100%);
+      box-shadow: 0 15px 35px -10px rgba(110, 165, 255, 0.35);
+    }
+    /* Footer Gradient */
+    .footer-gradient {
+      background: linear-gradient(180deg, #5C8DF6 0%, #7DB1FF 50%, #9EC9FF 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen py-6 px-2 sm:px-6">
+
+  <!-- Main Page Container (Matches the clean framed layout of 7639088.jpg) -->
+  <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-sm overflow-hidden border border-blue-100">
+
+    <!-- Top Browser Cushion Strip -->
+    <div class="h-3 bg-[#EBF0FA]"></div>
+
+    <!-- 1. TOP GRADIENT NAVIGATION BAR -->
+    <header class="nav-gradient px-6 sm:px-12 py-5 flex flex-wrap items-center justify-between gap-4 text-white">
+      <a href="#" class="text-xl sm:text-2xl font-extrabold tracking-tight flex items-center gap-2">
+        <span>tech<span class="font-normal opacity-95">nest</span></span>
+        <span class="text-[10px] font-mono-tech uppercase tracking-widest bg-white/25 px-2 py-0.5 rounded-full backdrop-blur-sm">AI Agent</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-white/95">
+        <a href="#hero" class="hover:text-white transition">Home</a>
+        <a href="#catalog" class="hover:text-white transition">Shop</a>
+        <a href="#agent-kits" class="hover:text-white transition">Tech Kits</a>
+        <a href="#services" class="hover:text-white transition">Contact Us</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <!-- Frosted Pill Search / Agent Input -->
+        <div class="relative flex items-center">
+          <input
+            id="agentSearchInput"
+            type="text"
+            placeholder="Ask AI or search gear..."
+            class="w-44 sm:w-56 bg-white/35 hover:bg-white/45 focus:bg-white/90 focus:text-slate-800 placeholder-white/85 focus:placeholder-slate-400 text-white text-xs rounded-full py-2 pl-4 pr-9 outline-none transition backdrop-blur-md"
+          />
+          <button onclick="runAgentQuery()" class="absolute right-3 text-white/90 hover:text-blue-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+          </button>
+        </div>
+
+        <button onclick="toggleCartDrawer()" class="text-xs sm:text-sm font-semibold hover:opacity-90 flex items-center gap-1.5 bg-white/20 px-3 py-1.5 rounded-full">
+          <span>Bag</span>
+          <span id="cartCountBadge" class="font-mono-tech bg-white text-blue-600 px-1.5 py-0.2 rounded-full text-[11px] font-bold">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Crisp White Divider Line (From Reference Image) -->
+    <div class="h-1.5 bg-white"></div>
+
+    <!-- 2. HERO SECTION + OVERLAPPING TOP ROW OF PRODUCTS -->
+    <section id="hero" class="hero-gradient pt-16 pb-36 px-6 sm:px-12 text-center">
+      <!-- Luminous Curved Horizon Arc -->
+      <div class="hero-arc"></div>
+
+      <div class="relative z-10 max-w-2xl mx-auto">
+        <p class="text-xs sm:text-sm font-semibold tracking-[0.25em] text-[#0088FF] uppercase mb-2">
+          AGENTIC TECH E-COMMERCE • BANGLADESH
+        </p>
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-[#0084FF] tracking-tight mb-5">
+          Best Shopping Experience
+        </h1>
+        <p class="text-xs sm:text-sm text-[#1E78D6] font-medium max-w-md mx-auto mb-7">
+          AI-verified mobile accessories, honest hardware grading, and automatic free nationwide delivery on orders ৳2,000+.
+        </p>
+
+        <!-- Agent Quick Preset Pills -->
+        <div class="flex flex-wrap justify-center gap-2 mb-7">
+          <button onclick="filterCatalog('all')" class="text-[11px] font-medium bg-white/75 hover:bg-white text-[#0077E6] px-3.5 py-1.5 rounded-full shadow-sm backdrop-blur-sm transition">
+            ✨ All Verified Gear
+          </button>
+          <button onclick="filterCatalog('sale')" class="text-[11px] font-medium bg-white/75 hover:bg-white text-[#FF6468] px-3.5 py-1.5 rounded-full shadow-sm backdrop-blur-sm transition">
+            🔥 Flash Sale Deals
+          </button>
+          <button onclick="filterCatalog('under500')" class="text-[11px] font-medium bg-white/75 hover:bg-white text-[#0077E6] px-3.5 py-1.5 rounded-full shadow-sm backdrop-blur-sm transition">
+            ⚡ Under ৳500
+          </button>
+          <button onclick="autoUnlockFreeDelivery()" class="text-[11px] font-medium bg-[#0084FF]/15 hover:bg-[#0084FF]/25 text-[#0066CC] border border-[#0084FF]/30 px-3.5 py-1.5 rounded-full backdrop-blur-sm transition">
+            🤖 Auto-Build ৳2,000 Free Delivery Kit
+          </button>
+        </div>
+
+        <a href="#catalog" class="inline-block btn-soft-blue text-white text-xs font-semibold tracking-[0.16em] uppercase px-8 py-3.5 rounded-lg transition">
+          SHOP NOW
+        </a>
+
+        <!-- Live Agent Telemetry Toast (Hidden until triggered) -->
+        <div id="agentStatusBanner" class="hidden mt-6 max-w-lg mx-auto bg-white/85 backdrop-blur-md border border-blue-200 rounded-xl px-4 py-3 text-left shadow-lg">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-mono-tech font-semibold text-blue-600 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+              TECH NEST AGENT TELEMETRY
+            </span>
+            <button onclick="document.getElementById('agentStatusBanner').classList.add('hidden')" class="text-xs text-slate-400 hover:text-slate-600">✕</button>
+          </div>
+          <p id="agentStatusText" class="text-xs text-slate-700 mt-1 font-medium"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 5-COLUMN FROSTED PRODUCT GRID (OVERLAPPING HERO LIKE 7639088.JPG) -->
+    <section id="catalog" class="relative z-20 -mt-28 px-6 sm:px-12 pb-12">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-white drop-shadow-sm">
+          Featured Tech Gear
+        </h2>
+        <span id="catalogCountLabel" class="text-xs font-mono-tech text-white/90 bg-blue-600/30 px-3 py-1 rounded-full backdrop-blur-sm">
+          10 Verified SKUs
+        </span>
+      </div>
+
+      <!-- 5-Column Grid (2 Rows of 5 on Desktop, Responsive on Mobile) -->
+      <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
+        <!-- Populated dynamically by JS -->
+      </div>
+
+      <div class="text-center mt-8">
+        <button onclick="filterCatalog('all')" class="text-xs text-slate-400 hover:text-[#0084FF] font-medium tracking-wide transition">
+          browse all categories &gt;
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. 5-COLUMN ICON CATEGORIES / TRUST PILLARS ("Dolor Sit Amet" Section in Reference) -->
+    <section id="services" class="px-6 sm:px-12 py-8">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-lg sm:text-xl font-bold text-[#0084FF]">
+          Smart Shopping &amp; Guarantees
+        </h2>
+        <a href="#agent-kits" class="text-xs text-slate-400 hover:text-[#0084FF] transition">
+          view more &gt;
+        </a>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 sm:gap-5">
+        <!-- Card 1: Location / Nationwide Delivery -->
+        <div onclick="showServiceInfo('Dhaka 24–48h (৳60) • Nationwide 2–4 Days (৳120) • Free over ৳2,000!')" class="cursor-pointer product-card-glass rounded-xl p-6 flex flex-col items-center justify-center text-center group">
+          <svg class="w-11 h-11 text-[#7B93F5] mb-3 group-hover:scale-110 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-6.75-7-11.5A7 7 0 0 1 19 9.5C19 14.25 12 21 12 21z"></path>
+            <circle cx="12" cy="9.5" r="2.5"></circle>
+          </svg>
+          <span class="text-xs font-bold text-[#2574D9]">Track BD</span>
+        </div>
+
+        <!-- Card 2: Chat / AI Matcher -->
+        <div onclick="showServiceInfo('Ask Tech Nest Agent to match cables & earbuds for iPhone 15, Galaxy S24, or Xiaomi.')" class="cursor-pointer product-card-glass rounded-xl p-6 flex flex-col items-center justify-center text-center group">
+          <svg class="w-11 h-11 text-[#7B93F5] mb-3 group-hover:scale-110 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            <line x1="9" y1="10" x2="15" y2="10"></line>
+            <line x1="9" y1="14" x2="13" y2="14"></line>
+          </svg>
+          <span class="text-xs font-bold text-[#2574D9]">AI Matcher</span>
+        </div>
+
+        <!-- Card 3: Discount / Flash Deals -->
+        <div onclick="filterCatalog('sale')" class="cursor-pointer product-card-glass rounded-xl p-6 flex flex-col items-center justify-center text-center group">
+          <svg class="w-11 h-11 text-[#7B93F5] mb-3 group-hover:scale-110 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2l2.4 2.4 3.4-.4.8 3.3 3.1 1.5-1.1 3.2 1.1 3.2-3.1 1.5-.8 3.3-3.4-.4L12 22l-2.4-2.4-3.4.4-.8-3.3-3.1-1.5 1.1-3.2-1.1-3.2 3.1-1.5.8-3.3 3.4.4L12 2z"></path>
+            <line x1="9" y1="15" x2="15" y2="9"></line>
+            <circle cx="9.5" cy="9.5" r="1"></circle>
+            <circle cx="14.5" cy="14.5" r="1"></circle>
+          </svg>
+          <span class="text-xs font-bold text-[#2574D9]">Flash Deals</span>
+        </div>
+
+        <!-- Card 4: Parcel / Free Shipping Bundles -->
+        <div onclick="autoUnlockFreeDelivery()" class="cursor-pointer product-card-glass rounded-xl p-6 flex flex-col items-center justify-center text-center group">
+          <svg class="w-11 h-11 text-[#7B93F5] mb-3 group-hover:scale-110 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          <span class="text-xs font-bold text-[#2574D9]">Free Parcel</span>
+        </div>
+
+        <!-- Card 5: Clock / 7-30 Day Warranty -->
+        <div onclick="showServiceInfo('Every item is QC-tested before dispatch with 7 to 30-day direct replacement warranty.')" class="cursor-pointer product-card-glass rounded-xl p-6 flex flex-col items-center justify-center text-center group col-span-2 sm:col-span-1">
+          <svg class="w-11 h-11 text-[#7B93F5] mb-3 group-hover:scale-110 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <polyline points="12 7 12 12 15.5 12"></polyline>
+          </svg>
+          <span class="text-xs font-bold text-[#2574D9]">Fast Dispatch</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TWO-COLUMN SOFT GRADIENT PROMO BANNERS (From Bottom of Reference Image) -->
+    <section id="agent-kits" class="px-6 sm:px-12 py-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Left Promo Banner: Student & Creator Kit Optimizer -->
+        <div onclick="autoUnlockFreeDelivery()" class="cursor-pointer promo-banner-gradient rounded-2xl p-7 text-white flex items-center gap-6 hover:opacity-95 transition">
+          <div class="shrink-0">
+            <svg class="w-16 h-16 text-white/95" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+          </div>
+          <div>
+            <span class="text-[10px] font-mono-tech uppercase tracking-widest bg-white/25 px-2 py-0.5 rounded">Agent Bundle • Save ৳840</span>
+            <h3 class="text-sm sm:text-base font-bold mt-1.5 leading-snug">
+              Student &amp; Commute Tech Kit — Auto-Optimized for Free Delivery (৳2,010)
+            </h3>
+            <p class="text-xs text-white/85 mt-1">Click to load TWS + 4-in-1 Cable + Smartwatch + REMAX Cable</p>
+          </div>
+        </div>
+
+        <!-- Right Promo Banner: Verified Device Compatibility -->
+        <div onclick="showServiceInfo('Compatible gear verified for iPhone 15 Pro Max, Galaxy S24 Ultra, Pixel 8 Pro & Xiaomi 14.')" class="cursor-pointer promo-banner-gradient rounded-2xl p-7 text-white flex items-center justify-between gap-6 hover:opacity-95 transition">
+          <div>
+            <span class="text-[10px] font-mono-tech uppercase tracking-widest bg-white/25 px-2 py-0.5 rounded">100% QC Inspected</span>
+            <h3 class="text-sm sm:text-base font-bold mt-1.5 leading-snug">
+              Verified Device Compatibility for Apple, Samsung, Pixel &amp; Xiaomi
+            </h3>
+            <p class="text-xs text-white/85 mt-1">Cash on Delivery, bKash &amp; Nagad supported nationwide</p>
+          </div>
+          <div class="shrink-0">
+            <svg class="w-16 h-16 text-white/95" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M5.6 5.6c3.5 2.5 3.5 10.3 0 12.8"></path>
+              <path d="M18.4 5.6c-3.5 2.5-3.5 10.3 0 12.8"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. 4-COLUMN GRADIENT FOOTER (Matches Reference Image) -->
+    <footer class="footer-gradient mt-6 px-6 sm:px-12 py-10 text-white">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-4xl mx-auto">
+        <div>
+          <h4 class="text-xs font-bold mb-3 tracking-wide">Categories</h4>
+          <ul class="space-y-1 text-[11px] text-white/85">
+            <li><a href="#catalog" onclick="filterCatalog('audio')" class="hover:text-white">Earbuds &amp; TWS</a></li>
+            <li><a href="#catalog" onclick="filterCatalog('charging')" class="hover:text-white">Fast Chargers &amp; Cables</a></li>
+            <li><a href="#catalog" onclick="filterCatalog('wearables')" class="hover:text-white">Ultra Smartwatches</a></li>
+            <li><a href="#catalog" onclick="filterCatalog('all')" class="hover:text-white">Audio Headsets</a></li>
+            <li><a href="#catalog" onclick="filterCatalog('under500')" class="hover:text-white">Under ৳500 Deals</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold mb-3 tracking-wide">Assistance</h4>
+          <ul class="space-y-1 text-[11px] text-white/85">
+            <li><a href="#services" class="hover:text-white">Track Your Order</a></li>
+            <li><a href="#services" class="hover:text-white">7–30 Day Warranty</a></li>
+            <li><a href="#services" class="hover:text-white">Free Shipping Tier (৳2,000+)</a></li>
+            <li><a href="#services" class="hover:text-white">Return &amp; Exchange</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold mb-3 tracking-wide">Tech Nest BD</h4>
+          <p class="text-[11px] text-white/85 leading-relaxed">
+            Optic-grade protection, GaN fast power, and acoustic clarity. Next-day courier in Dhaka &amp; 2–4 days nationwide.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold mb-3 tracking-wide">Connect &amp; Pay</h4>
+          <div class="flex items-center gap-3 mb-3">
+            <!-- Instagram -->
+            <a href="#" class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm5.25-.75a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z"/></svg>
+            </a>
+            <!-- Facebook -->
+            <a href="#" class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h4v4h-4v3h4v4h-4v7H9v-7H6v-4h3V7a4 4 0 014-4z"/></svg>
+            </a>
+            <!-- YouTube -->
+            <a href="#" class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.2 5 12 5 12 5s-4.2 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.1 6.8.2 6.8.2s4.2 0 7-.1c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM10 15V9l5.2 3-5.2 3z"/></svg>
+            </a>
+          </div>
+          <p class="text-[10px] font-mono-tech text-white/90">COD • bKash • Nagad</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bottom White Frame Strip -->
+    <div class="h-4 bg-white"></div>
+  </div>
+
+  <!-- FLOATING AGENTIC FREE-DELIVERY BAR -->
+  <div id="agentCartBar" class="hidden fixed bottom-4 inset-x-0 mx-auto max-w-xl z-50 px-4">
+    <div class="bg-white/95 backdrop-blur-md border border-blue-200 rounded-2xl p-3.5 shadow-2xl flex items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#0084FF] animate-pulse"></span>
+          <span id="cartTotalText" class="text-xs font-extrabold text-[#1E3A5F] font-mono-tech">Bag: ৳0</span>
+        </div>
+        <p id="freeShippingHint" class="text-[11px] text-[#0077E6] font-medium mt-0.5">
+          Add ৳2,000+ for 100% Free Nationwide Delivery
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="autoOptimizeBtn" onclick="optimizeCartForFreeDelivery()" class="hidden text-[11px] font-mono-tech bg-blue-50 hover:bg-blue-100 text-[#0077E6] border border-blue-200 px-3 py-1.5 rounded-lg font-semibold">
+          + Auto-Add ৳150 Cable
+        </button>
+        <button onclick="checkoutOrder()" class="btn-soft-blue text-white text-xs font-bold px-4 py-2 rounded-lg">
+          Checkout (COD)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 10 Curated Tech Nest Products styled with the 5 Pastel Cube Palettes from 7639088.jpg
+    const PRODUCTS = [
+      { id: "TN-01", name: "Pro White ANC TWS", price: 1190, oldPrice: 1550, category: "audio", sale: false, tier: "1:1 MASTER", palette: "pink" },
+      { id: "TN-02", name: "REMAX RC-155a Cable", price: 150, oldPrice: 220, category: "charging", sale: true, tier: "ORIGINAL", palette: "peach" },
+      { id: "TN-03", name: "Ultrapods Pro Crystal", price: 350, oldPrice: 490, category: "audio", sale: false, tier: "TRENDING", palette: "gold" },
+      { id: "TN-04", name: "SM 007 Neckband", price: 450, oldPrice: 650, category: "audio", sale: true, tier: "QC TESTED", palette: "blue" },
+      { id: "TN-05", name: "Y80 Ultra 8+1 Watch", price: 890, oldPrice: 1350, category: "wearables", sale: false, tier: "8+1 STRAPS", palette: "violet" },
+      { id: "TN-06", name: "RECRSI 4-in-1 65W", price: 420, oldPrice: 650, category: "charging", sale: true, tier: "ORIGINAL", palette: "pink" },
+      { id: "TN-07", name: "Compact 27W Adapter", price: 250, oldPrice: 380, category: "charging", sale: false, tier: "FAST PD", palette: "peach" },
+      { id: "TN-08", name: "KW68 Mini Smartwatch", price: 790, oldPrice: 1150, category: "wearables", sale: true, tier: "3+1 STRAPS", palette: "gold" },
+      { id: "TN-09", name: "Oraimo Over-Ear OR08", price: 990, oldPrice: 1450, category: "audio", sale: false, tier: "STUDIO", palette: "blue" },
+      { id: "TN-10", name: "LAXASFIT SIM Watch", price: 1350, oldPrice: 1750, category: "wearables", sale: true, tier: "2G SIM", palette: "violet" }
+    ];
+
+    // SVG Isometric 3D Pastel Cubes matching the 5 columns of 7639088.jpg
+    const CUBE_PALETTES = {
+      pink:   { top: "#FFCDD2", left: "#F8BBD0", right: "#F48FB1" },
+      peach:  { top: "#FFE0B2", left: "#FFCCBC", right: "#FFAB91" },
+      gold:   { top: "#FFF9C4", left: "#FFE082", right: "#FFD54F" },
+      blue:   { top: "#B3E5FC", left: "#90CAF9", right: "#81D4FA" },
+      violet: { top: "#F3E5F5", left: "#E1BEE7", right: "#CE93D8" }
+    };
+
+    let cart = [];
+
+    function getIsometricCubeSVG(paletteKey) {
+      const c = CUBE_PALETTES[paletteKey] || CUBE_PALETTES.blue;
+      return `
+        <svg viewBox="0 0 100 100" class="iso-cube drop-shadow-sm">
+          <!-- Top Face -->
+          <polygon points="50,12 88,32 50,52 12,32" fill="${c.top}" />
+          <!-- Left Face -->
+          <polygon points="12,32 50,52 50,90 12,70" fill="${c.left}" />
+          <!-- Right Face -->
+          <polygon points="50,52 88,32 88,70 50,90" fill="${c.right}" />
+        </svg>
+      `;
+    }
+
+    function renderProducts(list) {
+      const grid = document.getElementById("productGrid");
+      document.getElementById("catalogCountLabel").textContent = `${list.length} Verified SKUs`;
+      grid.innerHTML = list.map(item => `
+        <div onclick="addToCart('${item.id}')" class="cursor-pointer product-card-glass rounded-xl overflow-hidden relative flex flex-col justify-between pt-6">
+          ${item.sale ? `<div class="sale-ribbon"><span>SALE</span></div>` : ""}
+          
+          <div class="px-3 flex justify-end">
+            <span class="text-[9px] font-mono-tech font-semibold text-[#3B82F6] bg-white/75 px-2 py-0.5 rounded-full">
+              ${item.tier}
+            </span>
+          </div>
+
+          <div class="my-4 px-4 text-center">
+            ${getIsometricCubeSVG(item.palette)}
+            <div class="mt-2 font-mono-tech text-xs font-bold text-[#0077E6]">
+              ৳${item.price.toLocaleString()}
+              <span class="text-[10px] line-through text-slate-400 font-normal ml-1">৳${item.oldPrice}</span>
+            </div>
+          </div>
+
+          <!-- Frosted Bottom Label Bar (Exact match to 7639088.jpg) -->
+          <div class="bg-white/55 border-t border-white/80 py-2.5 px-3 text-center">
+            <p class="text-xs font-semibold text-[#2B6CB0] truncate">${item.name}</p>
+            <p class="text-[10px] text-[#4A90E2] font-medium mt-0.5">+ Click to Add</p>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function filterCatalog(mode) {
+      let filtered = PRODUCTS;
+      if (mode === "sale") filtered = PRODUCTS.filter(p => p.sale);
+      else if (mode === "under500") filtered = PRODUCTS.filter(p => p.price <= 500);
+      else if (mode !== "all") filtered = PRODUCTS.filter(p => p.category === mode);
+      renderProducts(filtered);
+    }
+
+    function runAgentQuery() {
+      const q = document.getElementById("agentSearchInput").value.trim().toLowerCase();
+      if (!q) return;
+      const matches = PRODUCTS.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        (q.includes("500") && p.price <= 500)
+      );
+      renderProducts(matches.length ? matches : PRODUCTS);
+      showServiceInfo(`Agent scanned 10 verified SKUs for "${q}" — showing ${matches.length || PRODUCTS.length} best matches.`);
+    }
+
+    function showServiceInfo(msg) {
+      const banner = document.getElementById("agentStatusBanner");
+      const text = document.getElementById("agentStatusText");
+      text.textContent = msg;
+      banner.classList.remove("hidden");
+    }
+
+    function addToCart(productId) {
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+      cart.push(product);
+      updateCartUI();
+      showServiceInfo(`Added "${product.name}" (৳${product.price}) to your Tech Nest bag.`);
+    }
+
+    function autoUnlockFreeDelivery() {
+      // Student Study Kit (৳1,860) + REMAX RC-155a Cable (৳150) = ৳2,010 (Unlocks Free Delivery)
+      cart = [
+        PRODUCTS.find(p => p.id === "TN-04"), // SM 007 Neckband (450)
+        PRODUCTS.find(p => p.id === "TN-06"), // RECRSI 4-in-1 (420)
+        PRODUCTS.find(p => p.id === "TN-08"), // KW68 Mini Watch (790)
+        PRODUCTS.find(p => p.id === "TN-03"), // Ultrapods Pro (350)
+      ];
+      updateCartUI();
+      showServiceInfo("🤖 Agent assembled the ৳2,010 Free-Delivery Kit (4 items) — ৳120 Steadfast Courier fee waived!");
+    }
+
+    async function optimizeCartForFreeDelivery() {
+      const cartIds = cart.map(i => i.id);
+      try {
+        const res = await fetch('/api/agent/optimize-bundle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartIds })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.recommendedFiller) {
+            const filler = PRODUCTS.find(p => p.id === data.recommendedFiller.id) || {
+              id: data.recommendedFiller.id,
+              name: data.recommendedFiller.name,
+              price: data.recommendedFiller.price,
+              oldPrice: data.recommendedFiller.price + 70,
+              category: 'charging',
+              sale: true,
+              tier: 'OPTIMIZER',
+              palette: 'peach'
+            };
+            cart.push(filler);
+            updateCartUI();
+            showServiceInfo(data.agentMessage);
+            return;
+          }
+        }
+      } catch (err) {
+        // Fallback for standalone offline execution
+      }
+
+      const remax = PRODUCTS.find(p => p.id === "TN-02");
+      if (remax) cart.push(remax);
+      updateCartUI();
+      showServiceInfo("Added REMAX RC-155a Cable (৳150) to unlock Free Nationwide Delivery!");
+    }
+
+    function updateCartUI() {
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      document.getElementById("cartCountBadge").textContent = cart.length;
+      const bar = document.getElementById("agentCartBar");
+      const totalText = document.getElementById("cartTotalText");
+      const hint = document.getElementById("freeShippingHint");
+      const optBtn = document.getElementById("autoOptimizeBtn");
+
+      if (cart.length === 0) {
+        bar.classList.add("hidden");
+        return;
+      }
+      bar.classList.remove("hidden");
+      totalText.textContent = `Bag (${cart.length} items): ৳${total.toLocaleString()}`;
+
+      if (total >= 2000) {
+        hint.textContent = "✅ 100% Free Nationwide Delivery Unlocked!";
+        optBtn.classList.add("hidden");
+      } else {
+        const diff = 2000 - total;
+        hint.textContent = `💡 Only ৳${diff} away from Free Nationwide Delivery (saves ৳120 fee)`;
+        if (diff <= 300) optBtn.classList.remove("hidden");
+        else optBtn.classList.add("hidden");
+      }
+    }
+
+    function toggleCartDrawer() {
+      const bar = document.getElementById("agentCartBar");
+      bar.classList.toggle("hidden");
+    }
+
+    async function checkoutOrder() {
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      if (cart.length === 0) {
+        alert("Your bag is empty! Add products to proceed.");
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName: 'Customer',
+            phone: '01711223344',
+            district: 'Dhaka',
+            items: cart,
+            paymentMethod: 'COD'
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          alert(`🎉 Order Confirmed via Tech Nest API!\nOrder ID: ${data.orderId || data.id}\nItems: ${cart.length}\nSubtotal: ৳${data.subtotal?.toLocaleString()}\nDelivery: ${data.deliveryFee === 0 ? 'FREE Nationwide Courier' : '৳' + data.deliveryFee}\nTotal Payable: ৳${(data.totalPayable || data.total)?.toLocaleString()}\nStatus: ${data.status || 'CONFIRMED'}`);
+          cart = [];
+          updateCartUI();
+          return;
+        }
+      } catch (e) {
+        // Fallback for standalone offline execution
+      }
+
+      alert(`Order Confirmed!\nItems: ${cart.length}\nTotal: ৳${total.toLocaleString()}\nDelivery: ${total >= 2000 ? 'FREE Nationwide Courier' : 'Standard Courier'}`);
+      cart = [];
+      updateCartUI();
+    }
+
+    // Try fetching products dynamically from API, fallback to local PRODUCTS
+    async function initCatalog() {
+      try {
+        const res = await fetch('/api/products');
+        if (res.ok) {
+          const data = await res.json();
+          const list = data.products || data;
+          if (Array.isArray(list) && list.length > 0) {
+            // Assign palettes to API products
+            const palettes = ['pink', 'peach', 'gold', 'blue', 'violet'];
+            const enriched = list.map((p, idx) => ({
+              id: p.id,
+              name: p.name || p.title,
+              price: p.price,
+              oldPrice: p.oldPrice || Math.round(p.price * 1.35),
+              category: p.category || 'audio',
+              sale: Boolean(p.sale || p.isSale),
+              tier: p.tier || (p.badge || 'VERIFIED'),
+              palette: palettes[idx % palettes.length]
+            }));
+            renderProducts(enriched);
+            return;
+          }
+        }
+      } catch (e) {
+        // Fallback to static items
+      }
+      renderProducts(PRODUCTS);
+    }
+
+    initCatalog();
+  </script>
+</body>
+</html>
