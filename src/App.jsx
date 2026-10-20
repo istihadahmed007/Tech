@@ -29,6 +29,7 @@ import BundleDeals from './components/BundleDeals';
 import SmartTechFinder from './components/SmartTechFinder';
 import ProductComparisonModal from './components/ProductComparisonModal';
 import TechKits from './components/TechKits';
+import PromoBanners from './components/PromoBanners';
 import RecentlyViewedSection from './components/RecentlyViewedSection';
 import Footer from './components/Footer';
 
@@ -380,6 +381,44 @@ export default function App() {
     showToast(lang === 'bn' ? `🎉 ${kitName} ব্যাগে যুক্ত হয়েছে!` : `🎉 ${kitName} added to bag!`);
     navigateToCart(true);
   }, [lang, navigateToCart, showToast]);
+
+  const handleAutoUnlockFreeDelivery = useCallback(() => {
+    // ৳2,010 Student & Commute Tech Kit: Neckband (450) + 4-in-1 Cable (420) + Y80 Watch (790) + Ultrapods (350) = ৳2,010 (Unlocks Free Delivery!)
+    const bundleIds = ['p04-sm007-neckband', 'p06-recrsi-4in1-cable', 'p11-y80-ultra-smartwatch', 'p03-ultrapods-pro'];
+    const bundleProducts = bundleIds.map(id => products.find(p => p.id === id) || INITIAL_PRODUCTS.find(p => p.id === id)).filter(Boolean);
+    if (bundleProducts.length === 0) return;
+
+    setCart(prevCart => {
+      let nextCart = [...prevCart];
+      for (const prod of bundleProducts) {
+        const defaultVariant = prod.variants ? prod.variants[0] : null;
+        const variantId = defaultVariant?.id || 'default';
+        const existingIdx = nextCart.findIndex(item => item.id === prod.id && (item.variant?.id || 'default') === variantId);
+        if (existingIdx > -1) {
+          nextCart[existingIdx] = {
+            ...nextCart[existingIdx],
+            quantity: nextCart[existingIdx].quantity + 1
+          };
+        } else {
+          nextCart.push({
+            id: prod.id,
+            sku: prod.sku || prod.id,
+            title: prod.title,
+            titleBn: prod.titleBn,
+            price: prod.price,
+            image: prod.image,
+            category: prod.category,
+            variant: defaultVariant,
+            quantity: 1
+          });
+        }
+      }
+      return nextCart;
+    });
+
+    showToast(lang === 'bn' ? '🎉 ফ্রি ডেলিভারি কিট যুক্ত হয়েছে (৳২,০১০)! ৳১২০ কুরিয়ার ফি মওকুফ!' : '🎉 ৳2,010 Free Delivery Kit added! ৳120 courier fee waived!');
+    navigateToCart(true);
+  }, [products, lang, navigateToCart, showToast]);
 
   // Navigate back to Home / Catalog
   const navigateToHome = useCallback((pushHistory = true) => {
@@ -813,16 +852,16 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between relative selection:bg-cyan-500 selection:text-[#090A0F] bg-[#090A0F] text-slate-100 antialiased">
+    <div className="min-h-screen flex flex-col justify-between relative selection:bg-blue-500 selection:text-white bg-[#F4F7FB] text-slate-800 antialiased">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#102A43] text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-[#B8E7F8]/40 flex items-center gap-2 animate-fadeIn">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white/95 text-slate-800 px-5 py-2.5 rounded-full text-xs font-semibold shadow-2xl border border-blue-200 flex items-center gap-2 animate-fadeIn backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Shopee-Inspired Top Utility Bar */}
+      {/* Top Utility Cushion Strip */}
       <TopUtilityBar
         onOpenTracking={(id) => {
           setTrackingOrderId(id || '');
@@ -835,7 +874,7 @@ export default function App() {
         t={t}
       />
 
-      {/* Shopee-Style Header */}
+      {/* Reference Top Gradient Header */}
       <Header
         storeName={import.meta.env.VITE_STORE_NAME || "Tech Nest"}
         t={t}
@@ -893,7 +932,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className={selectedProduct || isCartView || isCheckoutView ? "flex-grow w-full" : "container flex-grow pt-2 sm:pt-4"}>
+      <main className="flex-grow w-full">
         {selectedProduct ? (
           <ProductDetailPage
             product={selectedProduct}
@@ -941,10 +980,10 @@ export default function App() {
           />
         ) : (
           <>
-            {/* 1. Hero Carousel + Side Highlight Banners */}
+            {/* 1. Large Animated Hero Section with Glowing Curved Horizon Wave */}
             <Hero
               onShopClick={() => scrollToSection('products-section')}
-              onFindPhoneClick={() => scrollToSection('compatibility-finder')}
+              onFindPhoneClick={() => scrollToSection('smart-tech-finder')}
               onSelectCategory={(catId) => {
                 setSelectedCategory(catId);
                 scrollToSection('products-section');
@@ -965,7 +1004,7 @@ export default function App() {
                 setSearchQuery('');
                 scrollToSection('products-section');
               }}
-              onScrollToBundles={() => scrollToSection('bundles-section')}
+              onScrollToBundles={handleAutoUnlockFreeDelivery}
               products={products}
               onSelectProduct={(p) => navigateToProduct(p, true)}
               t={t}
@@ -973,71 +1012,7 @@ export default function App() {
               selectedCategory={selectedCategory}
             />
 
-            {/* 2. Shopee-Style Quick Shopping Shortcuts */}
-            <QuickShortcuts
-              onSelectCategory={navigateToCategory}
-              onNavigateSection={scrollToSection}
-              onSetSortBy={() => scrollToSection('products-section')}
-              lang={lang}
-            />
-
-            {/* 2.5 Smart Tech Finder Interactive Lifestyle Matching */}
-            <div id="smart-tech-finder">
-              <SmartTechFinder
-                products={products}
-                onSelectProduct={(p) => navigateToProduct(p, true)}
-                onAddToCart={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-                onToggleCompare={handleToggleCompare}
-                comparisonIds={comparisonIds}
-                lang={lang}
-                t={t}
-              />
-            </div>
-
-            {/* 3. Flash Sale Section With Countdown Clock */}
-            <FlashSale
-              products={products}
-              onOpenDetail={(p) => navigateToProduct(p, true)}
-              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-              onViewAllFlashDeals={() => {
-                setSelectedCategory(null);
-                scrollToSection('products-section');
-              }}
-              currencySymbol="৳"
-              lang={lang}
-            />
-
-            {/* 4. Featured Mobile Accessory Categories */}
-            <FeaturedCategories
-              selectedCategory={selectedCategory}
-              onSelectCategory={navigateToCategory}
-              onShopAll={() => {
-                setSelectedCategory(null);
-                scrollToSection('products-section');
-              }}
-              lang={lang}
-            />
-
-            {/* 4.5 Configurable Tech Kits for Lifestyle & Workflows */}
-            <TechKits
-              products={products}
-              onAddKitToBag={handleAddKitToBag}
-              onSelectProduct={(p) => navigateToProduct(p, true)}
-              currencySymbol="৳"
-              lang={lang}
-              t={t}
-            />
-
-            {/* 5. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
-            <div id="bundles-section">
-              <BundleDeals
-                onAddBundle={handleAddBundle}
-                lang={lang}
-                t={t}
-              />
-            </div>
-
-            {/* 6. Product Collection Grid with Category Filtering & Search */}
+            {/* 2. 5-Column Frosted Product Grid (2 Rows of 5, directly overlapping hero wave) */}
             <ProductGrid
               products={products}
               currencySymbol="৳"
@@ -1059,7 +1034,66 @@ export default function App() {
               lang={lang}
             />
 
+            {/* 3. 5-Column Browse Categories & Trust Icons ("Dolor Sit Amet" from Reference) */}
+            <FeaturedCategories
+              selectedCategory={selectedCategory}
+              onSelectCategory={navigateToCategory}
+              onShopAll={() => {
+                setSelectedCategory(null);
+                scrollToSection('products-section');
+              }}
+              onOpenTracking={() => {
+                setTrackingOrderId('');
+                setTrackingToken('');
+                setActiveModal('tracking');
+              }}
+              onOpenSupport={() => setActiveModal('support')}
+              onScrollToBundles={handleAutoUnlockFreeDelivery}
+              onScrollToFinder={() => scrollToSection('smart-tech-finder')}
+              lang={lang}
+            />
 
+            {/* 4. Two-Column Horizontal Soft Gradient Promo Banners (Reference Bottom Banners) */}
+            <PromoBanners
+              onAddFreeDeliveryKit={handleAutoUnlockFreeDelivery}
+              onScrollToFinder={() => scrollToSection('smart-tech-finder')}
+              onOpenSupport={() => setActiveModal('support')}
+              lang={lang}
+            />
+
+            {/* 5. Smart Tech Finder Interactive Lifestyle Matching */}
+            <div id="smart-tech-finder">
+              <SmartTechFinder
+                products={products}
+                onSelectProduct={(p) => navigateToProduct(p, true)}
+                onAddToCart={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+                onToggleCompare={handleToggleCompare}
+                comparisonIds={comparisonIds}
+                lang={lang}
+                t={t}
+              />
+            </div>
+
+            {/* 6. Configurable Tech Kits for Lifestyle & Workflows */}
+            <div id="tech-kits-section">
+              <TechKits
+                products={products}
+                onAddKitToBag={handleAddKitToBag}
+                onSelectProduct={(p) => navigateToProduct(p, true)}
+                currencySymbol="৳"
+                lang={lang}
+                t={t}
+              />
+            </div>
+
+            {/* 7. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
+            <div id="bundles-section">
+              <BundleDeals
+                onAddBundle={handleAddBundle}
+                lang={lang}
+                t={t}
+              />
+            </div>
 
             {/* 8. Brand & Phone Model Compatibility */}
             <BrandSection

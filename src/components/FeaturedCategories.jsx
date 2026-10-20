@@ -1,128 +1,109 @@
 import React from 'react';
-import { ChevronRight, Layers } from 'lucide-react';
+import { MapPin, MessageSquare, BadgePercent, Package, Clock, ChevronRight } from 'lucide-react';
 
 export default function FeaturedCategories({
   selectedCategory,
   onSelectCategory,
   onShopAll,
+  onOpenTracking,
+  onOpenSupport,
+  onScrollToBundles,
+  onScrollToFinder,
   lang = 'en'
 }) {
-  const categories = [
+  const cards = [
     {
-      id: 'earbuds',
-      name: lang === 'bn' ? 'ইয়ারবাডস ও টিডব্লিউএস' : 'Earbuds & TWS',
-      image: '/assets/products/p01-pro-tws-white.jpg',
-      itemCount: 10,
-      badge: 'ANC & Bass'
+      id: 'track',
+      title: lang === 'bn' ? 'অর্ডার ট্র্যাকিং' : 'Track BD',
+      subtext: lang === 'bn' ? 'ঢাকা ২৪-৪৮ঘ • সারা দেশ ২-৪ দিন' : 'Dhaka 24-48h • Nationwide 2-4 Days',
+      icon: MapPin,
+      onClick: () => {
+        if (onOpenTracking) onOpenTracking();
+        else if (onOpenSupport) onOpenSupport();
+      }
     },
     {
-      id: 'headphones',
-      name: lang === 'bn' ? 'হেডফোন ও নেকব্যান্ড' : 'Headphones',
-      image: '/assets/products/p09-tucci-a5-fighter-headset.jpg',
-      itemCount: 8,
-      badge: 'Studio Sound'
+      id: 'matcher',
+      title: lang === 'bn' ? 'স্মার্ট ম্যাচিং' : 'AI Matcher',
+      subtext: lang === 'bn' ? 'ফোন ও চার্জার কম্প্যাটিবিলিটি' : 'Instant phone & accessory matching',
+      icon: MessageSquare,
+      onClick: () => {
+        if (onScrollToFinder) onScrollToFinder();
+        else if (onSelectCategory) onSelectCategory('audio');
+      }
     },
     {
-      id: 'chargers',
-      name: lang === 'bn' ? 'ফাস্ট চার্জার' : 'Fast Chargers',
-      image: '/assets/products/p07-oppo-style-27w-charger.jpg',
-      itemCount: 4,
-      badge: 'Fast GaN'
+      id: 'deals',
+      title: lang === 'bn' ? 'ফ্ল্যাশ ডিলস' : 'Flash Deals',
+      subtext: lang === 'bn' ? 'বিশেষ ডিসকাউন্ট ও অফার' : 'Limited-time discounts & clearance',
+      icon: BadgePercent,
+      onClick: () => {
+        if (onSelectCategory) onSelectCategory('charging');
+        else if (onShopAll) onShopAll();
+      }
     },
     {
-      id: 'cables',
-      name: lang === 'bn' ? 'ইউএসবি ও ডেটা ক্যাবল' : 'Fast USB Cables',
-      image: '/assets/products/p02-remax-rc155a-cable.jpg',
-      itemCount: 6,
-      badge: '120W Braided'
+      id: 'parcel',
+      title: lang === 'bn' ? 'ফ্রি ডেলিভারি' : 'Free Parcel',
+      subtext: lang === 'bn' ? '৳২,০০০+ অর্ডারে সম্পূর্ণ ফ্রি' : '100% Free courier on ৳2,000+',
+      icon: Package,
+      onClick: () => {
+        if (onScrollToBundles) onScrollToBundles();
+        else if (onShopAll) onShopAll();
+      }
     },
     {
-      id: 'wearables',
-      name: lang === 'bn' ? 'স্মার্টওয়াচ ও ব্যান্ড' : 'Smartwatches',
-      image: '/assets/products/p11-y80-ultra-smartwatch.jpg',
-      itemCount: 4,
-      badge: 'Cellular & HD'
-    },
-    {
-      id: 'connectivity',
-      name: lang === 'bn' ? 'কানেক্টিভিটি ও ওটিজি' : 'OTG & Hubs',
-      image: '/assets/products/p08-2in1-otg-adapter.jpg',
-      itemCount: 3,
-      badge: 'USB 3.0'
-    },
-    {
-      id: 'cases',
-      name: lang === 'bn' ? 'ফোন কেস ও কভার' : 'Cases & Covers',
-      image: '/assets/cat-cases.jpg',
-      itemCount: 4,
-      badge: 'Drop Proof'
-    },
-    {
-      id: 'power-banks',
-      name: lang === 'bn' ? 'পাওয়ার ব্যাংক' : 'Power Banks',
-      image: '/assets/cat-powerbanks.jpg',
-      itemCount: 2,
-      badge: 'Heavy Battery'
+      id: 'warranty',
+      title: lang === 'bn' ? '৭-৩০ দিন ওয়ারেন্টি' : 'Fast Dispatch',
+      subtext: lang === 'bn' ? 'কিউসি টেস্টেড ও রিপ্লেসমেন্ট' : '100% QC tested & replacement warranty',
+      icon: Clock,
+      onClick: () => {
+        if (onOpenSupport) onOpenSupport();
+      }
     }
   ];
 
   return (
-    <section className="w-full my-6 sm:my-8 p-4 sm:p-6 bg-[#12141C] rounded-2xl border border-[#1E2230] shadow-xl">
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#1E2230]">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-            <Layers size={15} />
-          </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold font-mono text-white tracking-wide uppercase">
-              {lang === 'bn' ? 'ক্যাটাগরি সমূহ' : 'HARDWARE CATEGORIES'}
-            </h2>
-            <p className="text-[11px] text-zinc-400 font-mono">
-              {lang === 'bn' ? 'আপনার প্রয়োজনীয় গ্যাজেট সিলেক্ট করুন' : 'Explore verified engineering gear by category'}
-            </p>
-          </div>
+    <section id="services-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      {/* Section Header: Matches "Dolor Sit Amet" & "view more >" from Reference Screenshot */}
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-lg sm:text-xl font-extrabold text-[#0084FF] tracking-tight">
+            {lang === 'bn' ? 'স্মার্ট শপিং ও গ্যারান্টি' : 'Smart Shopping & Guarantees'}
+          </h2>
+          <p className="text-xs text-slate-500 font-medium hidden sm:block">
+            {lang === 'bn' ? 'নির্ভরযোগ্য ডেলিভারি, ওয়্যারেন্টি ও কাস্টমার সাপোর্ট' : 'Trusted logistics, genuine hardware grading, and local support'}
+          </p>
         </div>
 
         <button
           type="button"
           onClick={onShopAll}
-          className="text-xs font-mono font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors cursor-pointer"
+          className="text-xs font-semibold text-slate-400 hover:text-[#0084FF] flex items-center gap-1 transition cursor-pointer"
         >
-          <span>{lang === 'bn' ? 'সব পণ্য' : 'View Master Catalog'}</span>
-          <ChevronRight size={14} />
+          <span>{lang === 'bn' ? 'আরও দেখুন >' : 'view more >'}</span>
         </button>
       </div>
 
-      {/* Grid of Categories (Obsidian Bento Cards) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-3">
-        {categories.map((cat) => {
-          const isSelected = selectedCategory === cat.id;
+      {/* 5-Column Icon Category Grid (Exact Match to Reference Screenshot) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
+        {cards.map((c) => {
+          const Icon = c.icon;
           return (
             <div
-              key={cat.id}
-              onClick={() => onSelectCategory(isSelected ? null : cat.id)}
-              className={`p-3 rounded-xl border text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-between group ${
-                isSelected 
-                  ? 'border-cyan-400 bg-cyan-950/40 shadow-[0_0_15px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400/50' 
-                  : 'border-[#1E2230] hover:border-cyan-500/40 bg-[#0B0D14] hover:bg-[#161924]'
-              }`}
+              key={c.id}
+              onClick={c.onClick}
+              className="product-card-glass rounded-2xl p-6 sm:p-7 flex flex-col items-center justify-center text-center group cursor-pointer border border-white/85 hover:border-blue-300 transition-all duration-200"
             >
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden p-1.5 bg-[#12141C] mb-2 flex items-center justify-center border border-[#1E2230] group-hover:border-cyan-500/30 transition-colors">
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                  loading="lazy"
-                />
+              <div className="w-12 h-12 rounded-2xl bg-blue-50/80 text-[#7B93F5] flex items-center justify-center mb-3 group-hover:scale-110 group-hover:text-[#0084FF] transition-all">
+                <Icon size={24} strokeWidth={2} />
               </div>
-
-              <span className="text-[11px] sm:text-xs font-medium text-zinc-200 group-hover:text-cyan-300 transition-colors line-clamp-1">
-                {cat.name}
+              <span className="text-xs sm:text-sm font-bold text-[#2574D9] group-hover:text-blue-700 transition-colors">
+                {c.title}
               </span>
-
-              <span className="text-[10px] font-mono text-zinc-400 mt-1">
-                {cat.itemCount} items
-              </span>
+              <p className="text-[10px] text-slate-500 mt-1 font-medium leading-tight line-clamp-2">
+                {c.subtext}
+              </p>
             </div>
           );
         })}

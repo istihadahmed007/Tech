@@ -5,20 +5,13 @@ import {
   Heart, 
   X, 
   User, 
-  Globe,
-  SlidersHorizontal,
-  HelpCircle,
   Menu,
-  ShieldCheck,
-  Package,
-  ChevronDown,
+  Scale,
   Sparkles,
   ArrowRight,
-  Scale,
-  Zap,
-  Smartphone,
   Headphones,
-  BatteryCharging
+  Zap,
+  PhoneCall
 } from 'lucide-react';
 import BrandLogo from './BrandLogo';
 
@@ -48,9 +41,18 @@ export default function Header({
   products = []
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const searchContainerRef = useRef(null);
+
+  // Sticky header scroll opacity transition
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close search suggestions on click outside
   useEffect(() => {
@@ -67,7 +69,6 @@ export default function Header({
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setMobileMenuOpen(false);
-        setSearchOpen(false);
         setShowSuggestions(false);
       }
     };
@@ -84,7 +85,7 @@ export default function Header({
         p.title?.toLowerCase().includes(q) ||
         (p.titleBn && p.titleBn.toLowerCase().includes(q)) ||
         p.category?.toLowerCase().includes(q) ||
-        (p.photoRef && p.photoRef.toLowerCase().includes(q))
+        (p.brand && p.brand.toLowerCase().includes(q))
       );
     }).slice(0, 5);
   }, [searchQuery, products]);
@@ -94,8 +95,7 @@ export default function Header({
     setShowSuggestions(false);
 
     const q = searchQuery.toLowerCase().trim();
-    // Intelligent intent matching
-    if (q.includes('free') || q.includes('delivery') || q.includes('2000') || q.includes('combo') || q.includes('kit') || q.includes('bundle')) {
+    if (q.includes('free') || q.includes('delivery') || q.includes('2000') || q.includes('kit') || q.includes('bundle')) {
       if (onScrollToKits) {
         onScrollToKits();
         return;
@@ -118,41 +118,14 @@ export default function Header({
     }
   };
 
-  // Agent Quick-Prompt Intent Pills
-  const agentPromptPills = [
-    { 
-      label: '⚡ Unlock ৳2,000 Free Delivery', 
-      action: () => {
-        const el = document.getElementById('bundles-section');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-        else if (onScrollToKits) onScrollToKits();
-        else if (onGoToShop) onGoToShop();
-      } 
-    },
-    { 
-      label: '📱 Match My Phone', 
-      action: () => {
-        const el = document.getElementById('compatibility-finder');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-        else if (onScrollToFinder) onScrollToFinder();
-      } 
-    },
-    { 
-      label: '🎧 Audio Under ৳500', 
-      action: () => {
-        setSearchQuery('');
-        if (onSelectCategory) onSelectCategory('audio');
-        if (onGoToShop) onGoToShop();
-      } 
-    }
-  ];
-
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#090A0F]/95 backdrop-blur-md border-b border-[#1E2230] shadow-md text-slate-100">
-      {/* Top Main Header Container */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-6">
+    <header className={`sticky top-0 z-50 w-full nav-gradient text-white transition-all duration-300 ${
+      isScrolled ? 'shadow-lg bg-opacity-95 backdrop-blur-md' : 'shadow-sm backdrop-blur-sm'
+    }`}>
+      {/* Main Header Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
         
-        {/* Left: Tech Nest Authentic Glowing Logo & Telemetry Status */}
+        {/* Left: Brand Logo */}
         <div className="flex items-center gap-3 shrink-0">
           <a 
             href="/" 
@@ -162,29 +135,57 @@ export default function Header({
                 onGoHome();
               }
             }}
-            className="flex items-center group select-none py-0.5"
+            className="flex items-center gap-2 group select-none text-white hover:opacity-95 transition"
             title="Tech Nest — Authentic Mobile Accessories"
           >
             <BrandLogo 
-              variant="dark"
-              height={44} 
-              className="h-9 sm:h-11 md:h-12 w-auto transition-transform duration-200 group-hover:scale-[1.02]" 
+              variant="horizontal"
+              height={38} 
+              className="h-8 sm:h-9 w-auto brightness-0 invert drop-shadow-xs" 
             />
-          </a>
-
-          {/* Agent Status Telemetry Pill */}
-          <div className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#12141C] border border-[#1E2230]">
-            <span className="agent-pulse-dot" />
-            <span className="font-mono text-[10px] font-semibold text-cyan-400 uppercase tracking-wider">
-              Agent Online
+            <span className="hidden sm:inline text-[10px] font-mono uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded-full border border-white/30 backdrop-blur-xs">
+              AI Store
             </span>
-          </div>
+          </a>
         </div>
 
-        {/* Center: Agentic Command & Intent Bar */}
-        <div ref={searchContainerRef} className="hidden lg:flex flex-col flex-1 max-w-2xl mx-2 relative">
-          <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-            <div className="relative w-full">
+        {/* Center: Navigation Links (Reference: Home, Shop, Blog/Tech Kits, Contact Us) */}
+        <nav className="hidden md:flex items-center gap-7 text-sm font-semibold tracking-wide text-white/95">
+          <button 
+            type="button"
+            onClick={onGoHome} 
+            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
+          >
+            Home
+          </button>
+          <button 
+            type="button"
+            onClick={onGoToShop} 
+            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
+          >
+            Shop
+          </button>
+          <button 
+            type="button"
+            onClick={onScrollToKits} 
+            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
+          >
+            Tech Kits
+          </button>
+          <button 
+            type="button"
+            onClick={onOpenSupport} 
+            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
+          >
+            Contact Us
+          </button>
+        </nav>
+
+        {/* Right Area: Frosted Pill Search & User Actions */}
+        <div className="flex items-center gap-2.5 sm:gap-3.5">
+          {/* Frosted Pill Search (Exact match to reference image) */}
+          <div ref={searchContainerRef} className="relative">
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center">
               <input
                 type="text"
                 value={searchQuery}
@@ -195,153 +196,159 @@ export default function Header({
                 onFocus={() => {
                   if (searchQuery.trim().length >= 2) setShowSuggestions(true);
                 }}
-                placeholder="Ask Tech Nest Agent: '120W fast charging cables', 'Galaxy S24 Ultra', or 'ANC earbuds'..."
-                className="w-full pl-12 pr-24 py-2.5 bg-[#12141C] border border-[#1E2230] focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.25)] rounded-xl font-mono text-xs text-white placeholder-slate-400 focus:outline-none transition-all"
+                placeholder="Search gear..."
+                className="w-36 sm:w-52 lg:w-64 bg-white/30 hover:bg-white/40 focus:bg-white focus:text-slate-900 placeholder-white/85 focus:placeholder-slate-400 text-white text-xs font-medium rounded-full py-2 pl-4 pr-9 outline-none transition backdrop-blur-md border border-white/35 shadow-xs"
               />
-              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500 shadow-[0_0_6px_#06B6D4]"></span>
-                </span>
-                <Search size={15} className="text-cyan-400" />
-              </div>
-            </div>
-
-            {searchQuery && (
               <button 
-                type="button"
-                onClick={() => {
-                  setSearchQuery('');
-                  setShowSuggestions(false);
-                }}
-                className="absolute right-20 text-slate-400 hover:text-white p-1 cursor-pointer"
-                aria-label="Clear search"
+                type="submit"
+                className="absolute right-2.5 text-white/90 hover:text-white focus:text-blue-600 transition cursor-pointer"
+                aria-label="Search"
               >
-                <X size={15} />
+                <Search size={15} />
               </button>
-            )}
+            </form>
 
-            <button 
-              type="submit"
-              className="absolute right-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
-              title="Execute Agent Command"
-            >
-              <span>COMMAND</span>
-              <ArrowRight size={13} />
-            </button>
-          </form>
-
-          {/* Quick Agent Prompt Pills */}
-          <div className="flex items-center gap-1.5 mt-1.5 overflow-x-auto scrollbar-none pb-0.5">
-            {agentPromptPills.map((pill, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={pill.action}
-                className="font-mono text-[10px] text-slate-300 hover:text-cyan-400 bg-[#12141C] hover:bg-[#161924] border border-[#1E2230] hover:border-cyan-500/40 px-2 py-0.5 rounded-md whitespace-nowrap transition-colors cursor-pointer"
-              >
-                {pill.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Predictive Search Suggestions Dropdown */}
-          {showSuggestions && liveSuggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 py-2 border border-[#1E2230] shadow-2xl bg-[#12141C] rounded-xl z-50">
-              <div className="px-3 py-1 text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wider border-b border-[#1E2230] flex items-center justify-between">
-                <span>VERIFIED CATALOG MATCHES</span>
-                <span className="text-slate-400 text-[10px]">{liveSuggestions.length} items</span>
-              </div>
-              {liveSuggestions.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => handleSuggestionClick(item)}
-                  className="px-3 py-2 flex items-center gap-3 hover:bg-[#161924] cursor-pointer transition-colors border-b border-[#1E2230]/50 last:border-b-0"
-                >
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-10 h-10 object-contain rounded bg-[#090A0F] p-0.5 border border-[#1E2230] shrink-0" 
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-white truncate">
-                      {lang === 'bn' ? (item.titleBn || item.title) : item.title}
-                    </p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="font-mono text-xs font-bold text-cyan-400">৳{item.price.toLocaleString()}</span>
-                      {item.originalPrice && item.originalPrice > item.price && (
-                        <span className="font-mono text-[10px] text-slate-500 line-through">৳{item.originalPrice.toLocaleString()}</span>
-                      )}
-                      <span className="font-mono text-[10px] text-slate-400 bg-[#161924] px-1.5 py-0.2 rounded uppercase border border-[#1E2230]">
-                        {item.category}
-                      </span>
+            {/* Live Search Suggestions Dropdown */}
+            {showSuggestions && liveSuggestions.length > 0 && (
+              <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 py-2 border border-blue-100 shadow-2xl bg-white rounded-2xl z-50 text-slate-800 animate-fadeIn">
+                <div className="px-3.5 py-1.5 text-[11px] font-mono font-bold text-blue-600 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                  <span>Verified Catalog</span>
+                  <span className="text-slate-400 font-normal">{liveSuggestions.length} matches</span>
+                </div>
+                {liveSuggestions.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => handleSuggestionClick(item)}
+                    className="px-3.5 py-2 flex items-center gap-3 hover:bg-blue-50/70 cursor-pointer transition-colors border-b border-slate-50 last:border-b-0"
+                  >
+                    <img 
+                      src={item.image} 
+                      alt={item.title} 
+                      className="w-9 h-9 object-contain rounded-lg bg-slate-50 p-0.5 border border-slate-200 shrink-0" 
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-slate-800 truncate">
+                        {lang === 'bn' ? (item.titleBn || item.title) : item.title}
+                      </p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="font-mono text-xs font-bold text-blue-600">৳{item.price.toLocaleString()}</span>
+                        {item.originalPrice && item.originalPrice > item.price && (
+                          <span className="font-mono text-[10px] text-slate-400 line-through">৳{item.originalPrice.toLocaleString()}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-        {/* Right Actions Cluster */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Compare Matrix Icon Trigger */}
-          {comparisonCount > 0 && onOpenComparison && (
+          {/* Wishlist Trigger */}
+          {wishlistCount > 0 && (
             <button
               type="button"
-              onClick={onOpenComparison}
-              className="relative p-2 rounded-xl bg-[#12141C] border border-[#1E2230] text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
-              title="Open Spec Comparison Drawer"
-              aria-label="Open Spec Comparison"
+              onClick={onOpenWishlist}
+              className="relative p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition cursor-pointer"
+              title="Open Saved Wishlist"
+              aria-label="Open Wishlist"
             >
-              <Scale size={18} />
-              <span className="absolute -top-1 -right-1 font-mono text-[10px] font-bold bg-cyan-500 text-slate-950 w-4 h-4 rounded-full flex items-center justify-center">
-                {comparisonCount}
+              <Heart size={16} />
+              <span className="absolute -top-1 -right-1 font-mono text-[9px] font-bold bg-rose-500 text-white w-4 h-4 rounded-full flex items-center justify-center">
+                {wishlistCount}
               </span>
             </button>
           )}
 
-          {/* Wishlist Trigger */}
-          <button
-            type="button"
-            onClick={onOpenWishlist}
-            className="relative p-2 rounded-xl bg-[#12141C] border border-[#1E2230] text-slate-300 hover:text-rose-400 hover:border-rose-500/40 transition-colors"
-            title="Open Saved Wishlist"
-            aria-label="Open Wishlist"
-          >
-            <Heart size={18} />
-            {wishlistCount > 0 && (
-              <span className="absolute -top-1 -right-1 font-mono text-[10px] font-bold bg-rose-500 text-white w-4 h-4 rounded-full flex items-center justify-center">
-                {wishlistCount}
-              </span>
-            )}
-          </button>
-
-          {/* Account Trigger */}
+          {/* Sign In / Account Area */}
           <button
             type="button"
             onClick={onOpenAccount}
-            className="p-2 sm:px-3 sm:py-2 rounded-xl bg-[#12141C] border border-[#1E2230] text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors flex items-center gap-2"
+            className="text-xs font-semibold hover:opacity-95 flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full transition cursor-pointer border border-white/25"
             title="Customer Account & Orders"
           >
-            <User size={18} />
-            <span className="hidden sm:inline font-mono text-xs">
-              {currentUser ? currentUser.name.split(' ')[0] : (lang === 'bn' ? 'অ্যাকাউন্ট' : 'Account')}
-            </span>
+            <User size={14} />
+            <span>{currentUser ? currentUser.name.split(' ')[0] : 'Sign in'}</span>
           </button>
 
-          {/* Cart Trigger */}
+          {/* Shopping Bag / Cart */}
           <button
             type="button"
             onClick={onOpenCart}
-            className="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
-            title="View Shopping Bag"
+            className="text-xs font-semibold hover:opacity-95 flex items-center gap-1.5 bg-white/25 hover:bg-white/35 px-3 py-1.5 rounded-full transition cursor-pointer border border-white/30 shadow-xs active:scale-95"
+            title="View Bag"
+            aria-label={`Shopping bag with ${cartCount} items`}
           >
-            <ShoppingBag size={16} />
-            <span>BAG ({cartCount})</span>
+            <ShoppingBag size={14} />
+            <span className="hidden sm:inline">Bag</span>
+            <span className="font-mono bg-white text-blue-600 px-1.5 py-0.2 rounded-full text-[11px] font-bold">
+              {cartCount}
+            </span>
+          </button>
+
+          {/* Mobile Menu Hamburger */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition cursor-pointer"
+            aria-label="Toggle mobile menu"
+          >
+            <Menu size={18} />
           </button>
         </div>
       </div>
+
+      {/* Crisp White Divider Line from Reference Image */}
+      <div className="h-0.5 bg-white/80 w-full" />
+
+      {/* Mobile Menu Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white text-slate-800 border-b border-blue-100 shadow-xl px-5 py-4 space-y-3 animate-fadeIn">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <span className="text-xs font-mono font-bold text-blue-600 uppercase">Menu</span>
+            <button 
+              type="button"
+              onClick={() => setMobileMenuOpen(false)} 
+              className="text-slate-400 hover:text-slate-600 p-1"
+            >
+              <X size={18} />
+            </button>
+          </div>
+          <div className="flex flex-col space-y-2 text-sm font-semibold">
+            <button 
+              type="button"
+              onClick={() => { onGoHome(); setMobileMenuOpen(false); }}
+              className="text-left py-2 hover:text-blue-600 border-b border-slate-50 flex items-center justify-between"
+            >
+              <span>Home</span>
+              <ArrowRight size={14} className="text-slate-400" />
+            </button>
+            <button 
+              type="button"
+              onClick={() => { onGoToShop(); setMobileMenuOpen(false); }}
+              className="text-left py-2 hover:text-blue-600 border-b border-slate-50 flex items-center justify-between"
+            >
+              <span>Shop All Products</span>
+              <ArrowRight size={14} className="text-slate-400" />
+            </button>
+            <button 
+              type="button"
+              onClick={() => { onScrollToKits(); setMobileMenuOpen(false); }}
+              className="text-left py-2 hover:text-blue-600 border-b border-slate-50 flex items-center justify-between"
+            >
+              <span>Tech Kits (Free Delivery ৳2,010)</span>
+              <Zap size={14} className="text-blue-500" />
+            </button>
+            <button 
+              type="button"
+              onClick={() => { onOpenSupport(); setMobileMenuOpen(false); }}
+              className="text-left py-2 hover:text-blue-600 flex items-center justify-between"
+            >
+              <span>Contact Us & Warranty</span>
+              <PhoneCall size={14} className="text-slate-400" />
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

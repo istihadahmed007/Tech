@@ -9,17 +9,17 @@ export default function TopUtilityBar({
   t = {}
 }) {
   return (
-    <div className="w-full bg-[#050608] border-b border-[#1E2230] text-zinc-400 font-mono text-[11px] py-1.5 px-3 sm:px-6">
-      <div className="container max-w-7xl mx-auto flex items-center justify-between gap-3">
+    <div className="w-full bg-[#EBF0FA] border-b border-blue-100 text-slate-600 font-mono text-[11px] py-1.5 px-3 sm:px-6">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
         {/* Left: Store Care & Nationwide Delivery Notice */}
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-1.5 text-zinc-300">
-            <ShieldCheck size={12} className="text-emerald-400" />
+          <div className="hidden md:flex items-center gap-1.5 text-slate-700 font-semibold">
+            <ShieldCheck size={13} className="text-blue-600" />
             <span className="tracking-wide">{lang === 'bn' ? '১০০% অরিজিনাল মোবাইল এক্সেসরিজ' : '100% AUTHENTIC GEAR'}</span>
           </div>
-          <span className="hidden md:inline text-zinc-700">•</span>
-          <div className="flex items-center gap-1.5 text-zinc-200">
-            <Truck size={12} className="text-cyan-400" />
+          <span className="hidden md:inline text-slate-300">•</span>
+          <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
+            <Truck size={13} className="text-blue-600" />
             <span>
               {lang === 'bn' 
                 ? '৳২,০০০+ অর্ডারে সারাদেশে ফ্রি ডেলিভারি' 
@@ -33,34 +33,34 @@ export default function TopUtilityBar({
           <button
             type="button"
             onClick={() => onOpenTracking && onOpenTracking('')}
-            className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="hover:text-blue-600 transition-colors flex items-center gap-1.5 cursor-pointer font-medium"
             title="Track delivery status"
           >
-            <Package size={12} className="text-zinc-500 hover:text-cyan-400" />
+            <Package size={12} className="text-slate-500 hover:text-blue-600" />
             <span>{lang === 'bn' ? 'অর্ডার ট্র্যাক' : 'TRACK ORDER'}</span>
           </button>
 
           <button
             type="button"
             onClick={onOpenSupport}
-            className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="hover:text-blue-600 transition-colors flex items-center gap-1.5 cursor-pointer font-medium"
             title="Customer Support & Warranty"
           >
-            <HelpCircle size={12} className="text-zinc-500 hover:text-cyan-400" />
+            <HelpCircle size={12} className="text-slate-500 hover:text-blue-600" />
             <span>{lang === 'bn' ? 'হেল্প ও সাপোর্ট' : 'SUPPORT'}</span>
           </button>
 
-          <span className="text-zinc-700 hidden xs:inline">|</span>
+          <span className="text-slate-300 hidden xs:inline">|</span>
 
           {/* Bilingual Switcher */}
           <button
             type="button"
             onClick={() => setLang && setLang(lang === 'en' ? 'bn' : 'en')}
-            className="font-mono text-[11px] font-semibold cursor-pointer bg-[#12141C] border border-[#1E2230] text-zinc-300 hover:text-cyan-400 px-2 py-0.5 rounded transition-colors flex items-center gap-1"
+            className="font-mono text-[11px] font-bold cursor-pointer bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 px-2 py-0.5 rounded-md transition-colors flex items-center gap-1 shadow-2xs"
             title="Switch Language / ভাষা পরিবর্তন"
           >
-            <Globe size={11} className="text-cyan-400" />
-            <span>{lang === 'en' ? 'বাংলা' : 'EN'}</span>
+            <Globe size={11} className="text-blue-500" />
+            <span>{lang === 'en' ? 'BN' : 'EN'}</span>
           </button>
         </div>
       </div>

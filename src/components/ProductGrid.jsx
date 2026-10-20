@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from './ProductCard';
-import { SearchX, ArrowUpDown, Filter, Sparkles, Check, Zap } from 'lucide-react';
+import { SearchX, ArrowUpDown, Filter, Sparkles, Check, Zap, Layers } from 'lucide-react';
 
 export default function ProductGrid({ 
-  products, 
+  products = [], 
   currencySymbol = "৳",
   selectedCategory, 
   onSelectCategory,
@@ -25,27 +25,28 @@ export default function ProductGrid({
   const [sortBy, setSortBy] = useState('featured');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [internalTab, setInternalTab] = useState('all');
+  const [showAllProducts, setShowAllProducts] = useState(false);
+
   const activeTab = externalTab !== undefined ? externalTab : internalTab;
   const setActiveTab = onSelectCatalogTab || setInternalTab;
 
-  // Unified Catalog Filter Tabs
+  // Reference-aligned Filter Tabs
   const QUICK_FILTERS = [
-    { id: 'all', label: lang === 'bn' ? 'সব গিয়ার' : 'All Gear' },
-    { id: 'top_rated', label: lang === 'bn' ? 'টপ রেটেড' : 'Top Rated' },
-    { id: 'under_500', label: lang === 'bn' ? '৫০০৳ এর নিচে' : 'Under ৳500' },
-    { id: 'under_1000', label: lang === 'bn' ? '১,০০০৳ এর নিচে' : 'Under ৳1,000' },
-    { id: 'audio', label: lang === 'bn' ? 'অডিও গিয়ার' : 'Audio Gear' },
-    { id: 'charging', label: lang === 'bn' ? 'ফাস্ট চার্জিং' : 'Fast Charging' },
+    { id: 'all', label: lang === 'bn' ? 'সব পণ্য' : 'All Gear' },
+    { id: 'audio', label: lang === 'bn' ? 'ইয়ারবাডস ও টিডব্লিউএস' : 'Audio & TWS' },
+    { id: 'charging', label: lang === 'bn' ? 'চার্জার ও ক্যাবল' : 'Cables & Power' },
+    { id: 'wearables', label: lang === 'bn' ? 'স্মার্টওয়াচ' : 'Smartwatches' },
+    { id: 'sale', label: lang === 'bn' ? 'অফার ডিল' : 'Flash Sale' },
+    { id: 'under_500', label: lang === 'bn' ? '৳৫০০ এর নিচে' : 'Under ৳500' },
   ];
 
-  // Align active tab if category is changed externally (preserving price filters like under_500)
   useEffect(() => {
-    if (selectedCategory === 'audio' && activeTab !== 'under_500' && activeTab !== 'under_1000') {
+    if (selectedCategory === 'audio' && activeTab !== 'under_500' && activeTab !== 'sale') {
       setActiveTab('audio');
-    } else if (selectedCategory === 'charging' && activeTab !== 'under_500' && activeTab !== 'under_1000') {
+    } else if (selectedCategory === 'charging' && activeTab !== 'under_500' && activeTab !== 'sale') {
       setActiveTab('charging');
-    } else if (!selectedCategory && (activeTab === 'audio' || activeTab === 'charging')) {
-      setActiveTab('all');
+    } else if (selectedCategory === 'wearables' && activeTab !== 'under_500' && activeTab !== 'sale') {
+      setActiveTab('wearables');
     }
   }, [selectedCategory, activeTab]);
 
@@ -55,6 +56,8 @@ export default function ProductGrid({
       onSelectCategory('audio');
     } else if (filterId === 'charging') {
       onSelectCategory('charging');
+    } else if (filterId === 'wearables') {
+      onSelectCategory('wearables');
     } else if (filterId === 'all') {
       onSelectCategory(null);
     }
@@ -64,37 +67,22 @@ export default function ProductGrid({
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
       // Tab filter
-      if (activeTab === 'top_rated') {
-        if (!item.rating || item.rating < 4.7) return false;
+      if (activeTab === 'sale') {
+        const isSale = (item.originalPrice && item.originalPrice > item.price) || item.sale || item.isSale;
+        if (!isSale) return false;
       } else if (activeTab === 'under_500') {
         if (item.price > 500) return false;
-      } else if (activeTab === 'under_1000') {
-        if (item.price > 1000) return false;
       } else if (activeTab === 'audio') {
         if (item.category !== 'audio') return false;
       } else if (activeTab === 'charging') {
         if (item.category !== 'charging') return false;
+      } else if (activeTab === 'wearables') {
+        if (item.category !== 'wearables') return false;
       }
 
-      // External Category filter (e.g. from nav/hero shortcuts)
-      if (selectedCategory && activeTab !== 'audio' && activeTab !== 'charging') {
-        if (selectedCategory === 'earbuds') {
-          if (item.category !== 'audio' || item.id.includes('headphone') || item.id.includes('neckband') || item.id.includes('headset')) return false;
-        } else if (selectedCategory === 'headphones') {
-          if (!item.id.includes('headphone') && !item.id.includes('neckband') && !item.id.includes('headset')) return false;
-        } else if (selectedCategory === 'cables') {
-          if (!item.id.includes('cable')) return false;
-        } else if (selectedCategory === 'chargers') {
-          if (!item.id.includes('charger') && !item.id.includes('adapter')) return false;
-        } else if (selectedCategory === 'wearables') {
-          if (item.category !== 'wearables') return false;
-        } else if (selectedCategory === 'audio') {
-          if (item.category !== 'audio') return false;
-        } else if (selectedCategory === 'charging') {
-          if (item.category !== 'charging') return false;
-        } else if (item.category !== selectedCategory) {
-          return false;
-        }
+      // External Category filter
+      if (selectedCategory && activeTab !== 'audio' && activeTab !== 'charging' && activeTab !== 'wearables' && activeTab !== 'under_500' && activeTab !== 'sale') {
+        if (item.category !== selectedCategory) return false;
       }
 
       // Phone compatibility filter
@@ -102,15 +90,14 @@ export default function ProductGrid({
         return false;
       }
 
-      // Search filter across title, Bengali title, category, description, and compatible models
+      // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase().trim();
         const matchTitle = item.title?.toLowerCase().includes(query) || (item.titleBn && item.titleBn.toLowerCase().includes(query));
         const matchCategory = item.category?.toLowerCase().includes(query);
-        const matchDesc = item.description?.toLowerCase().includes(query) || (item.descriptionBn && item.descriptionBn.toLowerCase().includes(query));
-        const matchRef = item.photoRef && item.photoRef.toLowerCase().includes(query);
+        const matchBrand = item.brand && item.brand.toLowerCase().includes(query);
         const matchCompatibility = item.compatibleWith?.some(c => c.toLowerCase().includes(query));
-        if (!matchTitle && !matchCategory && !matchDesc && !matchRef && !matchCompatibility) {
+        if (!matchTitle && !matchCategory && !matchBrand && !matchCompatibility) {
           return false;
         }
       }
@@ -119,179 +106,102 @@ export default function ProductGrid({
       if (inStockOnly && item.stock <= 0) {
         return false;
       }
+
       return true;
     }).sort((a, b) => {
-      if (sortBy === 'price-asc') return a.price - b.price;
-      if (sortBy === 'price-desc') return b.price - a.price;
+      if (sortBy === 'price_asc') return a.price - b.price;
+      if (sortBy === 'price_desc') return b.price - a.price;
       if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
-      if (sortBy === 'newest') return (b.id > a.id ? 1 : -1);
-      if (activeTab === 'top_rated') return (b.rating || 0) - (a.rating || 0);
-      return 0; // featured default order
+      return 0;
     });
-  }, [products, selectedCategory, activeTab, selectedPhone, searchQuery, inStockOnly, sortBy]);
+  }, [products, activeTab, selectedCategory, selectedPhone, searchQuery, inStockOnly, sortBy]);
+
+  // In accordance with the reference image: show 10 items (2 rows of 5) on the initial view, or all if toggled or filtered
+  const isFilteringActive = Boolean(searchQuery || selectedPhone || (activeTab !== 'all' && activeTab !== 'sale'));
+  const displayedProducts = (showAllProducts || isFilteringActive || filteredProducts.length <= 10)
+    ? filteredProducts 
+    : filteredProducts.slice(0, 10);
 
   return (
-    <section id="products-section" className="w-full my-6 sm:my-10" aria-label="Unified Master Catalog">
-      {/* Telemetry Header & Status Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+    <section id="products-section" className="relative z-20 -mt-24 sm:-mt-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      {/* Top Header of Section: Title and SKU Count */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="agent-pulse-dot" />
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-cyan-400">
-              UNIFIED MASTER CATALOG
-            </span>
-            <span className="font-mono text-[10px] text-slate-400 px-2 py-0.5 rounded bg-[#161924] border border-[#1E2230]">
-              {filteredProducts.length} VERIFIED ITEMS
-            </span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-            {lang === 'bn' ? 'যাচাইকৃত মোবাইল এক্সেসরিজ কালেকশন' : 'Engineered Hardware & Daily Gear'}
+          <h2 className="text-xl sm:text-2xl font-extrabold text-white drop-shadow-sm tracking-tight flex items-center gap-2">
+            <span>{lang === 'bn' ? 'ফিচার্ড গ্যাজেট' : 'Featured Tech Gear'}</span>
           </h2>
+          <p className="text-xs text-blue-100 font-medium hidden sm:block">
+            {lang === 'bn' ? 'আসল ও ওয়ারেন্টিযুক্ত মোবাইল এক্সেসরিজ' : 'Genuine hardware, verified compatibility & express delivery'}
+          </p>
         </div>
 
-        {/* Telemetry Free Shipping Notice */}
-        <div className="flex items-center gap-2 font-mono text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl w-fit">
-          <Zap size={13} className="text-emerald-400" />
-          <span>{lang === 'bn' ? '২,০০০৳+ অর্ডারে সারাদেশে ফ্রি ডেলিভারি' : '৳2,000+ Unlocks Free Nationwide Shipping'}</span>
-        </div>
-      </div>
-
-      {/* Filter and Sorting Control Bar in Obsidian Glassmorphism */}
-      <div className="bg-[#12141C] rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 border border-[#1E2230] shadow-md flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-        {/* Quick-Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none" role="tablist">
-          {QUICK_FILTERS.map((f) => {
-            const isActive = activeTab === f.id;
-
-            return (
+        <div className="flex items-center gap-2">
+          {/* Quick Filter Tabs */}
+          <div className="hidden md:flex items-center gap-1 bg-white/20 p-1 rounded-full backdrop-blur-md border border-white/30 text-xs text-white">
+            {QUICK_FILTERS.map((f) => (
               <button
                 key={f.id}
                 type="button"
-                role="tab"
-                aria-selected={isActive}
                 onClick={() => handleTabClick(f.id)}
-                className={`px-3 py-1.5 rounded-xl font-mono text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-cyan-500 text-slate-950 font-bold border border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.35)]'
-                    : 'bg-[#161924] text-slate-300 hover:text-white hover:bg-[#1E2230] border border-[#1E2230]'
+                className={`px-3 py-1 rounded-full font-semibold transition cursor-pointer ${
+                  activeTab === f.id
+                    ? 'bg-white text-blue-600 shadow-xs'
+                    : 'text-white/90 hover:text-white hover:bg-white/15'
                 }`}
               >
                 {f.label}
               </button>
-            );
-          })}
-        </div>
-
-        {/* Right Controls: In-Stock Toggle & Sort */}
-        <div className="flex items-center justify-between sm:justify-end gap-2.5 pt-2 md:pt-0 border-t md:border-t-0 border-[#1E2230]">
-          {/* In-Stock Toggle */}
-          <label className="flex items-center gap-2 font-mono text-xs text-slate-300 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={inStockOnly}
-              onChange={(e) => setInStockOnly(e.target.checked)}
-              className="w-4 h-4 rounded bg-[#161924] border-[#1E2230] text-cyan-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
-            />
-            <span>{lang === 'bn' ? 'স্টকে আছে' : 'In-Stock Only'}</span>
-          </label>
-
-          {/* Sort Selector */}
-          <div className="flex items-center gap-1.5 bg-[#161924] border border-[#1E2230] rounded-xl px-2.5 py-1 text-xs">
-            <ArrowUpDown size={13} className="text-cyan-400" />
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              aria-label="Sort products"
-              className="bg-transparent text-slate-200 font-mono text-xs focus:outline-none cursor-pointer border-none pr-1"
-            >
-              <option value="featured" className="bg-[#12141C] text-slate-200">
-                {lang === 'bn' ? 'জনপ্রিয়তা' : 'Featured (Default)'}
-              </option>
-              <option value="rating" className="bg-[#12141C] text-slate-200">
-                {lang === 'bn' ? 'সর্বোচ্চ রেটিং' : 'Top Rated'}
-              </option>
-              <option value="price-asc" className="bg-[#12141C] text-slate-200">
-                {lang === 'bn' ? 'দাম: কম থেকে বেশি' : 'Price: Low → High'}
-              </option>
-              <option value="price-desc" className="bg-[#12141C] text-slate-200">
-                {lang === 'bn' ? 'দাম: বেশি থেকে কম' : 'Price: High → Low'}
-              </option>
-              <option value="newest" className="bg-[#12141C] text-slate-200">
-                {lang === 'bn' ? 'নতুন কালেকশন' : 'Newest Arrivals'}
-              </option>
-            </select>
+            ))}
           </div>
+
+          <span className="text-xs font-mono font-semibold text-white/95 bg-blue-600/35 border border-white/25 px-3 py-1.5 rounded-full backdrop-blur-md">
+            {filteredProducts.length} Verified SKUs
+          </span>
         </div>
       </div>
 
-      {/* Active Filter Chips */}
-      {(selectedPhone || searchQuery || (selectedCategory && activeTab !== 'audio' && activeTab !== 'charging') || activeTab !== 'all') && (
-        <div className="flex items-center flex-wrap gap-2 mb-4 text-xs">
-          <span className="font-mono text-slate-400 text-[11px] mr-1">ACTIVE FILTERS:</span>
-
+      {/* Active Filter Indicators Bar */}
+      {(selectedCategory || selectedPhone || searchQuery || activeTab !== 'all') && (
+        <div className="flex flex-wrap items-center gap-2 mb-4 bg-white/80 p-2.5 rounded-xl border border-blue-100 shadow-xs backdrop-blur-sm">
+          <span className="text-xs font-semibold text-slate-500">Active Filters:</span>
           {activeTab !== 'all' && (
-            <span className="flex items-center gap-1 bg-[#161924] text-cyan-400 border border-cyan-500/30 px-2.5 py-0.5 rounded-lg font-mono text-[11px]">
-              <span>TAB: {QUICK_FILTERS.find(f => f.id === activeTab)?.label.toUpperCase()}</span>
+            <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-2.5 py-0.5 rounded-full border border-blue-200">
+              Filter: {QUICK_FILTERS.find(f => f.id === activeTab)?.label || activeTab}
               <button 
-                onClick={() => {
-                  setActiveTab('all');
-                  if (selectedCategory === 'audio' || selectedCategory === 'charging') {
-                    onSelectCategory(null);
-                  }
-                }} 
-                className="ml-1 text-cyan-400 hover:text-white font-bold cursor-pointer"
-                aria-label="Clear tab filter"
-              >
-                ×
-              </button>
+                type="button" 
+                onClick={() => handleTabClick('all')} 
+                className="hover:text-blue-900 ml-1 font-bold"
+              >×</button>
             </span>
           )}
-
-          {selectedPhone && (
-            <span className="flex items-center gap-1 bg-[#161924] text-cyan-400 border border-cyan-500/30 px-2.5 py-0.5 rounded-lg font-mono text-[11px]">
-              <span>DEVICE: {selectedPhone}</span>
-              <button 
-                onClick={onClearPhoneFilter} 
-                className="ml-1 text-cyan-400 hover:text-white font-bold cursor-pointer"
-                aria-label={`Remove phone filter for ${selectedPhone}`}
-              >
-                ×
-              </button>
-            </span>
-          )}
-
           {searchQuery && (
-            <span className="flex items-center gap-1 bg-[#161924] text-cyan-400 border border-cyan-500/30 px-2.5 py-0.5 rounded-lg font-mono text-[11px]">
-              <span>QUERY: "{searchQuery}"</span>
+            <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-2.5 py-0.5 rounded-full border border-blue-200">
+              Search: "{searchQuery}"
               <button 
+                type="button" 
                 onClick={onClearSearch} 
-                className="ml-1 text-cyan-400 hover:text-white font-bold cursor-pointer"
-                aria-label="Clear search filter"
-              >
-                ×
-              </button>
+                className="hover:text-blue-900 ml-1 font-bold"
+              >×</button>
             </span>
           )}
-
           <button 
+            type="button"
             onClick={() => {
-              onClearPhoneFilter();
-              onClearSearch();
-              onSelectCategory(null);
-              setActiveTab('all');
-              setInStockOnly(false);
+              if (onClearSearch) onClearSearch();
+              if (onClearPhoneFilter) onClearPhoneFilter();
+              handleTabClick('all');
             }}
-            className="font-mono text-xs text-cyan-400 hover:text-cyan-300 underline ml-2 cursor-pointer"
+            className="text-xs text-blue-600 hover:underline font-semibold ml-auto"
           >
-            [CLEAR ALL]
+            Clear All
           </button>
         </div>
       )}
 
-      {/* Responsive Product Grid */}
-      {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-          {filteredProducts.map((product) => (
+      {/* 5-Column Grid (Matches 2 Rows of 5 in Reference Screenshot) */}
+      {displayedProducts.length > 0 ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
+          {displayedProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -309,28 +219,36 @@ export default function ProductGrid({
           ))}
         </div>
       ) : (
-        /* Zero-State Handling */
-        <div className="rounded-2xl p-10 sm:p-12 text-center bg-[#12141C] border border-[#1E2230] shadow-md max-w-lg mx-auto" role="status">
-          <div className="w-16 h-16 rounded-full bg-cyan-500/10 text-cyan-400 mx-auto flex items-center justify-center mb-4 border border-cyan-500/20">
-            <SearchX size={32} />
+        /* Zero State */
+        <div className="rounded-2xl p-10 text-center bg-white border border-blue-100 shadow-md max-w-md mx-auto my-8">
+          <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-500 mx-auto flex items-center justify-center mb-3">
+            <SearchX size={28} />
           </div>
-          <h4 className="text-base sm:text-lg font-bold text-white mb-1">
-            {t.noProductsFound || 'No matching accessories found'}
-          </h4>
-          <p className="text-xs sm:text-sm text-slate-400 mb-5 font-mono">
-            {t.noProductsSub || 'Try clearing your filters or exploring different categories.'}
-          </p>
+          <h4 className="text-base font-bold text-slate-800 mb-1">No matching gear found</h4>
+          <p className="text-xs text-slate-500 mb-4 font-medium">Try clearing your filters or search keywords.</p>
           <button
+            type="button"
             onClick={() => {
-              onClearPhoneFilter();
-              onClearSearch();
-              onSelectCategory(null);
-              setPriceTier('all');
-              setInStockOnly(false);
+              if (onClearSearch) onClearSearch();
+              if (onClearPhoneFilter) onClearPhoneFilter();
+              handleTabClick('all');
             }}
-            className="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold font-mono text-xs sm:text-sm shadow-md cursor-pointer transition-colors"
+            className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition"
           >
-            {t.resetFilters || 'RESET ALL FILTERS'}
+            Reset Filters
+          </button>
+        </div>
+      )}
+
+      {/* Centered Browse All Categories Link (Exact Match to Reference Screenshot) */}
+      {filteredProducts.length > 10 && !isFilteringActive && (
+        <div className="text-center mt-8">
+          <button
+            type="button"
+            onClick={() => setShowAllProducts(!showAllProducts)}
+            className="text-xs sm:text-sm text-slate-500 hover:text-blue-600 font-bold tracking-wide transition cursor-pointer"
+          >
+            {showAllProducts ? 'show less products <' : 'browse all categories >'}
           </button>
         </div>
       )}

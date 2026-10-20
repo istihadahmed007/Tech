@@ -1,182 +1,197 @@
 import React from 'react';
-import { Sparkles, ShieldCheck, Phone, MapPin, HelpCircle } from 'lucide-react';
-import BrandLogo from './BrandLogo';
+import { MapPin, Phone, HelpCircle, Package, ShieldCheck, Heart } from 'lucide-react';
 
 export default function Footer({ 
-  storeName, 
+  storeName = "Tech Nest", 
   onOpenSupport, 
   onOpenTracking, 
   onSelectCategory, 
-  t, 
-  lang 
+  t = {}, 
+  lang = 'en' 
 }) {
   return (
-    <footer className="w-full mt-16 sm:mt-24 border-t border-[#1E2230] bg-[#090A0F] text-zinc-400">
-      <div className="container pt-12 sm:pt-16 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-12 border-b border-[#1E2230]">
-          {/* Brand Column */}
-          <div className="lg:col-span-2 space-y-3.5">
-            <div className="flex items-center">
-              <BrandLogo variant="dark" height={48} className="h-10 sm:h-12 w-auto" />
-            </div>
-            <p className="text-xs text-zinc-400 leading-relaxed max-w-sm font-mono">
-              {t.footerAbout || 'Tech Nest — Precision-engineered mobile accessories, GaN fast chargers, ANC acoustics, and wearable tech with 24-48h nationwide delivery.'}
-            </p>
-            <div className="text-xs font-mono text-zinc-400 space-y-2 pt-1">
-              <div className="flex items-center gap-2">
-                <MapPin size={13} className="text-cyan-400 shrink-0" />
-                <span>Dhaka, Bangladesh • Fast Nationwide Dispatch</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <HelpCircle size={13} className="text-cyan-400 shrink-0" />
-                <button 
-                  type="button"
-                  onClick={onOpenSupport}
-                  className="text-cyan-400 hover:text-cyan-300 hover:underline cursor-pointer"
-                >
-                  Contact support & warranty telemetry
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Shop Links */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-white">
+    <footer className="footer-gradient mt-16 sm:mt-24 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-10">
+          
+          {/* Column 1: Categories */}
+          <div>
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-white mb-4">
               Categories
             </h4>
-            <ul className="space-y-2 text-xs font-mono">
+            <ul className="space-y-2 text-xs text-white/85">
               <li>
-                <button 
+                <button
                   type="button"
-                  onClick={() => onSelectCategory('audio')} 
-                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                  onClick={() => onSelectCategory && onSelectCategory('audio')}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  {t.catAudio || 'Audio & TWS'}
+                  Earbuds &amp; TWS
                 </button>
               </li>
               <li>
-                <button 
+                <button
                   type="button"
-                  onClick={() => onSelectCategory('charging')} 
-                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                  onClick={() => onSelectCategory && onSelectCategory('charging')}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  {t.catCharging || 'GaN & Charging'}
+                  Fast Chargers &amp; Cables
                 </button>
               </li>
               <li>
-                <button 
+                <button
                   type="button"
-                  onClick={() => onSelectCategory('wearables')} 
-                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                  onClick={() => onSelectCategory && onSelectCategory('wearables')}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  {t.catWearables || 'Smartwatches'}
+                  Ultra Smartwatches
                 </button>
               </li>
               <li>
-                <button 
+                <button
                   type="button"
-                  onClick={() => onSelectCategory(null)} 
-                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                  onClick={() => onSelectCategory && onSelectCategory('cases')}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  {t.allProducts || 'Master Catalog'}
+                  Phone Cases &amp; Covers
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onSelectCategory && onSelectCategory(null)}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
+                >
+                  All Verified Gear
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Support & Policies */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-white">
+          {/* Column 2: Assistance */}
+          <div>
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-white mb-4">
               Assistance
             </h4>
-            <ul className="space-y-2 text-xs font-mono">
+            <ul className="space-y-2 text-xs text-white/85">
               <li>
-                <button 
+                <button
                   type="button"
-                  onClick={onOpenTracking} 
-                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                  onClick={onOpenTracking}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  Track Dispatch Status
+                  Track Your Order
                 </button>
               </li>
               <li>
-                <button 
+                <button
                   type="button"
-                  onClick={onOpenSupport} 
-                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                  onClick={onOpenSupport}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  Warranty & Diagnostics
+                  7–30 Day Warranty
                 </button>
               </li>
               <li>
-                <button 
+                <button
                   type="button"
-                  onClick={onOpenSupport} 
-                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                  onClick={onOpenSupport}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  Free Delivery Tiers (৳2,000+)
+                  Free Shipping Tier (৳2,000+)
                 </button>
               </li>
               <li>
-                <button 
+                <button
                   type="button"
-                  onClick={onOpenSupport} 
-                  className="hover:text-cyan-400 transition-colors cursor-pointer"
+                  onClick={onOpenSupport}
+                  className="hover:text-white hover:underline transition-colors cursor-pointer text-left"
                 >
-                  7-Day Replacement Policy
+                  Return &amp; Exchange Policy
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Customer Trust & Logistics */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-white">
-              {lang === 'bn' ? 'নিরাপত্তা ও ডেলিভারি' : 'Trust Protocol'}
+          {/* Column 3: Tech Nest Brand Info */}
+          <div>
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-white mb-4">
+              Tech Nest BD
             </h4>
-            <ul className="text-xs font-mono space-y-2">
-              <li className="flex items-center gap-1.5 text-emerald-400">
-                <ShieldCheck size={14} className="shrink-0" />
-                <span>{lang === 'bn' ? '১০০% পরীক্ষিত আসল পণ্য' : '100% Quality Inspected'}</span>
-              </li>
-              <li className="flex items-center gap-1.5 text-cyan-400">
-                <Sparkles size={14} className="shrink-0" />
-                <span>{lang === 'bn' ? '৭ দিনের রিপ্লেসমেন্ট পলিসি' : '7-Day Replacement Policy'}</span>
-              </li>
-              <li>
-                <span className="text-zinc-400 text-[11px]">
-                  {lang === 'bn' ? 'সারা বাংলাদেশে ক্যাশ অন ডেলিভারি' : 'Nationwide Cash on Delivery (COD)'}
-                </span>
-              </li>
-            </ul>
+            <p className="text-xs text-white/85 leading-relaxed">
+              Optic-grade phone protection, GaN fast power adapters, acoustic clarity earbuds, and ultra smartwatches. Next-day courier dispatch in Dhaka &amp; 2–4 days nationwide.
+            </p>
+            <p className="text-[11px] text-white/75 mt-3">
+              Dhaka, Bangladesh • Official Warranty
+            </p>
           </div>
+
+          {/* Column 4: Connect & Social Icons (Matches Reference Screenshot) */}
+          <div>
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-white mb-4">
+              Connect &amp; Pay
+            </h4>
+            <div className="flex items-center gap-2.5 mb-4">
+              {/* Instagram */}
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-all hover:scale-110 shadow-xs"
+                title="Instagram"
+                aria-label="Instagram"
+              >
+                <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.65 0 3 1.35 3 3v10c0 1.65-1.35 3-3 3H7c-1.65 0-3-1.35-3-3V7c0-1.65 1.35-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm5.25-.75a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z"/></svg>
+              </a>
+
+              {/* Facebook */}
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-all hover:scale-110 shadow-xs"
+                title="Facebook"
+                aria-label="Facebook"
+              >
+                <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24"><path d="M13 3h4v4h-4v3h4v4h-4v7H9v-7H6v-4h3V7a4 4 0 014-4z"/></svg>
+              </a>
+
+              {/* Twitter / X */}
+              <a 
+                href="https://twitter.com" 
+                target="_blank" 
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-all hover:scale-110 shadow-xs"
+                title="Twitter"
+                aria-label="Twitter"
+              >
+                <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+
+              {/* YouTube */}
+              <a 
+                href="https://youtube.com" 
+                target="_blank" 
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/35 flex items-center justify-center text-white transition-all hover:scale-110 shadow-xs"
+                title="YouTube"
+                aria-label="YouTube"
+              >
+                <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.2 5 12 5 12 5s-4.2 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.1 6.8.2 6.8.2s4.2 0 7-.1c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM10 15V9l5.2 3-5.2 3z"/></svg>
+              </a>
+            </div>
+
+            <p className="text-[11px] font-mono text-white/90">
+              COD • bKash • Nagad Accepted
+            </p>
+          </div>
+
         </div>
 
-        {/* Bottom Strip & Payment Methods */}
-        <div className="pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-400">
-          <p>{t.copyright || '© 2026 Tech Nest. All rights reserved.'}</p>
-
-          {/* Payment Badges */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] text-zinc-400 mr-1">PAYMENTS:</span>
-            <span className="px-2 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 font-bold text-[10px]">
-              Cash on Delivery
-            </span>
-            <span className="px-2 py-0.5 rounded-md bg-pink-950/40 border border-pink-500/30 text-pink-400 font-bold text-[10px]">
-              bKash
-            </span>
-            <span className="px-2 py-0.5 rounded-md bg-amber-950/40 border border-amber-500/30 text-amber-400 font-bold text-[10px]">
-              Nagad
-            </span>
-            <span className="px-2 py-0.5 rounded-md bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 font-bold text-[10px]">
-              Visa / Mastercard
-            </span>
-            <span className="px-2 py-0.5 rounded-md bg-[#12141C] border border-[#1E2230] text-zinc-300 font-medium text-[10px] flex items-center gap-1">
-              <ShieldCheck size={11} className="text-emerald-400" />
-              <span>256-bit SSL</span>
-            </span>
-          </div>
+        {/* Bottom Strip */}
+        <div className="mt-12 pt-6 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between text-xs text-white/75 gap-3">
+          <p>© {new Date().getFullYear()} Tech Nest BD. All rights reserved.</p>
+          <p className="font-mono text-[11px]">Bangladeshi Owned &amp; Operated</p>
         </div>
       </div>
     </footer>
