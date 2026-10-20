@@ -27,7 +27,6 @@ import SupportModal from './components/SupportModal';
 import BundleDeals from './components/BundleDeals';
 import SmartTechFinder from './components/SmartTechFinder';
 import ProductComparisonModal from './components/ProductComparisonModal';
-import TechKits from './components/TechKits';
 import PromoBanners from './components/PromoBanners';
 import RecentlyViewedSection from './components/RecentlyViewedSection';
 import Footer from './components/Footer';
@@ -913,9 +912,9 @@ export default function App() {
         onScrollToKits={() => {
           if (selectedProduct || isCartView) {
             navigateToHome(false);
-            setTimeout(() => scrollToSection('tech-kits-section'), 50);
+            setTimeout(() => scrollToSection('bundles-section'), 50);
           } else {
-            scrollToSection('tech-kits-section');
+            scrollToSection('bundles-section');
           }
         }}
         onGoHome={() => navigateToHome(true)}
@@ -1099,17 +1098,6 @@ export default function App() {
               />
             </div>
 
-            {/* 7. Configurable Tech Kits for Lifestyle & Workflows */}
-            <div id="tech-kits-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <TechKits
-                products={products}
-                onAddKitToBag={handleAddKitToBag}
-                onSelectProduct={(p) => navigateToProduct(p, true)}
-                currencySymbol="৳"
-                lang={lang}
-                t={t}
-              />
-            </div>
 
             {/* 8. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
             <div id="bundles-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

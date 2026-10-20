@@ -170,7 +170,7 @@ export default function Header({
             onClick={onScrollToKits} 
             className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
           >
-            Tech Kits
+            Bundles
           </button>
           <button 
             type="button"
@@ -335,7 +335,7 @@ export default function Header({
               onClick={() => { onScrollToKits(); setMobileMenuOpen(false); }}
               className="text-left py-2 hover:text-blue-600 border-b border-slate-50 flex items-center justify-between"
             >
-              <span>Tech Kits (Free Delivery ৳2,010)</span>
+              <span>Special Bundles (Free Delivery ৳2,000+)</span>
               <Zap size={14} className="text-blue-500" />
             </button>
             <button 
