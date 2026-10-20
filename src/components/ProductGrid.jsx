@@ -131,7 +131,7 @@ export default function ProductGrid({
   }, [displayedProducts, onDisplayedIdsChange]);
 
   return (
-    <section id="products-section" className="product-grid-overlap max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+    <section id="products-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Top Header of Section: High-Contrast Heading and Filter Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>

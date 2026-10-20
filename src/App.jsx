@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import TopUtilityBar from './components/TopUtilityBar';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import TrendingCarousel from './components/TrendingCarousel';
 import QuickShortcuts from './components/QuickShortcuts';
 import FlashSale from './components/FlashSale';
 import FeaturedCategories from './components/FeaturedCategories';
@@ -982,7 +983,7 @@ export default function App() {
           />
         ) : (
           <>
-            {/* 1. Large Animated Hero Section with Glowing Curved Horizon Wave */}
+            {/* 1. Premium Wide Promotional Hero Slider */}
             <Hero
               onShopClick={() => scrollToSection('products-section')}
               onFindPhoneClick={() => scrollToSection('smart-tech-finder')}
@@ -992,6 +993,10 @@ export default function App() {
               }}
               onSelectPhone={(phone) => {
                 setSelectedPhone(phone);
+                scrollToSection('products-section');
+              }}
+              onSelectCatalogTab={(tab) => {
+                setCatalogTab(tab);
                 scrollToSection('products-section');
               }}
               searchQuery={searchQuery}
@@ -1014,7 +1019,22 @@ export default function App() {
               selectedCategory={selectedCategory}
             />
 
-            {/* 2. 5-Column Frosted Product Grid (2 Rows of 5, directly overlapping hero wave) */}
+            {/* 1.5 Horizontal Trending Products Carousel */}
+            <TrendingCarousel
+              products={products}
+              currencySymbol="৳"
+              onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
+              onOpenDetail={(p) => navigateToProduct(p, true)}
+              wishlistIds={wishlistIds}
+              onToggleWishlist={handleToggleWishlist}
+              onToggleCompare={handleToggleCompare}
+              comparisonIds={comparisonIds}
+              onViewAll={() => scrollToSection('products-section')}
+              t={t}
+              lang={lang}
+            />
+
+            {/* 2. Filterable Product Grid */}
             <ProductGrid
               products={products}
               currencySymbol="৳"
