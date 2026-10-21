@@ -1035,7 +1035,10 @@ export function createOrderWithReservation({
   isDemo = false
 }) {
   const db = getDatabase();
-  const orderId = 'AGY-' + Math.floor(100000 + Math.random() * 900000);
+  let orderId = 'AGY-' + Math.floor(100000 + Math.random() * 900000);
+  while (db.prepare('SELECT 1 FROM orders WHERE id = ?').get(orderId)) {
+    orderId = 'AGY-' + Math.floor(100000 + Math.random() * 900000);
+  }
   const guestToken = crypto.randomBytes(24).toString('hex');
   const now = new Date().toISOString();
 

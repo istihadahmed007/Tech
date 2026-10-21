@@ -97,16 +97,17 @@ export default function CheckoutModal({
           const activeObj = res.data.activeProvider === 'sslcommerz' ? res.data.sslcommerz : res.data.bkash;
           setIsSandboxMode(Boolean(res.data.sandbox || activeObj?.sandbox || res.data.activeProvider === 'sandbox'));
         } else {
-          // If offline, static host, or backend endpoint unconfigured: Paymently portal link is ALWAYS available!
-          setOnlineAvailable(true);
-          setActiveGatewayName('paymently');
+          setOnlineAvailable(false);
+          setActiveGatewayName(null);
           setIsSandboxMode(false);
+          setPaymentMethod('cod');
         }
       })
       .catch(() => {
-        setOnlineAvailable(true);
-        setActiveGatewayName('paymently');
+        setOnlineAvailable(false);
+        setActiveGatewayName(null);
         setIsSandboxMode(false);
+        setPaymentMethod('cod');
       });
   }, []);
 
@@ -266,7 +267,7 @@ export default function CheckoutModal({
         if (onClose) onClose();
         onOrderSuccess(createdOrder, guestToken);
       } else {
-        // Online payment: initiate authentic payment session with backend or Paymently
+        // Online payment: initiate authentic payment session with backend
         let sessionData = null;
         try {
           const initRes = await safeFetchJson('/api/payment/initiate', {
@@ -284,24 +285,21 @@ export default function CheckoutModal({
           if (initRes.ok && initRes.data?.success) {
             sessionData = initRes.data;
           } else {
-            console.warn('[Checkout] Payment initiate API notice:', initRes.error || initRes.status);
+            const serverErrMsg = initRes.data?.error || initRes.error || 'Payment gateway initiation failed';
+            console.warn('[Checkout] Payment initiate API notice:', serverErrMsg);
+            setErrorMessage(`Online payment gateway unavailable: ${serverErrMsg}`);
+            return;
           }
         } catch (initErr) {
           console.warn('[Checkout] Payment initiate API exception:', initErr);
+          setErrorMessage('Failed to connect to payment gateway. Please try again or choose Cash on Delivery.');
+          return;
         }
 
-        // Resilient fallback: If server initiated session, use it. Otherwise, launch direct Paymently session!
-        if (!sessionData) {
-          sessionData = {
-            success: true,
-            provider: 'paymently',
-            isPaymently: true,
-            orderId: createdOrder.id,
-            redirectUrl: 'https://vartualtutor.paymently.io/paymentlink/default/BDT',
-            paymentLink: 'https://vartualtutor.paymently.io/paymentlink/default/BDT',
-            invoiceId: String(createdOrder.id),
-            supportedMethods: ['bKash', 'Nagad', 'Rocket', 'Upay', 'Visa / Mastercard']
-          };
+        const effectivePaymentUrl = sessionData?.redirectUrl || sessionData?.paymentLink;
+        if (!effectivePaymentUrl) {
+          setErrorMessage('Payment gateway URL is missing or unavailable for this order.');
+          return;
         }
 
         if (onClose) onClose();
@@ -516,79 +514,77 @@ export default function CheckoutModal({
               </div>
             </div>
 
-            {/* STEP 2: Select Payment Method */}
+            {/* STEP 2: Payment */}
             <div className="checkout-card">
               <div className="checkout-step-header">
                 <div className="checkout-step-badge-wrap">
                   <span className="checkout-step-badge">2</span>
-                  <h2 className="checkout-step-title">Select Payment Method</h2>
+                  <h2 className="checkout-step-title">Payment</h2>
                 </div>
-                <span className="text-xs font-bold text-[#007600] flex items-center gap-1">
+                <span className="text-xs font-bold text-[#059669] flex items-center gap-1">
                   <ShieldCheck size={14} />
-                  Verified & Encrypted
+                  Verified &amp; Encrypted
                 </span>
               </div>
 
               <div>
-                {/* OPTION 1: Paymently Live Gateway (bKash / Nagad / Cards) - RECOMMENDED */}
-                <label 
-                  className={`checkout-payment-option ${paymentMethod === 'online' ? 'is-active' : ''}`}
-                >
-                  <div className="checkout-radio-flex">
-                    <input
-                      type="radio"
-                      name="amazonPaymentMethod"
-                      value="online"
-                      checked={paymentMethod === 'online'}
-                      onChange={() => setPaymentMethod('online')}
-                      className="checkout-radio-input"
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <span className="checkout-method-name">Online Payment via Paymently Portal</span>
-                        <span className="checkout-method-badge">Recommended &bull; Fast Track</span>
+                {onlineAvailable ? (
+                  <div className="checkout-direct-payment-box">
+                    <div className="checkout-direct-payment-content">
+                      <div className="checkout-direct-payment-icon">
+                        <Lock size={18} className="text-[#145CFF]" />
                       </div>
-
-                      <p className="checkout-method-desc">
-                        Instant automated verification via verified Paymently gateway (<code style={{ color: '#007185', fontFamily: 'monospace' }}>vartualtutor.paymently.io</code>). Pay securely with your mobile banking or credit/debit card.
-                      </p>
-
-                      {/* Brand Chips */}
-                      <div className="checkout-brand-chips">
-                        <span className="checkout-brand-chip" style={{ backgroundColor: '#E2136E' }}>bKash</span>
-                        <span className="checkout-brand-chip" style={{ backgroundColor: '#F7941D' }}>Nagad</span>
-                        <span className="checkout-brand-chip" style={{ backgroundColor: '#8C3494' }}>Rocket</span>
-                        <span className="checkout-brand-chip" style={{ backgroundColor: '#005BAA' }}>Upay</span>
-                        <span className="checkout-brand-chip" style={{ backgroundColor: '#1A1F71' }}>Visa / Mastercard</span>
+                      <div className="checkout-direct-payment-text">
+                        <div className="checkout-direct-payment-title">Secure Online Payment</div>
+                        <p className="checkout-direct-payment-desc">
+                          Instant encrypted checkout through our verified merchant gateway.
+                        </p>
                       </div>
                     </div>
-                  </div>
-                </label>
 
-                {/* OPTION 2: Cash on Delivery (COD) */}
-                <label 
-                  className={`checkout-payment-option ${paymentMethod === 'cod' ? 'is-active' : ''}`}
-                >
-                  <div className="checkout-radio-flex">
-                    <input
-                      type="radio"
-                      name="amazonPaymentMethod"
-                      value="cod"
-                      checked={paymentMethod === 'cod'}
-                      onChange={() => setPaymentMethod('cod')}
-                      className="checkout-radio-input"
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <span className="checkout-method-name">Cash on Delivery (COD)</span>
-                        <span className="checkout-method-badge" style={{ background: '#F0F2F2', color: '#565959', borderColor: '#D5D9D9' }}>Doorstep Collection</span>
+                    {paymentMethod === 'online' ? (
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="checkout-direct-payment-link"
+                        aria-label="Pay Securely Online"
+                      >
+                        {isSubmitting ? (
+                          <span>Processing Order...</span>
+                        ) : (
+                          <span>Pay Securely Online &rarr;</span>
+                        )}
+                      </button>
+                    ) : (
+                      <div className="checkout-cod-active-box">
+                        <div className="text-xs font-bold text-[#10263D]">Cash on Delivery Selected</div>
+                        <p className="text-xs text-[#52677B] mt-0.5">Pay in cash directly to the courier rider upon delivery handover.</p>
                       </div>
-                      <p className="checkout-method-desc">
-                        Pay in Bangladeshi Taka ({currencySymbol}) directly to the courier rider upon physical inspection and handover.
-                      </p>
+                    )}
+
+                    <div className="checkout-direct-payment-toggle">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod(paymentMethod === 'online' ? 'cod' : 'online')}
+                        className="checkout-alt-link"
+                      >
+                        {paymentMethod === 'online'
+                          ? 'Prefer Cash on Delivery? Pay upon physical handover'
+                          : '← Switch back to Secure Online Payment'}
+                      </button>
                     </div>
                   </div>
-                </label>
+                ) : (
+                  <div className="checkout-gateway-offline-notice">
+                    <AlertCircle size={16} className="text-[#DE3618] shrink-0" />
+                    <div>
+                      <strong className="text-[#10263D] block text-xs">Online Payment Gateway Unavailable</strong>
+                      <span className="text-xs text-[#52677B]">
+                        Online payment is currently unavailable. Your order will be placed as Cash on Delivery upon physical handover.
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -692,11 +688,11 @@ export default function CheckoutModal({
                 aria-label="Submit Order"
               >
                 {isSubmitting ? (
-                  <span style={{ width: '20px', height: '20px', border: '2px solid #0F1111', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }} />
+                  <span style={{ width: '20px', height: '20px', border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }} />
                 ) : (
                   <>
                     <span>
-                      {paymentMethod === 'online' ? 'Proceed to Pay with Paymently' : 'Place Your Order'}
+                      {paymentMethod === 'online' ? 'Pay Securely Online →' : 'Place Your Order'}
                     </span>
                     <ArrowRight size={16} />
                   </>

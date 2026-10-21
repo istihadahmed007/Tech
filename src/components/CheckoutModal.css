@@ -520,3 +520,120 @@
   flex-shrink: 0;
 }
 
+/* Direct Online Payment Container — White & Ice-Blue Theme */
+.checkout-direct-payment-box {
+  background-color: #F8FBFE;
+  border: 1px solid #DCE8F3;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(16, 38, 61, 0.04);
+}
+
+.checkout-direct-payment-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.checkout-direct-payment-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: #EAF4FC;
+  color: #145CFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #DCE8F3;
+}
+
+.checkout-direct-payment-text {
+  flex: 1;
+}
+
+.checkout-direct-payment-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #10263D;
+  letter-spacing: -0.01em;
+}
+
+.checkout-direct-payment-desc {
+  font-size: 12px;
+  color: #52677B;
+  margin: 3px 0 0;
+  line-height: 1.45;
+}
+
+.checkout-direct-payment-link {
+  width: 100%;
+  background-color: #145CFF;
+  border: 1px solid #145CFF;
+  border-radius: 10px;
+  padding: 13px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFFFFF;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(20, 92, 255, 0.20);
+  transition: all 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.checkout-direct-payment-link:hover:not(:disabled) {
+  background-color: #0D4BD9;
+  border-color: #0D4BD9;
+  box-shadow: 0 5px 14px rgba(20, 92, 255, 0.30);
+}
+
+.checkout-direct-payment-link:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.checkout-cod-active-box {
+  background-color: #FFFFFF;
+  border: 1px solid #DCE8F3;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.checkout-direct-payment-toggle {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.checkout-alt-link {
+  background: none;
+  border: none;
+  color: #52677B;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px;
+  transition: color 150ms ease;
+}
+
+.checkout-alt-link:hover {
+  color: #145CFF;
+}
+
+.checkout-gateway-offline-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #FFF5F5;
+  border: 1px solid #FED7D7;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+
