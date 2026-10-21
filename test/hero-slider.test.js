@@ -80,3 +80,18 @@ test('Hero Slider: Codebase integration and structural integrity', () => {
   assert.match(heroCode, /hero-slider-shop-btn/, 'Hero must render interactive shop button');
   assert.match(heroCode, /onSelectCategory/, 'Hero button must invoke real category routing');
 });
+
+test('Hero Slider: Full-Width Layout styles and constraints', () => {
+  const heroCss = fs.readFileSync(path.resolve('src/components/Hero.css'), 'utf8');
+  const heroCode = fs.readFileSync(path.resolve('src/components/Hero.jsx'), 'utf8');
+
+  // Verify hero-banner and hero-slider-section classes
+  assert.match(heroCode, /hero-banner/, 'Hero.jsx should include hero-banner class');
+  assert.match(heroCss, /width:\s*100%/, 'Hero.css must specify width: 100%');
+  assert.match(heroCss, /max-width:\s*none/, 'Hero.css must remove restrictive max-width');
+  assert.match(heroCss, /margin-inline:\s*0/, 'Hero.css must reset horizontal margins');
+  assert.match(heroCss, /padding:\s*0/, 'Hero.css must remove horizontal padding on hero container');
+  assert.match(heroCss, /object-fit:\s*contain/, 'Hero.css must use object-fit: contain to preserve complete artwork without cropping');
+  assert.match(heroCss, /aspect-ratio:\s*1024\s*\/\s*571/, 'Hero.css must maintain 1024 / 571 ratio for zero CLS and proportional scaling');
+});
+

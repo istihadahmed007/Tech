@@ -207,7 +207,7 @@ export default function Hero({
       id="hero-slider"
       aria-label="Tech Nest Featured Product Banners"
       aria-roledescription="carousel"
-      className="hero-slider-section"
+      className="hero-slider-section hero-banner"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsFocused(true)}
