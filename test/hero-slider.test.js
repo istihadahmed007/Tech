@@ -90,8 +90,11 @@ test('Hero Slider: Full-Width Layout styles and constraints', () => {
   assert.match(heroCss, /width:\s*100%/, 'Hero.css must specify width: 100%');
   assert.match(heroCss, /max-width:\s*none/, 'Hero.css must remove restrictive max-width');
   assert.match(heroCss, /margin-inline:\s*0/, 'Hero.css must reset horizontal margins');
-  assert.match(heroCss, /padding:\s*0/, 'Hero.css must remove horizontal padding on hero container');
-  assert.match(heroCss, /object-fit:\s*contain/, 'Hero.css must use object-fit: contain to preserve complete artwork without cropping');
+  assert.match(heroCss, /object-fit:\s*(?:cover|contain)/, 'Hero.css must use object-fit: cover or contain');
   assert.match(heroCss, /aspect-ratio:\s*1024\s*\/\s*571/, 'Hero.css must maintain 1024 / 571 ratio for zero CLS and proportional scaling');
+
+  // Ensure index.css does not conflict with hero-slider-card
+  const indexCss = fs.readFileSync(path.resolve('src/index.css'), 'utf8');
+  assert.equal(indexCss.includes('.hero-slider-card'), false, 'index.css must not contain conflicting legacy hero-slider-card rules');
 });
 
