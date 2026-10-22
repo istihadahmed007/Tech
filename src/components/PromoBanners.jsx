@@ -49,14 +49,6 @@ export default function PromoBanners({
                   <span>{lang === 'bn' ? 'এখনই কিনুন' : 'Shop Now'}</span>
                   <ArrowRight size={15} />
                 </button>
-
-                <button
-                  type="button"
-                  onClick={onScrollToFinder}
-                  className="bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm px-5 py-3 rounded-full border border-white/20 backdrop-blur-xs transition-colors cursor-pointer"
-                >
-                  {lang === 'bn' ? 'ডিভাইস কম্প্যাটিবিলিটি' : 'Find Accessories'}
-                </button>
               </div>
             </div>
 

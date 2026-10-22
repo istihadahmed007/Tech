@@ -1075,46 +1075,7 @@ export default function App() {
               lang={lang}
             />
 
-            {/* 5. Brand & Phone Model Compatibility Finder */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <BrandSection
-                selectedPhone={selectedPhone}
-                onSelectPhone={(phone) => {
-                  setSelectedPhone(phone);
-                  scrollToSection('products-section');
-                }}
-                onClearPhoneFilter={() => setSelectedPhone(null)}
-                lang={lang}
-              />
-            </div>
 
-            {/* 6. Smart Tech Finder Interactive Lifestyle Matching */}
-            <div id="smart-tech-finder" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <SmartTechFinder
-                products={products}
-                excludeProductIds={displayedGridIds}
-                onSelectProduct={(p) => navigateToProduct(p, true)}
-                onOpenDetail={(p) => navigateToProduct(p, true)}
-                onAddToCart={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-                onQuickAdd={(p) => handleAddToCart(p, p.variants?.[0], 1)}
-                onToggleCompare={handleToggleCompare}
-                comparisonIds={comparisonIds}
-                onOpenComparison={() => setActiveModal('comparison')}
-                currencySymbol="৳"
-                lang={lang}
-                t={t}
-              />
-            </div>
-
-
-            {/* 8. Special Offers & Smart Free Delivery Bundles (৳2,000+ Threshold Deals) */}
-            <div id="bundles-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <BundleDeals
-                onAddBundle={handleAddBundle}
-                lang={lang}
-                t={t}
-              />
-            </div>
 
             {/* 8.5 Recently Viewed Products Showcase */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
