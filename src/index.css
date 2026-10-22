@@ -1,61 +1,60 @@
 :root {
-  /* Tech Nest Premium Ice-Blue Retail System (Matching Reference Image) */
-  --canvas-bg: #F4F7FB;
+  /* Tech Nest Modern Gadget Store Design Tokens (Reference Match) */
+  --canvas-bg: #FFFFFF;
   --surface-white: #FFFFFF;
   --surface-card: #FFFFFF;
-  --surface-card-subtle: #EBF4FC;
-  --surface-alt: #E2EFFC;
-  --surface-muted: #D9E9F8;
-  --surface-ice: #E8F4FF;
+  --surface-card-subtle: #F8FAFC;
+  --surface-alt: #F1F5F9;
+  --surface-muted: #E2E8F0;
+  --surface-ice: #EFF6FF;
   
-  /* High-Contrast Typography */
-  --text-primary: #10263D;
-  --text-navy: #10263D;
-  --text-secondary: #47617D;
-  --text-tertiary: #7C95B1;
-  --text-muted: #8FA6BE;
+  /* High-Contrast Readable Typography */
+  --text-primary: #0F172A;
+  --text-navy: #0F172A;
+  --text-secondary: #334155;
+  --text-tertiary: #64748B;
+  --text-muted: #94A3B8;
   --text-inverted: #FFFFFF;
 
-  /* Sky & Electric Blue Brand Accents */
-  --electric-blue: #0084FF;
-  --electric-blue-hover: #006FD6;
-  --electric-blue-active: #005BB3;
-  --electric-blue-subtle: rgba(0, 132, 255, 0.08);
-  --electric-blue-border: rgba(0, 132, 255, 0.25);
-  --electric-blue-text: #0077E6;
+  /* Blue & Royal Navy Brand Accents */
+  --electric-blue: #1D4ED8;
+  --electric-blue-hover: #1E40AF;
+  --electric-blue-active: #172554;
+  --electric-blue-subtle: rgba(29, 78, 216, 0.08);
+  --electric-blue-border: rgba(29, 78, 216, 0.25);
+  --electric-blue-text: #1D4ED8;
 
-  --electric-cyan: #00A6FF;
-  --electric-cyan-hover: #008EE0;
-  --electric-cyan-glow: rgba(0, 166, 255, 0.35);
-  --electric-cyan-subtle: rgba(0, 166, 255, 0.08);
+  --electric-cyan: #0284C7;
+  --electric-cyan-hover: #0369A1;
+  --electric-cyan-glow: rgba(2, 132, 199, 0.35);
+  --electric-cyan-subtle: rgba(2, 132, 199, 0.08);
 
   --emerald-verified: #059669;
   --emerald-glow: rgba(5, 150, 105, 0.35);
   --emerald-subtle: rgba(5, 150, 105, 0.08);
 
-  /* Supporting Brand Accents */
-  --brand-navy: #10263D;
-  --brand-navy-dark: #0A1929;
-  --brand-navy-light: #1E3A5F;
-  --brand-primary: #0084FF;
-  --brand-hover: #0070D8;
-  --brand-active: #005BB3;
-  --brand-subtle: rgba(0, 132, 255, 0.08);
+  /* Deep Navy Brand Palette */
+  --brand-navy: #0A192F;
+  --brand-navy-dark: #060E1A;
+  --brand-navy-light: #0D2040;
+  --brand-primary: #1D4ED8;
+  --brand-hover: #1E40AF;
+  --brand-active: #172554;
+  --brand-subtle: rgba(29, 78, 216, 0.08);
 
-  /* Precise 1px Engineered Borders & Dividers */
-  --border-subtle: #DCE7F0;
-  --border-card: #DCE7F0;
-  --border-divider: #DCE7F0;
-  --border-focus: #0084FF;
+  /* Subtle Engineered Borders & Dividers */
+  --border-subtle: #E2E8F0;
+  --border-card: #E2E8F0;
+  --border-divider: #E2E8F0;
+  --border-focus: #1D4ED8;
 
-  /* Delicate Ice-Blue Depth Shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(16, 38, 61, 0.05);
-  --shadow-sm: 0 1px 3px 0 rgba(16, 38, 61, 0.08), 0 1px 2px -1px rgba(16, 38, 61, 0.05);
-  --shadow-md: 0 4px 14px -2px rgba(100, 150, 230, 0.16), 0 2px 6px -1px rgba(16, 38, 61, 0.06);
-  --shadow-lg: 0 12px 28px -4px rgba(70, 130, 240, 0.2), 0 4px 10px -2px rgba(16, 38, 61, 0.08);
-  --shadow-xl: 0 22px 40px -12px rgba(70, 130, 240, 0.28);
-  --shadow-blue: 0 10px 25px -5px rgba(104, 155, 255, 0.45);
-  --shadow-cyan-glow: 0 0 25px -3px rgba(0, 132, 255, 0.35);
+  /* Clean Elevations */
+  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 14px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 28px -4px rgba(15, 23, 42, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.06);
+  --shadow-xl: 0 20px 35px -8px rgba(15, 23, 42, 0.16);
+  --shadow-blue: 0 10px 25px -5px rgba(29, 78, 216, 0.35);
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -68,14 +67,15 @@
   --font-mono: 'JetBrains Mono', 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Exact Top Nav Gradient from Reference Image */
+/* Compact Dark-Blue Navigation Bar (Reference Layout) */
 .nav-gradient {
-  background: linear-gradient(90deg, #6CA8FF 0%, #7CB8FF 45%, #8CC8FF 100%);
+  background: linear-gradient(90deg, #0A192F 0%, #0D2040 50%, #102A54 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Soft Sky-Periwinkle Hero with Glowing Curved Horizon Arc */
+/* Prominent Deep Navy-to-Blue Hero */
 .hero-gradient {
-  background: radial-gradient(110% 85% at 50% 18%, #E6F4FF 0%, #C5E2FF 48%, #9DC2FF 72%, #B5CFFF 100%);
+  background: radial-gradient(circle at 75% 45%, #1D4ED8 0%, #143365 45%, #08162D 85%);
   position: relative;
   overflow: hidden;
 }
@@ -87,49 +87,41 @@
   width: 130%;
   height: 112%;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 65%, rgba(255, 255, 255, 0.85) 0%, rgba(210, 236, 255, 0.6) 55%, rgba(255, 255, 255, 0.95) 70%, transparent 73%);
-  box-shadow: 0 25px 60px rgba(100, 155, 255, 0.25);
+  background: radial-gradient(circle at 50% 65%, rgba(29, 78, 216, 0.25) 0%, rgba(13, 32, 64, 0.4) 55%, transparent 75%);
   pointer-events: none;
-  animation: heroArcPulse 8s ease-in-out infinite alternate;
 }
 
-@keyframes heroArcPulse {
-  0% { transform: translateY(0) scale(1); opacity: 0.9; }
-  100% { transform: translateY(-4px) scale(1.02); opacity: 1; }
-}
-
-/* Soft Gradient CTA Button */
+/* Primary CTA Button */
 .btn-soft-blue {
-  background: linear-gradient(135deg, #3686F5 0%, #1668E3 100%);
+  background: #1D4ED8;
   color: #FFFFFF !important;
-  box-shadow: 0 10px 25px -5px rgba(54, 134, 245, 0.45);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-soft-blue:hover {
-  background: linear-gradient(135deg, #4A94F8 0%, #2074EC 100%);
+  background: #1E40AF;
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px -5px rgba(54, 134, 245, 0.55);
+  box-shadow: 0 6px 20px rgba(29, 78, 216, 0.45);
 }
 
 .btn-soft-blue:active {
   transform: translateY(0);
 }
 
-/* Frosted Glass Product Cards */
+/* Modern Crisp White Product Cards */
 .product-card-glass {
-  background: linear-gradient(180deg, rgba(235, 246, 255, 0.95) 0%, rgba(216, 238, 255, 0.88) 100%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 14px 30px -10px rgba(100, 150, 230, 0.16);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card-glass:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 22px 40px -12px rgba(70, 130, 240, 0.28);
-  border-color: #8CC8FF;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.1);
+  border-color: #93C5FD;
 }
 
 /* Top-Left Diagonal Coral SALE Ribbon */
@@ -137,8 +129,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   overflow: hidden;
   pointer-events: none;
   z-index: 10;
@@ -147,29 +139,30 @@
 .sale-ribbon span {
   position: absolute;
   display: block;
-  width: 96px;
-  padding: 3.5px 0;
-  background: linear-gradient(90deg, #FF7578 0%, #FF8E72 100%);
+  width: 90px;
+  padding: 3px 0;
+  background: #EF4444;
   color: #fff;
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 700;
   text-align: center;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   transform: rotate(-45deg);
-  top: 13px;
-  left: -25px;
-  box-shadow: 0 2px 6px rgba(255, 117, 120, 0.35);
+  top: 12px;
+  left: -24px;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.35);
 }
 
-/* Promo Banner Gradient */
+/* Full-Width Blue Promotional Band Gradient */
 .promo-banner-gradient {
-  background: linear-gradient(135deg, #7CC8FF 0%, #86B3FF 50%, #91AEFF 100%);
-  box-shadow: 0 15px 35px -10px rgba(110, 165, 255, 0.35);
+  background: linear-gradient(135deg, #091933 0%, #112D58 45%, #1D4ED8 100%);
+  box-shadow: 0 15px 35px -10px rgba(15, 23, 42, 0.25);
 }
 
-/* Footer Gradient */
+/* Deep Navy Footer Gradient */
 .footer-gradient {
-  background: linear-gradient(180deg, #5C8DF6 0%, #7DB1FF 50%, #9EC9FF 100%);
+  background: linear-gradient(180deg, #0A192F 0%, #060E1A 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 * {

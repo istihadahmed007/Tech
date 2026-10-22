@@ -131,30 +131,28 @@ export default function ProductGrid({
   }, [displayedProducts, onDisplayedIdsChange]);
 
   return (
-    <section id="products-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      {/* Top Header of Section: High-Contrast Heading and Filter Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-black text-[#10263D] tracking-tight flex items-center gap-2">
-            <span>{lang === 'bn' ? 'ফিচার্ড গ্যাজেট' : 'Featured Tech Gear'}</span>
-          </h2>
-          <p className="text-xs text-[#47617D] font-medium hidden sm:block mt-0.5">
-            {lang === 'bn' ? 'আসল ও ওয়ারেন্টিযুক্ত মোবাইল এক্সেসরিজ' : 'Genuine hardware, verified compatibility & express delivery'}
-          </p>
-        </div>
+    <section id="products-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+      {/* Top Header of Section: Centered Heading matching Reference Image */}
+      <div className="text-center mb-8">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+          {lang === 'bn' ? 'ফিচার্ড গ্যাজেট' : 'Featured Products'}
+        </h2>
+        <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1.5 max-w-lg mx-auto">
+          {lang === 'bn' ? 'আসল ও ওয়ারেন্টিযুক্ত মোবাইল এক্সেসরিজ' : 'Top-rated tech gear, verified compatibility & express delivery'}
+        </p>
 
-        <div className="flex items-center gap-2">
-          {/* Quick Filter Tabs with Strong Contrast */}
-          <div className="hidden md:flex items-center gap-1 bg-white/85 p-1 rounded-full backdrop-blur-md border border-blue-200/80 text-xs shadow-xs">
+        {/* Quick Filter Tabs */}
+        <div className="flex flex-wrap items-center justify-center gap-1.5 mt-5">
+          <div className="inline-flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-200 text-xs shadow-inner">
             {QUICK_FILTERS.map((f) => (
               <button
                 key={f.id}
                 type="button"
                 onClick={() => handleTabClick(f.id)}
-                className={`px-3 py-1 rounded-full font-semibold transition cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full font-semibold transition cursor-pointer ${
                   activeTab === f.id
-                    ? 'bg-[#0084FF] text-white shadow-xs font-bold'
-                    : 'text-[#10263D] hover:text-[#0084FF] hover:bg-blue-50/70'
+                    ? 'bg-[#0D2040] text-white shadow-xs font-bold'
+                    : 'text-slate-700 hover:text-blue-600 hover:bg-white/80'
                 }`}
               >
                 {f.label}
@@ -162,7 +160,7 @@ export default function ProductGrid({
             ))}
           </div>
 
-          <span className="text-xs font-mono font-bold text-[#0077E6] bg-blue-50/90 border border-blue-200 px-3 py-1.5 rounded-full shadow-xs">
+          <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-full shadow-2xs ml-1">
             {filteredProducts.length} Verified SKUs
           </span>
         </div>
@@ -170,10 +168,10 @@ export default function ProductGrid({
 
       {/* Active Filter Indicators Bar */}
       {(selectedCategory || selectedPhone || searchQuery || activeTab !== 'all') && (
-        <div className="flex flex-wrap items-center gap-2 mb-4 bg-white/80 p-2.5 rounded-xl border border-blue-100 shadow-xs backdrop-blur-sm">
+        <div className="flex flex-wrap items-center gap-2 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-200 shadow-xs">
           <span className="text-xs font-semibold text-slate-500">Active Filters:</span>
           {activeTab !== 'all' && (
-            <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-2.5 py-0.5 rounded-full border border-blue-200">
+            <span className="inline-flex items-center gap-1 bg-white text-blue-700 text-xs px-2.5 py-0.5 rounded-full border border-blue-200 shadow-2xs">
               Filter: {QUICK_FILTERS.find(f => f.id === activeTab)?.label || activeTab}
               <button 
                 type="button" 
@@ -183,7 +181,7 @@ export default function ProductGrid({
             </span>
           )}
           {searchQuery && (
-            <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-2.5 py-0.5 rounded-full border border-blue-200">
+            <span className="inline-flex items-center gap-1 bg-white text-blue-700 text-xs px-2.5 py-0.5 rounded-full border border-blue-200 shadow-2xs">
               Search: "{searchQuery}"
               <button 
                 type="button" 
@@ -206,9 +204,9 @@ export default function ProductGrid({
         </div>
       )}
 
-      {/* 5-Column Grid (Matches 2 Rows of 5 in Reference Screenshot) */}
+      {/* 4-Column Responsive Grid matching Reference Image */}
       {displayedProducts.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
           {displayedProducts.map((product) => (
             <ProductCard
               key={product.id}

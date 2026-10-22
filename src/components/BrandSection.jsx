@@ -9,16 +9,16 @@ export default function BrandSection({
   lang = 'en'
 }) {
   return (
-    <section id="compatibility-finder" className="w-full my-6 sm:my-8 p-5 sm:p-7 bg-white rounded-2xl border border-blue-100 shadow-sm text-[#10263D]">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5 pb-3.5 border-b border-blue-100">
+    <section id="compatibility-finder" className="w-full my-6 sm:my-8 p-5 sm:p-7 bg-white rounded-2xl border border-slate-200 shadow-xs text-[#0F172A]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5 pb-3.5 border-b border-slate-100">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <h2 className="text-sm sm:text-base font-bold font-mono text-[#10263D] tracking-wide uppercase">
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+            <h2 className="text-sm sm:text-base font-bold font-mono text-[#0F172A] tracking-wide uppercase">
               {lang === 'bn' ? 'ব্র্যান্ড ও ফোন মডেল কম্প্যাটিবিলিটি' : 'VERIFIED DEVICE COMPATIBILITY MATRIX'}
             </h2>
           </div>
-          <p className="text-[11px] text-[#47617D] font-mono">
+          <p className="text-[11px] text-slate-500 font-mono">
             {lang === 'bn' 
               ? 'আপনার স্মার্টফোনের জন্য শতভাগ পরীক্ষিত চার্জার, ক্যাবল ও অডিও এক্সেসরিজ' 
               : 'Filter accessories with guaranteed wattage, pin-out, and protocol compatibility'}
@@ -29,7 +29,7 @@ export default function BrandSection({
           <button
             type="button"
             onClick={onClearPhoneFilter}
-            className="text-xs font-mono font-semibold text-[#0084FF] hover:text-[#005BB3] hover:underline cursor-pointer flex items-center gap-1"
+            className="text-xs font-mono font-semibold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer flex items-center gap-1"
           >
             <span>{lang === 'bn' ? 'ফিল্টার মুছুন' : 'Reset Filter'}</span>
             <span className="text-slate-500">({selectedPhone})</span>
@@ -42,7 +42,7 @@ export default function BrandSection({
         {BRANDS_AND_MODELS.map((brandGroup) => (
           <div 
             key={brandGroup.brand} 
-            className="p-4 rounded-xl bg-[#F8FBFE] border border-blue-100/90 hover:border-blue-300 hover:bg-white transition-all flex flex-col justify-between"
+            className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-400 hover:bg-white transition-all flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center gap-2 mb-3">

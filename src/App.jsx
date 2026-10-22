@@ -926,6 +926,14 @@ export default function App() {
             scrollToSection('products-section');
           }
         }}
+        onScrollToCategories={() => {
+          if (selectedProduct || isCartView) {
+            navigateToHome(true);
+            setTimeout(() => scrollToSection('categories-section'), 50);
+          } else {
+            scrollToSection('categories-section');
+          }
+        }}
         onSelectCategory={navigateToCategory}
         onSelectProduct={(p) => navigateToProduct(p, true)}
         products={products}
@@ -1040,7 +1048,15 @@ export default function App() {
               lang={lang}
             />
 
-            {/* 3. 5-Column Browse Categories & Trust Icons ("Dolor Sit Amet" from Reference) */}
+            {/* 3. Full-Width Blue Promotional Band ("Upgrade Your Tech Life") */}
+            <PromoBanners
+              onAddFreeDeliveryKit={handleAutoUnlockFreeDelivery}
+              onScrollToFinder={() => scrollToSection('smart-tech-finder')}
+              onOpenSupport={() => setActiveModal('support')}
+              lang={lang}
+            />
+
+            {/* 4. Shop by Category (Image-Led Cards) */}
             <FeaturedCategories
               selectedCategory={selectedCategory}
               onSelectCategory={navigateToCategory}
@@ -1056,14 +1072,6 @@ export default function App() {
               onOpenSupport={() => setActiveModal('support')}
               onScrollToBundles={handleAutoUnlockFreeDelivery}
               onScrollToFinder={() => scrollToSection('smart-tech-finder')}
-              lang={lang}
-            />
-
-            {/* 4. Two-Column Horizontal Soft Gradient Promo Banners (Reference Bottom Banners) */}
-            <PromoBanners
-              onAddFreeDeliveryKit={handleAutoUnlockFreeDelivery}
-              onScrollToFinder={() => scrollToSection('smart-tech-finder')}
-              onOpenSupport={() => setActiveModal('support')}
               lang={lang}
             />
 

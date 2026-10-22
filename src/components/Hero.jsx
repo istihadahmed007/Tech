@@ -16,8 +16,9 @@ const SLIDES = [
     title: 'Wireless Earbuds',
     headline: 'Sound Beyond Limits',
     category: 'audio',
-    image: '/assets/slider/slide-1-wireless-earbuds.jpg',
-    alt: 'Tech Nest Wireless Earbuds — Sound Beyond Limits with Active Noise Cancellation, up to 40H Playtime, and IPX4 Water Resistance',
+    image: '/assets/hero-gadgets-navy.jpg',
+    fallbackImage: '/assets/slider/slide-1-wireless-earbuds.jpg',
+    alt: 'Tech Nest Wireless Earbuds & Premium Audio Gear — Sound Beyond Limits with Active Noise Cancellation',
     action: ({ onSelectCategory, onShopClick }) => {
       if (onSelectCategory) onSelectCategory('audio');
       if (onShopClick) onShopClick();
@@ -219,61 +220,74 @@ export default function Hero({
       tabIndex={0}
     >
       <div className="hero-slider-card">
-        {/* Live Active Category Chip */}
-        <div className="hero-slider-badge-live" aria-hidden="true">
-          <span className="hero-slider-badge-pulse" />
-          <span>{activeSlide.title}</span>
+        {/* Left Content Column: Live HTML Copy matching Reference Image */}
+        <div className="hero-content-col">
+          {/* Live Active Category Chip */}
+          <div className="hero-slider-badge-live" aria-hidden="true">
+            <span className="hero-slider-badge-pulse" />
+            <span>{activeSlide.title}</span>
+          </div>
+
+          <h1 className="hero-headline">
+            Latest Tech Gadgets &amp; Accessories
+          </h1>
+
+          <p className="hero-subline">
+            Top-rated electronics and high-tech accessories for your lifestyle.
+          </p>
+
+          <div className="hero-slide-feature-tag">
+            <span>{activeSlide.title}</span> — <em>{activeSlide.headline}</em>
+          </div>
+
+          {/* Real Interactive "Shop Now" Button */}
+          <button
+            type="button"
+            onClick={(e) => handleTriggerAction(activeSlide, e)}
+            aria-label={`Shop ${activeSlide.title} — ${activeSlide.headline}`}
+            className="hero-slider-shop-btn"
+            title={`Shop ${activeSlide.title}`}
+          >
+            <span>Shop Now</span>
+          </button>
         </div>
 
-        {/* Carousel Track with smooth hardware-accelerated transform */}
-        <div 
-          className="hero-slider-track"
-          style={{
-            transform: `translateX(-${currentSlide * 100}%)`,
-            transition: prefersReducedMotion ? 'none' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1)'
-          }}
-        >
-          {SLIDES.map((slide, index) => {
-            const isCurrent = index === currentSlide;
+        {/* Right Media Column: Product Photography */}
+        <div className="hero-media-col">
+          <div 
+            className="hero-slider-track"
+            style={{
+              transform: `translateX(-${currentSlide * 100}%)`,
+              transition: prefersReducedMotion ? 'none' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1)'
+            }}
+          >
+            {SLIDES.map((slide, index) => {
+              const isCurrent = index === currentSlide;
 
-            return (
-              <div
-                key={slide.id}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={`Slide ${index + 1} of ${totalSlides}: ${slide.title} — ${slide.headline}`}
-                aria-hidden={!isCurrent}
-                onClick={(e) => handleTriggerAction(slide, e)}
-                className="hero-slider-slide"
-              >
-                {/* Visual Banner Image */}
-                <img
-                  src={slide.image}
-                  alt={slide.alt}
-                  width={1024}
-                  height={571}
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  decoding={index === 0 ? 'sync' : 'async'}
-                  fetchPriority={index === 0 ? 'high' : 'auto'}
-                  className="hero-slider-image"
-                />
-
-                {/* Real Interactive Accessible "Shop Now" Button positioned over banner */}
-                <button
-                  type="button"
-                  tabIndex={isCurrent ? 0 : -1}
+              return (
+                <div
+                  key={slide.id}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`Slide ${index + 1} of ${totalSlides}: ${slide.title} — ${slide.headline}`}
+                  aria-hidden={!isCurrent}
                   onClick={(e) => handleTriggerAction(slide, e)}
-                  aria-label={`Shop ${slide.title} — ${slide.headline}`}
-                  className="hero-slider-shop-btn"
-                  title={`Shop ${slide.title}`}
+                  className="hero-slider-slide"
                 >
-                  <span className="sr-only">
-                    Shop {slide.title} — {slide.headline}
-                  </span>
-                </button>
-              </div>
-            );
-          })}
+                  <img
+                    src={slide.image}
+                    alt={slide.alt}
+                    width={1024}
+                    height={571}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding={index === 0 ? 'sync' : 'async'}
+                    fetchPriority={index === 0 ? 'high' : 'auto'}
+                    className="hero-slider-image"
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Previous Navigation Arrow */}

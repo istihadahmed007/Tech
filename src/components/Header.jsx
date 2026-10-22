@@ -34,6 +34,7 @@ export default function Header({
   setSearchQuery,
   onScrollToFinder,
   onScrollToKits,
+  onScrollToCategories,
   onGoHome,
   onGoToShop,
   onSelectCategory,
@@ -118,14 +119,27 @@ export default function Header({
     }
   };
 
+  const handleCategoriesClick = () => {
+    if (onScrollToCategories) {
+      onScrollToCategories();
+    } else {
+      const el = document.getElementById('categories-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      } else if (onGoToShop) {
+        onGoToShop();
+      }
+    }
+  };
+
   return (
-    <header className={`sticky top-0 z-50 w-full nav-gradient text-white transition-all duration-300 ${
-      isScrolled ? 'shadow-lg bg-opacity-95 backdrop-blur-md' : 'shadow-sm backdrop-blur-sm'
+    <header className={`sticky top-0 z-50 w-full nav-gradient text-white transition-all duration-300 border-b border-white/10 ${
+      isScrolled ? 'shadow-xl bg-[#0a192f]/95 backdrop-blur-md' : 'shadow-md backdrop-blur-sm'
     }`}>
-      {/* Main Header Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+      {/* Main Header Container (Compact Dark-Blue Navigation Bar) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between gap-4">
         
-        {/* Left: Brand Logo */}
+        {/* Left: Brand Logo & Title */}
         <div className="flex items-center gap-3 shrink-0">
           <a 
             href="/" 
@@ -140,50 +154,47 @@ export default function Header({
           >
             <BrandLogo 
               variant="horizontal"
-              height={38} 
-              className="h-8 sm:h-9 w-auto brightness-0 invert drop-shadow-xs" 
+              height={34} 
+              className="h-7 sm:h-8 w-auto brightness-0 invert drop-shadow-xs" 
             />
-            <span className="hidden sm:inline text-[10px] font-mono uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded-full border border-white/30 backdrop-blur-xs">
-              AI Store
-            </span>
           </a>
         </div>
 
-        {/* Center: Navigation Links (Reference: Home, Shop, Blog/Tech Kits, Contact Us) */}
-        <nav className="hidden md:flex items-center gap-7 text-sm font-semibold tracking-wide text-white/95">
-          <button 
-            type="button"
-            onClick={onGoHome} 
-            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
-          >
-            Home
-          </button>
+        {/* Center: Navigation Links (Reference: Shop, Categories, About Us, Contact) */}
+        <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-semibold tracking-wide text-slate-200">
           <button 
             type="button"
             onClick={onGoToShop} 
-            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
+            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-blue-400"
           >
             Shop
           </button>
           <button 
             type="button"
-            onClick={onScrollToKits} 
-            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
+            onClick={handleCategoriesClick} 
+            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-blue-400"
           >
-            Bundles
+            Categories
           </button>
           <button 
             type="button"
             onClick={onOpenSupport} 
-            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-white"
+            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-blue-400"
           >
-            Contact Us
+            About Us
+          </button>
+          <button 
+            type="button"
+            onClick={onOpenSupport} 
+            className="hover:text-white transition-colors cursor-pointer py-1 border-b-2 border-transparent hover:border-blue-400"
+          >
+            Contact
           </button>
         </nav>
 
-        {/* Right Area: Frosted Pill Search & User Actions */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5">
-          {/* Frosted Pill Search (Exact match to reference image) */}
+        {/* Right Area: Search & Controls */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Compact Pill Search */}
           <div ref={searchContainerRef} className="relative">
             <form onSubmit={handleSearchSubmit} className="relative flex items-center">
               <input
@@ -196,21 +207,21 @@ export default function Header({
                 onFocus={() => {
                   if (searchQuery.trim().length >= 2) setShowSuggestions(true);
                 }}
-                placeholder="Search gear..."
-                className="w-36 sm:w-52 lg:w-64 bg-white/30 hover:bg-white/40 focus:bg-white focus:text-slate-900 placeholder-white/85 focus:placeholder-slate-400 text-white text-xs font-medium rounded-full py-2 pl-4 pr-9 outline-none transition backdrop-blur-md border border-white/35 shadow-xs"
+                placeholder="Search gadgets..."
+                className="w-32 sm:w-44 lg:w-56 bg-white/10 hover:bg-white/15 focus:bg-white focus:text-slate-900 placeholder-slate-400 focus:placeholder-slate-500 text-white text-xs font-medium rounded-full py-1.5 pl-3.5 pr-8 outline-none transition border border-white/15 focus:border-blue-400 shadow-inner"
               />
               <button 
                 type="submit"
-                className="absolute right-2.5 text-white/90 hover:text-white focus:text-blue-600 transition cursor-pointer"
+                className="absolute right-2 text-slate-300 hover:text-white focus:text-blue-600 transition cursor-pointer"
                 aria-label="Search"
               >
-                <Search size={15} />
+                <Search size={14} />
               </button>
             </form>
 
             {/* Live Search Suggestions Dropdown */}
             {showSuggestions && liveSuggestions.length > 0 && (
-              <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 py-2 border border-blue-100 shadow-2xl bg-white rounded-2xl z-50 text-slate-800 animate-fadeIn">
+              <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 py-2 border border-slate-200 shadow-2xl bg-white rounded-2xl z-50 text-slate-800 animate-fadeIn">
                 <div className="px-3.5 py-1.5 text-[11px] font-mono font-bold text-blue-600 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
                   <span>Verified Catalog</span>
                   <span className="text-slate-400 font-normal">{liveSuggestions.length} matches</span>
@@ -248,11 +259,11 @@ export default function Header({
             <button
               type="button"
               onClick={onOpenWishlist}
-              className="relative p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition cursor-pointer"
+              className="relative p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer border border-white/15"
               title="Open Saved Wishlist"
               aria-label="Open Wishlist"
             >
-              <Heart size={16} />
+              <Heart size={15} />
               <span className="absolute -top-1 -right-1 font-mono text-[9px] font-bold bg-rose-500 text-white w-4 h-4 rounded-full flex items-center justify-center">
                 {wishlistCount}
               </span>
@@ -263,24 +274,24 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenAccount}
-            className="text-xs font-semibold hover:opacity-95 flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full transition cursor-pointer border border-white/25"
+            className="text-xs font-semibold hover:opacity-95 flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition cursor-pointer border border-white/15 text-slate-200 hover:text-white"
             title="Customer Account & Orders"
           >
             <User size={14} />
-            <span>{currentUser ? currentUser.name.split(' ')[0] : 'Sign in'}</span>
+            <span className="hidden sm:inline">{currentUser ? currentUser.name.split(' ')[0] : 'Sign in'}</span>
           </button>
 
           {/* Shopping Bag / Cart */}
           <button
             type="button"
             onClick={onOpenCart}
-            className="text-xs font-semibold hover:opacity-95 flex items-center gap-1.5 bg-white/25 hover:bg-white/35 px-3 py-1.5 rounded-full transition cursor-pointer border border-white/30 shadow-xs active:scale-95"
+            className="text-xs font-semibold hover:opacity-95 flex items-center gap-1.5 bg-blue-600/80 hover:bg-blue-600 px-3 py-1.5 rounded-full transition cursor-pointer border border-blue-400/30 shadow-xs active:scale-95 text-white"
             title="View Bag"
             aria-label={`Shopping bag with ${cartCount} items`}
           >
             <ShoppingBag size={14} />
             <span className="hidden sm:inline">Bag</span>
-            <span className="font-mono bg-white text-blue-600 px-1.5 py-0.2 rounded-full text-[11px] font-bold">
+            <span className="font-mono bg-white text-blue-900 px-1.5 py-0.2 rounded-full text-[11px] font-bold">
               {cartCount}
             </span>
           </button>
@@ -289,16 +300,13 @@ export default function Header({
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition cursor-pointer"
+            className="md:hidden p-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 transition cursor-pointer border border-white/15"
             aria-label="Toggle mobile menu"
           >
             <Menu size={18} />
           </button>
         </div>
       </div>
-
-      {/* Crisp White Divider Line from Reference Image */}
-      <div className="h-0.5 bg-white/80 w-full" />
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
