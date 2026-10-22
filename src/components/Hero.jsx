@@ -16,7 +16,7 @@ const SLIDES = [
     title: 'Wireless Earbuds',
     headline: 'Sound Beyond Limits',
     category: 'audio',
-    image: '/assets/hero-gadgets-navy.jpg',
+    image: '/assets/slider/slide-1-wireless-earbuds.jpg',
     fallbackImage: '/assets/slider/slide-1-wireless-earbuds.jpg',
     alt: 'Tech Nest Wireless Earbuds & Premium Audio Gear — Sound Beyond Limits with Active Noise Cancellation',
     action: ({ onSelectCategory, onShopClick }) => {

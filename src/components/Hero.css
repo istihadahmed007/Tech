@@ -2,6 +2,7 @@
    Tech Nest — Prominent Deep Navy-to-Blue Hero Component
    Reference Layout: Deep blue gradient, live HTML headline on left,
    product imagery on right, crisp white "Shop Now" pill button.
+   Clean 2-column non-overlapping grid layout with zero text collisions.
    ========================================================================== */
 
 .hero-slider-section,
@@ -45,7 +46,7 @@
   max-height: none;
   margin-inline: 0;
   aspect-ratio: 1024 / 571;
-  background: radial-gradient(circle at 75% 45%, #1D4ED8 0%, #153468 45%, #08162D 85%);
+  background: radial-gradient(circle at 75% 45%, #1D4ED8 0%, #133365 45%, #08162D 85%);
   border: none;
   border-radius: 0;
   overflow: hidden;
@@ -53,68 +54,45 @@
   box-sizing: border-box;
   user-select: none;
   touch-action: pan-y;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 48%) minmax(0, 52%);
   align-items: center;
 }
 
 @media (max-width: 768px) {
   .hero-slider-card {
-    min-height: 520px;
-    flex-direction: column-reverse;
-    justify-content: flex-end;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: auto;
+    min-height: auto;
+    padding-bottom: 2.25rem;
   }
 }
 
-/* Left Content Column */
+/* Left Content Column: Dedicated non-overlapping column */
 .hero-content-col {
-  position: absolute;
-  left: 6%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48%;
-  max-width: 580px;
-  z-index: 15;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
   text-align: left;
+  padding: 2rem 1.5rem 2rem clamp(4.5rem, 6.5vw, 6.5rem);
+  z-index: 10;
   pointer-events: auto;
 }
 
 @media (max-width: 768px) {
   .hero-content-col {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: none;
+    order: 2;
     width: 100%;
-    max-width: 100%;
-    padding: 1.5rem 1.25rem 2.5rem;
-    background: linear-gradient(180deg, transparent 0%, rgba(8, 22, 45, 0.95) 25%);
+    padding: 1.25rem 1.25rem 1.5rem;
+    align-items: center;
+    text-align: center;
   }
-}
-
-/* Live HTML Headline */
-.hero-headline {
-  color: #FFFFFF;
-  font-size: clamp(1.85rem, 4vw, 3.4rem);
-  font-weight: 800;
-  line-height: 1.14;
-  letter-spacing: -0.025em;
-  margin-top: 0.5rem;
-  margin-bottom: 0.75rem;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Supporting Subline */
-.hero-subline {
-  color: #CBD5E1;
-  font-size: clamp(0.875rem, 1.5vw, 1.15rem);
-  line-height: 1.55;
-  margin-bottom: 0.75rem;
-  font-weight: 400;
-  max-width: 480px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Live Active Category Chip */
@@ -142,6 +120,44 @@
   box-shadow: 0 0 8px #38BDF8;
 }
 
+/* Live HTML Headline */
+.hero-headline {
+  color: #FFFFFF;
+  font-size: clamp(1.75rem, 3.2vw, 2.9rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin-top: 0.6rem;
+  margin-bottom: 0.65rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  word-break: break-word;
+}
+
+@media (max-width: 768px) {
+  .hero-headline {
+    text-align: center;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+  }
+}
+
+/* Supporting Subline */
+.hero-subline {
+  color: #CBD5E1;
+  font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+  font-weight: 400;
+  max-width: 440px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .hero-subline {
+    text-align: center;
+  }
+}
+
+/* Feature Tag */
 .hero-slide-feature-tag {
   display: inline-flex;
   align-items: center;
@@ -149,7 +165,7 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
-  padding: 0.3rem 0.85rem;
+  padding: 0.25rem 0.85rem;
   font-size: 0.78rem;
   color: #BFDBFE;
   margin-bottom: 1.25rem;
@@ -164,8 +180,8 @@
   background: #FFFFFF;
   color: #0F172A !important;
   font-weight: 700;
-  font-size: clamp(0.875rem, 1.25vw, 1.05rem);
-  padding: 0.75rem 2rem;
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
+  padding: 0.75rem 2.2rem;
   border-radius: 9999px;
   border: 2px solid transparent;
   cursor: pointer;
@@ -190,22 +206,40 @@
   outline-offset: 3px;
 }
 
-/* Right Media Column */
+/* Right Media Column: Dedicated non-overlapping product photography column */
 .hero-media-col {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 58%;
+  position: relative;
   height: 100%;
+  width: 100%;
   overflow: hidden;
   z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Soft studio fade on the left edge of media column */
+.hero-media-col::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  background: linear-gradient(to right, rgba(8, 22, 45, 0.95) 0%, transparent 100%);
+  z-index: 6;
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {
   .hero-media-col {
-    position: relative;
+    order: 1;
     width: 100%;
-    height: 260px;
+    height: 250px;
+  }
+  
+  .hero-media-col::before {
+    display: none;
   }
 }
 
@@ -245,13 +279,13 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 9999px;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(8, 22, 45, 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -259,23 +293,16 @@
   cursor: pointer;
   transition: all 180ms ease;
   z-index: 20;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   outline: none;
 }
 
-@media (min-width: 640px) {
-  .hero-slider-arrow {
-    width: 44px;
-    height: 44px;
-  }
-}
-
 .hero-slider-arrow.is-left {
-  left: 12px;
+  left: 16px;
 }
 
 .hero-slider-arrow.is-right {
-  right: 12px;
+  right: 16px;
 }
 
 @media (min-width: 640px) {
@@ -299,6 +326,12 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 
+@media (max-width: 768px) {
+  .hero-slider-arrow {
+    display: none;
+  }
+}
+
 /* Pagination Dots */
 .hero-slider-dots {
   position: absolute;
@@ -310,7 +343,7 @@
   gap: 6px;
   padding: 5px 12px;
   border-radius: 9999px;
-  background: rgba(10, 25, 47, 0.6);
+  background: rgba(8, 22, 45, 0.65);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -319,7 +352,7 @@
 
 @media (min-width: 640px) {
   .hero-slider-dots {
-    bottom: 18px;
+    bottom: 16px;
     gap: 8px;
     padding: 6px 14px;
   }
